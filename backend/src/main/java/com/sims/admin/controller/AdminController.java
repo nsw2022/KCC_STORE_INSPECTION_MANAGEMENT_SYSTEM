@@ -11,6 +11,6 @@ public class AdminController {
     @GetMapping("/admin")
     public ResponseEntity<String> admin() {
 
-        return new ResponseEntity<>("Test", HttpStatus.OK);
+        return new ResponseEntity<>("Test2", HttpStatus.OK);
     }
 }
