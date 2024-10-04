@@ -90,6 +90,9 @@
 
 .page-wrapper {
     height: 100vh;
+    position:fixed;
+    left:0;
+    top:0;
 }
 
 .page-wrapper .theme {
@@ -147,7 +150,6 @@
 .sidebar-content {
     max-height: calc(100% - 30px);
     height: calc(100% - 30px);
-    overflow-y: auto;
     position: relative;
 }
 
@@ -290,30 +292,32 @@
 .sub-menu {
     color: #000000;
 }
+.page-wrapper2{
+    width:100%;
+    
+}
 
-
-.page-content {
+.page-content{
     display: inline-block;
     width: 100%;
-    height: 100%;
-    padding-left: 0px;
+    min-height: 100vh;
+    padding-left: 300px;
     padding-top: 50px;
+    padding-left:0;
+    box-sizing:border-box;
     background-color: #F4F7FF;
 }
 
-.page-content > div {
-    padding: 20px 40px;
-}
 
-.page-content {
-    overflow-x: hidden;
-}
+/* .page-content {
+  overflow-x: hidden;
+} */
 
 
 
 @media screen and (min-width: 768px) {
     .page-wrapper.toggled .page-content {
-        padding-left: 300px;
+        /*     padding-left: 300px */
         padding-top: 50px;
         box-sizing: border-box;
     }
@@ -343,5 +347,10 @@
     .sidebar-dropdown{
         margin-bottom: 1.5em;
         margin-left: 10px;
+    }
+
+    .page-wrapper2{
+        padding-left:300px;
+        box-sizing:border-box;
     }
 }
