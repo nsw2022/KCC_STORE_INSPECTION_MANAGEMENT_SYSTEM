@@ -1,0 +1,166 @@
+body {
+    font-family: "Noto Sans KR" !important;
+}
+
+/* 가상 사이드바 */
+.sidebar {
+    width: 300px; /* 사이드바의 폭을 300px로 고정 */
+    background-color: blanchedalmond;
+}
+.content {
+    flex-grow: 1; /* 남은 공간을 모두 사용 */
+    background-color: #f4f7ff;
+}
+
+/* 가맹점 관리 top 영역 시작 */
+.top-box {
+    width: 100%;
+}
+
+.top-box-content {
+    width: 90%;
+    height: 100%;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+    padding: 12px 30px;
+}
+
+.top-box-content div div b {
+    font-size: 1.5rem;
+}
+.top-button-wrapper {
+    padding-left: 10px; /* 좌측 패딩 추가 */
+    padding-right: 10px; /* 우측 패딩 추가 */
+}
+
+.top-button {
+    text-align: center;
+    cursor: pointer;
+    width: 80px;
+}
+
+.top-lookup {
+    background-color: #16dbcc;
+    border-radius: 30px;
+    height: 35px;
+    line-height: 2;
+    color: white;
+}
+
+.top-lookup:hover {
+    background-color: #3ab2a9;
+}
+
+.top-reset {
+    border-radius: 30px;
+    height: 35px;
+    line-height: 2;
+    color: #858d9d;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+}
+
+.top-reset:hover {
+    background-color: #e1e1e1;
+}
+
+input.top-search::-webkit-input-placeholder {
+    background-image: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQujvGvIxeVPUNWJWCxEA94dTFFxjjPK1khMQ&s);
+    background-size: 32px;
+    background-position: right;
+    background-repeat: no-repeat;
+    text-indent: 5px;
+    color: #aaa;
+}
+/* 가맹점 관리 top 영역 끝 */
+
+/* 중간 게시판 목록 시작 */
+.middle-box {
+    width: 100%;
+}
+
+.middle-content {
+    width: 90%;
+    height: 100%;
+    margin: 0 auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+    padding: 12px 30px;
+}
+
+.middle-register {
+    background-color: #4318ff;
+    border-radius: 30px;
+    height: 35px;
+    line-height: 2;
+    color: white;
+}
+
+.middle-register:hover {
+    background-color: #3ab2a9;
+}
+
+.middle-delete {
+    border-radius: 30px;
+    height: 35px;
+    line-height: 2;
+    color: #858d9d;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+}
+
+.middle-delete:hover {
+    background-color: #e1e1e1;
+}
+
+/* 중간 게시판 목록 끝 */
+
+@media (max-width: 1170px) {
+    .top-search-box div {
+        font-size: 0.75rem;
+    }
+    .top-search-box input {
+        font-size: 0.75rem;
+    }
+
+    input.top-search::-webkit-input-placeholder {
+        background-image: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQujvGvIxeVPUNWJWCxEA94dTFFxjjPK1khMQ&s);
+        background-size: 24px;
+        background-position: right;
+        background-repeat: no-repeat;
+        color: #aaa;
+    }
+}
+
+@media (max-width: 393px) {
+    .top-box-content {
+        padding: 12px 15px; /* 작은 화면에서 패딩 조정 */
+    }
+    .sidebar {
+        width: 100%; /* 모바일에서 사이드바를 전체 너비로 확장 */
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        height: auto;
+        background-color: #fff;
+    }
+    .content {
+        margin-left: 0; /* 모바일에서 사이드바 없애고 콘텐츠 너비 조정 */
+    }
+    .top-box-content div div b {
+        font-size: 1rem;
+    }
+    .top-search {
+        width: 90%;
+    }
+    .table-responsive {
+        overflow-x: auto;
+    }
+    table {
+        min-width: 600px; /* 테이블의 최소 너비 고정 */
+    }
+}
