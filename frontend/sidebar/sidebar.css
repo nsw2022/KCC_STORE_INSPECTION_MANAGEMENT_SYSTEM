@@ -1,0 +1,347 @@
+.sidebar-wrapper {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  position: fixed;
+  top: 0;
+  left: -800px;
+  z-index: 999;
+}
+
+#sidebar{
+  font: 400 1.25em "Noto Sans KR";
+}
+.sidebar-brand{
+  width: 100%;
+  height: 50px;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: center;
+}
+.sidebar-brand>a{
+  margin-top: 10px;
+  font: 400 2em "Playfair Display";
+}
+#close-sidebar{
+  position: absolute;
+  right: 10px;
+  top: 20px;
+}
+.sidebar-menu{
+  width: 100%;
+  height: auto;
+  margin-top: 50px;
+  
+}
+.sidebar-menu>ul{
+  
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: space-around;
+}
+
+.sidebar-dropdown{
+  margin-bottom: 2em;
+  margin-left: 10px;
+}
+
+.sidebar-submenu>ul>li{
+  margin-top: 1.25em;
+}
+
+.sidebar-submenu>ul>li>a{
+  font-size: 1.5em;
+}
+
+/* sidebar-dropdown에서 아이콘을 제거 */
+.sidebar-dropdown > a:after {
+  content: none !important; /* 가상 요소를 없앰 */
+}
+
+/* active 상태의 스타일 정의 */
+.sidebar-submenu > ul > li > a.active-hover {
+  background-color: #DCE8FF; /* hover 시 배경색 */
+  border-radius: 10px; /* 모서리 둥글게 */
+  color: #0035BE !important;
+  font: 600 1.5em "Noto Sans KR";
+}
+
+
+
+.page-wrapper .sidebar-wrapper,
+.sidebar-wrapper .sidebar-dropdown > a:after,
+.sidebar-wrapper .sidebar-menu .sidebar-dropdown .sidebar-submenu li a:before,
+.sidebar-wrapper ul li a i,
+.page-wrapper .page-content,
+.sidebar-wrapper .sidebar-menu ul li a,
+#show-sidebar,
+#close-sidebar {
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -ms-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+
+/*----------------page-wrapper----------------*/
+
+.page-wrapper {
+  height: 100vh;
+}
+
+.page-wrapper .theme {
+  width: 40px;
+  height: 40px;
+  display: inline-block;
+  border-radius: 4px;
+  margin: 2px;
+}
+
+.page-wrapper .theme.chiller-theme {
+  background: #ffffff;
+}
+
+/*----------------toggeled sidebar----------------*/
+
+.page-wrapper.toggled .sidebar-wrapper {
+  left: 0px;
+}
+
+
+/*----------------show sidebar button----------------*/
+#show-sidebar {
+  position: fixed;
+  left: 0.5em;
+  top: 0.3em;
+  z-index: 100;
+  border-radius: 0 4px 4px 0px;
+  width: 35px;
+  transition-delay: 0.3s;
+  background-color: #F4F7FF;
+  border: none;
+  color: #000000;
+  font-size: 20px;
+}
+.page-wrapper.toggled #show-sidebar {
+  left: -40px;
+}
+/*----------------sidebar-wrapper----------------*/
+
+
+
+.sidebar-wrapper ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-wrapper a {
+  text-decoration: none;
+}
+
+/*----------------sidebar-content----------------*/
+
+.sidebar-content {
+  max-height: calc(100% - 30px);
+  height: calc(100% - 30px);
+  overflow-y: auto;
+  position: relative;
+}
+
+.sidebar-content.desktop {
+  overflow-y: hidden;
+}
+
+/*--------------------sidebar-brand----------------------*/
+
+
+
+.sidebar-wrapper .sidebar-brand > a {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.sidebar-wrapper .sidebar-brand #close-sidebar {
+  cursor: pointer;
+  font-size: 20px;
+}
+
+
+
+
+
+/*----------------------sidebar-menu-------------------------*/
+
+.sidebar-wrapper .sidebar-menu {
+  padding-bottom: 10px;
+}
+
+.sidebar-wrapper .sidebar-menu ul li a {
+  display: inline-block;
+  width: 100%;
+  text-decoration: none;
+  position: relative;
+  padding: 8px 30px 8px 20px;
+}
+
+.sidebar-wrapper .sidebar-menu ul li a i {
+  margin-right: 10px;
+  font-size: 12px;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  border-radius: 4px;
+}
+
+
+.sidebar-wrapper .sidebar-menu .sidebar-dropdown .sidebar-submenu li {
+  padding-left: 15px;
+  padding-right: 25px;
+  box-sizing: border-box;
+  font-size: 13px;
+}
+
+
+.sidebar-wrapper .sidebar-menu .sidebar-submenu {
+  display: none;
+}
+
+
+
+
+
+
+/*-----------------------------chiller-theme-------------------------------------------------*/
+
+.chiller-theme .sidebar-wrapper {
+    background: #ffffff;
+}
+
+.chiller-theme .sidebar-wrapper .sidebar-brand>a{
+  color: #000000;
+}
+
+.chiller-theme .sidebar-wrapper .sidebar-menu ul li a,
+.chiller-theme .sidebar-footer>a {
+    color: #818896;
+}
+
+.chiller-theme .sidebar-wrapper .sidebar-menu ul li:hover>a,
+.chiller-theme .sidebar-wrapper .sidebar-menu .sidebar-dropdown.active>a {
+    color: #0035BE;
+    font-weight: bold;
+}
+
+.page-wrapper.chiller-theme.toggled #close-sidebar {
+    color: #bdbdbd;
+}
+
+.page-wrapper.chiller-theme.toggled #close-sidebar:hover {
+    color: #ffffff;
+}
+
+.chiller-theme .sidebar-wrapper .sidebar-menu ul li a i,
+.chiller-theme .sidebar-wrapper .sidebar-menu .sidebar-dropdown div {
+    background: #ffffff;
+}
+
+.sidebar-submenu>ul>li>a:hover{
+  border-radius: 10px;
+  background-color: #DCE8FF;
+}
+
+
+.top-bar{
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 25;
+  display: inline-block;
+  width: 100%;
+  height: 50px;
+  background-color: #F4F7FF;
+  padding-top: 13px;
+  padding-left: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: center;
+}
+#breadcrumb{
+  font: 500 1em "Noto Sans KR";
+}
+/* 대분류 메뉴 색상 */
+.parent-menu {
+  color: #A2A2A2;
+}
+
+/* 구분자 색상 */
+.separator {
+  color: #A2A2A2;
+  margin: 0 5px; /* 약간의 여백 추가 */
+}
+
+/* 서브메뉴 색상 */
+.sub-menu {
+  color: #000000;
+}
+
+
+.page-content {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  padding-left: 0px;
+  padding-top: 50px;
+  background-color: #F4F7FF;
+}
+
+.page-content > div {
+  padding: 20px 40px;
+}
+
+.page-content {
+  overflow-x: hidden;
+}
+
+
+
+@media screen and (min-width: 768px) {
+  .page-wrapper.toggled .page-content {
+    padding-left: 300px;
+    padding-top: 50px;
+    box-sizing: border-box;
+  }
+  .top-bar{
+    background-color: #ffffff;
+    padding-left: 350px;
+    box-sizing: border-box;
+    display: block;
+  }
+  .sidebar-wrapper {
+    width: 300px;
+    height: 100%;
+    max-height: 100%;
+    position: fixed;
+    top: 0;
+    left: -300px;
+    z-index: 999;
+  }
+  .sidebar-brand{
+    margin-left: 10px;
+    margin-top: 20px;
+  }
+  .sidebar-wrapper .sidebar-brand {
+    padding: 10px 20px;
+    display: block;
+  }
+  .sidebar-dropdown{
+    margin-bottom: 1.5em;
+    margin-left: 10px;
+  }
+}
