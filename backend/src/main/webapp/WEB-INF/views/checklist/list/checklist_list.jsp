@@ -75,36 +75,67 @@ pageEncoding="UTF-8" %>
                   <div class="row first-input-box mb-3">
                     <div class="col-12 col-lg-3 d-flex align-items-center">
                       <label class="col-form-label me-2" style="min-width: 40px;">브랜드</label>
-                      <input type="text" class="form-control" placeholder="브랜드">
+                      <input type="text" class="form-control" placeholder="브랜드" list="useBrandOptions">
+                      <datalist id="useBrandOptions">
+                        <option value="-전체-">
+                        <option value="KCC 베이커리">
+                        <option value="KCC 카페">
+                      </datalist>
                     </div>
                     <div class="col-12 col-lg-3 d-flex align-items-center">
                       <label class="col-form-label me-2" style="min-width: 80px;">체크리스트명</label>
-                      <input type="text" class="form-control" placeholder="체크리스트명">
+                      <input type="text" class="form-control" placeholder="체크리스트명" list="useChecklistOptions">
+                      <datalist id="useChecklistOptions">
+                        <option value="-전체-">
+                        <option value="2024 정기 점검 체크리스트">
+                        <option value="2024 긴급 점검 체크리스트">
+                      </datalist>
                     </div>
                     <div class="col-12 col-lg-3 d-flex align-items-center">
                       <label class="col-form-label me-2" style="min-width: 100px; font: 500 12px Noto Sans KR;">마스터체크리스트</label>
-                      <input type="text" class="form-control" placeholder="마스터체크리스트">
+                      <input type="text" class="form-control" placeholder="마스터체크리스트" list="useMasterChecklistOptions">
+                      <datalist id="useMasterChecklistOptions">
+                        <option value="-전체-">
+                        <option value="2023 정기 점검 체크리스트">
+                        <option value="2023 긴급 점검 체크리스트">
+                      </datalist>
                     </div>
                     <div class="col-12 col-lg-3 d-flex align-items-center">
                       <label class="col-form-label me-2" style="min-width: 50px;">점검유형</label>
-                      <input type="text" class="form-control" placeholder="점검유형">
+                      <input type="text" class="form-control" placeholder="점검유형" list="useInspectionTypeOptions">
+                      <datalist id="useInspectionTypeOptions">
+                        <option value="-전체-">
+                        <option value="정기 점검">
+                        <option value="기획 점검">
+                        <option value="제품 점검">
+                        <option value="긴급 점검">
+                      </datalist>
                     </div>
                   </div>
 
                   <div class="row second-input-box mb-3">
                     <div class="col-12 col-lg-3 d-flex align-items-center">
                       <label class="col-form-label me-2" style="min-width: 50px;">등록년월</label>
-                      <input type="text" class="form-control" placeholder="2024-10-07">
+                      <input type="date" class="form-control" placeholder="2024-10-07">
                     </div>
                     <div class="col-12 col-lg-3 d-flex align-items-center">
                       <label class="col-form-label me-2" style="min-width: 60px;">마스터여부</label>
-                      <input type="text" class="form-control" placeholder="마스터여부 선택">
+                      <input type="text" class="form-control" placeholder="마스터여부 선택" list="useMasterChecklistCheckOptions">
+                      <datalist id="useMasterChecklistCheckOptions">
+                        <option value="-전체-">
+                      </datalist>
                     </div>
                     <div class="col-12 col-lg-3 d-flex align-items-center">
                       <label class="col-form-label me-2" style="min-width: 50px;">사용여부</label>
-                      <input type="text" class="form-control" placeholder="사용여부 선택">
+                      <input type="text" class="form-control" placeholder="사용여부 선택" list="useStatusOptions" id="useStatusInput">
+                      <datalist id="useStatusOptions">
+                        <option value="-전체-">
+                        <option value="Y">
+                        <option value="N">
+                      </datalist>
                     </div>
-                    <div class="col-12 col-md-3" style="height: 0px"></div>
+                    <div class="col-12 col-lg-3 d-flex align-items-center" >
+                    </div>
                   </div>
                 </div>
 
@@ -146,7 +177,7 @@ pageEncoding="UTF-8" %>
                     <div class="row first-input-box mb-3">
                       <div class="col-12 col-lg-3 d-flex align-items-center">
                         <label class="col-form-label me-2" style="min-width: 40px;">브랜드</label>
-                        <input type="text" class="form-control" placeholder="브랜드">
+                        <input type="text" class="form-control" placeholder="브랜드" list="useBrandOptions">
                       </div>
                       <div class="col-12 col-lg-3 d-flex align-items-center">
                         <label class="col-form-label me-2" style="min-width: 80px;">체크리스트명</label>
@@ -154,18 +185,18 @@ pageEncoding="UTF-8" %>
                       </div>
                       <div class="col-12 col-lg-3 d-flex align-items-center">
                         <label class="col-form-label me-2" style="min-width: 100px; font: 500 12px Noto Sans KR;">마스터체크리스트</label>
-                        <input type="text" class="form-control" placeholder="마스터체크리스트">
+                        <input type="text" class="form-control" placeholder="마스터체크리스트" list="useMasterChecklistOptions">
                       </div>
                       <div class="col-12 col-lg-3 d-flex align-items-center">
                         <label class="col-form-label me-2" style="min-width: 50px;">점검유형</label>
-                        <input type="text" class="form-control" placeholder="점검유형">
+                        <input type="text" class="form-control" placeholder="점검유형" list="useInspectionTypeOptions">
                       </div>
                     </div>
 
                     <div class="row second-input-box mb-3">
                       <div class="col-12 col-lg-3 d-flex align-items-center">
                         <label class="col-form-label me-2" style="min-width: 50px;">등록년월</label>
-                        <input type="text" class="form-control" placeholder="2024-10-07">
+                        <input type="date" class="form-control" placeholder="2024-10-07">
                       </div>
                       <div class="col-12 col-lg-3 d-flex align-items-center">
                         <label class="col-form-label me-2" style="min-width: 60px;">마스터여부</label>
