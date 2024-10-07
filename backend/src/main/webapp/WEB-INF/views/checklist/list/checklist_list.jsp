@@ -132,6 +132,58 @@ pageEncoding="UTF-8" %>
             </div>
           </div>
           <%-- middle box end--%>
+            <%-- bottom box start--%>
+            <div class="row top-box mb-3">
+              <div class="col">
+                <div class="top-content">
+                  <div class="button-box" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span class="m-3" style="font: 350 20px Noto Sans KR;">체크리스트 상세</span>
+                    <div class="my-3">
+                      <button type="button" class="btn btn-primaty me-3 save-btn" onclick="onAddRow()">저장</button>
+                    </div>
+                  </div>
+                  <div class="container">
+                    <div class="row first-input-box mb-3">
+                      <div class="col-12 col-lg-3 d-flex align-items-center">
+                        <label class="col-form-label me-2" style="min-width: 40px;">브랜드</label>
+                        <input type="text" class="form-control" placeholder="브랜드">
+                      </div>
+                      <div class="col-12 col-lg-3 d-flex align-items-center">
+                        <label class="col-form-label me-2" style="min-width: 80px;">체크리스트명</label>
+                        <input type="text" class="form-control" placeholder="체크리스트명">
+                      </div>
+                      <div class="col-12 col-lg-3 d-flex align-items-center">
+                        <label class="col-form-label me-2" style="min-width: 100px; font: 500 12px Noto Sans KR;">마스터체크리스트</label>
+                        <input type="text" class="form-control" placeholder="마스터체크리스트">
+                      </div>
+                      <div class="col-12 col-lg-3 d-flex align-items-center">
+                        <label class="col-form-label me-2" style="min-width: 50px;">점검유형</label>
+                        <input type="text" class="form-control" placeholder="점검유형">
+                      </div>
+                    </div>
+
+                    <div class="row second-input-box mb-3">
+                      <div class="col-12 col-lg-3 d-flex align-items-center">
+                        <label class="col-form-label me-2" style="min-width: 50px;">등록년월</label>
+                        <input type="text" class="form-control" placeholder="2024-10-07">
+                      </div>
+                      <div class="col-12 col-lg-3 d-flex align-items-center">
+                        <label class="col-form-label me-2" style="min-width: 60px;">마스터여부</label>
+                        <input type="checkbox" >
+                      </div>
+                      <div class="col-12 col-lg-3 d-flex align-items-center">
+                        <label class="col-form-label me-2" style="min-width: 50px;">사용여부</label>
+                        <input type="checkbox">
+                      </div>
+                      <div class="col-12 col-md-3" style="height: 0px"></div>
+                    </div>
+                  </div>
+
+
+                </div>
+              </div>
+            </div>
+            <%-- bottom box end--%>
         </div>
       </main>
     </div>

@@ -123,6 +123,15 @@ body {
   padding: 12px 30px;
 }
 
+
+.save-btn{
+  width: 7vw;
+  background-color: #4318FF !important;
+  border-radius: 15px !important;
+  color: #ffffff !important;
+  border: none;
+}
+
 @media (max-width: 400px) {
   /* header */
   .ag-header-row{
