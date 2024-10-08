@@ -184,8 +184,11 @@ pageEncoding="UTF-8" %>
                         <input type="text" class="form-control" placeholder="체크리스트명">
                       </div>
                       <div class="col-12 col-lg-3 d-flex align-items-center">
+
                         <label class="col-form-label me-2" style="min-width: 100px; font: 500 12px Noto Sans KR;">마스터체크리스트</label>
-                        <input type="text" class="form-control" placeholder="마스터체크리스트" list="useMasterChecklistOptions">
+                        <div class="search-container" style="position: relative;">
+                          <input type="text" class="form-control" placeholder="마스터체크리스트" data-bs-target="#masterChecklistModal" data-bs-toggle="modal" readonly>
+                        </div>
                       </div>
                       <div class="col-12 col-lg-3 d-flex align-items-center">
                         <label class="col-form-label me-2" style="min-width: 50px;">점검유형</label>
@@ -219,6 +222,134 @@ pageEncoding="UTF-8" %>
       </main>
     </div>
 
+
+    <%-------------  modal -------------%>
+    <div class="modal fade" id="masterChecklistModal" aria-hidden="true" aria-labelledby="masterChecklistList" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+
+          <%-------------- header --------------%>
+            <div class="modal-header">
+            <span class="modal-title fs-5" id="masterChecklistList" style="font: 450 16px 'Noto Sans KR'">
+              마스터체크리스트 선택
+            </span>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+          <%-------------- header --------------%>
+
+          <%-------------- body --------------%>
+          <div class="modal-body">
+            <div class="input-group mb-3 modal-search-box" style="    padding: .5rem 1rem;">
+              <input type="text" class="form-control me-2" placeholder="체크리스트 검색" aria-label="Recipient's username" aria-describedby="button-addon2">
+              <button class="btn btn-outline-secondary" type="button" id="button-addon2">검색</button>
+            </div>
+            <ol class="list-group">
+              <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+                <div class="item-info d-flex align-items-center">
+                  <span class="me-3">01</span>
+                  <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
+                </div>
+                <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                  미리보기
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+                <div class="item-info d-flex align-items-center">
+                  <span class="me-3">01</span>
+                  <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
+                </div>
+                <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                  미리보기
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+                <div class="item-info d-flex align-items-center">
+                  <span class="me-3">01</span>
+                  <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
+                </div>
+                <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                  미리보기
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+                <div class="item-info d-flex align-items-center">
+                  <span class="me-3">01</span>
+                  <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
+                </div>
+                <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                  미리보기
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+                <div class="item-info d-flex align-items-center">
+                  <span class="me-3">01</span>
+                  <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
+                </div>
+                <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                  미리보기
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+                <div class="item-info d-flex align-items-center">
+                  <span class="me-3">01</span>
+                  <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
+                </div>
+                <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                  미리보기
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </li>
+              <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+                <div class="item-info d-flex align-items-center">
+                  <span class="me-3">01</span>
+                  <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
+                </div>
+                <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                  미리보기
+                  <i class="fa-regular fa-eye"></i>
+                </button>
+              </li>
+
+
+
+            </ol>
+          </div>
+          <%-------------- body --------------%>
+
+          <%-------------- footer --------------%>
+          <div class="modal-footer">
+            <button class="btn btn-primary" data-bs-dismiss="modal">선택</button>
+          </div>
+          <%-------------- footer --------------%>
+        </div>
+      </div>
+    </div>
+
+
+    <%--    second modal     --%>
+    <div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="details" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="details">상세보기</h1>
+            <button class="btn btn-primary" data-bs-target="#masterChecklistModal" data-bs-toggle="modal">뒤로가기</button>
+          </div>
+          <div class="modal-body">
+            Hide this modal and show the first with the button below.
+          </div>
+          <div class="modal-footer">
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%-----------  modal end ---------------%>
     <script
       type="application/javascript"
       src="../../../../../resources/js/master/checklist/list/checklist.js"
