@@ -114,21 +114,15 @@
 
 
 
-</div>
 
 
-<%-- 붙이려는 페이지 아래 해당 container 안에 작업 하면 된다.
-<div class="page-wrapper2">
-    <main class="page-content">
-        <div class="container">
-            <h1>메인콘텐츠에용</h1>
-        </div>
-    </main>
-</div>--%>
-
-
-
-
+<%--<div class="page-wrapper2">--%>
+<%--    <main class="page-content">--%>
+<%--        <div class="container">--%>
+<%--            <h1>메인콘텐츠에용</h1>--%>
+<%--        </div>--%>
+<%--    </main>--%>
+<%--</div>--%>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>

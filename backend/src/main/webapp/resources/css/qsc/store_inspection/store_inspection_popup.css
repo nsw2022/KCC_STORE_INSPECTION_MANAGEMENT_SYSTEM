@@ -1,0 +1,198 @@
+body{
+    background: #F4F7FF;
+    padding: 40px;
+    box-sizing: border-box;
+}
+
+.inspection-detail {
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    font-family: 'Noto Sans KR', sans-serif;
+    margin-bottom: 40px;
+}
+
+.inspection-header h2 {
+    font: 600 1.3rem "Noto Sans KR";
+    margin-bottom: 20px;
+}
+
+.inspection-info {
+    width: 100%;
+    border: solid 1px #D0D5DD;
+    border-radius: 10px;
+}
+
+.inspection-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+
+}
+
+.inspection-table thead th {
+    background-color: #f4f4f4;
+    text-align: left;
+    padding: 10px;
+    box-sizing: border-box;
+    font: 600 1.1rem "Noto Sans KR";
+    color: #333;
+}
+
+.inspection-table tbody td {
+    padding: 15px;
+    border-top: 1px solid #D0D5DD;
+    font-size: 1rem;
+    color: #333;
+}
+
+.inspection-status {
+    font: 500 1rem "Noto Sans KR";
+    color: #D90D0D;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.inspection-subtitle {
+    font: 400 1rem "Noto Sans KR";
+    color: #666;
+}
+
+.inspection-table tbody td i {
+    margin-right: 10px;
+    color: #999;
+}
+
+/*-------------------------팝업리스트--------------------------*/
+.inspection-results-section {
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    overflow-x: auto; /* 가로 스크롤을 위한 설정 */
+}
+
+.inspection-results-table {
+    width: 100%;
+    border-collapse: separate;
+    table-layout: fixed;
+    min-width: 700px; /* 스크롤을 위한 최소 너비 */
+    border: solid 1px #D0D5DD;
+    border-spacing: 0px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+
+.inspection-results-table th,
+.inspection-results-table td {
+    padding: 15px;
+    box-sizing: border-box;
+    text-align: left;
+    border-bottom: 1px solid #ddd; /* 가로 구분선만 적용 */
+    border-left: none; /* 세로 구분선 제거 */
+    border-right: none; /* 세로 구분선 제거 */
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 1rem;
+}
+
+.inspection-results-table th {
+    background-color: #f4f4f4;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #ddd; /* 헤더는 더 두꺼운 구분선 */
+}
+
+/* 왼쪽 요소를 더 떨어트리기 위한 padding-left 설정 */
+.inspection-results-table td {
+    padding-left: 5%; /* 원하는 만큼 값을 조정 */
+    box-sizing: border-box;
+}
+
+.inspection-results-table th {
+    padding-left: 5%; /* 헤더에서도 같은 여백을 적용 */
+    box-sizing: border-box;
+}
+
+.inspection-results-table tbody tr:nth-child(even) {
+    background-color: #fafafa; /* 짝수 행 배경색 설정 */
+}
+
+.history-btn {
+    background-color: #4318FF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.history-btn:hover {
+    background-color: #2B2BFF;
+}
+#go-inspection-wrap{
+    width: 100%;
+    height: 50px;
+
+}
+#go-inspection{
+    float: right;
+    width: 15vw; /* 화면 너비의 15% */
+    height: 50px;
+    border-radius: 10px;
+    border: none;
+    font: 500 1em "Noto Sans KR";
+    color: white;
+    background: #4318FF;
+}
+
+
+
+/*-----------------------반응형 제어-----------------------*/
+@media (max-width: 768px) {
+    .inspection-details {
+        flex-direction: column;
+    }
+    .inspection-item {
+        width: 100%;
+    }
+    /* 768px 이하에서 테이블 셀을 블록으로 쌓이게 설정 */
+    .inspection-table tbody tr {
+        display: block;
+    }
+    .inspection-table tbody td {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        border-top: none; /* 첫 번째 블록 간에 테두리 제거 */
+        margin-bottom: 10px; /* 블록 사이의 간격 */
+    }
+
+    /*-------------------------팝업리스트--------------------------*/
+    .inspection-results-table {
+        width: 100%;
+    }
+    .inspection-results-table th,
+    .inspection-results-table td {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+
+    #go-inspection{
+        width: 20vw; /* 화면 너비의 20% */
+
+    }
+}
+@media (max-width: 400px) {
+    #go-inspection{
+        width: 30vw; /* 화면 너비의 20% */
+
+    }
+}

@@ -1,0 +1,877 @@
+* {
+    font-family: "Noto Sans KR";
+}
+body{
+    background-color: #f4f7ff;
+    padding: 40px;
+    box-sizing: border-box;
+}
+/* 프로그레스 바 컨테이너 */
+.progress-container {
+    width: 457px;
+    min-height: 100px;
+    margin: 0 auto;
+    background-color: #f4f7ff;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+/* 각 단계 */
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    gap: 0;
+    float: left;
+}
+
+/* 원형 모양 */
+.circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 30px;
+    border: 3px solid #9CA3AF;
+    background-color: #F4F7FF;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 활성화된 원형 */
+.circle.active {
+    border-color: #4318ff;
+}
+
+.inner-circle{
+    width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    background-color: #D1D5DB;
+
+}
+.inner-circle.active{
+    background-color: #4318ff;
+}
+
+/* 각 단계의 텍스트 */
+.step p {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+/* 활성화된 텍스트 */
+.step.active p {
+    color: black;
+    font-weight: 600;
+}
+
+.line {
+    width: 85px;
+    height: 3px;
+    background-color: #d0d5dd;
+    margin-top: 25px;
+    float: left;
+}
+
+
+/* 첫 번째와 마지막 단계에 라인 표시 안함 */
+.step:first-child .line,
+.step:last-child .line {
+    display: none;
+}
+
+
+/*---------------------------상단 구역--------------------------*/
+/* 공통 스타일 */
+.inspection-detail {
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    font-family: 'Noto Sans KR', sans-serif;
+    box-sizing: border-box;
+    margin-bottom: 40px;
+}
+
+
+.inspection-info {
+    border: 1px solid #D0D5DD;
+    border-radius: 10px;
+}
+
+.inspection-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    table-layout: auto;
+}
+
+.inspection-table td {
+
+    vertical-align: top;
+    font-size: 1rem;
+    color: #333;
+}
+.info-title{
+    border-right: 1px solid #D0D5DD;
+}
+
+.inspection-table td:last-child {
+    border-right: none;
+}
+
+.info-title {
+    width: 180px;
+    vertical-align: top;
+    word-break: break-word; /* 텍스트가 길면 줄 바꿈 */
+    font-weight: 700;
+    color: #333;
+    white-space: nowrap;
+    padding: 15px;
+    box-sizing: border-box;
+}
+.inspection-table td.info-title p {
+    display: block;
+    margin: 0;
+    line-height: 1.4; /* 줄 간격 설정 */
+    word-wrap: break-word; /* 긴 단어를 줄 바꿈 처리 */
+    white-space: normal; /* 여러 줄로 표시되도록 설정 */
+}
+
+.info-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 25px;
+    box-sizing: border-box;
+}
+
+.store-name {
+    font-weight: 700;
+    color: #D90D0D;
+    margin-right: 10px;
+}
+
+.store-subtitle, .inspection-date, .inspector-name {
+    font-size: 1rem;
+    color: #666;
+    margin-right: 20px;
+}
+
+/*-------------------점검 체크리스트 구역-----------------------*/
+.inspection-section {
+    width: 100%;
+    margin: 0 auto;
+    padding: 30px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+}
+
+.inspection-tabs{
+    width: 100%;
+    height: 50px;
+    /*display: flex;*/
+    /*justify-content: space-between;*/
+    margin-bottom: 20px;
+}
+
+.inspection-tab{
+    float: left;
+    margin-right: 15px;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    border: solid 1px #D0D5DD;
+    border-radius: 10px;
+    background-color: white;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 400;
+    color: #9CA3AF;
+}
+.inspection-tab:last-child{
+    margin-right: 0;
+}
+.inspection-tab:hover{
+    border: solid 1px #4318FF;
+    font-weight: 500;
+    color: #4318FF;
+    transition: 0.3s ease-out;
+}
+
+.inspection-tab.active{
+    background-color: #4318FF;
+    color: white;
+    font-weight: 500;
+}
+
+.inspection-list {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    align-items: start; /* 아이템들이 높이에 맞춰 늘어나지 않도록 설정 */
+}
+
+/* 기본적으로 숨긴 상태 */
+.inspection-list {
+    visibility: hidden;
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+    transition: visibility 0s, opacity 0.5s ease, height 0.3s ease;
+}
+
+/* 활성화된 상태 */
+.inspection-list.active {
+    visibility: visible;
+    opacity: 1;
+    height: auto;
+}
+
+
+
+.inspection-box {
+    /* 불필요한 플렉스 속성 제거 */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    /* height:auto;가 있다면 제거 */
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background-color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.inspection-header {
+    background-color: #fafafa;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 15px 30px;
+    box-sizing: border-box;
+}
+
+.toggle-icon {
+    font-size: 18px;
+    transition: transform 0.3s;
+}
+
+
+.inspection-content {
+    height: 0;
+    overflow: hidden;
+    transition: height 0.2s ease-out;
+    will-change: height;
+}
+.inspection-content-detail{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-top: solid 1px #e0e0e0;
+    padding: 15px 30px;
+    box-sizing: border-box;
+}
+
+.inspection-content-detail>p{
+    font: 400 16px "Noto Sans KR";
+    margin-bottom: 0;
+
+}
+
+.add-btn {
+    background-color: #4318FF;
+    color: white;
+    border: none;
+    border-radius: 15px;
+    width: 30px;
+    height: 30px;
+    font-size: 20px;
+    cursor: pointer;
+    margin-left: 10px;
+
+    display: flex; /* 추가 */
+    align-items: center; /* 추가 */
+    justify-content: center; /* 추가 */
+    box-sizing: border-box;
+
+    min-width: 30px;
+    min-height: 30px;
+    flex-shrink: 0;
+}
+
+
+.inspection-total-score {
+    width: 100%;
+    height: 60px;
+    border-radius: 10px;
+    background-color: #D9DDFF;
+    margin-top: 20px;
+    text-align: right;
+    font-size: 18px;
+    font-weight: bold;
+    color: #6258ff;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.inspection-total-score span {
+    color: red;
+}
+
+/*---------------해당부분은 동적으로 변동이 될부분의 css------------*/
+/* 사진 업로드 버튼 */
+
+
+/* 기본 닫힌 상태 */
+.inspection-content-wrapper {
+    height: 0; /* height를 0으로 설정 */
+    overflow: hidden; /* 콘텐츠가 넘치지 않도록 숨김 */
+    padding: 0 20px; /* 열릴 때 패딩 추가 */
+    box-sizing: border-box;
+    transition: padding 0.3s ease-out; /* 패딩 애니메이션만 유지 */
+}
+
+/* 열릴 때 상태 */
+.inspection-content-wrapper.open {
+    padding: 0 20px 20px 20px; /* 열릴 때 패딩 추가 */
+}
+
+
+
+
+.answer-section {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.answer-btn {
+    width: 45%;
+    height: 60px;
+    border: 1px solid #d0d5dd;
+    background-color: white;
+    color: #666;
+    font-size: 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+.answer-btn:hover {
+    background-color: #f4f7ff;
+}
+
+.answer-btn:active {
+    border-color: #4318ff;
+    color: #4318ff;
+}
+
+.answer-section2 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.radio-label2 {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    color: #9CA3AF;
+    margin-right: 20px;
+}
+
+.radio-label2 input[type="radio"] {
+    margin-right: 5px;
+    width: 18px;
+    height: 18px;
+}
+
+input[type="radio"]:checked {
+    accent-color: #4318FF; /* 체크된 라디오 버튼의 색상을 파란색으로 설정 */
+}
+
+.radio-label2:last-child {
+    margin-right: 0; /* 마지막 항목에만 오른쪽 여백 없음 */
+}
+
+
+.photo-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-top: 20px;
+}
+
+.photo-buttons {
+    height: 130px;
+    display: flex;
+    flex-direction: column; /* 세로 정렬 */
+    justify-content: space-between;
+}
+
+.photo-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px; /* 버튼 높이를 넓게 */
+    border: 1px solid #e0e0e0;
+    background-color: white;
+    color: #666;
+    font-size: 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif;
+    margin-bottom: 10px; /* 버튼 사이 간격 */
+}
+.photo-btn:last-child{
+    margin-bottom: 0;
+}
+.photo-btn>i{
+    margin-right: 5px;
+}
+
+.photo-boxes {
+    display: flex;
+    justify-content: space-between;
+    width: calc(100% - 120px); /* 사진 버튼을 제외한 공간 */
+}
+
+.photo-box {
+    width: calc(50% - 10px);
+    height: 130px;
+    background-color: #fff0c2;
+    color: #666;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+}
+
+
+
+/* --------------------매장 정보 라디오 버튼 -------------------*/
+.store-info {
+    margin-top: 20px;
+}
+
+/* 탭 버튼 */
+.tab-section {
+    padding: 10px 20px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    background-color: #f4f7ff;
+    border: solid 1px #D0D5DD;
+    border-radius: 10px;
+    margin-bottom: -10px;
+}
+
+.tab-btn {
+    width: 48%;
+    height: 50px;
+    border: none;
+    border-radius: 10px;
+    color: #4318FF;
+    cursor: pointer;
+    background-color: #F4F7FF;
+}
+
+.tab-btn.active {
+    background-color: #4318FF;
+    color: white;
+}
+.location-content-list{
+    border: 1px solid #D0D5DD;
+    border-radius: 0 0 10px 10px;
+    border-top: none;
+}
+
+.radio-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    border-bottom: solid 1px #D0D5DD;
+    font-size: 16px;
+    color: #9CA3AF;
+}
+.radio-label:first-child{
+    padding-top: 25px;
+}
+.radio-label:last-child {
+    border-bottom: none;
+}
+
+input[type="radio"] {
+    width: 18px;
+    height: 18px;
+}
+
+/* 기타사항 입력 */
+.other-info {
+    margin-top: 20px;
+}
+
+.other-info>label{
+    margin-bottom: 10px;
+}
+
+.etc-input {
+    width: 100%;
+    height: 80px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #666;
+    resize: none;
+}
+
+/*---------------상세입력 탭----------------*/
+/* 기본적으로 숨겨진 상세입력 내용 */
+.detail-content {
+    display: none;
+    border: solid 1px #D0D5DD;
+    border-radius: 0 0 10px 10px;
+    border-top: none;
+    padding: 30px 20px 20px 20px;
+    box-sizing: border-box;
+}
+
+/* active된 탭의 스타일 */
+.tab-btn.active {
+    background-color: #4318FF;
+    color: white;
+}
+
+.radio-group {
+    display: flex;
+    justify-content: space-between;
+}
+.radio-group label {
+    flex: 1;
+    text-align: center;
+    cursor: pointer;
+}
+
+.input-group-cover{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.input-group-cover>.input-group{
+    width: 47%;
+}
+.input-group-cover>.input-group:first-child{
+    margin-right: 20px;
+}
+
+.input-group {
+    flex: 1 1 45%; /* 45% 너비로 설정 */
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+.input-group:last-child{
+    margin-bottom: 0;
+}
+
+
+.input-group label {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+
+.input-group input[type="text"],
+.input-group textarea {
+    padding: 10px;
+    border: 1px solid #D0D5DD;
+    border-radius: 10px;
+    border-top-left-radius: 10px !important;
+    border-bottom-left-radius: 10px !important;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+    resize: none; /* 텍스트 영역의 크기 조정 금지 */
+}
+
+.input-group textarea {
+    border-top-left-radius: 10px !important;
+    border-bottom-left-radius: 10px !important;
+    border-radius: 10px;
+    height: 100px;
+}
+
+.radio-group {
+    display: flex;
+    gap: 20px;
+}
+
+.radio-group label {
+    font-size: 14px;
+    color: #9CA3AF;
+    display: flex;
+    align-items: center;
+}
+
+.radio-group input[type="radio"] {
+    margin-left: 10px;
+}
+
+#go-inspection-wrap{
+    width: 100%;
+    height: 50px;
+
+}
+.go-inspection{
+    float: right;
+    width: 15vw; /* 화면 너비의 15% */
+    height: 50px;
+    border-radius: 10px;
+    border: none;
+    font: 500 1em "Noto Sans KR";
+    color: white;
+    background: #4318FF;
+    margin-left: 15px;
+}
+
+
+
+
+
+
+/* 반응형 스타일 */
+@media screen and (max-width: 1000px) {
+    .info-title{
+        padding: 29px;
+    }
+    .info-details span:nth-child(3) {
+        flex-basis: 50%;
+        margin-top: 10px;
+    }
+    .info-details span:nth-child(4) {
+        margin-top: 10px;
+    }
+}
+@media screen and (max-width: 950px) {
+    .input-group-cover{
+        width: 100%;
+        display: block;
+    }
+
+    .input-group-cover>.input-group{
+        width: 100%;
+    }
+
+    .input-group-cover>.input-group:first-child{
+        margin-right: 0;
+    }
+    .input-group-cover>.input-group:last-child{
+        margin-bottom: 20px;
+    }
+
+    .photo-section {
+        display: block;
+        margin-top: 20px;
+    }
+
+    .photo-buttons {
+        width: 100%;
+        height: 60px;
+        display: flex;
+        flex-direction: row; /* 세로 정렬 */
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+    .photo-btn{
+        width: calc(50% - 10px);
+        height: 100%;
+    }
+
+    .photo-boxes {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+    }
+
+}
+@media screen and (max-width: 768px) {
+    .info-title{
+        border-right: none;
+        border-bottom: solid 1px #D0D5DD;
+        align-items: center;
+    }
+
+    .inspection-table td {
+        display: block;
+        width: 100%;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    .info-details {
+        overflow: hidden; /* 자식 요소들의 float로 인한 깨짐 방지 */
+    }
+
+    .info-details > span {
+        float: left; /* 왼쪽 정렬 */
+        width: calc(50% - 10px); /* 각 요소의 너비를 50%로 설정 */
+        margin-bottom: 10px; /* 아래쪽 여백 추가 */
+        margin-right: 10px; /* 오른쪽 여백 추가 */
+    }
+
+    .info-details > span:nth-child(2n) {
+        margin-right: 0; /* 짝수 번째 요소는 오른쪽 여백 제거 */
+    }
+
+    .store-name {
+        margin-bottom: 5px;
+    }
+
+    .store-subtitle, .inspection-date, .inspector-name {
+        margin-bottom: 5px;
+    }
+
+    /*-------------------반응형 점검 체크리스트 구역-----------------------*/
+    .inspection-list {
+        grid-template-columns: 1fr;
+        /*display: flex;*/
+        /*flex-wrap: wrap;*/
+        /*gap: 20px;*/
+    }
+
+    .inspection-tab {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+
+    .input-group {
+        flex: 1 1 100%; /* 너비를 100%로 변경 */
+    }
+
+    .radio-group {
+        flex-wrap: wrap; /* 작은 화면에서 줄바꿈이 가능하도록 설정 */
+    }
+}
+@media screen and (max-width: 580px) {
+    .progress-container {
+        width: 310px;
+        min-height: 100px;
+        margin: 0 auto;
+    }
+    .circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        border: 2px solid #9CA3AF;
+        background-color: #F4F7FF;
+        margin-bottom: 10px;
+    }
+
+    .inner-circle{
+        width: 14px;
+        height: 14px;
+        border-radius: 7px;
+        background-color: #D1D5DB;
+
+    }
+
+    .step p {
+        font-size: 10px;
+        color: #666;
+        margin: 0;
+    }
+
+    /* 활성화된 텍스트 */
+    .step.active p {
+        color: black;
+        font-weight: 600;
+    }
+
+    .line {
+        width: 50px;
+        height: 2px;
+        background-color: #d0d5dd;
+        margin-top: 19px;
+        float: left;
+    }
+
+    .inspection-tabs {
+        /*flex-direction: column;*/
+        flex-direction: row;
+        justify-content: space-between;
+        /*gap: 10px;*/
+    }
+    .inspection-tab{
+        /*width: 100%;*/
+        width: 48%;
+        margin-right: 4%;
+        margin-bottom: 15px;
+    }
+    .inspection-tab:nth-child(2n){
+        margin-right: 0%;
+    }
+
+    .inspection-header {
+        padding: 15px;
+        box-sizing: border-box;
+    }
+
+    .inspection-content-detail{
+        padding: 15px;
+        box-sizing: border-box;
+    }
+
+}
+
+@media screen and (max-width: 470px) {
+    .info-details > span {
+        display: block;
+        float: none;
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    .info-details > span:last-child{
+        margin-bottom: 0;
+    }
+
+    /*-------------------반응형 점검 체크리스트 구역-----------------------*/
+    .inspection-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+@media screen and (max-width: 400px){
+    .inspection-tab{
+        width: 100%;
+    }
+}
+
+
