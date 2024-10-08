@@ -2,10 +2,10 @@
 pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>사이드바 컴포넌트 - 아코디언</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>가맹점 관리</title>
     <!-- Bootstrap CSS -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
@@ -68,13 +68,213 @@ pageEncoding="UTF-8" %>
                 <div class="">
                   <b id="가맹점">가맹점 관리</b>
                 </div>
-                <div class="d-flex justify-content-between">
-                  <div class="top-button-wrapper px-2">
-                    <div class="top-button top-lookup">조회</div>
-                  </div>
-                  <div class="">
-                    <div class="top-button-wrapper px-2">
-                      <div class="top-button top-reset">초기화</div>
+                <!-- 가맹점 관리 top 영역끝 -->
+
+                <!-- 중간 게시판 목록 시작 -->
+                <div class="middle-box">
+                    <div class="middle-content">
+                        <div class="d-flex justify-content-end py-4">
+                            <div class="top-button-wrapper px-2">
+                                <div class="top-button middle-register">추가</div>
+                            </div>
+                            <div class="">
+                                <div class="top-button-wrapper px-2">
+                                    <div class="top-button middle-delete">삭제</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="checkAll"/></th>
+                                    <th>No</th>
+                                    <th>가맹점명</th>
+                                    <th>브랜드</th>
+                                    <th>사업장 등록번호</th>
+                                    <th>오픈시간</th>
+                                    <th>점주명</th>
+                                    <th>SV</th>
+                                    <th>점검자</th>
+                                    <th>수정</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td><input type="checkbox" class="checkItem"/></td>
+                                    <td>1</td>
+                                    <td>혜화점</td>
+                                    <td>KCC 크라상</td>
+                                    <td>111-11-1234</td>
+                                    <td>10:30</td>
+                                    <td>노승우</td>
+                                    <td>노승우</td>
+                                    <td>노승우</td>
+                                    <td>
+                                        <button class="btn btn-primary">수정</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="checkItem"/></td>
+                                    <td>1</td>
+                                    <td>혜화점</td>
+                                    <td>KCC 크라상</td>
+                                    <td>111-11-1234</td>
+                                    <td>10:30</td>
+                                    <td>노승우</td>
+                                    <td>노승우</td>
+                                    <td>노승우</td>
+                                    <td>
+                                        <button class="btn btn-primary">수정</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="checkItem"/></td>
+                                    <td>1</td>
+                                    <td>혜화점</td>
+                                    <td>KCC 크라상</td>
+                                    <td>111-11-1234</td>
+                                    <td>10:30</td>
+                                    <td>노승우</td>
+                                    <td>노승우</td>
+                                    <td>노승우</td>
+                                    <td>
+                                        <button class="btn btn-primary">수정</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="checkItem"/></td>
+                                    <td>1</td>
+                                    <td>혜화점</td>
+                                    <td>KCC 크라상</td>
+                                    <td>111-11-1234</td>
+                                    <td>10:30</td>
+                                    <td>노승우</td>
+                                    <td>노승우</td>
+                                    <td>노승우</td>
+                                    <td>
+                                        <button class="btn btn-primary">수정</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="checkItem"/></td>
+                                    <td>1</td>
+                                    <td>혜화점</td>
+                                    <td>KCC 크라상</td>
+                                    <td>111-11-1234</td>
+                                    <td>10:30</td>
+                                    <td>노승우</td>
+                                    <td>노승우</td>
+                                    <td>노승우</td>
+                                    <td>
+                                        <button class="btn btn-primary">수정</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="checkItem"/></td>
+                                    <td>1</td>
+                                    <td>혜화점</td>
+                                    <td>KCC 크라상</td>
+                                    <td>111-11-1234</td>
+                                    <td>10:30</td>
+                                    <td>노승우</td>
+                                    <td>노승우</td>
+                                    <td>노승우</td>
+                                    <td>
+                                        <button class="btn btn-primary">수정</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="checkItem"/></td>
+                                    <td>1</td>
+                                    <td>혜화점</td>
+                                    <td>KCC 크라상</td>
+                                    <td>111-11-1234</td>
+                                    <td>10:30</td>
+                                    <td>노승우</td>
+                                    <td>노승우</td>
+                                    <td>노승우</td>
+                                    <td>
+                                        <button class="btn btn-primary">수정</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="checkItem"/></td>
+                                    <td>1</td>
+                                    <td>혜화점</td>
+                                    <td>KCC 크라상</td>
+                                    <td>111-11-1234</td>
+                                    <td>10:30</td>
+                                    <td>노승우</td>
+                                    <td>노승우</td>
+                                    <td>노승우</td>
+                                    <td>
+                                        <button class="btn btn-primary">수정</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="checkItem"/></td>
+                                    <td>1</td>
+                                    <td>혜화점</td>
+                                    <td>KCC 크라상</td>
+                                    <td>111-11-1234</td>
+                                    <td>10:30</td>
+                                    <td>노승우</td>
+                                    <td>노승우</td>
+                                    <td>노승우</td>
+                                    <td>
+                                        <button class="btn btn-primary">수정</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="checkItem"/></td>
+                                    <td>1</td>
+                                    <td>혜화점</td>
+                                    <td>KCC 크라상</td>
+                                    <td>111-11-1234</td>
+                                    <td>10:30</td>
+                                    <td>노승우</td>
+                                    <td>노승우</td>
+                                    <td>노승우</td>
+                                    <td>
+                                        <button class="btn btn-primary">수정</button>
+                                    </td>
+                                </tr>
+
+                                </tbody>
+                            </table>
+
+                        </div>
+                        <div class="d-flex justify-content-end align-items-center middle-pagebox ">
+
+                            <div class="pe-3 d-flex align-item-center">
+                                <label for="" style="
+                                        width: 101px;
+                                        padding-top: 6px;
+                                        padding-right: 10px;
+                                       ">페이지 : </label>
+                                <select name="" id="" class="form-select">
+                                    <option value="1" selected>1페이지</option>
+                                    <option value="2">2페이지</option>
+                                    <option value="3">3페이지</option>
+                                    <option value="4">4페이지</option>
+                                    <option value="5">5페이지</option>
+                                </select>
+                            </div>
+                            <div style="display: flex; justify-content: center; align-items: center;">
+                                <a href="" style="text-decoration: none;margin-right: 10px">
+                                    <i class="fa-solid fa-caret-left middle-page-arrow"
+                                       style="color: black; font-size: 1.4rem; vertical-align: middle;"></i>
+                                </a>
+                                페이지 <span style="vertical-align: middle; margin: 0 10px;">20</span> 중 <span
+                                    style="vertical-align: middle; margin: 0 10px;">1</span>
+                                <a href="" style="text-decoration: none;">
+                                    <i class="fa-solid fa-caret-right middle-page-arrow"
+                                       style="color: black; font-size: 1.4rem; vertical-align: middle;"></i>
+                                </a>
+                            </div>
+
+                        </div>
                     </div>
                   </div>
                 </div>
