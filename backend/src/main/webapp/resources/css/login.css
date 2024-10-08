@@ -1,0 +1,111 @@
+.row {
+	height: 100vh;
+}
+
+.login_area {
+	background-color: #F5F8FF;
+}
+
+.design_area {
+	background-image: url("/resources/img/login_img.png");
+}
+
+.row .login_area .container {
+	width: 50%;
+	height: 40%;
+}
+
+.sub_container {
+	width: 80%;
+}
+
+.header_text {
+	font: 700 2.5em "Noto Sans KR";
+}
+
+.header_sub_text {
+	font: 700 1.5em "Noto Sans KR";
+	color: #71717A;
+}
+
+.input_area, .line_area {
+	width: 70%;
+}
+
+.line {
+	width: 20%;
+	height: 2px;
+	background-color: #71717A;
+}
+
+.line_text, .remember_text {
+	font: 700 1.1em "Noto Sans KR";
+	color: #71717A;
+}
+
+.input_area input {
+	width: 100%;
+	height: 50px;
+	border: none;
+	outline: none;
+}
+
+.empno_area, .password_area {
+	border-radius: 10px;
+}
+
+.empno_area, .input_area input, .password_area {
+	background-color: #eaefff;
+}
+
+::placeholder {
+	color: #c4c9ed;
+	font: 500 1.1em "Noto Sans KR";
+}
+
+input[type="checkbox"] {
+	accent-color: #9684e6;
+	width: 26px;
+	height: 26px;
+	margin-top: 2px;
+}
+
+.find_password_text {
+	margin-left: auto;
+	font: 700 1.1em "Noto Sans KR";
+	color: #8098f9;
+	cursor: pointer;
+}
+
+.login_btn {
+	width: 100%;
+	height: 50px;
+	color: #FFFFFF;
+	font: 700 1.2em "Noto Sans KR";
+	background-color: #8098f9;
+	border-radius: 10px;
+	border: none;
+}
+
+.fa-eye-slash, .fa-eye, input {
+	cursor: pointer;
+}
+
+.login_btn:hover {
+	background-color: #4318ff;
+}
+
+@media screen and (max-width: 768px) {
+	.design_area {
+		display: none;
+	}
+	.container-fluid .header_text {
+		font: 700 1.5em "Noto Sans KR";
+	}
+	.container-fluid .header_sub_text {
+		font: 700 1em "Noto Sans KR";
+	}
+	.container-fluid .input_area, .container-fluid .line_area {
+		width: 100%;
+	}
+}

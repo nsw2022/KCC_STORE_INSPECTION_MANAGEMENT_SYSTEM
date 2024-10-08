@@ -1,181 +1,88 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
 <meta charset="UTF-8">
-<title>Login</title>
-<style>
-body {
-	font-family: Arial, sans-serif;
-	background-color: #f4f4f4;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	height: 100vh;
-	margin: 0;
-}
-
-.login-container {
-	display: flex;
-	width: 900px; /* Adjust the width as needed */
-	background-color: white;
-	border-radius: 8px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-	overflow: hidden;
-}
-
-.signin-section {
-	flex: 1;
-	padding: 60px;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	background-color: #ffffff;
-}
-
-.signin-section h2 {
-	margin: 0;
-	font-size: 28px;
-	color: #0044cc;
-	font-weight: bold;
-}
-
-.signin-section .social-buttons {
-	display: flex;
-	margin: 20px 0;
-}
-
-.signin-section .social-buttons a {
-	margin: 0 10px;
-	font-size: 18px;
-	color: #555;
-	text-decoration: none;
-}
-
-.signin-section .social-buttons a:hover {
-	color: #0044cc;
-}
-
-.signin-section input[type="text"], .signin-section input[type="password"]
-	{
-	width: 100%;
-	padding: 12px;
-	margin: 8px 0;
-	border: 1px solid #ddd;
-	border-radius: 4px;
-	box-sizing: border-box;
-	font-size: 14px;
-}
-
-.signin-section a {
-	color: #666;
-	font-size: 14px;
-	text-decoration: none;
-	margin-top: 10px;
-	display: inline-block;
-}
-
-.signin-section a:hover {
-	text-decoration: underline;
-}
-
-.signin-section button {
-	width: 100%;
-	padding: 12px;
-	background: #8E2DE2; /* fallback for old browsers */ background :
-	-webkit-linear-gradient( to left, #4A00E0, #8E2DE2);
-	/* Chrome 10-25, Safari 5.1-6 */ background : linear-gradient( to left,
-	#4A00E0, #8E2DE2);
-	/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-	color: white;
-	border: none;
-	border-radius: 4px;
-	cursor: pointer;
-	font-size: 16px;
-	margin-top: 20px;
-	background: -webkit-linear-gradient(to left, #4A00E0, #8E2DE2);
-	/* Chrome 10-25, Safari 5.1-6 */
-	background: linear-gradient(to left, #4A00E0, #8E2DE2);
-}
-
-.signin-section button:hover {
-	background-color: #003bb3;
-}
-
-.welcome-section {
-	flex: 1;
-	background: #8E2DE2; /* fallback for old browsers */
-	background: -webkit-linear-gradient(to left, #4A00E0, #8E2DE2);
-	/* Chrome 10-25, Safari 5.1-6 */
-	background: linear-gradient(to left, #4A00E0, #8E2DE2);
-	/* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-	color: white;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	padding: 60px;
-}
-
-.welcome-section h2 {
-	font-size: 28px;
-	margin-bottom: 20px;
-}
-
-.welcome-section p {
-	font-size: 16px;
-	margin-bottom: 40px;
-	text-align: center;
-}
-
-.welcome-section button {
-	padding: 12px 30px;
-	background-color: transparent;
-	color: white;
-	border: 2px solid white;
-	border-radius: 4px;
-	font-size: 16px;
-	cursor: pointer;
-}
-
-.welcome-section button:hover {
-	background-color: rgba(255, 255, 255, 0.2);
-}
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+	crossorigin="anonymous">
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+	integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+	crossorigin="anonymous"></script>
+<link
+	href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+	rel="stylesheet" />
+<!-- Font Awesome (아이콘 사용 시) -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+	integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+	crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- Option 1: Include in HTML -->
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+	integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+	crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<link rel="stylesheet" href="/resources/css/login.css">
+<title>Document</title>
 </head>
-<script>
-	this.window =open()
-</script>
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/resources/js/login.js">
+    
+  </script>
 <body>
-	<div class="login-container">
-		<div class="signin-section">
-			<h2>로그인</h2>
-			<div class="social-buttons">
-				<a href="#"><i class="fa fa-facebook"></i> Facebook</a> <a href="#"><i
-					class="fa fa-google"></i> Google</a> <a href="#"><i
-					class="fa fa-linkedin"></i> LinkedIn</a>
+	<div class="container-fluid">
+		<div class="row">
+			<div
+				class="col-md-6 login_area border d-flex justify-content-center align-items-center">
+				<div
+					class="container-fluid d-flex flex-column sub_container align-items-center">
+					<div class="header_text text-center">점포점검관리시스템</div>
+					<div class="header_sub_text text-center">Store Inspection
+						Management System</div>
+					<div
+						class="line_area d-flex justify-content-between my-4 align-items-center">
+						<div class="line"></div>
+						<div class="line_text">로그인이 필요합니다</div>
+						<div class="line"></div>
+					</div>
+					<div class="input_area">
+						<div class="empno_area d-flex border mb-2 align-items-center">
+							<i class="fa-regular fa-lg fa-envelope mx-2"
+								style="color: #c4c9ed;"></i> <input type="text"
+								class="empno_input" placeholder="사번">
+						</div>
+						<div class="password_area d-flex border align-items-center">
+							<i class="bi bi-shield fa-lg mx-2" style="color: #c4c9ed;"></i> <input
+								type="password" class="password_input" placeholder="비밀번호">
+							<i class="fa-regular fa-lg fa-eye-slash mx-4"
+								style="color: #c4c9ed;"></i>
+						</div>
+						<div class="extra_area mt-3 d-flex align-items-center">
+							<input type="checkbox" class="me-2">
+							<p class="remember_text mb-0">사번 기억하기</p>
+							<p class="find_password_text mb-0">비밀번호 찾기</p>
+						</div>
+						<div class="login_btn_area mt-4">
+							<button class="login_btn">로그인</button>
+						</div>
+					</div>
+				</div>
 			</div>
-			<form action="/loginProcess" method="post">
-				<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-				<input type="text" name="username" placeholder="ID" required>
-				<input type="password" name="password" placeholder="Password" required>
-				<c:if test="${error}">
-					<p id="valid" class="alert alert-danger">${exception}</p>
-				</c:if>
-				<a href="#">비밀번호를 잊으셨습니까?</a>
-				<button type="submit">Sign In</button>
-			</form>
-		</div>
-		<div class="welcome-section">
-			<h2>Hello, Friends!</h2>
-			<p>Enter your personal details and start your journey with us</p>
-			<button
-				onclick="location.href='${pageContext.request.contextPath}/join'">Sign
-				Up</button>
+			<div class="col-md-6 design_area border"></div>
 		</div>
 	</div>
 </body>
+
 </html>

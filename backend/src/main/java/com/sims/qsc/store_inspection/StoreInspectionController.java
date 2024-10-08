@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 @RequestMapping("/qsc")
 @Slf4j
-
 public class StoreInspectionController {
 
     @Value("${naver.maps.client.id}")
