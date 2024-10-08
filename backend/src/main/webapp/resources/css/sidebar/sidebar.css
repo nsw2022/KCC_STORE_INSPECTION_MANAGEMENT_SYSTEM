@@ -301,7 +301,6 @@
 .page-content{
     display: inline-block;
     width: 100%;
-    padding-left: 300px;
     padding-top: 50px;
     padding-left:0;
     box-sizing:border-box;
@@ -320,7 +319,7 @@
 
 @media screen and (min-width: 1000px) {
     .page-wrapper.toggled .page-content {
-        /*     padding-left: 300px */
+        padding-left: 300px;
         padding-top: 50px;
         box-sizing: border-box;
     }
