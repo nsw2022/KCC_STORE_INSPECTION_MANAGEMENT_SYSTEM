@@ -1,4 +1,4 @@
-package com.sims.qsc.store_inspection_schedule;
+package com.sims.qsc.store_inspection_schedule.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 @RequestMapping("/qsc")
 @Slf4j
-public class StoreInspectionSchedule {
+public class StoreInspectionScheduleController {
 	
 	@GetMapping("/store_inspection_schedule")
 	public String store_inspection_schedule() {

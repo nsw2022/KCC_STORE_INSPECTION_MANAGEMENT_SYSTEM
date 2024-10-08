@@ -1,4 +1,4 @@
-package com.sims.main.controller;
+package com.sims.home.dashboard.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
