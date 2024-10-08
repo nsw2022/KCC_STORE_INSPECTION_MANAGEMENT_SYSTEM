@@ -1,0 +1,504 @@
+body {
+  font-family: "Noto Sans KR" !important;
+}
+
+/* 모달 시작 */
+/* 모달 시작 */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1050; /* 부트스트랩 z-index 범위 내 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal_popup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 500px; /* 최대 너비 설정 */
+  background: #fff;
+  border-radius: 0.3rem;
+  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
+  padding: 20px;
+  overflow-y: auto; /* 내용이 많을 경우 스크롤 가능 */
+}
+
+.modal-header,
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.modal-footer {
+  border-top: 1px solid #dee2e6;
+}
+
+.list-group {
+  max-height: 200px; /* 모바일에서는 최대 높이를 조금 줄임 */
+  overflow-y: auto;
+}
+
+.list-group .list-group-item {
+  border: none;
+  background-color: #fff8e5 !important;
+  border-radius: 8px;
+  height: auto;
+  padding: 10px;
+}
+
+.item-info p {
+  font-weight: 500;
+  color: #333;
+  margin: 0; /* 여백 제거 */
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between; /* 버튼 사이 공간을 균등하게 분배 */
+  align-items: center;
+  border-top: 1px solid #dee2e6;
+  padding: 1rem; /* 하단 패딩 추가 */
+}
+
+.modal-footer .btn {
+  flex: 1; /* 버튼의 너비가 균등해지도록 설정 */
+  margin: 0 10px; /* 버튼 사이에 일정한 간격 추가 */
+  min-width: 100px; /* 버튼 최소 너비 설정 */
+}
+
+.modal.on {
+  display: block;
+}
+
+/* 가맹점 관리 top 영역 시작 */
+.top-box {
+  width: 100%;
+}
+
+.more {
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.more:hover {
+  background-color: #e1e1e1;
+}
+
+.search-btn,
+.autocomplete-item {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.search-btn i {
+  transition: transform 0.3s linear;
+}
+
+.wrapper.active .search-btn i {
+  transform: rotate(-180deg);
+}
+
+.hide-list {
+  display: none;
+  padding: 20px;
+  margin-top: 4px;
+  background: #fff;
+  border-radius: 7px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  z-index: 3;
+}
+
+.wrapper.active .hide-list {
+  display: block;
+}
+
+.hide-list .search {
+  position: relative;
+}
+
+.search i {
+  top: 50%;
+  left: 15px;
+  color: #999;
+  font-size: 20px;
+  pointer-events: none;
+  transform: translateY(-50%);
+  position: absolute;
+}
+
+.hide-list .options {
+  margin-top: 10px;
+  max-height: 250px;
+  overflow-y: auto;
+  padding: 0px;
+  list-style: none;
+}
+
+.options::-webkit-scrollbar {
+  width: 7px;
+}
+
+.options::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 25px;
+}
+
+.options::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 25px;
+}
+
+.options::-webkit-scrollbar-thumb:hover {
+  background: #b3b3b3;
+}
+
+.options li {
+  height: 50px;
+  padding: 0px 13px;
+  font-size: 21px;
+}
+
+.options li:hover,
+.autocomplete-item.selected {
+  border-radius: 5px;
+  background: #f2f2f2;
+}
+
+.top-box-content {
+  width: 90%;
+  height: 100%;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+  padding: 12px 30px;
+}
+
+.top-box-content div div b {
+  font-size: 1.5rem;
+}
+
+.top-button-wrapper {
+  padding-left: 10px; /* 좌측 패딩 추가 */
+  padding-right: 10px; /* 우측 패딩 추가 */
+}
+
+.top-button {
+  text-align: center;
+  cursor: pointer;
+  width: 80px;
+}
+
+.top-lookup {
+  background-color: #16dbcc;
+  border-radius: 30px;
+  height: 35px;
+  line-height: 2;
+  color: white;
+}
+
+.top-lookup:hover {
+  background-color: #3ab2a9;
+}
+
+.top-reset {
+  border-radius: 30px;
+  height: 35px;
+  line-height: 2;
+  color: #858d9d;
+  box-shadow:
+    rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+}
+
+.top-reset:hover {
+  background-color: #e1e1e1;
+}
+
+input.top-search::-webkit-input-placeholder {
+  background-image: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQujvGvIxeVPUNWJWCxEA94dTFFxjjPK1khMQ&s);
+  background-size: 32px;
+  background-position: right;
+  background-repeat: no-repeat;
+  text-indent: 5px;
+  color: #aaa;
+}
+
+/* 가맹점 관리 top 영역 끝 */
+
+/* 중간 게시판 목록 시작 */
+.middle-box {
+  width: 100%;
+}
+
+.middle-content {
+  width: 90%;
+  height: 100%;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+  padding: 12px 30px;
+}
+
+.middle-register {
+  background-color: #4318ff;
+  border-radius: 30px;
+  height: 35px;
+  line-height: 2;
+  color: white;
+}
+
+.middle-register:hover {
+  background-color: #1d0879;
+}
+
+.middle-delete {
+  border-radius: 30px;
+  height: 35px;
+  line-height: 2;
+  color: #858d9d;
+  box-shadow:
+    rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+}
+
+.middle-delete:hover {
+  background-color: #e1e1e1;
+}
+
+.table-responsive {
+  overflow-x: scroll;
+  width: 100%;
+}
+
+table th {
+  color: #718ebf;
+}
+
+table th,
+table td {
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+  padding: 8px; /* 셀 패딩 조정 */
+  vertical-align: middle;
+}
+
+table tr td input {
+  vertical-align: middle;
+}
+
+/* 중간 게시판 목록 끝 */
+
+/* 하단 점검 검색 필터 시작 */
+.bottom-box-content {
+  width: 90%;
+  height: 100%;
+  margin: 0 auto;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+  padding: 12px 30px;
+}
+
+/* 커스텀 달력시작 */
+/* 커스텀 달력 테이블 스타일 */
+.calendar-body td {
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.calendar-body td:hover {
+  background-color: #f0f0f0;
+}
+.table .disabled {
+  background-color: #e9ecef !important;
+  color: #6c757d;
+  cursor: not-allowed;
+}
+
+.table .today {
+  background-color: #ffc107 !important;
+}
+.table .selected {
+  background-color: #6e00fa !important;
+  color: white;
+}
+
+@media (max-width: 600px) {
+  .calendar-body td {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+}
+/* 선택된 날짜 카드 스타일 */
+#selected-dates-container {
+  display: flex;
+  overflow-x: auto;
+  padding: 10px 0;
+}
+.date-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #e2e3e5;
+  border-radius: 5px;
+  padding: 5px 10px;
+  margin-right: 10px;
+  min-width: 100px;
+}
+.date-card .remove-date {
+  margin-left: 10px;
+  cursor: pointer;
+  color: #dc3545;
+  font-weight: bold;
+}
+
+/* 비활성화된 모든 날짜에 대한 메시지 스타일 */
+#all-dates-disabled-message {
+  display: none;
+}
+
+/* 커스텀 달력 끝 */
+
+/* 하단 점검 검색 필터 끝 */
+
+/* 반응형 시작 */
+@media (max-width: 1300px) {
+  .top-box-content div div b {
+    font-size: 1.4rem;
+  }
+
+  .top-search-box div {
+    font-size: 0.75rem;
+  }
+
+  .top-search-box input {
+    font-size: 0.75rem;
+  }
+
+  .item-info p {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 1170px) {
+  .top-search-box div {
+    font-size: 0.75rem;
+  }
+
+  .top-search-box input {
+    font-size: 0.75rem;
+  }
+
+  input.top-search::-webkit-input-placeholder {
+    background-image: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQujvGvIxeVPUNWJWCxEA94dTFFxjjPK1khMQ&s);
+    background-size: 24px;
+    background-position: right;
+    background-repeat: no-repeat;
+    color: #aaa;
+  }
+
+  table {
+    font-size: 0.7rem;
+    min-width: 600px; /* 적절한 최소 너비 설정 */
+    width: 100%; /* 너비를 100%로 유지 */
+    border-collapse: collapse; /* 셀 간격 제거 */
+  }
+
+  table th,
+  table td {
+    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+    padding: 8px; /* 셀 패딩 조정 */
+    vertical-align: middle;
+  }
+
+  table th {
+    color: #718ebf;
+  }
+
+  table td .btn {
+    font-size: 0.7rem !important;
+  }
+
+  /* 모바일 모달 창 */
+  .modal_popup {
+    width: 410px;
+  }
+}
+
+@media (max-width: 393px) {
+  .top-box-content {
+    padding: 12px 15px; /* 작은 화면에서 패딩 조정 */
+  }
+
+  .top-box-content div div b {
+    font-size: 1.2rem !important;
+  }
+
+  .sidebar {
+    width: 100%; /* 모바일에서 사이드바를 전체 너비로 확장 */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    height: auto;
+    background-color: #fff;
+  }
+
+  .content {
+    margin-left: 0; /* 모바일에서 사이드바 없애고 콘텐츠 너비 조정 */
+  }
+
+  .top-search {
+    width: 90%;
+  }
+
+  table {
+    min-width: unset;
+    width: 400px;
+  }
+
+  .table-responsive {
+    overflow-x: scroll !important;
+    width: 100%;
+  }
+
+  .middle-pagebox {
+    font-size: 0.8rem;
+  }
+
+  .middle-box label {
+    display: none;
+  }
+
+  .middle-pagebox .form-select {
+    font-size: 0.7rem;
+  }
+
+  /* 모바일 모달 창 */
+  .modal_popup {
+    width: 360px;
+  }
+
+  /* 모바일 모달 창 itme들 글자 크기 */
+  .item-info p {
+    font-size: 0.65rem;
+  }
+}

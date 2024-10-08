@@ -2,7 +2,10 @@ server:
   port: ${PORT_NUMBER}
   tomcat:
     additional-tld-skip-patterns: osdt_cert.jar, osdt_core.jar
-
+  ssl:
+    key-store: classpath:ssl/keystore.p12
+    key-store-type: PKCS12
+    key-store-password: ${SSL_PASSWORD}
 
 logging:
   level:
@@ -22,11 +25,14 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
-
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
   mapper-locations: classpath:mapper/**/*.xml
   type-aliases-package: com.sims.admin.domain
 
+naver:
+  maps:
+    client:
+      id: ${YOUR_CLIENT_ID}
 
