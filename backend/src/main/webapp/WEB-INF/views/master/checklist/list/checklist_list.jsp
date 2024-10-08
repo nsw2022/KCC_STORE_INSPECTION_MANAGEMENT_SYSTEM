@@ -46,7 +46,7 @@ pageEncoding="UTF-8" %>
     />
     <link
       rel="stylesheet"
-      href="/resources/css/checklist/list/checklist_list.css"
+      href="/resources/css/master/checklist/list/checklist_list.css"
     />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -54,7 +54,7 @@ pageEncoding="UTF-8" %>
   </head>
   <body>
   <div class="sidebar">
-    <jsp:include page="../../sidebar/sidebar.jsp" />
+    <jsp:include page="../../../sidebar/sidebar.jsp" />
   </div>
 
     <div class="page-wrapper2">
@@ -221,7 +221,7 @@ pageEncoding="UTF-8" %>
 
     <script
       type="application/javascript"
-      src="../../../../resources/js/checklist/list/checklist.js"
+      src="../../../../../resources/js/master/checklist/list/checklist.js"
     ></script>
   </body>
 </html>

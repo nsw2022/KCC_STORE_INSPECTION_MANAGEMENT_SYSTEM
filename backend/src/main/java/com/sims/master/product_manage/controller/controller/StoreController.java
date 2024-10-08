@@ -1,4 +1,4 @@
-package com.sims.master.product_manage.controller;
+package com.sims.master.product_manage.controller.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

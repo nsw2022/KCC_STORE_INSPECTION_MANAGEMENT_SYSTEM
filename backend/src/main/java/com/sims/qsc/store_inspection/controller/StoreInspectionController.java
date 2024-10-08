@@ -1,4 +1,4 @@
-package com.sims.qsc.store_inspection;
+package com.sims.qsc.store_inspection.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
