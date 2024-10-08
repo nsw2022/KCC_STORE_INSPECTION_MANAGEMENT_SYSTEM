@@ -29,4 +29,9 @@ mybatis:
   mapper-locations: classpath:mapper/**/*.xml
   type-aliases-package: com.sims.admin.domain
 
+naver:
+  maps:
+    client:
+      id: ${YOUR_CLIENT_ID}
+
 

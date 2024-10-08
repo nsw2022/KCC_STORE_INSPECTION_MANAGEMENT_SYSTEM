@@ -3,57 +3,88 @@ $(document).ready(function() {
     // 기본 대시보드를 선택된 상태로 활성화
     activateDefaultMenu("대시보드");
 
-    if (window.innerWidth > 768) {
-        $("#show-sidebar").hide(); // 768px 이상에서는 열기 버튼 숨기기
-        $("#close-sidebar").hide(); // 768px 이상에서는 닫기 버튼 숨기기
-    } else {
-        $("#show-sidebar").show(); // 768px 이하에서는 열기 버튼 보이기
-        $("#close-sidebar").show(); // 768px 이하에서는 닫기 버튼 보이기
-    }
-});
-
-// 사이드바 메뉴 토글 기능
-$(".sidebar-dropdown > a").click(function() {
-    $(".sidebar-submenu").slideUp(200);
-    if (
-        $(this).parent().hasClass("active")
-    ) {
-        $(".sidebar-dropdown").removeClass("active");
-        $(this).parent().removeClass("active");
-    } else {
-        $(".sidebar-dropdown").removeClass("active");
-        $(this).next(".sidebar-submenu").slideDown(200);
-        $(this).parent().addClass("active");
-    }
-});
-
-// 사이드바 닫기 버튼
-$("#close-sidebar").click(function() {
-    $(".page-wrapper").removeClass("toggled");
+    // 현재 화면 크기에 따라 사이드바와 버튼 상태 설정
+    handleResize();
 });
 
 // 사이드바 열기 버튼
 $("#show-sidebar").click(function() {
-    $(".page-wrapper").addClass("toggled");
+    // 사이드바를 먼저 display: block;으로 설정
+    $(".sidebar-wrapper").css("display", "block");
+
+    // 슬라이드 애니메이션을 적용하여 사이드바가 열리도록 설정
+    setTimeout(function() {
+        $(".page-wrapper").addClass("toggled");
+
+        // 1000px 이하일 때 스크롤을 막음
+        if (window.innerWidth <= 1000) {
+            $("body").css("overflow", "hidden"); // 스크롤 방지
+        }
+    }, 10); // 약간의 지연을 주어 애니메이션과 display가 자연스럽게 연결되도록
+
+    // 열리면 열기 버튼을 숨기고 닫기 버튼을 보여줌
+    $("#show-sidebar").hide();
+    $("#close-sidebar").show();
 });
 
-// 모바일 환경인지 체크
-const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth <= 768;
-
-if (isMobile) {
+// 사이드바 닫기 버튼
+$("#close-sidebar").click(function() {
+    // 슬라이드 애니메이션을 적용하여 사이드바가 닫히도록 설정
     $(".page-wrapper").removeClass("toggled");
-}
+
+    // 애니메이션이 끝난 후 사이드바를 display: none;으로 설정
+    setTimeout(function() {
+        $(".sidebar-wrapper").css("display", "none");
+
+        // 스크롤 가능하게 복원
+        $("body").css("overflow", "auto");
+    }, 300); // 애니메이션 시간과 맞춰서 300ms 후에 숨김
+
+    // 닫기 버튼을 숨기고 열기 버튼을 다시 보이게 함
+    $("#show-sidebar").show();
+    $("#close-sidebar").hide();
+});
 
 // 창 크기 변경 시 처리
 $(window).resize(function() {
-    if (window.innerWidth <= 768) {
+    handleResize();
+});
+
+// 사이드바와 버튼을 화면 크기에 맞게 조정하는 함수
+function handleResize() {
+    if (window.innerWidth <= 1000) {
         $(".page-wrapper").removeClass("toggled");
+        $(".sidebar-wrapper").css("display", "none"); // 사이드바 숨기기
         $("#show-sidebar").show(); // 사이드바 열기 버튼 보이기
-        $("#close-sidebar").show(); // 사이드바 닫기 버튼 보이기
+        $("#close-sidebar").hide(); // 사이드바 닫기 버튼 숨기기
+        $("body").css("overflow", "auto"); // 스크롤 가능하게 복원
     } else {
         $(".page-wrapper").addClass("toggled");
+        $(".sidebar-wrapper").css("display", "block"); // 사이드바 보이기
         $("#show-sidebar").hide(); // 사이드바 열기 버튼 숨기기
         $("#close-sidebar").hide(); // 사이드바 닫기 버튼 숨기기
+        $("body").css("overflow", "auto"); // 스크롤 가능하게 복원
+    }
+}
+
+// 드롭다운 메뉴 클릭 시 서브메뉴 열기/닫기 기능 추가
+$(".sidebar-dropdown > a").click(function(e) {
+    e.preventDefault();
+
+    let $submenu = $(this).next(".sidebar-submenu");
+
+    // 이미 열려있는 서브메뉴를 닫음
+    if ($submenu.is(":visible")) {
+        $submenu.slideUp(200);
+        $(this).parent().removeClass("active");
+    } else {
+        // 다른 열려있는 서브메뉴 닫기
+        $(".sidebar-submenu").slideUp(200);
+        $(".sidebar-dropdown").removeClass("active");
+
+        // 클릭한 메뉴의 서브메뉴를 열기
+        $submenu.slideDown(200);
+        $(this).parent().addClass("active");
     }
 });
 
