@@ -405,15 +405,25 @@ $(function () {
       // 중복된 날짜는 추가하지 않음
       if (selectedCalendarDates.includes(date)) return;
 
+      // 날짜 추가
       selectedCalendarDates.push(date);
 
-      const cardHTML = `
-            <div class="date-card">
-              <span>${date}</span>
-              <span class="remove-date">&times;</span>
-            </div>
-          `;
-      $selectedDatesContainer.append(cardHTML);
+      // 날짜 정렬
+      selectedCalendarDates.sort();
+
+      // 기존 카드들을 모두 지움
+      $selectedDatesContainer.empty();
+
+      // 정렬된 날짜들로 카드 재생성
+      selectedCalendarDates.forEach(function (sortedDate) {
+        const cardHTML = `
+      <div class="date-card">
+        <span>${sortedDate}</span>
+        <span class="remove-date">&times;</span>
+      </div>
+    `;
+        $selectedDatesContainer.append(cardHTML);
+      });
     }
 
     /**
@@ -514,7 +524,6 @@ $(function () {
         $cell.attr("data-date", dateString);
 
         $row.append($cell);
-        day++;
       }
 
       $calendarBody.append($row);
@@ -602,15 +611,15 @@ $(function () {
 
       // 연도 선택 시 현재 연도 이전을 비활성화하려면 아래 주석 해제
       /*
-                                    $("#year-select-calendar option").each(function () {
-                                      const optionYear = parseInt($(this).val());
-                                      if (optionYear < todayYear) {
-                                        $(this).attr("disabled", true);
-                                      } else {
-                                        $(this).removeAttr("disabled");
-                                      }
-                                    });
-                                    */
+                                          $("#year-select-calendar option").each(function () {
+                                            const optionYear = parseInt($(this).val());
+                                            if (optionYear < todayYear) {
+                                              $(this).attr("disabled", true);
+                                            } else {
+                                              $(this).removeAttr("disabled");
+                                            }
+                                          });
+                                          */
     }
 
     // 초기 달력 생성 (현재 월과 연도)
@@ -700,6 +709,7 @@ $(function () {
   $("#frequency").change(function () {
     const selectedFrequency = $(this).val();
     updateCountOptions(selectedFrequency);
+    resetDateCards();
     if (selectedFrequency === "none") {
       $("#schedule-date-container").hide();
       $("#input-schedule").hide();
@@ -728,33 +738,20 @@ $(function () {
   });
 
   // 모달 영역 시작
-  const $modal = $(".modal");
 
-  // 이벤트 위임을 사용하여 동적으로 생성된 .modal_btn에 클릭 이벤트 핸들러 적용
-  $(document).on("click", ".modal_btn", function (e) {
-    e.preventDefault(); // 기본 동작 방지 (필요 시)
-    e.stopPropagation(); // 이벤트 버블링 방지 (필요 시)
-    $modal.show(); // 모달 표시
-  });
-
-  // 이벤트 위임을 사용하여 동적으로 생성된 .close_btn에 클릭 이벤트 핸들러 적용
-  $(document).on("click", ".close_btn", function (e) {
-    e.preventDefault(); // 기본 동작 방지 (필요 시)
-    e.stopPropagation(); // 이벤트 버블링 방지 (필요 시)
-    $modal.hide(); // 모달 숨기기
-  });
-
-  // 추가: 모달 외부 클릭 시 모달 닫기
-  $(document).on("click", ".modal", function (e) {
-    if ($(e.target).is(".modal")) {
-      $modal.hide();
+  // 모달 내 li 들 이벤트 클릭
+  $(document).on("click", ".list-group-item .item-info", function () {
+    // 클릭된 요소가 이미 'highlighted' 클래스를 가지고 있는지 확인
+    if ($(this).hasClass("highlighted")) {
+      // 'highlighted' 클래스가 있다면 제거
+      $(this).removeClass("highlighted");
+    } else {
+      // 'highlighted' 클래스가 없다면,
+      // 다른 모든 요소에서 'highlighted' 클래스 제거 후
+      $(".item-info").removeClass("highlighted");
+      // 현재 클릭된 요소에만 'highlighted' 클래스 추가
+      $(this).addClass("highlighted");
     }
-  });
-
-  // 추가: 모달 내 '취소' 버튼 클릭 시 모달 닫기
-  $(document).on("click", ".modal-footer .btn-secondary", function (e) {
-    e.preventDefault();
-    $modal.hide();
   });
 
   // 모달 영역 끝
@@ -764,48 +761,67 @@ $(function () {
   const rowData = [
     {
       no: 1,
-      brand: "KCC베이커리",
-      checklist_name: "2024 체크리스트",
-      master_checklist_name: "2023 체크리스트",
-      inspection_type: "기획점검",
-      create_date: "2024-10-07",
-      status: "Y",
+      store: "혜화점",
+      brand: "KCC 크라상",
+      checklist_name: "KCC 크라상 인상점검표",
+      schedule_date: "2024.10.09",
+      inspector: "노승우",
     },
     {
       no: 2,
-      brand: "KCC베이커리",
-      checklist_name: "2024 체크리스트",
-      master_checklist_name: "2023 체크리스트",
-      inspection_type: "기획점검",
-      create_date: "2024-10-06",
-      status: "Y",
+      store: "동대문점",
+      brand: "KCC 크라상",
+      checklist_name: "KCC 크라상 인상점검표",
+      schedule_date: "2024.10.07",
+      inspector: "노승우",
     },
     {
       no: 3,
-      brand: "KCC베이커리",
-      checklist_name: "2024 체크리스트",
-      master_checklist_name: "2023 체크리스트",
-      inspection_type: "기획점검",
-      create_date: "2024-10-05",
-      status: "N",
+      store: "천호점",
+      brand: "KCC 크라상",
+      checklist_name: "KCC 크라상 위생점검표",
+      schedule_date: "2024.10.07",
+      inspector: "이지훈",
     },
     {
       no: 4,
-      brand: "KCC베이커리",
-      checklist_name: "2024 체크리스트",
-      master_checklist_name: "2023 체크리스트",
-      inspection_type: "기획점검",
-      create_date: "2024-10-04",
-      status: "Y",
+      store: "건대입구점",
+      brand: "KCC 카페",
+      checklist_name: "KCC 카페 제품점검표",
+      schedule_date: "2024.10.05",
+      inspector: "이지훈",
     },
     {
       no: 5,
-      brand: "KCC베이커리",
-      checklist_name: "2024 체크리스트",
-      master_checklist_name: "2023 체크리스트",
-      inspection_type: "기획점검",
-      create_date: "2024-10-03",
-      status: "Y",
+      store: "명동점",
+      brand: "KCC 카페",
+      checklist_name: "KCC 카페 제품점검표",
+      schedule_date: "2024.10.05",
+      inspector: "유재원",
+    },
+    {
+      no: 6,
+      store: "수유점",
+      brand: "KCC 카페",
+      checklist_name: "KCC 카페 제품점검표",
+      schedule_date: "2024.10.03",
+      inspector: "유재원",
+    },
+    {
+      no: 7,
+      store: "청량리점",
+      brand: "KCC 가티",
+      checklist_name: "KCC 카페 인상점검표",
+      schedule_date: "2024.10.03",
+      inspector: "원승언",
+    },
+    {
+      no: 8,
+      store: "왕십리점",
+      brand: "KCC 디저트",
+      checklist_name: "KCC 디저트 인상점검표",
+      schedule_date: "2024.10.01",
+      inspector: "원승언",
     },
   ];
 
@@ -817,30 +833,38 @@ $(function () {
         headerName: "",
         checkboxSelection: true,
         headerCheckboxSelection: true,
-        width: 50,
+        minWidth: 45,
+        width: 70,
         resizable: true,
         cellStyle: { backgroundColor: "#ffffff" },
       },
       { field: "no", headerName: "No", width: 80, minWidth: 50 },
-      { field: "brand", headerName: "브랜드", minWidth: 110 },
-      { field: "checklist_name", headerName: "체크리스트명", minWidth: 150 },
+      { field: "store", headerName: "가맹점", width: 150, minWidth: 50 }, // Adjusted width for uniformity
+      { field: "brand", headerName: "브랜드", width: 150, minWidth: 110 },
       {
-        field: "master_checklist_name",
-        headerName: "마스터 체크리스트",
-        minWidth: 150,
+        field: "checklist_name",
+        headerName: "체크리스트명",
+        width: 150,
+        minWidth: 110,
       },
-      { field: "inspection_type", headerName: "점검유형", minWidth: 110 },
-      { field: "create_date", headerName: "등록년월", minWidth: 110 },
-      { field: "status", headerName: "사용여부", minWidth: 70 },
+      {
+        field: "schedule_date",
+        headerName: "점검예정일",
+        width: 150,
+        minWidth: 110,
+      },
+      { field: "inspector", headerName: "점검자", width: 150, minWidth: 110 },
       {
         headerName: "자세히보기",
         field: "more",
+        width: 150,
         minWidth: 120,
         cellRenderer: function (params) {
           const button = document.createElement("button");
           button.innerText = "자세히 보기";
-          button.classList.add("modal_btn");
-          button.classList.add("more");
+          button.setAttribute("data-bs-toggle", "modal");
+          button.setAttribute("data-bs-target", "#masterChecklistModal");
+          button.classList.add("modal_btn", "more");
           return button;
         },
       },
@@ -849,7 +873,7 @@ $(function () {
       type: "fitGridWidth",
       defaultMinWidth: 10,
     },
-    rowHeight: 50,
+    rowHeight: 45,
     rowSelection: "multiple",
     pagination: true,
     paginationAutoPageSize: true,

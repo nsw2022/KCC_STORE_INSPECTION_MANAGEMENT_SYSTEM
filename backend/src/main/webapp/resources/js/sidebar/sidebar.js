@@ -117,7 +117,7 @@ $(".sidebar-dropdown > a, .sidebar-submenu > ul > li > a").click(function () {
   // breadcrumb 형식으로 top-bar에 텍스트 출력
   if ($(this).parents(".sidebar-submenu").length) {
     $("#breadcrumb").html(
-      `<span class="parent-menu">${parentMenu}</span> <span class="separator">></span> <span class="sub-menu">${subMenu}</span>`
+      `<span class="parent-menu">${parentMenu}</span> <span class="separator">></span> <span class="sub-menu">${subMenu}</span>`,
     );
   } else {
     $("#breadcrumb").html(`<span class="parent-menu">${parentMenu}</span>`);

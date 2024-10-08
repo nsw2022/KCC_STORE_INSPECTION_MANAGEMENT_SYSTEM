@@ -49,8 +49,8 @@
 
 <h3>QSC</h3>
 <a href="/qsc/inspection_schedule/schedule_list">가맹점 점검 계획 관리</a>
-
-
+<a href="/qsc/store_inspection">가맹점 점검</a>
+<a href="/qsc/store_inspection_schedule">가맹점 점검 일정 조회</a>
 
 </body>
 </html>
