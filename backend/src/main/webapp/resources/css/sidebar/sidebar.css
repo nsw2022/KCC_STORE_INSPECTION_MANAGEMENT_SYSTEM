@@ -335,10 +335,3 @@
     box-sizing: border-box;
   }
 }
-
-@media (max-width: 600px) {
-  .page-content > div {
-    padding: 20px 20px;
-    box-sizing: border-box;
-  }
-}
