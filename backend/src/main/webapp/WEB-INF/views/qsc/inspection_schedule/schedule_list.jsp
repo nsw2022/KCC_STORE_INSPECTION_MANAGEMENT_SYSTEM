@@ -27,7 +27,10 @@
           integrity='sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=='
           crossorigin='anonymous'/>
 
+    <link rel="stylesheet" href="/resources/css/qsc/store_inspection/popup_inspection.css">
     <link rel="stylesheet" href="/resources/css/qsc/inspection_schedule/schedule_list.css">
+
+
     <!-- Iconscout Link For Icons -->
     <link
             rel="stylesheet"
@@ -529,71 +532,471 @@
 
     </main>
 </div>
-<div class="modal on">
-    <div class="modal_popup">
-        <div class="modal-header d-flex justify-content-between align-items-center">
-            <h4 class="modal-title">체크 리스트 선택</h4>
+<%-------------  modal -------------%>
+<div class="modal fade" id="masterChecklistModal" aria-hidden="true" aria-labelledby="masterChecklistList" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
 
-            <svg class="svg-inline--fa fa-times fa-w-11 close_btn close" aria-hidden="true" focusable="false"
-                 data-prefix="fas" data-icon="times" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"
-                 data-fa-i2svg="">
-                <path fill="currentColor"
-                      d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path>
-            </svg>
-        </div>
-        <div class="modal_wrapper modal-body">
-            <ul class="list-group">
-                <li class="list-group-item d-flex justify-content-between align-items-center mb-3">
-                    <div class="item-info d-flex align-items-center">
-                        <span class="me-3">01</span>
-                        <p class="mb-0">KCC 크라상 위생 점검 체크리스트</p>
-                    </div>
-                    <button class="btn btn-primary btn-sm">
-                        <i class="fa-regular fa-eye"></i>
-                        미리보기
-                    </button>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center mb-3">
-                    <div class="item-info d-flex align-items-center">
-                        <span class="me-3">02</span>
-                        <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
-                    </div>
-                    <button class="btn btn-primary btn-sm">
-                        <i class="fa-regular fa-eye"></i>
-                        미리보기
-                    </button>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center mb-3">
-                    <div class="item-info d-flex align-items-center">
-                        <span class="me-3">03</span>
-                        <p class="mb-0">KCC 디저트 위생 점검 체크리스트</p>
-                    </div>
-                    <button class="btn btn-primary btn-sm">
-                        <i class="fa-regular fa-eye"></i>
-                        미리보기
-                    </button>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-center mb-3">
-                    <div class="item-info d-flex align-items-center">
-                        <span class="me-3">04</span>
-                        <p class="mb-0">KCC 계란 긴급 점검</p>
-                    </div>
-                    <button class="btn btn-primary btn-sm">
-                        <i class="fa-regular fa-eye"></i>
-                        미리보기
-                    </button>
-                </li>
-                <!-- 추가 리스트 아이템 -->
-            </ul>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-secondary">취소</button>
-            <button class="btn btn-primary">선택</button>
+            <%-------------- header --------------%>
+            <div class="modal-header">
+            <span class="modal-title fs-5" id="masterChecklistList" style="font: 450 16px 'Noto Sans KR'">
+              마스터체크리스트 선택
+            </span>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <%-------------- header --------------%>
+
+            <%-------------- body --------------%>
+            <div class="modal-body">
+                <div class="input-group mb-3 modal-search-box" style="    padding: .5rem 1rem;">
+                    <input type="text" class="form-control me-2" placeholder="체크리스트 검색" aria-label="Recipient's username" aria-describedby="button-addon2">
+                    <button class="btn btn-outline-secondary" type="button" id="button-addon2">검색</button>
+                </div>
+                <ol class="list-group  scrollable-list ">
+                    <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+                        <div class="item-info d-flex align-items-center">
+                            <span class="me-3">01</span>
+                            <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
+                        </div>
+                        <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                            미리보기
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+                        <div class="item-info d-flex align-items-center">
+                            <span class="me-3">01</span>
+                            <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
+                        </div>
+                        <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                            미리보기
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+                        <div class="item-info d-flex align-items-center">
+                            <span class="me-3">01</span>
+                            <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
+                        </div>
+                        <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                            미리보기
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+                        <div class="item-info d-flex align-items-center">
+                            <span class="me-3">01</span>
+                            <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
+                        </div>
+                        <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                            미리보기
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+                        <div class="item-info d-flex align-items-center">
+                            <span class="me-3">01</span>
+                            <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
+                        </div>
+                        <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                            미리보기
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+                        <div class="item-info d-flex align-items-center">
+                            <span class="me-3">01</span>
+                            <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
+                        </div>
+                        <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                            미리보기
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+                        <div class="item-info d-flex align-items-center">
+                            <span class="me-3">01</span>
+                            <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
+                        </div>
+                        <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                            미리보기
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
+                    </li>
+
+
+
+                </ol>
+            </div>
+            <%-------------- body --------------%>
+
+            <%-------------- footer --------------%>
+            <div class="modal-footer">
+                <button class="btn btn-secondary">취소</button>
+                <button class="" data-bs-dismiss="modal">선택</button>
+            </div>
+            <%-------------- footer --------------%>
         </div>
     </div>
 </div>
 
 
+<%--    second modal     --%>
+<div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="details" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" style="max-width : 1015px!important;">
+        <div class="modal-content" style="overflow-y: scroll;">
+            <section class="inspection-section">
+                <div class="inspection-tabs">
+                    <button class="inspection-tab active" data-tab="중대법규">중대법규</button>
+                    <button class="inspection-tab" data-tab="기타법규">기타법규</button>
+                    <button class="inspection-tab" data-tab="위생관리">위생관리</button>
+                    <button class="inspection-tab" data-tab="위생지도상황">위생지도상황</button>
+                    <button class="inspection-tab" data-bs-target="#masterChecklistModal" data-bs-toggle="modal" style="background-color: #afa4dd; color: white">뒤로가기</button>
+                </div>
+
+                <section class="inspection-list" id="중대법규">
+                    <div class="inspection-box">
+                        <div class="inspection-header">
+                            영업취소
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="inspection-content">
+                            <div class="inspection-content-detail">
+                                <p>1. 소비기한 변조 및 삭제</p>
+                                <button class="add-btn">+</button>
+                            </div>
+
+                            <%--        ----해당부분은 동적으로 변동이 될부분----        --%>
+                            <div class="inspection-content-wrapper">
+                                <!-- 사진 업로드 구역 -->
+                                <div class="answer-section">
+                                    <button class="answer-btn">예</button>
+                                    <button class="answer-btn">아니오</button>
+                                </div>
+
+                                <div class="photo-section">
+                                    <div class="photo-buttons">
+                                        <button class="photo-btn camera-btn">
+                                            <i class="fa-solid fa-camera"></i>사진촬영
+                                        </button>
+                                        <button class="photo-btn gallery-btn">
+                                            <i class="fa-regular fa-image"></i>갤러리
+                                        </button>
+                                    </div>
+                                    <div class="photo-boxes">
+                                        <div class="photo-box">사진 미등록</div>
+                                        <div class="photo-box">최대 2개</div>
+                                    </div>
+                                </div>
+
+                                <!-- 매장 정보 라디오 버튼 리스트 -->
+                                <div class="store-info">
+                                    <div class="tab-section">
+                                        <button class="tab-btn active">위치정보</button>
+                                        <button class="tab-btn">상세입력</button>
+                                    </div>
+
+                                    <!-- 위치정보 -->
+                                    <div class="content location-content">
+                                        <div class = "content location-content-list">
+                                            <label class="radio-label">
+                                                매장
+                                                <input type="radio" name="location">
+                                            </label>
+                                            <label class="radio-label">
+                                                카페
+                                                <input type="radio" name="location">
+                                            </label>
+                                            <label class="radio-label">
+                                                주방
+                                                <input type="radio" name="location">
+                                            </label>
+                                            <label class="radio-label">
+                                                기타
+                                                <input type="radio" name="location">
+                                            </label>
+
+                                        </div>
+
+                                        <!-- 기타사항 입력 -->
+                                        <div class="other-info">
+                                            <label>기타사항</label>
+                                            <textarea class="etc-input" name="responsibility" placeholder="기타사항을 입력해주세요"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <!-- 상세입력 정보 (숨김 상태) -->
+                                    <div class="content detail-content">
+                                        <div class="input-group-cover">
+                                            <div class="input-group">
+                                                <label>제품명 (또는 상세위치)</label>
+                                                <input type="text" class="product-name" placeholder="제품명 입력">
+                                            </div>
+                                            <div class="input-group">
+                                                <label>위반수량</label>
+                                                <input type="text" class="violation-quantity" placeholder="위반수량 입력">
+                                            </div>
+                                        </div>
+
+                                        <div class="input-group">
+                                            <label>원인</label>
+                                            <textarea class="reason" placeholder="원인을 작성해주세요"></textarea>
+                                        </div>
+                                        <div class="input-group">
+                                            <label>개선조치사항</label>
+                                            <textarea class="action" placeholder="개선조치사항을 입력해주세요"></textarea>
+                                        </div>
+                                        <div class="input-group">
+                                            <label>위반사항</label>
+                                            <textarea class="violation" placeholder="위반사항을 입력해주세요"></textarea>
+                                        </div>
+                                        <div class="input-group">
+                                            <label>귀책사유</label>
+                                            <div class="radio-group">
+                                                <label>
+                                                    SV <input type="radio" name="responsibility" value="SV">
+                                                </label>
+                                                <label>
+                                                    점주 <input type="radio" name="responsibility" value="Owner">
+                                                </label>
+                                                <label>
+                                                    직원 <input type="radio" name="responsibility" value="Employee">
+                                                </label>
+                                                <label>
+                                                    기타 <input type="radio" name="responsibility" value="Other">
+                                                </label>
+                                            </div>
+                                            <textarea class="caupvd" placeholder="귀책사유를 입력해주세요"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                            <%--        ----해당부분은 동적으로 변동이 될부분----        --%>
+                        </div>
+                    </div>
+
+                    <div class="inspection-box">
+                        <div class="inspection-header">
+                            영업정지 1개월 이상
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="inspection-content">
+                            <div class="inspection-content-detail">
+                                <p>2. 표시사항 전부를 표시하지 않은 식품을 영업에 사용</p>
+                                <button class="add-btn">+</button>
+                            </div>
+
+                            <%--        ----해당부분은 동적으로 변동이 될부분----        --%>
+                            <div class="inspection-content-wrapper">
+                                <!-- 사진 업로드 구역 -->
+                                <div class="answer-section2">
+                                    <label class="radio-label2">
+                                        <input type="radio" name="rating" value="매우좋음" checked>
+                                        매우좋음
+                                    </label>
+                                    <label class="radio-label2">
+                                        <input type="radio" name="rating" value="좋음">
+                                        좋음
+                                    </label>
+                                    <label class="radio-label2">
+                                        <input type="radio" name="rating" value="보통">
+                                        보통
+                                    </label>
+                                    <label class="radio-label2">
+                                        <input type="radio" name="rating" value="나쁨">
+                                        나쁨
+                                    </label>
+                                    <label class="radio-label2">
+                                        <input type="radio" name="rating" value="매우나쁨">
+                                        매우나쁨
+                                    </label>
+                                </div>
+
+
+                                <div class="photo-section">
+                                    <div class="photo-buttons">
+                                        <button class="photo-btn camera-btn">
+                                            <i class="fa-solid fa-camera"></i>사진촬영
+                                        </button>
+                                        <button class="photo-btn gallery-btn">
+                                            <i class="fa-regular fa-image"></i>갤러리
+                                        </button>
+                                    </div>
+                                    <div class="photo-boxes">
+                                        <div class="photo-box">사진 미등록</div>
+                                        <div class="photo-box">최대 2개</div>
+                                    </div>
+                                </div>
+
+                                <!-- 매장 정보 라디오 버튼 리스트 -->
+                                <div class="store-info">
+                                    <div class="tab-section">
+                                        <button class="tab-btn active">위치정보</button>
+                                        <button class="tab-btn">상세입력</button>
+                                    </div>
+
+                                    <!-- 위치정보 -->
+                                    <div class="content location-content">
+                                        <div class = "content location-content-list">
+                                            <label class="radio-label">
+                                                매장
+                                                <input type="radio" name="location">
+                                            </label>
+                                            <label class="radio-label">
+                                                카페
+                                                <input type="radio" name="location">
+                                            </label>
+                                            <label class="radio-label">
+                                                주방
+                                                <input type="radio" name="location">
+                                            </label>
+                                            <label class="radio-label">
+                                                기타
+                                                <input type="radio" name="location">
+                                            </label>
+
+                                        </div>
+
+                                        <!-- 기타사항 입력 -->
+                                        <div class="other-info">
+                                            <label>기타사항</label>
+                                            <textarea class="etc-input" placeholder="기타사항을 입력해주세요"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <!-- 상세입력 정보 (숨김 상태) -->
+                                    <div class="content detail-content">
+                                        <div class="input-group-cover">
+                                            <div class="input-group">
+                                                <label>제품명 (또는 상세위치)</label>
+                                                <input type="text" class="product-name" placeholder="제품명 입력">
+                                            </div>
+                                            <div class="input-group">
+                                                <label>위반수량</label>
+                                                <input type="text" class="violation-quantity" placeholder="위반수량 입력">
+                                            </div>
+                                        </div>
+
+                                        <div class="input-group">
+                                            <label>원인</label>
+                                            <textarea class="reason" placeholder="원인을 작성해주세요"></textarea>
+                                        </div>
+                                        <div class="input-group">
+                                            <label>개선조치사항</label>
+                                            <textarea class="action" placeholder="개선조치사항을 입력해주세요"></textarea>
+                                        </div>
+                                        <div class="input-group">
+                                            <label>위반사항</label>
+                                            <textarea class="violation" placeholder="위반사항을 입력해주세요"></textarea>
+                                        </div>
+                                        <div class="input-group">
+                                            <label>귀책사유</label>
+                                            <div class="radio-group">
+                                                <label>
+                                                    SV <input type="radio" name="responsibility" value="SV">
+                                                </label>
+                                                <label>
+                                                    점주 <input type="radio" name="responsibility" value="Owner">
+                                                </label>
+                                                <label>
+                                                    직원 <input type="radio" name="responsibility" value="Employee">
+                                                </label>
+                                                <label>
+                                                    기타 <input type="radio" name="responsibility" value="Other">
+                                                </label>
+                                            </div>
+                                            <textarea class="caupvd" placeholder="귀책사유를 입력해주세요"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                            <%--        ----해당부분은 동적으로 변동이 될부분----        --%>
+
+                        </div>
+                    </div>
+
+                    <div class="inspection-box">
+                        <div class="inspection-header">
+                            영업정지 15일 이상
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="inspection-content">
+                            <div class="inspection-content-detail">
+                                <p>3. 소비기한 경과</p>
+                                <button class="add-btn">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="inspection-box">
+                        <div class="inspection-header">
+                            시정 명령
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="inspection-content">
+                            <div class="inspection-content-detail">
+                                <p>4. 영업신고 관련 위반</p>
+                                <button class="add-btn">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="inspection-box">
+                        <div class="inspection-header">
+                            과태료
+                            <span class="toggle-icon">▼</span>
+                        </div>
+                        <div class="inspection-content">
+                            <div class="inspection-content-detail">
+                                <p>5. 무신고 소분판매</p>
+                                <button class="add-btn">+</button>
+                            </div>
+                            <div class="inspection-content-detail">
+                                <p>6. 건강검진 위반</p>
+                                <button class="add-btn">+</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="inspection-list" id="기타법규">
+                    <!-- 기타법규 관련 내용 -->
+                    <div class="inspection-box">
+                        <div class="inspection-header">기타법규 관련 내용 1</div>
+                    </div>
+                </section>
+
+                <section class="inspection-list" id="위생관리">
+                    <!-- 위생관리 관련 내용 -->
+                    <div class="inspection-box">
+                        <div class="inspection-header">위생관리 관련 내용 1</div>
+                    </div>
+                </section>
+
+                <section class="inspection-list" id="위생지도상황">
+                    <!-- 위생지도상황 관련 내용 -->
+                    <div class="inspection-box">
+                        <div class="inspection-header">위생지도상황 관련 내용 1</div>
+                    </div>
+                </section>
+
+
+            </section>
+            <div class="modal-footer">
+
+            </div>
+        </div>
+    </div>
+</div >
+
+
 <script src="/resources/js/qsc/inspection_schedule/schedule_list.js"></script>
+<script src="/resources/js/qsc/store_inspection/popup_inspection.js"></script>
 </body>
 </html>
