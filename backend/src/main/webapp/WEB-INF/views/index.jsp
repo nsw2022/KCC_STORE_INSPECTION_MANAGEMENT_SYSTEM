@@ -36,8 +36,21 @@
 
 </head>
 <body>
-<h1>index </h1>
-<a href="/qsc/inspection_schedule/schedule_list">가맹점 점검 관리</a>
+
+<h2>화면설계도 </h2>
+<a href="https://docs.google.com/spreadsheets/d/1jUrxwTbg0_H_gdSAI89xL245TaHFSbjgrUxWUyTyKWA/edit?gid=1473716366#gid=1473716366">링크보기</a>
+<br>
+<br>
+<h2>홈페이지</h2>
+
+<h3>마스터관리</h3>
 <a href="/master/store_manage/store_list">가맹점 관리</a>
+<a href="/checklist/list">체크리스트 관리</a>
+
+<h3>QSC</h3>
+<a href="/qsc/inspection_schedule/schedule_list">가맹점 점검 계획 관리</a>
+
+
+
 </body>
 </html>
