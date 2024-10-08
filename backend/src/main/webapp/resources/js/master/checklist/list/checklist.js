@@ -1,3 +1,24 @@
+// 아이콘이 포함된 셀 렌더러 정의
+function BtnCellRenderer() {}
+
+BtnCellRenderer.prototype.init = function() {
+    // div를 생성하고 클릭 이벤트 추가
+    this.eGui = document.createElement('div');
+    this.eGui.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 15 15">
+        <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+      </svg>
+    `;
+    this.eGui.className = 'icon-container d-inline-flex';  // 필요한 경우 스타일 추가
+    this.eGui.addEventListener('click', function() {
+        alert("점검 항목 관리 페이지로 리다이렉트됩니다.");
+    });
+};
+
+BtnCellRenderer.prototype.getGui = function() {
+    return this.eGui;
+};
+
 
 // ROW 데이타 정의
 const rowData = [
@@ -26,9 +47,11 @@ const gridOptions = {
         { field: "master_checklist_name", headerName: "마스터 체크리스트", minWidth: 110 },
         { field: "inspection_type", headerName: "점검유형", minWidth: 110  },
         { field: "create_date", headerName: "등록년월", minWidth: 110  },
-        { field: "status", headerName: "사용여부", minWidth: 70}
-
+        { field: "status", headerName: "사용여부", minWidth: 70},
+        { field: "action", headerName: "관리", width: 100, minWidth:53, pinned: 'right',cellRenderer: BtnCellRenderer, autoHeight: true},
     ],
+
+
 
     autoSizeStrategy: {                    // 자동사이즈정책
         type: 'fitGridWidth',              // 그리드넓이기준으로
