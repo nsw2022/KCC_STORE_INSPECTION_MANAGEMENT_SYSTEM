@@ -110,8 +110,19 @@ document.querySelectorAll('.tab-btn').forEach(button => {
             locationContent.style.display = 'none';
             detailContent.style.display = 'block';
         }
+
+        // inspection-content-wrapper 높이를 다시 계산하여 적용
+        adjustWrapperHeight(parentWrapper);
     });
 });
+
+// 콘텐츠 높이를 조정하는 함수
+function adjustWrapperHeight(element) {
+    element.style.height = 'auto'; // 높이를 자동으로 일단 설정
+    const newHeight = element.scrollHeight; // 새로운 높이 계산
+    element.style.height = newHeight + 'px'; // 새로운 높이를 적용
+    element.style.transition = 'height 0.5s ease'; // 부드러운 전환
+}
 
 
 
