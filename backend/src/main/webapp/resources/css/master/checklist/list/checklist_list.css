@@ -147,6 +147,18 @@ body {
   overflow-y: auto;
 }
 
+.input-group {
+  display: flex;
+  flex-wrap: nowrap !important;
+  width: 100%;
+  flex-direction: row !important;
+}
+
+.modal-search-box{
+  flex-direction: row;
+  flex-wrap: nowrap !important;
+}
+
 .modal-search-box input{
   border-color: #D0D5DD;
   border-radius: 10px !important;
@@ -197,6 +209,63 @@ body {
 .list-group-item button{
   font: 400 13px "Noto Sans KR";
 }
+
+/*  second modal         ***************************************************/
+.accordion-button{
+  background-color: #EDEDED !important;
+  font: 400 13px "Noto Sans KR" !important;
+  border-radius: 10px !important;
+
+}
+.accordion-item{
+  border-radius: 10px !important;
+  border-color: #EDEDED !important;
+}
+.modal-backdrop {
+  z-index: 900 !important; /* 모달 배경 */
+}
+.score{
+  height: 3rem;
+  background-color: #D9DDFF;
+  border-radius: 10px;
+  font: 400 15px "Noto Sans KR" !important;
+}
+.accordion-body .row div{
+  border-radius: 8px;
+  margin: 0rem 1rem;
+}
+.accordion-body .row span{
+  margin: 0.5rem 0rem;
+  color: #9CA3AF;
+  font: 400 13px "Noto Sans KR" !important;
+}
+.form-check{
+  font: 300 10px "Noto Sans KR" !important;
+  padding: 0 !important;
+  margin: 0rem 0rem 0rem 1.5rem !important;
+}
+.radio-box{
+  display: flex;
+  justify-content: center;
+}
+
+.large-category-group .btn{
+  width: 4.5rem;
+  height: 2rem;
+  font: 350 12px "Noto Sans KR";
+  border-radius: 15px;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -265,6 +334,59 @@ body {
     border-radius: 15px;
   }
 
+  .modal-search-box input{
+    border-color: #D0D5DD;
+    border-radius: 10px !important;
+    font: 350 10px "Noto Sans KR";
+    color: #858D9D;
+  }
+  .modal-search-box button{
+    border-color: #D0D5DD;
+    border-radius: 10px !important;
+    font: 350 10px "Noto Sans KR";
+    color: #858D9D;
+  }
+  .item-info {
+    box-shadow:
+            rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+            rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    border-radius: 6px;
+    width: 80%;
+    height: 60px;
+    padding: 10px;
+    font: 400 10px "Noto Sans KR";
+  }
+  .list-group button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f1f5f9;
+    border-color: #fff;
+    height: 60px;
+    color: black;
+  }
+  .list-group-item button{
+    font: 400 10px "Noto Sans KR";
+  }
+  .container {
+    margin: 0.1rem 0.1rem;
+  }
+  .btn-box div{
+    width: 8rem;
+  }
+
+  .large-category-group .btn{
+    width: 4rem;
+    height: 2rem;
+    font: 350 10px "Noto Sans KR";
+  }
+
+
+
+
+  
+
 }
 @media (max-width: 991px) {
   .top-content .first-input-box{
@@ -277,3 +399,12 @@ body {
     margin-bottom: 1rem !important;
   }
 }
+
+.back-btn, .btn-close{
+    outline:none !important;
+    box-shadow:none !important;
+}
+/*.btn:active, .btn:focus {*/
+/*  outline:none !important;*/
+/*  box-shadow:none !important;*/
+/*}*/

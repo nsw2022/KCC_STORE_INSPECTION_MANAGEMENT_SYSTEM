@@ -335,3 +335,9 @@
     box-sizing: border-box;
   }
 }
+
+@media screen and (max-width: 390px) {
+  .page-content > div {
+    padding: 10px 10px;
+  }
+}
