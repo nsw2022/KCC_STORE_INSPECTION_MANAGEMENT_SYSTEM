@@ -366,10 +366,10 @@ pageEncoding="UTF-8" %>
                             <div id="innerCollapseOne" class="accordion-collapse collapse" aria-labelledby="innerHeadingOne">
                               <div class="accordion-body">
                                 <div class="row row-cols-2 btn-box">
-                                  <div class="col- border border-light-subtle d-flex justify-content-center align-items-center">
+                                  <div class="col-lg border border-light-subtle d-flex justify-content-center align-items-center">
                                     <span>예</span>
                                   </div>
-                                  <div class="col- border border-light-subtle d-flex justify-content-center align-items-center">
+                                  <div class="col-lg border border-light-subtle d-flex justify-content-center align-items-center">
                                     <span>아니오</span>
                                   </div>
                                 </div>
@@ -432,12 +432,7 @@ pageEncoding="UTF-8" %>
                                 </label>
                                 <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault5">
                               </div>
-
                             </div>
-
-
-
-
                           </div>
                         </div>
                       </div>
