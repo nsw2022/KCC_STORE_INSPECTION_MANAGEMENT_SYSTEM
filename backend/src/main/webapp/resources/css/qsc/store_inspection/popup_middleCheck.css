@@ -2,7 +2,7 @@
     font-family: "Noto Sans KR";
 }
 body{
-    background-color: #f4f7ff;
+    background-color: #f4f7ff !important;
     padding: 40px;
     box-sizing: border-box;
 }
@@ -607,8 +607,10 @@ body{
         margin-top: 10px;
     }
 }
-@media screen and (max-width: 950px) {
-
+@media screen and (max-width: 910px) {
+    .detailed-item {
+        margin-right: 0;
+    }
 
 }
 @media screen and (max-width: 768px) {
@@ -699,6 +701,10 @@ body{
 
 }
 @media screen and (max-width: 580px) {
+    body{
+        padding: 20px !important;
+        box-sizing: border-box;
+    }
     .progress-container {
         width: 310px;
         min-height: 100px;
@@ -755,6 +761,17 @@ body{
     }
     .info-details > span:last-child{
         margin-bottom: 0;
+    }
+
+    .subitem-info {
+        list-style-type: none;
+        padding: 0;
+        display: block;
+    }
+
+    .info-box{
+        width: 100%;
+        margin-bottom: 15px;
     }
 
 }

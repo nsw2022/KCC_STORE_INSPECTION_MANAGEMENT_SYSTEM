@@ -2,7 +2,7 @@
     font-family: "Noto Sans KR";
 }
 body{
-    background-color: #f4f7ff;
+    background-color: #f4f7ff !important;
     padding: 40px;
     box-sizing: border-box;
 }

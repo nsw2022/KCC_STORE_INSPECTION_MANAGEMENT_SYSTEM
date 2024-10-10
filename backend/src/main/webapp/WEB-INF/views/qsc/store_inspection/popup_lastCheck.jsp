@@ -22,13 +22,13 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' integrity='sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==' crossorigin='anonymous'/>
 
-    <link rel="stylesheet" href="/resources/css/qsc/store_inspection/popup_middleCheck.css">
-    <link rel="stylesheet" href="/resources/css/qsc/store_inspection/popup_inspection.css">
+    <link rel="stylesheet" href="/resources/css/qsc/store_inspection/popup_lastCheck.css">
     <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js'></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 </head>
 <body>
-<%--<p>입력된 기타사항: ${textareaData}</p>--%>
+
 <div class="progress-container">
     <div class="step active">
         <div class="circle complete">
@@ -37,23 +37,23 @@
         <p>점검</p>
     </div>
     <div class="line active"></div>
-    <div class="step">
-        <div class="circle active">
-            <div class="inner-circle active"></div>
+    <div class="step active">
+        <div class="circle complete">
+            <i class="fa-solid fa-check"></i>
         </div>
         <p>결과확인</p>
     </div>
-    <div class="line"></div>
-    <div class="step">
-        <div class="circle">
-            <div class="inner-circle"></div>
+    <div class="line active"></div>
+    <div class="step active">
+        <div class="circle complete">
+            <i class="fa-solid fa-check"></i>
         </div>
         <p>서명</p>
     </div>
-    <div class="line"></div>
+    <div class="line active"></div>
     <div class="step">
-        <div class="circle">
-            <div class="inner-circle"></div>
+        <div class="circle active">
+            <div class="inner-circle active"></div>
         </div>
         <p>확인</p>
     </div>
@@ -76,13 +76,14 @@
         </table>
     </div>
 </section>
+
 <section class="inspection-section">
     <div class="inspection-tabs">
         <button class="inspection-tab active" data-tab="report-summary">보고서 간략</button>
         <button class="inspection-tab" data-tab="detailed-result">세부결과</button>
     </div>
 
-<%--  ----------------탭에 따라서 변하는 구역----------------  --%>
+    <%--  ----------------탭에 따라서 변하는 구역----------------  --%>
     <div class="tab-content report-summary">
         <div class="score-section">
             <table class="score-table">
@@ -249,7 +250,7 @@
 
 
 
-<%--  ----------------탭에 따라서 변하는 구역----------------  --%>
+    <%--  ----------------탭에 따라서 변하는 구역----------------  --%>
 
 
     <div class="inspection-total-score">
@@ -321,9 +322,6 @@
     </div>
 </section>
 
-
-
 </body>
-<script src="/resources/js/qsc/store_inspection/popup_middleCheck.js"></script>
-<script src="/resources/js/qsc/store_inspection/popup_inspection.js"></script>
+<script src="/resources/js/qsc/store_inspection/popup_lastCheck.js"></script>
 </html>
