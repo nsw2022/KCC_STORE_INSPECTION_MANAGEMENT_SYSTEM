@@ -611,15 +611,15 @@ $(function () {
 
       // 연도 선택 시 현재 연도 이전을 비활성화하려면 아래 주석 해제
       /*
-                                          $("#year-select-calendar option").each(function () {
-                                            const optionYear = parseInt($(this).val());
-                                            if (optionYear < todayYear) {
-                                              $(this).attr("disabled", true);
-                                            } else {
-                                              $(this).removeAttr("disabled");
-                                            }
-                                          });
-                                          */
+                                                $("#year-select-calendar option").each(function () {
+                                                  const optionYear = parseInt($(this).val());
+                                                  if (optionYear < todayYear) {
+                                                    $(this).attr("disabled", true);
+                                                  } else {
+                                                    $(this).removeAttr("disabled");
+                                                  }
+                                                });
+                                                */
     }
 
     // 초기 달력 생성 (현재 월과 연도)
@@ -867,6 +867,7 @@ $(function () {
           button.classList.add("modal_btn", "more");
           return button;
         },
+        pinned: "right",
       },
     ],
     autoSizeStrategy: {
@@ -897,12 +898,11 @@ $(function () {
   function createNewRowData() {
     var newData = {
       no: rowData.length + 1,
+      store: "",
       brand: "",
       checklist_name: "",
-      master_checklist_name: "",
-      inspection_type: "",
-      create_date: "",
-      status: "",
+      schedule_date: "",
+      inspector: "",
     };
     return newData;
   }
@@ -927,9 +927,22 @@ $(function () {
       });
       updateChecklistCount();
     } else {
-      alert("삭제할 항목을 선택하세요.");
+      Swal.fire({
+        title: "경고!",
+        text: "삭제할 항목을 선택해주세요.",
+        icon: "warning",
+        confirmButtonText: "확인",
+      });
     }
   }
+
+  $("#addRowButton").on("click", function () {
+    onAddRow();
+  });
+
+  $("#deleteRowButton").on("click", function () {
+    onDeleteRow();
+  });
 
   //  중간 테이블 영역 끝
 });

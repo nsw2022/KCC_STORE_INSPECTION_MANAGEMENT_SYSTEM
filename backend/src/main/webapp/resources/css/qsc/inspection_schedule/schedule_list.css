@@ -4,6 +4,11 @@ body {
 }
 
 /* 모달 시작 */
+
+.modal.fade.show {
+  padding: 0 !important;
+}
+
 list-group {
   max-height: 500px; /* 모바일에서는 최대 높이를 조금 줄임 */
   overflow-y: auto;
@@ -231,7 +236,7 @@ list-group {
 }
 
 .top-box-content {
-  width: 90%;
+  width: 100%;
   height: 100%;
   margin: 0 auto;
   background-color: white;
@@ -298,7 +303,7 @@ input.top-search::-webkit-input-placeholder {
 }
 
 .middle-content {
-  width: 90%;
+  width: 100%;
   height: 100%;
   margin: 0 auto;
   background-color: white;
@@ -357,7 +362,7 @@ table tr td input {
 
 /* 하단 점검 검색 필터 시작 */
 .bottom-box-content {
-  width: 90%;
+  width: 100%;
   height: 100%;
   margin: 0 auto;
   background-color: white;
