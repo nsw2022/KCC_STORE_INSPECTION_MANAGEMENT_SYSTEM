@@ -171,7 +171,6 @@
                     <div>
                       <div id="subCategoryGrid" style="height: 324px; width:100%" class="ag-theme-quartz mb-2"></div>
                     </div>
-
                     <div class="update-box border border-light-subtle mb-2">
                       <div class="title-box">
                         <span class="m-3" style="font: 400 15px Noto Sans KR;">중분류 등록 및 수정</span>
@@ -193,16 +192,13 @@
                             <div class="col-12 col-lg-6 d-flex align-items-center mb-2 penalty position-relative">
                               <label class="col-form-label me-2" style="min-width: 50px;">과태료</label>
                               <input type="text" class="form-control penalty-input" placeholder="0">
-                              <span class="unit" style="margin-right: 10px">만원</span>
+                              <span class="unit" style="margin-right: 8px; font: 300 11px Noto Sans KR">만원</span>
                             </div>
                             <div class="col-12 col-lg-6 d-flex align-items-center mb-2 suspention position-relative">
                               <label class="col-form-label me-2" style="min-width: 50px;">영업정지</label>
                               <input type="text" class="form-control suspention-input" placeholder="0">
-                              <span class="unit" style="margin-right: 10px">일</span>
+                              <span class="unit" style="margin-right: 8px; font: 300 11px Noto Sans KR">일</span>
                             </div>
-
-
-
                           </div>
                         </div>
                       </div>
@@ -227,7 +223,68 @@
                 </h2>
                 <div id="collapseThree" class="accordion-collapse collapse show">
                   <div class="accordion-body">
-                    <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element.
+                    <div class="button-box d-flex justify-content-end">
+                      <div class="my-2 d-flex justify-content-center">
+                        <button type="button" class="btn btn-light m-1" onclick="onAddRow()">추가</button>
+                        <button type="button" class="btn btn-light m-1" onclick="onDeleteRow()">삭제</button>
+                      </div>
+                    </div>
+                    <div>
+                      <div id="evaluationGrid" style="height: 324px; width:100%" class="ag-theme-quartz mb-2"></div>
+                    </div>
+                    <div class="update-box border border-light-subtle mb-2">
+                      <div class="title-box">
+                        <span class="m-3" style="font: 400 15px Noto Sans KR;">평가항목 등록 및 수정</span>
+                        <div class="my-3">
+                          <button type="button" class="btn btn-primary me-3">저장</button>
+                        </div>
+                      </div>
+                      <div class="container">
+                        <div class="update-box-content">
+                          <div class="row first-input-box mb-3">
+                            <div class="col-12 col-lg-12 d-flex align-items-center mb-2">
+                              <label class="col-form-label me-2" style="min-width: 50px;">평가항목</label>
+                              <input type="text" class="form-control" placeholder="평가항목">
+                            </div>
+                            <div class="col-12 col-lg-6 d-flex align-items-center mb-2">
+                              <label class="col-form-label me-2" style="min-width: 50px;">평가항목유형</label>
+                              <input type="text" class="form-control" placeholder="평가항목유형" list="evaluationOptions">
+                              <datalist id="evaluationOptions">
+                                <option value="Y/N">
+                                <option value="선택지형">
+                                <option value="단답형">
+                              </datalist>
+                            </div>
+                            <div class="col-12 col-lg-3 d-flex align-items-center mb-2">
+                              <label class="col-form-label me-2" style="min-width: 50px;">사용여부</label>
+                              <input type="checkbox" class="form-check-label" checked>
+                            </div>
+                            <div class="col-12 col-lg-3 d-flex align-items-center mb-2">
+                              <label class="col-form-label me-2" style="min-width: 50px;">사용여부</label>
+                              <input type="checkbox" class="form-check-label" checked>
+                            </div>
+                            <div class="col-12 col-lg-6 d-flex align-items-center mb-2 penalty position-relative">
+                              <label class="col-form-label me-2" style="min-width: 50px;">위반유형</label>
+                              <input type="text" class="form-control" list="violationTypeOptions">
+                              <datalist id="violationTypeOptions">
+                                <option value=" ">
+                              </datalist>
+                            </div>
+                            <div class="col-12 col-lg-6 d-flex align-items-center mb-2 suspention position-relative">
+                              <label class="col-form-label me-2" style="min-width: 50px;">점수</label>
+                              <input type="text" class="form-control" placeholder="100">
+                            </div>
+                            <div class="col-12 col-lg-12 d-flex align-items-center mb-2 suspention position-relative">
+                              <label class="col-form-label me-2" style="min-width: 50px;">기본입력<br>내용</label>
+                              <input type="text" class="form-control" placeholder="">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+
+
                   </div>
                 </div>
               </div>
@@ -266,6 +323,10 @@
 <script defer
         type="application/javascript"
         src="../../../../../resources/js/master/checklist/inspection_list_manage/sub_category.js"
+></script>
+<script defer
+        type="application/javascript"
+        src="../../../../../resources/js/master/checklist/inspection_list_manage/evaluation.js"
 ></script>
 </body>
 </html>

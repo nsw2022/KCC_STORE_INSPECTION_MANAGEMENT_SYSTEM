@@ -150,7 +150,7 @@ body {
 .penalty-input,
 .suspention-input {
     text-align: right; /* input 필드 내의 텍스트 및 플레이스홀더를 오른쪽으로 정렬 */
-    padding-right: 40px !important; /* 오른쪽 여백을 추가하여 텍스트와 유닛 사이의 간격 유지 */
+    padding-right: 30px !important; /* 오른쪽 여백을 추가하여 텍스트와 유닛 사이의 간격 유지 */
 }
 
 .unit {
