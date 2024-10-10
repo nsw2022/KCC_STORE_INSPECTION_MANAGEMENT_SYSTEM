@@ -301,7 +301,50 @@
                 </h2>
                 <div id="collapseFour" class="accordion-collapse collapse show">
                   <div class="accordion-body">
-                    <strong>This is the fourth item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element.
+                    <div class="button-box d-flex justify-content-end">
+                      <div class="my-2 d-flex justify-content-center">
+                        <button type="button" class="btn btn-light m-1" onclick="onAddRow()">추가</button>
+                        <button type="button" class="btn btn-light m-1" onclick="onDeleteRow()">삭제</button>
+                      </div>
+                    </div>
+                    <div>
+                      <div id="choiceListGrid" style="height: 324px; width:100%" class="ag-theme-quartz mb-2"></div>
+                    </div>
+                    <div class="update-box border border-light-subtle mb-2">
+                      <div class="title-box">
+                        <span class="m-3" style="font: 400 15px Noto Sans KR;">선택지 등록 및 수정</span>
+                        <div class="my-3">
+                          <button type="button" class="btn btn-primary me-3">저장</button>
+                        </div>
+                      </div>
+                      <div class="container">
+                        <div class="update-box-content">
+                          <div class="row first-input-box mb-3">
+                            <div class="col-12 col-lg-12 d-flex align-items-center mb-2">
+                              <label class="col-form-label me-2" style="min-width: 50px;">선택지<br>내용</label>
+                              <input type="text" class="form-control" placeholder="적합">
+                            </div>
+                            <div class="col-12 col-lg-6 d-flex align-items-center mb-2 position-relative">
+                              <label class="col-form-label me-2" style="min-width: 50px;">선택지<br>점수</label>
+                              <input type="text" class="form-control" placeholder="100">
+                            </div>
+                            <div class="col-12 col-lg-6 d-flex align-items-center mb-2 position-relative">
+                              <label class="col-form-label me-2" style="min-width: 50px;">부적합<br>강도</label>
+                              <input type="text" class="form-control" placeholder="100" list="strengthOptions">
+                              <datalist id="strengthOptions">
+                                <option value="크리티컬">
+                                <option value="메이져">
+                                <option value="마이너">
+                              </datalist>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+
+
+
                   </div>
                 </div>
               </div>
@@ -327,6 +370,10 @@
 <script defer
         type="application/javascript"
         src="../../../../../resources/js/master/checklist/inspection_list_manage/evaluation.js"
+></script>
+<script defer
+        type="application/javascript"
+        src="../../../../../resources/js/master/checklist/inspection_list_manage/choice-list.js"
 ></script>
 </body>
 </html>
