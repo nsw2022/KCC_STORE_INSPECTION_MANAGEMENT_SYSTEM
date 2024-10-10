@@ -355,6 +355,41 @@ body {
     }
 
 
+    .item-info {
+        box-shadow:
+                rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+                rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+        border-radius: 6px;
+        width: 80%;
+        height: 60px;
+        padding: 10px;
+        font: 400 10px "Noto Sans KR";
+    }
+    .list-group button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: #f1f5f9;
+        border-color: #fff;
+        height: 60px;
+        color: black;
+    }
+    .list-group-item button{
+        font: 400 10px "Noto Sans KR";
+    }
+    .container {
+        margin: 0.1rem 0.1rem;
+    }
+    .btn-box div{
+        width: 8rem;
+    }
+
+
+
+    .collapseTwo, .collapseThree, .collapseFour{
+
+    }
 
 
 }

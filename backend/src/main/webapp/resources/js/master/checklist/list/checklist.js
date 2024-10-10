@@ -11,7 +11,7 @@ BtnCellRenderer.prototype.init = function() {
     `;
     this.eGui.className = 'icon-container d-inline-flex';  // 필요한 경우 스타일 추가
     this.eGui.addEventListener('click', function() {
-        alert("점검 항목 관리 페이지로 리다이렉트됩니다.");
+        window.location.replace("https://ksims.store/inspection/list/manage");
     });
 };
 
