@@ -43,7 +43,6 @@
         rel="stylesheet"
         href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
         />
-        <link rel="stylesheet" href="sidebar.css">
         <link rel="stylesheet" href="/resources/css/qsc/store_inspection_schedule/store_inspection_schedule.css">
         <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js'></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -51,6 +50,7 @@
 </head>
 <body>
 
+<jsp:include page="../../sidebar/sidebar.jsp"></jsp:include>
 
  <!-- 본문 -->
         <div class="page-wrapper2">
@@ -117,6 +117,51 @@
 
                     <!-- 캘린더 -->
                     <div id="wrapper" class="container-fluid mt-2 mb-0 p-0"></div>
+                    
+                    <!-- 가맹점 점검체크리스트 목록 Modal -->
+						<div class="modal fade" id="storeChecklistModal" tabindex="-1" aria-labelledby="storeChecklistModalLabel" aria-hidden="true">
+							<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+								<div class="modal-content">
+									<div class="modal-header px-4 py-3">
+										<div class="modal-title modal_store_name" id="storeChecklistModalLabel"></div>
+										<div class="modal_inspector_area">
+											<div class="modal_inspector_name px-3 py-2 border border-1"></div>
+										</div>
+										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body py-0 mb-3">
+										<div class="checklist_item_area d-flex align-items-center">
+											<div class="checklist_number">01</div>
+											<div class="checklist_item me-5">KCC 크라상 위생 점검 체크리스트</div>
+										</div>
+										<div class="checklist_item_area d-flex align-items-center">
+											<div class="checklist_number">02</div>
+											<div class="checklist_item me-5">KCC 크라상 제품 점검 체크리스트</div>
+										</div>
+										<div class="checklist_item_area d-flex align-items-center">
+											<div class="checklist_number">03</div>
+											<div class="checklist_item me-5">KCC 크라상 정기 점검 체크리스트</div>
+										</div>
+										<div class="checklist_item_area d-flex align-items-center">
+											<div class="checklist_number">04</div>
+											<div class="checklist_item me-5">KCC 크라상 비정기 점검 체크리스트</div>
+										</div>
+										<div class="checklist_item_area d-flex align-items-center">
+											<div class="checklist_number">05</div>
+											<div class="checklist_item me-5">KCC 크라상 기획 점검 체크리스트</div>
+										</div>
+										<div class="checklist_item_area d-flex align-items-center">
+											<div class="checklist_number">06</div>
+											<div class="checklist_item me-5">KCC 크라상 위생 점검 체크리스트</div>
+										</div>
+										<div class="checklist_item_area d-flex align-items-center">
+											<div class="checklist_number">07</div>
+											<div class="checklist_item me-5">KCC 크라상 위생 점검 체크리스트</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
 
                 </div>
             </main>
