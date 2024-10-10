@@ -53,8 +53,6 @@ body {
 .first-input-box .form-control{
     height: 2.5rem;
 }
-
-
 .top-content .form-control{
     font: 300 13px "Noto Sans KR" !important;
     color: #858D9D;
@@ -64,10 +62,6 @@ body {
 .top-content .col-form-label{
     font: 500 13px "Noto Sans KR";
 }
-
-
-
-
 
 
 
@@ -95,7 +89,7 @@ body {
 .accordion-item{
     border-radius: 8px !important;
     border-color: white !important;
-    box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+    /*box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;*/
 }
 .middle-row .btn-light{
     width: 7vw;
@@ -132,27 +126,20 @@ body {
 .update-box-content .col-form-label{
     font: 400 11px "Noto Sans KR" !important;
 }
-
-
-
-
 .col-form-label{
     font: 500 13px "Noto Sans KR";
 }
-
 .form-control{
     font: 300 11px "Noto Sans KR" !important;
     color: #858D9D;
     border-color: #D0D5DD !important;
     border-radius: 10px !important;
 }
-
 .penalty-input,
 .suspention-input {
     text-align: right; /* input 필드 내의 텍스트 및 플레이스홀더를 오른쪽으로 정렬 */
     padding-right: 30px !important; /* 오른쪽 여백을 추가하여 텍스트와 유닛 사이의 간격 유지 */
 }
-
 .unit {
     position: absolute; /* 절대 위치 설정 */
     right: 10px; /* 오른쪽에 위치 조정 */
@@ -160,12 +147,127 @@ body {
     transform: translateY(-50%); /* 중앙 정렬을 위한 변환 */
     color: #999; /* 색상 설정 */
 }
-
 .penalty::placeholder,
 .suspention::placeholder {
     text-align: right; /* 플레이스홀더 텍스트 정렬 */
+}
+
+/******************   first modal   ********************/
+.list-group {
+    max-height: 500px; /* 모바일에서는 최대 높이를 조금 줄임 */
+    overflow-y: auto;
+}
+
+.input-group {
+    display: flex;
+    flex-wrap: nowrap !important;
+    width: 100%;
+    flex-direction: row !important;
+}
+
+.modal-search-box{
+    flex-direction: row;
+    flex-wrap: nowrap !important;
+}
+
+.modal-search-box input{
+    border-color: #D0D5DD;
+    border-radius: 10px !important;
+    font: 350 13px "Noto Sans KR";
+    color: #858D9D;
+}
+.modal-search-box button{
+    border-color: #D0D5DD;
+    border-radius: 10px !important;
+    font: 350 13px "Noto Sans KR";
+    color: #858D9D;
+}
+
+.list-item{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.list-group-item {
+    border: none !important;
+}
+.item-info {
+    box-shadow:
+            rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+            rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    border-radius: 6px;
+    width: 80%;
+    height: 60px;
+    padding: 10px;
+    font: 400 13px "Noto Sans KR";
+}
+
+.item-info:hover {
+    background-color: #f2f6ff !important;
+    border: 1px solid #3274fa;
+}
+.list-group button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f1f5f9;
+    border-color: #fff;
+    height: 60px;
+    color: black;
+}
+.list-group-item button{
+    font: 400 13px "Noto Sans KR";
+}
+
+
+/*  second modal         ***************************************************/
+.inner-accordion-button{
+    background-color: #EDEDED !important;
+    font: 400 13px "Noto Sans KR" !important;
+    border-radius: 10px !important;
 
 }
+.inner-accordion-item{
+    border-radius: 10px !important;
+    border-color: #EDEDED !important;
+}
+.modal-backdrop {
+    z-index: 900 !important; /* 모달 배경 */
+}
+.score{
+    height: 3rem;
+    background-color: #D9DDFF;
+    border-radius: 10px;
+    font: 400 15px "Noto Sans KR" !important;
+}
+.inner-accordion-body .row div{
+    border-radius: 8px;
+    margin: 0rem 1rem;
+}
+.inner-accordion-body .row span{
+    margin: 0.5rem 0rem;
+    color: #9CA3AF;
+    font: 400 13px "Noto Sans KR" !important;
+}
+.form-check{
+    font: 300 10px "Noto Sans KR" !important;
+    padding: 0 !important;
+    margin: 0rem 0rem 0rem 1.5rem !important;
+}
+.radio-box{
+    display: flex;
+    justify-content: center;
+}
+
+.large-category-group .btn{
+    width: 4.5rem;
+    height: 2rem;
+    font: 350 12px "Noto Sans KR";
+    border-radius: 15px;
+}
+
 
 
 
@@ -251,6 +353,10 @@ body {
     #categoryGrid, #subCategoryGrid, #evaluationGrid, #choiceListGrid {
         height: 324px !important;
     }
+
+
+
+
 }
 
 

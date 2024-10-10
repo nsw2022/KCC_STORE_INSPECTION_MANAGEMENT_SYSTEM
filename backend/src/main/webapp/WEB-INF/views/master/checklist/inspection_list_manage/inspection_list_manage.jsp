@@ -77,7 +77,7 @@
               <div class="row first-input-box mb-3">
                 <div class="col-12 d-flex align-items-center justify-content-between p-0">
                   <label class="col-form-label" style="width: 100px">마스터</br>체크리스트</label>
-                  <input type="text" class="form-control" placeholder="마스터 체크리스트" list="useChecklistOptions">
+                  <input type="text" class="form-control" placeholder="마스터 체크리스트" data-bs-target="#masterChecklistModal" data-bs-toggle="modal" readonly>
                   <datalist id="useChecklistOptions">
                     <option value="2024 위생 점검 체크리스트">
                   </datalist>
@@ -352,6 +352,258 @@
           </div>
         </div>
       <%-- middle box End--%>
+
+
+
+        <%-------------  modal -------------%>
+        <div class="modal fade" id="masterChecklistModal" aria-hidden="true" aria-labelledby="masterChecklistList" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+          <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+
+              <%-------------- header --------------%>
+              <div class="modal-header">
+            <span class="modal-title fs-5" id="masterChecklistList" style="font: 450 16px 'Noto Sans KR'">
+              마스터체크리스트 선택
+            </span>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <%-------------- header --------------%>
+
+              <%-------------- body --------------%>
+              <div class="modal-body">
+                <div class="input-group mb-3 modal-search-box" style="    padding: .5rem 1rem;">
+                  <input type="text" class="form-control me-2" placeholder="체크리스트 검색" aria-label="Recipient's username" aria-describedby="button-addon2">
+                  <button class="btn btn-outline-secondary" type="button" id="button-addon2">검색</button>
+                </div>
+                <ol class="list-group">
+                  <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+                    <div class="item-info d-flex align-items-center">
+                      <span class="me-3">01</span>
+                      <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
+                    </div>
+                    <button class="btn btn-primary btn-sm rounded-20" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                      미리보기
+                      <i class="fa-regular fa-eye"></i>
+                    </button>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+                    <div class="item-info d-flex align-items-center">
+                      <span class="me-3">01</span>
+                      <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
+                    </div>
+                    <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                      미리보기
+                      <i class="fa-regular fa-eye"></i>
+                    </button>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+                    <div class="item-info d-flex align-items-center">
+                      <span class="me-3">01</span>
+                      <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
+                    </div>
+                    <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                      미리보기
+                      <i class="fa-regular fa-eye"></i>
+                    </button>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+                    <div class="item-info d-flex align-items-center">
+                      <span class="me-3">01</span>
+                      <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
+                    </div>
+                    <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                      미리보기
+                      <i class="fa-regular fa-eye"></i>
+                    </button>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+                    <div class="item-info d-flex align-items-center">
+                      <span class="me-3">01</span>
+                      <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
+                    </div>
+                    <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                      미리보기
+                      <i class="fa-regular fa-eye"></i>
+                    </button>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+                    <div class="item-info d-flex align-items-center">
+                      <span class="me-3">01</span>
+                      <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
+                    </div>
+                    <button class="btn btn-primary btn-sm " type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                      미리보기
+                      <i class="fa-regular fa-eye"></i>
+                    </button>
+                  </li>
+                  <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+                    <div class="item-info d-flex align-items-center">
+                      <span class="me-3">01</span>
+                      <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
+                    </div>
+                    <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                      미리보기
+                      <i class="fa-regular fa-eye"></i>
+                    </button>
+                  </li>
+
+
+
+                </ol>
+              </div>
+              <%-------------- body --------------%>
+
+              <%-------------- footer --------------%>
+              <div class="modal-footer">
+                <button class="btn btn-primary" data-bs-dismiss="modal">선택</button>
+              </div>
+              <%-------------- footer --------------%>
+            </div>
+          </div>
+        </div>
+
+
+        <%--    second modal     --%>
+        <div class="modal fade" id="exampleModalToggle2" aria-hidden="false" aria-labelledby="details" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+          <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+              <%--------------          header       ----------------------%>
+              <div class="modal-header">
+                <div class="large-category-group">
+                  <button type="button" class="btn btn-primary">중대법규</button>
+                  <button type="button" class="btn btn-outline-primary">기타법규</button>
+                </div>
+                <button class="btn back-btn" data-bs-target="#masterChecklistModal" data-bs-toggle="modal">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+                  </svg>
+                </button>
+              </div>
+              <%--------------           header       ----------------------%>
+              <%--------------           body       ----------------------%>
+              <div class="modal-body">
+                <div class="row d-flex justify-content-between">
+                  <div class="col-lg mb-3">
+                    <div class="accordion" id="accordionExample">
+                      <div class="accordion-item inner-accordion-item">
+                        <h2 class="accordion-header">
+                          <button class="accordion-button inner-accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#outerCollapseOne" aria-expanded="false" aria-controls="outerCollapseOne">
+                            영업취소
+                          </button>
+                        </h2>
+                        <div id="outerCollapseOne" class="accordion-collapse collapse" >
+                          <div class="accordion-body inner-accordion-body p-0">
+                            <!-- 내부 아코디언 -->
+                            <div class="accordion" id="innerAccordion1">
+                              <div class="accordion-item inner-accordion-item border border-0">
+                                <h2 class="accordion-header" id="innerHeadingOne">
+                                  <button class="accordion-button inner-accordion-button collapsed border border-0" style="background-color: white !important;" type="button" data-bs-toggle="collapse" data-bs-target="#innerCollapseOne" aria-expanded="false" aria-controls="innerCollapseOne">
+                                    <span style="font: 400 13px Noto Sans KR">1. </span><span style="font: 400 13px Noto Sans KR">소비기한 변조 및 삭제</span>
+                                  </button>
+                                </h2>
+                                <div id="innerCollapseOne" class="accordion-collapse collapse" aria-labelledby="innerHeadingOne">
+                                  <div class="accordion-body inner-accordion-body">
+                                    <div class="row row-cols-2 btn-box">
+                                      <div class="col-lg border border-light-subtle d-flex justify-content-center align-items-center">
+                                        <span>예</span>
+                                      </div>
+                                      <div class="col-lg border border-light-subtle d-flex justify-content-center align-items-center">
+                                        <span>아니오</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- 내부 아코디언 -->
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg mb-3">
+                    <div class="accordion-item inner-accordion-item">
+                      <h2 class="accordion-header">
+                        <button class="accordion-button inner-accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#outerCollapseTwo" aria-expanded="false" aria-controls="outerCollapseTwo">
+                          영업정지 1개월 이상
+                        </button>
+                      </h2>
+                      <div id="outerCollapseTwo" class="accordion-collapse collapse">
+                        <!-- 내부 아코디언 -->
+                        <div class="accordion" id="innerAccordion2">
+                          <div class="accordion-item inner-accordion-item border border-0">
+                            <h2 class="accordion-header" id="innerHeadingTwo">
+                              <button class="accordion-button inner-accordion-button collapsed border border-0" style="background-color: white !important;" type="button" data-bs-toggle="collapse" data-bs-target="#innerCollapseTwo" aria-expanded="false" aria-controls="innerCollapseTwo">
+                                <span style="font: 400 13px Noto Sans KR">1. </span><span style="font: 400 13px Noto Sans KR">표시사항 전부를 표시하지 않은 식품</span>
+                              </button>
+                            </h2>
+                            <div id="innerCollapseTwo" class="accordion-collapse collapse" aria-labelledby="innerHeadingTwo">
+                              <div class="accordion-body inner-accordion-body">
+                                <div class="row d-flex justify-content-center radio-box">
+                                  <div class="col form-check">
+                                    <label class="form-check-label" for="flexRadioDefault1">
+                                      매우 좋음
+                                    </label>
+                                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                                  </div>
+                                  <div class="col form-check">
+                                    <label class="form-check-label" for="flexRadioDefault1">
+                                      좋음
+                                    </label>
+                                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
+                                  </div>
+                                  <div class="col form-check">
+                                    <label class="form-check-label" for="flexRadioDefault1">
+                                      보통
+                                    </label>
+                                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault3">
+                                  </div>
+                                  <div class="col form-check">
+                                    <label class="form-check-label" for="flexRadioDefault1">
+                                      나쁨
+                                    </label>
+                                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault4">
+                                  </div>
+                                  <div class="col form-check">
+                                    <label class="form-check-label" for="flexRadioDefault1">
+                                      매우 나쁨
+                                    </label>
+                                    <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault5">
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- 내부 아코디언 -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex flex-row justify-content-end align-items-center score">
+                  <span class="me-2">총</span>
+                  <span style="color: #D90D0D">100</span>
+                  <span class="me-2">점</span>
+                </div>
+
+
+
+              </div>
+              <%--------------           body       ----------------------%>
+
+            </div>
+          </div>
+        </div>
+
+        <%-----------  modal end ---------------%>
+
+
+
+
+
+
+
+
 
     </div>
   </main>
