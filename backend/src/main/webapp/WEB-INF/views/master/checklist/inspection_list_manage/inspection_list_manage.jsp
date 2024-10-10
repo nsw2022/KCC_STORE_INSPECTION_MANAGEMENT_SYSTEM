@@ -171,6 +171,46 @@
                     <div>
                       <div id="subCategoryGrid" style="height: 324px; width:100%" class="ag-theme-quartz mb-2"></div>
                     </div>
+
+                    <div class="update-box border border-light-subtle mb-2">
+                      <div class="title-box">
+                        <span class="m-3" style="font: 400 15px Noto Sans KR;">중분류 등록 및 수정</span>
+                        <div class="my-3">
+                          <button type="button" class="btn btn-primary me-3">저장</button>
+                        </div>
+                      </div>
+                      <div class="container">
+                        <div class="update-box-content">
+                          <div class="row row-cols-2 first-input-box mb-3">
+                            <div class="col-12 col-lg-6 d-flex align-items-center mb-2">
+                              <label class="col-form-label me-2" style="min-width: 50px;">중분류명</label>
+                              <input type="text" class="form-control" placeholder="중분류명">
+                            </div>
+                            <div class="col-12 col-lg-6 d-flex align-items-center mb-2">
+                              <label class="col-form-label me-2" style="min-width: 50px;">사용여부</label>
+                              <input type="checkbox" class="form-check-label" checked>
+                            </div>
+                            <div class="col-12 col-lg-6 d-flex align-items-center mb-2 penalty position-relative">
+                              <label class="col-form-label me-2" style="min-width: 50px;">과태료</label>
+                              <input type="text" class="form-control penalty-input" placeholder="0">
+                              <span class="unit" style="margin-right: 10px">만원</span>
+                            </div>
+                            <div class="col-12 col-lg-6 d-flex align-items-center mb-2 suspention position-relative">
+                              <label class="col-form-label me-2" style="min-width: 50px;">영업정지</label>
+                              <input type="text" class="form-control suspention-input" placeholder="0">
+                              <span class="unit" style="margin-right: 10px">일</span>
+                            </div>
+
+
+
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+
+
+
                   </div>
                 </div>
               </div>

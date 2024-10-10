@@ -147,7 +147,25 @@ body {
     border-radius: 10px !important;
 }
 
+.penalty-input,
+.suspention-input {
+    text-align: right; /* input 필드 내의 텍스트 및 플레이스홀더를 오른쪽으로 정렬 */
+    padding-right: 40px !important; /* 오른쪽 여백을 추가하여 텍스트와 유닛 사이의 간격 유지 */
+}
 
+.unit {
+    position: absolute; /* 절대 위치 설정 */
+    right: 10px; /* 오른쪽에 위치 조정 */
+    top: 50%; /* 세로 중앙 정렬 */
+    transform: translateY(-50%); /* 중앙 정렬을 위한 변환 */
+    color: #999; /* 색상 설정 */
+}
+
+.penalty::placeholder,
+.suspention::placeholder {
+    text-align: right; /* 플레이스홀더 텍스트 정렬 */
+
+}
 
 
 
