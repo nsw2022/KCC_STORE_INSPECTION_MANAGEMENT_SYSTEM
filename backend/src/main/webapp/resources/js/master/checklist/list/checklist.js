@@ -43,7 +43,7 @@ const gridOptions = {
         },
         { field: "no", headerName: "no", width: 80, minWidth: 50},
         { field: "brand", headerName: "브랜드", minWidth: 110},
-        { field: "checklist_name", headerName: "체크리스명", minWidth: 110},
+        { field: "checklist_name", headerName: "체크리스트명", minWidth: 110},
         { field: "master_checklist_name", headerName: "마스터 체크리스트", minWidth: 110 },
         { field: "inspection_type", headerName: "점검유형", minWidth: 110  },
         { field: "create_date", headerName: "등록년월", minWidth: 110  },
