@@ -246,6 +246,11 @@ body {
         width: 50px;
         font-size: 0.7rem;
     }
+
+
+    #categoryGrid, #subCategoryGrid, #evaluationGrid, #choiceListGrid {
+        height: 324px !important;
+    }
 }
 
 

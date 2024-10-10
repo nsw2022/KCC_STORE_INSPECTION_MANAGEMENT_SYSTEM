@@ -114,7 +114,7 @@
                       </div>
                     </div>
                     <div>
-                      <div id="categoryGrid" style="height: 324px; width:100%" class="ag-theme-quartz mb-2"></div>
+                      <div id="categoryGrid" style="height: 371px; width:100%" class="ag-theme-quartz mb-2"></div>
                     </div>
                     <div class="update-box border border-light-subtle mb-2">
                       <div class="title-box">
@@ -308,7 +308,7 @@
                       </div>
                     </div>
                     <div>
-                      <div id="choiceListGrid" style="height: 324px; width:100%" class="ag-theme-quartz mb-2"></div>
+                      <div id="choiceListGrid" style="height: 420px; width:100%" class="ag-theme-quartz mb-2"></div>
                     </div>
                     <div class="update-box border border-light-subtle mb-2">
                       <div class="title-box">
