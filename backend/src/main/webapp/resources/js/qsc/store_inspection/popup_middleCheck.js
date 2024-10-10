@@ -11,30 +11,27 @@ function initializeTabs() {
     const inspectionList = document.getElementById("inspection-middleCheck-list");
 
     // 기본 상태 설정: 보고서 간략은 보이기, 세부결과는 숨기기
-    reportSummary.style.display = "flex";  // 보고서 간략은 기본 표시
-    detailedResult.style.display = "none";  // 세부결과는 숨김
-    inspectionList.style.display = "none";  // 기본적으로 inspection-middleCheck-list도 숨김
+    reportSummary.style.display = "flex";
+    detailedResult.style.display = "none";
+    inspectionList.style.display = "none";
 
     // 탭 클릭 이벤트 추가
     tabs.forEach(tab => {
         tab.addEventListener("click", function () {
-            // 모든 탭 버튼에서 active 클래스 제거
             tabs.forEach(tab => tab.classList.remove("active"));
 
-            // 클릭된 탭 버튼에 active 클래스 추가
             this.classList.add("active");
 
-            // 선택된 탭에 따라 콘텐츠 전환
             const selectedTab = this.getAttribute("data-tab");
 
             if (selectedTab === "report-summary") {
-                reportSummary.style.display = "flex";  // 보고서 간략 보이기
-                detailedResult.style.display = "none";  // 세부결과 숨기기
-                inspectionList.style.display = "none";  // 보고서 간략 탭에서는 리스트 숨김
+                reportSummary.style.display = "flex";
+                detailedResult.style.display = "none";
+                inspectionList.style.display = "none";
             } else if (selectedTab === "detailed-result") {
-                reportSummary.style.display = "none";  // 보고서 간략 숨기기
-                detailedResult.style.display = "flex";  // 세부결과 보이기
-                inspectionList.style.display = "none";  // 세부결과가 보이면서 상세보기 클릭 전에는 숨김
+                reportSummary.style.display = "none";
+                detailedResult.style.display = "flex";
+                inspectionList.style.display = "none";
             }
         });
     });
@@ -43,15 +40,24 @@ function initializeTabs() {
 function initializeDetailButtons() {
     const detailButtons = document.querySelectorAll(".detail-btn");
     const inspectionList = document.getElementById("inspection-middleCheck-list");
+    const itemTitle = document.querySelector(".item-title");
 
-    // 각 상세보기 버튼에 클릭 이벤트 추가
+
+    //상세보기
     detailButtons.forEach(button => {
         button.addEventListener("click", function () {
+            // 해당 버튼이 속한 item-header의 h3 안의 텍스트 가져오기
+            const sectionTitle = this.closest('.item-header').querySelector('h3').textContent;
+
+            // <h2 class="item-title"> 안에 가져온 텍스트 넣기
+            itemTitle.textContent = sectionTitle;
+
             // 상세보기 버튼 클릭 시 inspection-middleCheck-list를 토글로 보이거나 숨기기
             if (inspectionList.style.display === "none") {
-                inspectionList.style.display = "block";  // 클릭하면 보이기
+                inspectionList.style.display = "block";
+                inspectionList.scrollIntoView({ behavior: 'smooth', block: 'start' }); //스크롤 이동
             } else {
-                inspectionList.style.display = "none";  // 다시 클릭하면 숨기기
+                inspectionList.style.display = "none";
             }
         });
     });
@@ -59,7 +65,6 @@ function initializeDetailButtons() {
 
 // 하단부분 수정하기 버튼 클릭
 function initializeEditButtons() {
-    // 모든 "수정하기" 버튼에 클릭 이벤트를 추가
     const editButtons = document.querySelectorAll(".edit-btn");
 
     editButtons.forEach(button => {
@@ -67,7 +72,6 @@ function initializeEditButtons() {
             const contentWrapper = this.parentElement.querySelector(".inspection-content-wrapper");
 
             if (contentWrapper) {
-                // 현재 감춰져 있으면 열기, 열려 있으면 닫기
                 if (contentWrapper.style.height === "0px" || contentWrapper.style.height === "") {
                     openContent(contentWrapper);
                 } else {
@@ -89,4 +93,29 @@ function initializeEditButtons() {
         element.style.transition = "height 0.5s ease";  // 부드러운 전환
     }
 }
+
+
+// ------------------서명페이지로 데이터 넘기기-----------------
+function middleCheckInspection() {
+    // textarea 데이터를 가져옴
+    const textareaData = document.querySelector('.etc-input').value;
+
+    // 폼을 생성하여 데이터를 전송
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/qsc/popup_signature';  // 페이지 이동 경로 설정
+
+    // textarea 데이터를 숨겨진 input 필드로 추가
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'textareaData';
+    input.value = textareaData || "";  // 데이터가 없을 경우 빈 값으로 설정
+    form.appendChild(input);
+
+    // 폼을 문서에 추가한 뒤 제출
+    document.body.appendChild(form);
+    form.submit();
+}
+
+
 

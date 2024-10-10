@@ -1,0 +1,412 @@
+* {
+    font-family: "Noto Sans KR";
+}
+body{
+    background-color: #f4f7ff !important;
+    padding: 40px;
+    box-sizing: border-box;
+}
+/* 프로그레스 바 컨테이너 */
+.progress-container {
+    width: 457px;
+    min-height: 100px;
+    margin: 0 auto;
+    background-color: #f4f7ff;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+/* 각 단계 */
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    gap: 0;
+    float: left;
+}
+
+/* 원형 모양 */
+.circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 30px;
+    border: 3px solid #9CA3AF;
+    background-color: #F4F7FF;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.circle.complete {
+    background-color: #4318ff;
+    border: none;
+}
+.circle.complete>i{
+    color: white;
+}
+
+/* 활성화된 원형 */
+.circle.active {
+    border-color: #4318ff;
+}
+
+.inner-circle{
+    width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    background-color: #D1D5DB;
+
+}
+.inner-circle.active{
+    background-color: #4318ff;
+}
+
+/* 각 단계의 텍스트 */
+.step p {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+/* 활성화된 텍스트 */
+.step.active p {
+    color: black;
+    font-weight: 600;
+}
+
+.line {
+    width: 85px;
+    height: 3px;
+    background-color: #d0d5dd;
+    margin-top: 25px;
+    float: left;
+}
+
+.line.active{
+    background-color: #4318ff;
+}
+
+/* 첫 번째와 마지막 단계에 라인 표시 안함 */
+.step:first-child .line,
+.step:last-child .line {
+    display: none;
+}
+
+
+/*---------------------------상단 구역--------------------------*/
+/* 공통 스타일 */
+.inspection-detail {
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    font-family: 'Noto Sans KR', sans-serif;
+    box-sizing: border-box;
+    margin-bottom: 40px;
+}
+
+
+.inspection-info {
+    border: 1px solid #D0D5DD;
+    border-radius: 10px;
+}
+
+.inspection-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    table-layout: auto;
+}
+
+.inspection-table td {
+
+    vertical-align: top;
+    font-size: 1rem;
+    color: #333;
+}
+.info-title{
+    border-right: 1px solid #D0D5DD;
+}
+
+.inspection-table td:last-child {
+    border-right: none;
+}
+
+.info-title {
+    width: 180px;
+    vertical-align: top;
+    word-break: break-word; /* 텍스트가 길면 줄 바꿈 */
+    font-weight: 700;
+    color: #333;
+    white-space: nowrap;
+    padding: 15px;
+    box-sizing: border-box;
+}
+.inspection-table td.info-title p {
+    display: block;
+    margin: 0;
+    line-height: 1.4; /* 줄 간격 설정 */
+    word-wrap: break-word; /* 긴 단어를 줄 바꿈 처리 */
+    white-space: normal; /* 여러 줄로 표시되도록 설정 */
+}
+
+.info-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 25px;
+    box-sizing: border-box;
+}
+
+.store-name {
+    font-weight: 700;
+    color: #D90D0D;
+    margin-right: 10px;
+}
+
+.store-subtitle, .inspection-date, .inspector-name {
+    font-size: 1rem;
+    color: #666;
+    margin-right: 20px;
+}
+/*--------------------서명---------------------*/
+.signature-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    width: 100%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+}
+
+.signature-area {
+    width: 55%;
+    background-color: #FFF8E5;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    position: relative;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.signature-area canvas {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
+
+.signature-placeholder {
+    position: absolute;
+    color: #999;
+    text-align: center;
+    font-size: 16px;
+}
+
+.details-section {
+    width: 42%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.details-section>div:last-child{
+    height: 190px;
+    display: flex;
+    flex-direction: column;
+}
+
+.details-section input, .details-section textarea {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+}
+.details-section textarea{
+    height: auto;
+    flex-grow: 1;
+    margin-bottom: 0;
+    box-sizing: border-box;
+    resize: none;
+}
+
+
+.details-section label {
+    font-size: 18px;
+    font-weight: 500;
+    color: #48505E;
+    margin-bottom: 10px;
+}
+
+/*---------------------중단 버튼 디자인-----------------------*/
+#go-inspection-wrap{
+    width: 100%;
+    height: 50px;
+
+}
+.go-inspection{
+    float: right;
+    width: 15vw; /* 화면 너비의 15% */
+    height: 50px;
+    border-radius: 10px;
+    border: none;
+    font: 500 1em "Noto Sans KR";
+    color: white;
+    background: #4318FF;
+    margin-left: 15px;
+}
+
+
+
+
+/*------------------- 반응형 디자인 --------------------*/
+@media screen and (max-width: 1000px) {
+    .info-title{
+        padding: 29px;
+    }
+    .info-details span:nth-child(3) {
+        flex-basis: 50%;
+        margin-top: 10px;
+    }
+    .info-details span:nth-child(4) {
+        margin-top: 10px;
+    }
+}
+@media screen and (max-width: 910px) {
+
+}
+@media screen and (max-width: 768px) {
+    .info-title{
+        border-right: none;
+        border-bottom: solid 1px #D0D5DD;
+        align-items: center;
+    }
+
+    .inspection-table td {
+        display: block;
+        width: 100%;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    .info-details {
+        overflow: hidden;
+    }
+
+    .info-details > span {
+        float: left;
+        width: calc(50% - 10px);
+        margin-bottom: 10px;
+        margin-right: 10px;
+    }
+
+    .info-details > span:nth-child(2n) {
+        margin-right: 0; /* 짝수 번째 요소는 오른쪽 여백 제거 */
+    }
+
+    .store-name {
+        margin-bottom: 5px;
+    }
+
+    .store-subtitle, .inspection-date, .inspector-name {
+        margin-bottom: 5px;
+    }
+
+    /* -----------------서명------------------ */
+    .signature-container {
+        flex-direction: column;
+    }
+    .signature-area, .details-section {
+        width: 100%;
+    }
+    .details-section input, .details-section textarea {
+        margin-bottom: 0;
+    }
+
+    .details-section label {
+        margin-top: 20px;
+    }
+
+
+
+}
+@media screen and (max-width: 580px) {
+    body{
+        padding: 20px !important;
+        box-sizing: border-box;
+    }
+    .progress-container {
+        width: 310px;
+        min-height: 100px;
+        margin: 0 auto;
+    }
+    .circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        border: 2px solid #9CA3AF;
+        background-color: #F4F7FF;
+        margin-bottom: 10px;
+    }
+
+    .inner-circle{
+        width: 14px;
+        height: 14px;
+        border-radius: 7px;
+        background-color: #D1D5DB;
+
+    }
+
+    .step p {
+        font-size: 10px;
+        color: #666;
+        margin: 0;
+    }
+
+    /* 활성화된 텍스트 */
+    .step.active p {
+        color: black;
+        font-weight: 600;
+    }
+
+    .line {
+        width: 50px;
+        height: 2px;
+        background-color: #d0d5dd;
+        margin-top: 19px;
+        float: left;
+    }
+
+    /*--------------------탭세부결과-------------------*/
+
+}
+
+@media screen and (max-width: 470px) {
+    .info-details > span {
+        display: block;
+        float: none;
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    .info-details > span:last-child{
+        margin-bottom: 0;
+    }
+
+    .subitem-info {
+        list-style-type: none;
+        padding: 0;
+        display: block;
+    }
+
+}
