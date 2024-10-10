@@ -2,7 +2,6 @@ package com.sims.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -68,15 +67,14 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
         );
 
-//        http.formLogin(auth -> auth
-//                .loginPage("/login")
-//                .successHandler(new CustomAuthenticationSuccessHandler()) // Custom handler 등록
-//                .failureUrl("/login?error=true")
-//                .usernameParameter("username")
-//                .passwordParameter("password")
-//                .loginProcessingUrl("/loginProcess")
-//        );
-//
+        http.formLogin(auth -> auth
+                .loginPage("/login")
+                .failureUrl("/login?error=true")
+                .usernameParameter("mbrNo")
+                .passwordParameter("mbrPw")
+                .loginProcessingUrl("/loginProcess")
+        );
+
 //        http.logout(logout -> logout
 //                .logoutUrl("/logout")
 //                .logoutSuccessUrl("/login?logout=true")
