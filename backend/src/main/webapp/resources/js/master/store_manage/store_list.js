@@ -208,4 +208,260 @@ $(function () {
       $("#checkAll").prop("checked", false);
     }
   });
+
+  // 모달안의 사업자등록증 함수
+  // 모달안의 사업자등록증 함수
+  function fileCus() {
+    $(".file_cus input[type=file]").on("change", function () {
+      const fileName = $(this).val().split("\\").pop();
+      const fileDisplay = $(this).siblings(".file_display");
+      const fileNameDisplay = fileDisplay.find(".file_name");
+      const fileRemoveButton = fileDisplay.find(".file_remove");
+
+      fileNameDisplay.text(fileName || "파일을 선택해주세요.");
+
+      // 파일이 선택되면 'X' 버튼을 보여줍니다.
+      if (fileName) {
+        fileRemoveButton.show();
+      } else {
+        fileRemoveButton.hide();
+      }
+    });
+
+    // 'X' 버튼 클릭 시 파일 입력 초기화
+    $(".file_cus .file_remove").on("click", function (e) {
+      e.preventDefault(); // 기본 동작 방지
+      const fileDisplay = $(this).closest(".file_display");
+      const fileInput = $(this).closest("label").find("input[type=file]");
+      const fileNameDisplay = fileDisplay.find(".file_name");
+
+      // 파일 입력 초기화
+      fileInput.val("");
+      // 파일명 표시 영역 초기화
+      fileNameDisplay.text("파일을 선택해주세요.");
+      // 'X' 버튼 숨기기
+      $(this).hide();
+    });
+  }
+
+  fileCus();
+
+  // 중간테이블 영역 시작
+  // ROW 데이터 정의
+  const rowData = [
+    {
+      no: "01",
+      store: "혜화점",
+      brand: "KCC 크라상",
+      BRN: "111-11-1234",
+      OPEN: "10:30",
+      OWN: "노승우",
+      SV: "노승우",
+      INSP: "노승우",
+      more: "수정",
+    },
+    {
+      no: "02",
+      store: "동대문점",
+      brand: "KCC 크라상",
+      BRN: "111-11-1234",
+      OPEN: "10:30",
+      OWN: "노승우",
+      SV: "노승우",
+      INSP: "노승우",
+      more: "수정",
+    },
+    {
+      no: "03",
+      store: "천호점",
+      brand: "KCC 크라상",
+      BRN: "111-11-1234",
+      OPEN: "10:30",
+      OWN: "이지훈",
+      SV: "이지훈",
+      INSP: "이지훈",
+      more: "수정",
+    },
+    {
+      no: "04",
+      store: "건대입구점",
+      brand: "KCC 카페",
+      BRN: "111-11-1234",
+      OPEN: "10:30",
+      OWN: "이지훈",
+      SV: "이지훈",
+      INSP: "이지훈",
+      more: "수정",
+    },
+    {
+      no: "05",
+      store: "명동점",
+      brand: "KCC 카페",
+      BRN: "111-11-1234",
+      OPEN: "10:30",
+      OWN: "유재원",
+      SV: "유재원",
+      INSP: "유재원",
+      more: "수정",
+    },
+    {
+      no: "06",
+      store: "수유점",
+      brand: "KCC 카페",
+      BRN: "111-11-1234",
+      OPEN: "10:30",
+      OWN: "유재원",
+      SV: "유재원",
+      INSP: "유재원",
+      more: "수정",
+    },
+    {
+      no: "07",
+      store: "청량리점",
+      brand: "KCC 카페",
+      BRN: "111-11-1234",
+      OPEN: "10:30",
+      OWN: "원승언",
+      SV: "원승언",
+      INSP: "원승언",
+      more: "수정",
+    },
+    {
+      no: "08",
+      store: "왕십리점",
+      brand: "KCC 디저트",
+      BRN: "111-11-1234",
+      OPEN: "10:30",
+      OWN: "원승언",
+      SV: "원승언",
+      INSP: "원승언",
+      more: "수정",
+    },
+  ];
+
+  // 통합 설정 객체
+  const gridOptions = {
+    rowData: rowData,
+    columnDefs: [
+      {
+        headerName: "",
+        checkboxSelection: true,
+        headerCheckboxSelection: true,
+        minWidth: 45,
+        width: 70,
+        resizable: true,
+        cellStyle: { backgroundColor: "#ffffff" },
+      },
+      { field: "no", headerName: "No", width: 80, minWidth: 50 },
+      { field: "store", headerName: "가맹점", width: 150, minWidth: 50 },
+      { field: "brand", headerName: "브랜드", width: 150, minWidth: 110 },
+      {
+        field: "BRN",
+        headerName: "사업자등록번호",
+        width: 150,
+        minWidth: 110,
+      },
+      {
+        field: "OPEN",
+        headerName: "오픈시간",
+        width: 150,
+        minWidth: 110,
+      },
+      { field: "OWN", headerName: "점주명", width: 150, minWidth: 110 },
+      { field: "SV", headerName: "SV", width: 150, minWidth: 110 },
+      { field: "INSP", headerName: "점검자", width: 150, minWidth: 110 },
+      {
+        headerName: "수정",
+        field: "more",
+        width: 150,
+        minWidth: 120,
+        cellRenderer: function (params) {
+          const button = document.createElement("button");
+          button.innerText = "수정";
+          button.setAttribute("data-bs-toggle", "modal");
+          button.setAttribute("data-bs-target", "#DetailStore");
+          button.classList.add("modal_btn", "more");
+          return button;
+        },
+        pinned: "right",
+      },
+    ],
+    autoSizeStrategy: {
+      type: "fitGridWidth",
+      defaultMinWidth: 10,
+    },
+    rowHeight: 45,
+    rowSelection: "multiple",
+    pagination: true,
+    paginationAutoPageSize: true,
+    onCellClicked: (params) => {},
+  };
+
+  const gridDiv = document.querySelector("#myGrid");
+  const gridApi = agGrid.createGrid(gridDiv, gridOptions);
+
+  // 체크리스트 개수를 업데이트하는 함수
+  function updateChecklistCount() {
+    const checklistCount = document.querySelector(".checklist_count");
+    if (checklistCount) {
+      checklistCount.textContent = rowData.length; // 현재 rowData 길이를 업데이트
+    }
+  }
+
+  // 처음 페이지 로드 시 checklist_count 값 설정
+  updateChecklistCount();
+
+  function createNewRowData() {
+    var newData = {
+      no: rowData.length + 1,
+      store: "",
+      brand: "",
+      BRN: "",
+      OPEN: "",
+      OWN: "",
+      SV: "",
+      INSP: "",
+      more: "",
+    };
+    return newData;
+  }
+
+  function onAddRow() {
+    var newItem = createNewRowData();
+    rowData.push(newItem);
+    gridApi.applyTransaction({ add: [newItem] });
+    updateChecklistCount();
+  }
+
+  function onDeleteRow() {
+    var selectedRows = gridApi.getSelectedRows();
+    if (selectedRows.length > 0) {
+      gridApi.applyTransaction({ remove: selectedRows });
+
+      selectedRows.forEach((row) => {
+        const index = rowData.findIndex((data) => data.no === row.no);
+        if (index > -1) {
+          rowData.splice(index, 1);
+        }
+      });
+      updateChecklistCount();
+    } else {
+      Swal.fire({
+        title: "경고!",
+        text: "삭제할 항목을 선택해주세요.",
+        icon: "warning",
+        confirmButtonText: "확인",
+      });
+    }
+  }
+
+  $("#addRowButton").on("click", function () {
+    onAddRow();
+  });
+
+  $("#deleteRowButton").on("click", function () {
+    onDeleteRow();
+  });
+
+  //  중간 테이블 영역 끝
 });

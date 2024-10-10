@@ -96,7 +96,7 @@
                         </div>
                     </div>
                     <%-- 자동 완성 영역 --%>
-                    <div class="container">
+                    <div class="container-fluid">
                         <div class="row g-3 align-items-center pt-4 top-search-box d-flex">
                             <!-- 가맹점 라벨과 검색 필드 -->
                             <div class="col-lg-2 col-md-4 col-12">
@@ -186,7 +186,7 @@
                             </div>
 
                             <!-- 점검자 라벨과 검색 필드 -->
-                            <div class="col-lg-2 col-md-4 col-12">
+                            <div class="col-lg-3 col-md-4 col-12">
                                 <label for="inspector" class="form-label">점검자</label>
                                 <div class="wrapper" data-autocomplete="inspector">
                                     <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
@@ -213,85 +213,17 @@
                 </div>
                 <%--  top 영역끝  --%>
 
-                <%--  중간 게시판 목록 시작  --%>
-                <%--                <div class="middle-box py-2">--%>
-                <%--                    <div class="middle-content ">--%>
-                <%--                        <div class="d-flex justify-content-end py-4">--%>
-                <%--                            <div class="top-button-wrapper px-2">--%>
-                <%--                                <div class="top-button middle-register">추가</div>--%>
-                <%--                            </div>--%>
-                <%--                            <div class="">--%>
-                <%--                                <div class="top-button-wrapper px-2">--%>
-                <%--                                    <div class="top-button middle-delete">삭제</div>--%>
-                <%--                                </div>--%>
-                <%--                            </div>--%>
-                <%--                        </div>--%>
-                <%--                        <div class="table-responsive">--%>
-                <%--                            <table class="table">--%>
-                <%--                                <thead>--%>
-                <%--                                <tr>--%>
-                <%--                                    <th><input type="checkbox" id="checkAll"/></th>--%>
-                <%--                                    <th>No</th>--%>
-                <%--                                    <th>가맹점명</th>--%>
-                <%--                                    <th>브랜드</th>--%>
-                <%--                                    <th>체크리스트명</th>--%>
-                <%--                                    <th>점검예정일</th>--%>
-                <%--                                    <th>점검자</th>--%>
-                <%--                                    <th>자세히보기</th>--%>
 
-                <%--                                </tr>--%>
-                <%--                                </thead>--%>
-                <%--                                <tbody>--%>
-                <%--                                <tr>--%>
-                <%--                                    <td><input type="checkbox" class="checkItem"/></td>--%>
-                <%--                                    <td>1</td>--%>
-                <%--                                    <td>혜화점</td>--%>
-                <%--                                    <td>KCC 크라상</td>--%>
-                <%--                                    <td>KCC 크라상 위생점검표</td>--%>
-                <%--                                    <td>2024.10.30</td>--%>
-                <%--                                    <td>노승우</td>--%>
-                <%--                                    <td>--%>
-                <%--                                        <button class="more modal_btn">자세히 보기</button>--%>
-                <%--                                    </td>--%>
-                <%--                                </tr>--%>
-
-
-                <%--                                </tbody>--%>
-                <%--                            </table>--%>
-                <%--                        </div>--%>
-                <%--                        <div class="d-flex justify-content-end align-items-center middle-pagebox ">--%>
-
-                <%--                            <div class="pe-3 d-flex align-item-center">--%>
-                <%--                                <label for="" style="--%>
-                <%--                                        width: 101px;--%>
-                <%--                                        padding-top: 6px;--%>
-                <%--                                        padding-right: 10px;--%>
-                <%--                                       ">페이지 : </label>--%>
-                <%--                                <select name="" id="" class="form-select">--%>
-                <%--                                    <option value="1" selected>1페이지</option>--%>
-                <%--                                    <option value="2">2페이지</option>--%>
-                <%--                                    <option value="3">3페이지</option>--%>
-                <%--                                    <option value="4">4페이지</option>--%>
-                <%--                                    <option value="5">5페이지</option>--%>
-                <%--                                </select>--%>
-                <%--                            </div>--%>
-                <%--                            <div style="display: flex; justify-content: center; align-items: center;">--%>
-                <%--                                <a href="" style="text-decoration: none;margin-right: 10px">--%>
-                <%--                                    <i class="fa-solid fa-caret-left middle-page-arrow"--%>
-                <%--                                       style="color: black; font-size: 1.4rem; vertical-align: middle;"></i>--%>
-                <%--                                </a>--%>
-                <%--                                페이지 <span style="vertical-align: middle; margin: 0 10px;">20</span> 중 <span--%>
-                <%--                                    style="vertical-align: middle; margin: 0 10px;">1</span>--%>
-                <%--                                <a href="" style="text-decoration: none;">--%>
-                <%--                                    <i class="fa-solid fa-caret-right middle-page-arrow"--%>
-                <%--                                       style="color: black; font-size: 1.4rem; vertical-align: middle;"></i>--%>
-                <%--                                </a>--%>
-                <%--                            </div>--%>
-
-                <%--                        </div>--%>
-                <%--                    </div>--%>
                 <div class="middle-box py-2">
                     <div class="middle-content ">
+                        <div class="d-flex justify-content-end mb-3">
+                            <div class="px-2">
+                                <div class="top-button top-reset"  id="addRowButton" >추가</div>
+                            </div>
+                            <div class="px-2">
+                                <div class="top-button top-reset"  id="deleteRowButton">삭제</div>
+                            </div>
+                        </div>
                         <div id="myGrid" class="ag-theme-alpine" style="height: 500px; width: 100%;"></div>
                     </div>
                 </div>
@@ -299,7 +231,7 @@
 
                 <%--                    <!-- 중간 게시판 목록 끝 -->--%>
 
-                <%--                </div>--%>
+
 
                 <%--  하단 점검 시작  --%>
 
@@ -321,7 +253,7 @@
                     </div>
 
                     <!-- 검색 필드 섹션 -->
-                    <div class="container">
+                    <div class="container-fluid">
                         <div class="row g-3 align-items-center pt-4">
 
                             <!-- 점검유형 -->
@@ -618,7 +550,7 @@
                             <span class="me-3">01</span>
                             <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
                         </div>
-                        <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                        <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal" style="border-radius: 8px;">
                             미리보기
                             <i class="fa-regular fa-eye"></i>
                         </button>
@@ -632,7 +564,7 @@
 
             <%-------------- footer --------------%>
             <div class="modal-footer">
-                <button class="btn btn-secondary">취소</button>
+                <button class="btn btn-secondary"  data-bs-dismiss="modal" aria-label="Close">취소</button>
                 <button class="" data-bs-dismiss="modal">선택</button>
             </div>
             <%-------------- footer --------------%>
@@ -996,7 +928,9 @@
 </div >
 
 
-<script src="/resources/js/qsc/inspection_schedule/schedule_list.js"></script>
 <script src="/resources/js/qsc/store_inspection/popup_inspection.js"></script>
+<script src="/resources/js/qsc/inspection_schedule/schedule_list.js"></script>
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>
