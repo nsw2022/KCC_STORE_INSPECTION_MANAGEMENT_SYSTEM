@@ -175,6 +175,299 @@ body{
     margin-right: 20px;
 }
 
+/*--------------------탭 디자인------------------*/
+.inspection-section {
+    width: 100%;
+    margin: 0 auto;
+    padding: 30px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+}
+
+.inspection-tabs{
+    width: 100%;
+    height: 50px;
+    /*display: flex;*/
+    /*justify-content: space-between;*/
+    margin-bottom: 20px;
+}
+
+.inspection-tab{
+    float: left;
+    margin-right: 15px;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    border: solid 1px #D0D5DD;
+    border-radius: 10px;
+    background-color: white;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 400;
+    color: #9CA3AF;
+}
+.inspection-tab:last-child{
+    margin-right: 0;
+}
+.inspection-tab:hover{
+    border: solid 1px #4318FF;
+    font-weight: 500;
+    color: #4318FF;
+    transition: 0.3s ease-out;
+}
+
+.inspection-tab.active{
+    background-color: #4318FF;
+    color: white;
+    font-weight: 500;
+}
+
+/*-----------------tab부분 전환 디자인-------------*/
+
+/* 콘텐츠 블록 기본 숨기기 */
+.tab-content {
+    display: none;
+}
+/* 보고서 간략, 세부결과의 기본 스타일 */
+.report-summary, .detailed-result {
+    width: 100%;
+}
+
+/*------------------보고서 간략 디자인----------------*/
+
+.report-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+}
+
+/* 점수표 섹션 */
+.score-section {
+    width: 48%;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background-color: #fff;
+    overflow: hidden;
+}
+
+.score-table {
+    width: 100%;
+    border-collapse: collapse;
+    padding: 20px;
+    box-sizing: border-box;
+    border: none;
+}
+
+.score-table th, .score-table td {
+    padding: 10px;
+    text-align: center;
+    border: none;
+}
+
+.score-table thead{
+    background-color: #EDEDED;
+    border-bottom: solid 1px #D0D5DD;
+}
+
+.grade-section {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 20px 20px 20px;
+    box-sizing: border-box;
+}
+
+.grade-box, .total-score-box {
+    width: 48%;
+    height: 100px;
+    /*text-align: center;*/
+    padding: 15px;
+    box-sizing: border-box;
+    background-color: #FFF8E5;
+    border-radius: 8px;
+    border: 1px solid #D0D5DD;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.grade-box>p, .total-score-box>p{
+    margin-bottom: 0;
+}
+
+.grade-text, .total-score-text {
+    font-size: 18px;
+    font-weight: 400;
+
+}
+.grade-text>span, .total-score-text>span{
+    font-size: 24px;
+    font-weight: 500;
+    color: #4318FF;
+}
+
+/* 행정처분 섹션 */
+.admin-action-section {
+    width: 48%;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #fff;
+}
+
+.admin-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.admin-box {
+    display: flex;
+    justify-content: space-between;
+}
+
+.fine-box-wrapper, .closure-box-wrapper{
+    width: 48%;
+}
+
+.fine-box, .closure-box {
+    width: 100%;
+    height: 100px;
+    text-align: right;
+    padding: 15px;
+    box-sizing: border-box;
+    background-color: #FFF8E5;
+    border-radius: 8px;
+    border: 1px solid #D0D5DD;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.fine-amount, .closure-days {
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 0;
+}
+.fine-amount>span, .closure-days>span{
+    color: #D90D0D;
+    font-weight: 500;
+    font-size: 24px;
+}
+
+
+
+
+
+
+/*------------------점수표기 디자인----------------*/
+.inspection-total-score {
+    width: 100%;
+    height: 60px;
+    border-radius: 10px;
+    background-color: #D9DDFF;
+    margin-top: 20px;
+    text-align: right;
+    font-size: 18px;
+    font-weight: bold;
+    color: #6258ff;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.inspection-total-score span {
+    color: red;
+}
+
+/*---------------------세부결과-----------------------*/
+
+.tab-content.detailed-result {
+    background-color: white;
+    border-radius: 10px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* 테이블과 상세보기 버튼 */
+.detailed-section {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+.detailed-item {
+    flex: 1 1 48%;  /* 2개씩 배치되도록 설정 */
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    margin-right: 10px;
+}
+.detailed-item:nth-child(2n){
+    margin-right: 0;
+}
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.item-header h3 {
+    font-size: 16px;
+    color: #333;
+    font-weight: bold;
+    margin: 0;
+}
+
+.detail-btn {
+    padding: 5px 10px;
+    background-color: white;
+    border-radius: 10px;
+    border: solid 1px #D0D5DD;
+    cursor: pointer;
+    font-size: 14px;
+    color: #9CA3AF;
+}
+.detail-btn:hover{
+    border: solid 1px #4A00E0;
+    background-color: #4A00E0;
+    color: white;
+    transition: ease-out 0.3s;
+}
+
+/* 테이블 스타일 */
+.detailed-table {
+    width: 100%;  /* 테이블이 부모 컨테이너에 맞게 확장됨 */
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.detailed-table th, .detailed-table td {
+    text-align: center;
+    padding: 10px;
+}
+.detailed-table th{
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+}
+.detailed-table td{
+    border: none;
+}
+
+.detailed-table thead {
+    background-color: #EDEDED;
+    font-weight: bold;
+}
 
 
 
@@ -197,6 +490,112 @@ body{
 }
 
 
+/*-------------------하단 상세보기 섹션------------------*/
+#inspection-lastCheck-list {
+    width: 100%;
+    margin: 0 auto;
+    margin-top: 30px;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+.item-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.check-item {
+    display: flex;
+    flex-wrap: wrap; /* 여러 줄로 감싸기 */
+    gap: 20px; /* 요소 간격 */
+    justify-content: space-between;
+}
+
+.check-subitem {
+    flex: 1 1 48%; /* 각 항목이 한 행에 두 개씩 배치되도록 설정 */
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.subitem-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.subitem-info-wrapper {
+    border: 1px solid #D0D5DD;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 10px;
+}
+
+.subitem-info-wrapper p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.subitem-info {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    gap: 15px;
+}
+
+.info-box {
+    background-color: #FFF8E5;
+    border-radius: 10px;
+    padding: 10px 20px;
+    text-align: center;
+    flex: 1;
+}
+
+.info-box p {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+.info-box .score {
+    font-size: 16px;
+    font-weight: 700;
+    color: red; /* 강조 */
+}
+
+.edit-btn {
+    padding: 10px 20px;
+    background-color: white;
+    border: 1px solid #4318FF;
+    border-radius: 10px;
+    color: #4318FF;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease-out;
+    text-align: center;
+    display: block;
+    width: 100%;
+}
+
+.edit-btn:hover {
+    background-color: #4318FF;
+    color: white;
+}
+.inspection-content-wrapper{
+    padding: 20px 0 0 0 !important;
+    box-sizing: border-box;
+}
+
+
+
+
+
+
 /*------------------- 반응형 디자인 --------------------*/
 @media screen and (max-width: 1000px) {
     .info-title{
@@ -211,7 +610,9 @@ body{
     }
 }
 @media screen and (max-width: 910px) {
-
+    .detailed-item {
+        margin-right: 0;
+    }
 }
 @media screen and (max-width: 768px) {
     .info-title{
@@ -250,7 +651,54 @@ body{
         margin-bottom: 5px;
     }
 
-    /* -----------------서명------------------ */
+    /* -----------------보고서 간략 반응형 ------------------ */
+
+    .report-summary {
+        flex-direction: column;
+    }
+
+    .score-section, .admin-action-section {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .grade-section {
+        flex-direction: column;
+    }
+
+    .grade-box, .total-score-box {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .admin-box {
+        flex-direction: column;
+    }
+
+    .fine-box, .closure-box {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .fine-box-wrapper, .closure-box-wrapper{
+        width: 100%;
+    }
+
+    /*--------------------탭세부결과-------------------*/
+    .detailed-section {
+        display: block;
+    }
+
+    .detailed-item {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    /*-------------------하단 상세보기 섹션------------------*/
+
+    .check-subitem {
+        flex: 1 1 100%;
+    }
 
 
 
@@ -322,6 +770,11 @@ body{
         list-style-type: none;
         padding: 0;
         display: block;
+    }
+
+    .info-box{
+        width: 100%;
+        margin-bottom: 15px;
     }
 
 }

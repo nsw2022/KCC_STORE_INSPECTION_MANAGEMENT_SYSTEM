@@ -307,6 +307,29 @@ table.calendar td:hover {
 
 /*----------------------------지도-----------------------------*/
 
+.map-section{
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    box-sizing: border-box;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+#map-input-container{
+    width: 20%;
+    padding-right: 20px;
+    box-sizing: border-box;
+}
+#map{
+    width: 80%;
+    border-radius: 10px;
+}
+
 
 /*----------------------------지도에 따른 체크리스트-----------------------------*/
 /* 테이블 컨테이너 스타일 */

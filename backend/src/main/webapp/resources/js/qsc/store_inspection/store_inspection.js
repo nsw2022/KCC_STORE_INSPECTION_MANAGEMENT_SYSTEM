@@ -4,31 +4,43 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-function calender(){
-
+function calender() {
     const calendarBody = document.getElementById('calendar-body');
     const monthSelect = document.getElementById('month-select');
-    const yearDisplay = document.getElementById('year');
+    const yearSelect = document.getElementById('year-select');
     let selectedDate = null;
 
-    function generateCalendar(month, year) {
-        // 달력 날짜 초기화
-        calendarBody.innerHTML = '';
+    // 년도 드롭다운 생성 함수
+    function populateYearSelect(startYear = 1900, endYear = 2100, defaultYear = 2024) {
+        yearSelect.innerHTML = ''; // 기존 옵션 제거
+        for (let year = startYear; year <= endYear; year++) {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = `${year}년`;
+            if (year === defaultYear) {
+                option.selected = true;
+            }
+            yearSelect.appendChild(option);
+        }
+    }
 
-        // 해당 월의 첫 번째 날과 마지막 날 계산
-        const firstDay = new Date(year, month, 1).getDay();
-        const lastDate = new Date(year, month + 1, 0).getDate();
+    // 달력 생성 함수
+    function generateCalendar(month, year) {
+        calendarBody.innerHTML = ''; // 기존 달력 내용 초기화
+
+        const firstDay = new Date(year, month, 1).getDay(); // 해당 월의 첫 번째 날의 요일
+        const lastDate = new Date(year, month + 1, 0).getDate(); // 해당 월의 마지막 날짜
 
         let day = 1;
         let row = document.createElement('tr');
 
-        // 월요일 시작으로 설정
+        // 월요일 시작을 위해 빈 칸 채우기
         for (let i = 0; i < (firstDay === 0 ? 6 : firstDay - 1); i++) {
             const emptyCell = document.createElement('td');
             row.appendChild(emptyCell);
         }
 
-        // 날짜 채우기
+        // 달력 날짜 채우기
         for (let i = firstDay === 0 ? 6 : firstDay - 1; i < 7; i++) {
             const cell = document.createElement('td');
             cell.textContent = day++;
@@ -63,17 +75,23 @@ function calender(){
         }
     }
 
-    // 초기 달력 생성
-    const currentMonth = 3;  // April
-    const currentYear = 2024;
-    generateCalendar(currentMonth, currentYear);
-
-    // 월 선택 시 달력 갱신
-    monthSelect.addEventListener('change', function () {
+    // 년도 및 월 선택 시 달력 갱신
+    function updateCalendar() {
+        const selectedYear = parseInt(yearSelect.value);
         const selectedMonth = parseInt(monthSelect.value);
-        generateCalendar(selectedMonth, parseInt(yearDisplay.textContent));
-    });
+        generateCalendar(selectedMonth, selectedYear);
+    }
+
+    // 페이지 로드 시 초기 설정
+    populateYearSelect(); // 년도 드롭다운 생성
+    updateCalendar(); // 초기 달력 생성
+
+    // 월 또는 년도 변경 시 달력 갱신
+    monthSelect.addEventListener('change', updateCalendar);
+    yearSelect.addEventListener('change', updateCalendar);
 }
+
+
 function scheduleScroll() {
     // 모든 td 요소를 선택
     const tdElements = document.querySelectorAll('.schedule-table tbody td');
@@ -99,5 +117,3 @@ function scheduleScroll() {
         }
     });
 }
-
-x``

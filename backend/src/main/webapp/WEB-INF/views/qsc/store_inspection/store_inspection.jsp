@@ -76,6 +76,12 @@
 
                     <div class="calendar-container">
                         <div class="calendar-header">
+                            <!-- 년도 선택 추가 -->
+                            <select id="year-select">
+                                <!-- JS에서 동적으로 추가 -->
+                            </select>
+
+                            <!-- 월 선택 -->
                             <select id="month-select">
                                 <option value="0">January</option>
                                 <option value="1">February</option>
@@ -90,7 +96,6 @@
                                 <option value="10">November</option>
                                 <option value="11">December</option>
                             </select>
-                            <span id="year">2024</span>
                         </div>
 
                         <table class="calendar">
@@ -106,7 +111,7 @@
                             </tr>
                             </thead>
                             <tbody id="calendar-body">
-                            <!-- 달력 날짜가 js생성 -->
+                            <!-- 달력 날짜가 js 생성 -->
                             </tbody>
                         </table>
                     </div>
@@ -175,17 +180,36 @@
                     </div>
                 </section>
 
-                <section class="map-section mt-5">
-                    <h3>가맹점 위치</h3>
-                    <div id="map" style="height: 400px; background-color: #f0f0f0; position: relative">
-                        <!-- 여기에 지도 라이브러리 추가 -->
-                        <div class="search" style="    position: absolute;
-    z-index: 1000;
-    top: 20px;
-    left: 20px;">
+                <section class="map-section">
+
+                    <div id="map-input-container">
+                        <h3>가맹점 위치</h3>
+                        <div class="search">
                             <input type="text" placeholder="검색할 주소" id="address">
                             <input  id="submit" type="button" value="주소검색" >
                         </div>
+
+                        <div class="input-group">
+                            <label for="start">출발지:</label>
+                            <input type="text" id="start" placeholder="출발지 주소를 입력하세요">
+                        </div>
+                        <div class="input-group">
+                            <label for="destination1">목적지 1:</label>
+                            <input type="text" id="destination1" placeholder="목적지 1 주소를 입력하세요">
+                        </div>
+                        <div class="input-group">
+                            <label for="destination2">목적지 2:</label>
+                            <input type="text" id="destination2" placeholder="목적지 2 주소를 입력하세요">
+                        </div>
+                        <div class="input-group">
+                            <label for="destination3">목적지 3:</label>
+                            <input type="text" id="destination3" placeholder="목적지 3 주소를 입력하세요">
+                        </div>
+                        <button id="calculateRoutes">최단 거리 계산 및 경로 표시</button>
+
+                    </div>
+                    <div id="map" style="height: 400px; background-color: #f0f0f0;">
+                        <!-- 여기에 지도 라이브러리 추가 -->
 
 
                     </div>
