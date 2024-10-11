@@ -4,11 +4,11 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sims.home.dashboard.mapper.MemberMapper">
-    <select id="getMemberByMbrId" resultType="Member">
+    <select id="getMemberByMbrId" resultType="MemberDao">
         select * from member where mbr_no = #{mbrNo}
     </select>
 
-    <insert id="insertTestMember" parameterType="Member">
+    <insert id="insertTestMember" parameterType="MemberDao">
         INSERT INTO member (
         MBR_ID, MBR_NO, MBR_PW, MBR_NM, MBR_ROLE_CD, MBR_STTS_CD, TEL, HIRE_DT, QUIT_DT, CRE_MBR_ID, UPD_MBR_ID, CRE_TM, UPD_TM, LAST_LOGIN_TM
         ) VALUES (
@@ -21,8 +21,8 @@
         </foreach>,
         1,
         '010-1234-5678',
-        '20241010',   -- HIRE_DT 형식에 맞게 8자리로 수정
-        NULL,         -- QUIT_DT 값이 NULL인 경우, 10글자 제한 오류가 발생하지 않음
+        '20241010',
+        NULL,
         1,
         NULL,
         TO_CHAR(SYSDATE, 'YYYYMMDDHH24MI'),

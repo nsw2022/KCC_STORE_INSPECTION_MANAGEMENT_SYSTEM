@@ -1,7 +1,8 @@
 package com.sims.home.dashboard.service;
 
-import com.sims.home.dashboard.domain.Member;
+import com.sims.home.dashboard.vo.MemberDao;
 import com.sims.home.dashboard.mapper.MemberMapper;
+import com.sims.home.dashboard.vo.MemberRegistRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,23 +20,21 @@ public class MemberServiceImpl implements MemberService{
     private final BCryptPasswordEncoder encoder;
 
     @Override
-    public int registTest() {
+    public int regist(MemberRegistRequest member) {
         List<String> roleCodes = new ArrayList<>();
-        roleCodes.add("ROLE_INSP");
+        roleCodes.add(member.getMbrRoleCd());
 
-        Member member = Member.builder()
-                .mbrNo("C202410001")
-                .mbrPw(encoder.encode("1234"))
-                .mbrNm("점검자")
+        MemberDao newMember = MemberDao.builder()
+                .mbrNo(member.getMbrNo())
+                .mbrPw(encoder.encode(member.getMbrPw()))
+                .mbrNm(member.getMbrNm())
                 .mbrRoleCd(roleCodes)
                 .mbrSttsCd(1)
-                .tel("010-1234-5678")
-                .hireDt("20241010")
-                .creMbrId(1)
-                .creTm("202410101010")
+                .tel(member.getTel())
+                .hireDt(member.getHireDt())
                 .build();
 
-        log.info("member = {}", member);
-        return memberMapper.insertTestMember(member);
+        log.info("member = {}", newMember);
+        return memberMapper.insertTestMember(newMember);
     }
 }

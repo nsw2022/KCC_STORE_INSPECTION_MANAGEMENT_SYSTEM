@@ -1,20 +1,16 @@
 package com.sims.home.dashboard.controller;
 
-import com.sims.home.dashboard.domain.Member;
-import com.sims.home.dashboard.mapper.MemberMapper;
 import com.sims.home.dashboard.service.MemberService;
+import com.sims.home.dashboard.vo.MemberRegistRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -38,10 +34,11 @@ public class HomeController {
         return "redirect:/";
     }
 
-    @GetMapping("/regist/test")
+    @PostMapping("/regist")
     @ResponseBody
-    public ResponseEntity<String> registTest() {
-        int result = memberService.registTest();
+    public ResponseEntity<String> registTest(@RequestBody MemberRegistRequest member) {
+        log.info("request = {}", member);
+        int result = memberService.regist(member);
         if(result == 1)
             return new ResponseEntity<>("success", HttpStatus.OK);
         else

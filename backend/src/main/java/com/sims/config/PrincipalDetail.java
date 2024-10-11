@@ -1,7 +1,7 @@
 package com.sims.config;
 
 
-import com.sims.home.dashboard.domain.Member;
+import com.sims.home.dashboard.vo.MemberDao;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +15,7 @@ import java.util.Collection;
 public class PrincipalDetail implements UserDetails {
 
     private static final Logger log = LoggerFactory.getLogger(PrincipalDetail.class);
-    private final Member member;
+    private final MemberDao member;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
