@@ -122,12 +122,12 @@
 						<div class="modal fade" id="storeChecklistModal" tabindex="-1" aria-labelledby="storeChecklistModalLabel" aria-hidden="true">
 							<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
 								<div class="modal-content">
-									<div class="modal-header px-4 py-3">
+									<div class="modal-header pe-3 ps-4 py-3 justify-content-between">
 										<div class="modal-title modal_store_name" id="storeChecklistModalLabel"></div>
 										<div class="modal_inspector_area">
 											<div class="modal_inspector_name px-3 py-2 border border-1"></div>
 										</div>
-										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+										<button type="button" class="btn-close ms-0" data-bs-dismiss="modal" aria-label="Close"></button>
 									</div>
 									<div class="modal-body py-0 mb-3">
 										<div class="checklist_item_area d-flex align-items-center">
