@@ -49,7 +49,7 @@ const gridOptions3 = {
 
     // 드래그 종료 후 seq 업데이트
     onRowDragEnd: params => {
-        updateRowDataSeq();
+        updateEvaluationRowDataSeq();
     },
 };
 
@@ -58,11 +58,12 @@ const gridApi3 = agGrid.createGrid(gridDiv3, gridOptions3);
 
 
 // 새로운 rowData 생성 함수
-function createNewRowData() {
+function createNewEvaluationRowData() {
     var newData3 = {
         no: (gridApi3.getDisplayedRowCount() + 1),
-        category_name: "",
-        reference_score: "",
+        evaluation_item: "",
+        evaluation_item_type: "",
+        score: null,
         status: "",
         seq: (gridApi3.getDisplayedRowCount() + 1).toString()
     };
@@ -70,13 +71,13 @@ function createNewRowData() {
 }
 
 // 행 추가 함수
-function onAddRow() {
-    var newItem3 = createNewRowData();
+function onAddEvaluationRow() {
+    var newItem3 = createNewEvaluationRowData();
     gridApi3.applyTransaction({ add: [newItem3] });
 }
 
 // 행 삭제 함수
-function onDeleteRow() {
+function onDeleteEvaluationRow() {
     var selectedRows = gridApi3.getSelectedRows();
     if (selectedRows.length > 0) {
         gridApi3.applyTransaction({ remove: selectedRows });
@@ -86,7 +87,7 @@ function onDeleteRow() {
 }
 
 // 드래그 완료 후 seq 값을 업데이트하는 함수
-function updateRowDataSeq() {
+function updateEvaluationRowDataSeq() {
     gridApi3.forEachNode((node, index) => {
         // 각 행의 seq를 1부터 순차적으로 할당
         node.data.seq = (index + 1).toString();

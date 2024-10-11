@@ -1,6 +1,9 @@
 body {
     font-family: "Noto Sans KR" !important;
 }
+.page-content{
+    height: 100vh !important;
+}
 .content {
     flex-grow: 1; /* 남은 공간을 모두 사용 */
     background-color: #f4f7ff;
@@ -88,8 +91,11 @@ body {
 
 .accordion-item{
     border-radius: 8px !important;
-    border-color: white !important;
-    /*box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;*/
+    border: none !important;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+}
+.accordion-button {
+    border-radius: 8px !important;
 }
 .middle-row .btn-light{
     width: 7vw;
@@ -112,7 +118,7 @@ body {
 
 
 
-/******************* accodion content *****************/
+/******************* accordion content *****************/
 .first-input-box{
     display: flex;
     justify-content: space-between;
@@ -153,6 +159,11 @@ body {
 }
 
 /******************   first modal   ********************/
+.modal .accordion-item{
+    border-radius: 8px !important;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px !important;
+}
+
 .list-group {
     max-height: 500px; /* 모바일에서는 최대 높이를 조금 줄임 */
     overflow-y: auto;
@@ -226,11 +237,12 @@ body {
 .inner-accordion-button{
     background-color: #EDEDED !important;
     font: 400 13px "Noto Sans KR" !important;
-    border-radius: 10px !important;
-
+    border-radius: 8px !important;
 }
 .inner-accordion-item{
-    border-radius: 10px !important;
+    border-radius: 8px !important;
+    border-color: #EDEDED !important;
+    border: 1px solid rgba(0, 0, 0, .125) !important;
     border-color: #EDEDED !important;
 }
 .modal-backdrop {
