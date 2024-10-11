@@ -2,6 +2,7 @@ package com.sims.home.dashboard.controller;
 
 import com.sims.home.dashboard.domain.Member;
 import com.sims.home.dashboard.mapper.MemberMapper;
+import com.sims.home.dashboard.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,8 +21,7 @@ import java.util.List;
 @Slf4j
 public class HomeController {
 
-    private final MemberMapper memberMapper;
-    private final BCryptPasswordEncoder encoder;
+    private final MemberService memberService;
 
     @GetMapping("/")
     public String index() {
@@ -38,27 +38,13 @@ public class HomeController {
         return "redirect:/";
     }
 
-    @GetMapping("/test")
+    @GetMapping("/regist/test")
     @ResponseBody
-    public ResponseEntity<String> test() {
-        // 권한 코드를 위한 리스트 생성
-        List<String> roleCodes = new ArrayList<>();
-        roleCodes.add("ROLE_ADMIN");
-
-        Member member = Member.builder()
-                .mbrNo("A202410001")
-                .mbrPw(encoder.encode("1234"))
-                .mbrNm("admin")
-                .mbrRoleCd(roleCodes)
-                .mbrSttsCd(1)
-                .tel("010-1234-5678")
-                .hireDt("20241010")
-                .creMbrId(1)
-                .creTm("202410101010")
-                .build();
-
-        log.info("member = {}", member);
-        memberMapper.insertTestMember(member);
-        return new ResponseEntity<>("success", HttpStatus.OK);
+    public ResponseEntity<String> registTest() {
+        int result = memberService.registTest();
+        if(result == 1)
+            return new ResponseEntity<>("success", HttpStatus.OK);
+        else
+            return new ResponseEntity<>("fail", HttpStatus.BAD_REQUEST);
     }
 }
