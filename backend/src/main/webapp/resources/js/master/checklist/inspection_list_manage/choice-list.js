@@ -48,7 +48,7 @@ const gridOptions4 = {
 
     // 드래그 종료 후 seq 업데이트
     onRowDragEnd: params => {
-        updateRowDataSeq();
+        updateChoiceListRowDataSeq();
     },
 };
 
@@ -57,11 +57,12 @@ const gridApi4 = agGrid.createGrid(gridDiv4, gridOptions4);
 
 
 // 새로운 rowData 생성 함수
-function createNewRowData() {
+function createNewChoiceListRowData() {
     var newData4 = {
         no: (gridApi4.getDisplayedRowCount() + 1),
-        category_name: "",
-        reference_score: "",
+        choice_list: "",
+        strength: "",
+        suitable: "",
         status: "",
         seq: (gridApi4.getDisplayedRowCount() + 1).toString()
     };
@@ -69,13 +70,13 @@ function createNewRowData() {
 }
 
 // 행 추가 함수
-function onAddRow() {
-    var newItem4 = createNewRowData();
+function onAddChoiceListRow() {
+    var newItem4 = createNewChoiceListRowData();
     gridApi4.applyTransaction({ add: [newItem4] });
 }
 
 // 행 삭제 함수
-function onDeleteRow() {
+function onDeleteChoiceListRow() {
     var selectedRows = gridApi4.getSelectedRows();
     if (selectedRows.length > 0) {
         gridApi4.applyTransaction({ remove: selectedRows });
@@ -85,7 +86,7 @@ function onDeleteRow() {
 }
 
 // 드래그 완료 후 seq 값을 업데이트하는 함수
-function updateRowDataSeq() {
+function updateChoiceListRowDataSeq() {
     gridApi4.forEachNode((node, index) => {
         // 각 행의 seq를 1부터 순차적으로 할당
         node.data.seq = (index + 1).toString();

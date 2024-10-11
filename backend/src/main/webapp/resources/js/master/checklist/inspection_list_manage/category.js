@@ -46,7 +46,7 @@ const gridOptions = {
 
     // 드래그 종료 후 seq 업데이트
     onRowDragEnd: params => {
-        updateRowDataSeq();
+        updateCategoryRowDataSeq();
     },
 };
 
@@ -55,7 +55,7 @@ const gridApi = agGrid.createGrid(gridDiv, gridOptions);
 
 
 // 새로운 rowData 생성 함수
-function createNewRowData() {
+function createNewCategoryRowData() {
     var newData = {
         no: (gridApi.getDisplayedRowCount() + 1),
         category_name: "",
@@ -67,13 +67,13 @@ function createNewRowData() {
 }
 
 // 행 추가 함수
-function onAddRow() {
-    var newItem = createNewRowData();
+function onAddCategoryRow() {
+    var newItem = createNewCategoryRowData();
     gridApi.applyTransaction({ add: [newItem] });
 }
 
 // 행 삭제 함수
-function onDeleteRow() {
+function onDeleteCategoryRow() {
     var selectedRows = gridApi.getSelectedRows();
     if (selectedRows.length > 0) {
         gridApi.applyTransaction({ remove: selectedRows });
@@ -83,7 +83,7 @@ function onDeleteRow() {
 }
 
 // 드래그 완료 후 seq 값을 업데이트하는 함수
-function updateRowDataSeq() {
+function updateCategoryRowDataSeq() {
     gridApi.forEachNode((node, index) => {
         // 각 행의 seq를 1부터 순차적으로 할당
         node.data.seq = (index + 1).toString();

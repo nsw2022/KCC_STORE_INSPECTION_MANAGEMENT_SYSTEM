@@ -109,8 +109,8 @@
                   <div class="accordion-body">
                     <div class="button-box d-flex justify-content-end">
                       <div class="my-2 d-flex justify-content-center">
-                        <button type="button" class="btn btn-light m-1" onclick="onAddRow()">추가</button>
-                        <button type="button" class="btn btn-light m-1" onclick="onDeleteRow()">삭제</button>
+                        <button type="button" class="btn btn-light m-1" onclick="onAddCategoryRow()">추가</button>
+                        <button type="button" class="btn btn-light m-1" onclick="onDeleteCategoryRow()">삭제</button>
                       </div>
                     </div>
                     <div>
@@ -164,8 +164,8 @@
                   <div class="accordion-body">
                     <div class="button-box d-flex justify-content-end">
                       <div class="my-2 d-flex justify-content-center">
-                        <button type="button" class="btn btn-light m-1" onclick="onAddRow()">추가</button>
-                        <button type="button" class="btn btn-light m-1" onclick="onDeleteRow()">삭제</button>
+                        <button type="button" class="btn btn-light m-1" onclick="onAddSubCategoryRow()">추가</button>
+                        <button type="button" class="btn btn-light m-1" onclick="onDeleteSubCategoryRow()">삭제</button>
                       </div>
                     </div>
                     <div>
@@ -225,8 +225,8 @@
                   <div class="accordion-body">
                     <div class="button-box d-flex justify-content-end">
                       <div class="my-2 d-flex justify-content-center">
-                        <button type="button" class="btn btn-light m-1" onclick="onAddRow()">추가</button>
-                        <button type="button" class="btn btn-light m-1" onclick="onDeleteRow()">삭제</button>
+                        <button type="button" class="btn btn-light m-1" onclick="onAddEvaluationRow()">추가</button>
+                        <button type="button" class="btn btn-light m-1" onclick="onDeleteEvaluationRow()">삭제</button>
                       </div>
                     </div>
                     <div>
@@ -303,8 +303,8 @@
                   <div class="accordion-body">
                     <div class="button-box d-flex justify-content-end">
                       <div class="my-2 d-flex justify-content-center">
-                        <button type="button" class="btn btn-light m-1" onclick="onAddRow()">추가</button>
-                        <button type="button" class="btn btn-light m-1" onclick="onDeleteRow()">삭제</button>
+                        <button type="button" class="btn btn-light m-1" onclick="onAddChoiceListRow()">추가</button>
+                        <button type="button" class="btn btn-light m-1" onclick="onDeleteChoiceListRow()">삭제</button>
                       </div>
                     </div>
                     <div>
