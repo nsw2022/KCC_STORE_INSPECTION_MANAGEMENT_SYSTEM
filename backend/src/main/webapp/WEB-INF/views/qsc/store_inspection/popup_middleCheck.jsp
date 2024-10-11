@@ -137,111 +137,9 @@
     </div>
 
     <!-- 세부결과 구역 -->
-    <div class="tab-content detailed-result">
+    <div class="tab-content detailed-result" style="display: none;">
         <div class="detailed-section">
-            <!-- 중대법규 -->
-            <div class="detailed-item">
-                <div class="item-header">
-                    <h3>중대법규</h3>
-                    <button class="detail-btn">상세보기</button>
-                </div>
-                <table class="detailed-table">
-                    <thead>
-                    <tr>
-                        <th>배점</th>
-                        <th>적합</th>
-                        <th>부적합</th>
-                        <th>해당없음</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>40</td>
-                        <td>30</td>
-                        <td>10</td>
-                        <td>0</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- 기타법규 -->
-            <div class="detailed-item">
-                <div class="item-header">
-                    <h3>기타법규</h3>
-                    <button class="detail-btn">상세보기</button>
-                </div>
-                <table class="detailed-table">
-                    <thead>
-                    <tr>
-                        <th>배점</th>
-                        <th>적합</th>
-                        <th>부적합</th>
-                        <th>해당없음</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>10</td>
-                        <td>10</td>
-                        <td>0</td>
-                        <td>0</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- 위생관리 -->
-            <div class="detailed-item">
-                <div class="item-header">
-                    <h3>위생관리</h3>
-                    <button class="detail-btn">상세보기</button>
-                </div>
-                <table class="detailed-table">
-                    <thead>
-                    <tr>
-                        <th>배점</th>
-                        <th>적합</th>
-                        <th>부적합</th>
-                        <th>해당없음</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>30</td>
-                        <td>20</td>
-                        <td>10</td>
-                        <td>0</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- 위생지도상황 -->
-            <div class="detailed-item">
-                <div class="item-header">
-                    <h3>위생지도상황</h3>
-                    <button class="detail-btn">상세보기</button>
-                </div>
-                <table class="detailed-table">
-                    <thead>
-                    <tr>
-                        <th>배점</th>
-                        <th>적합</th>
-                        <th>부적합</th>
-                        <th>해당없음</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>20</td>
-                        <td>10</td>
-                        <td>10</td>
-                        <td>0</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+            <!-- JavaScript로 동적으로 상세 항목들이 생성됩니다 -->
         </div>
     </div>
 
@@ -264,66 +162,16 @@
 
 <%--  ----------------하단 세부결과 보기----------------  --%>
 
-<section id="inspection-middleCheck-list">
+<section id="inspection-middleCheck-list" style="display: none;">
     <h2 class="item-title"></h2>
     <div class="check-item">
-
-
-        <div class="check-subitem">
-            <p class="subitem-title">영업취소</p>
-            <div class="subitem-info-wrapper">
-                <p>1. 소비기한 변조 및 삭제</p>
-                <ul class="subitem-info">
-                    <li class="info-box">
-                        <p>배점/결과</p>
-                        <span class="score">5 / 5</span>
-                    </li>
-                    <li class="info-box">
-                        <p>과태료</p>
-                        <span>-</span>
-                    </li>
-                    <li class="info-box">
-                        <p>영업정지</p>
-                        <span>-</span>
-                    </li>
-                </ul>
-                <button class="edit-btn">수정하기</button>
-
-                <%--        ----해당부분은 동적으로 변동이 될부분----        --%>
-                <jsp:include page="checkList_choice.jsp" />
-                <%--        ----해당부분은 동적으로 변동이 될부분----        --%>
-
-            </div>
-
-        </div>
-
-        <div class="check-subitem">
-            <p class="subitem-title">영업정지 1개월 이상</p>
-            <div class="subitem-info-wrapper">
-                <p>2. 표시사항 전부를 표시하지 않은 식품을 영업에 사용</p>
-                <ul class="subitem-info">
-                    <li class="info-box">
-                        <p>배점/결과</p>
-                        <span class="score">5 / 5</span>
-                    </li>
-                    <li class="info-box">
-                        <p>과태료</p>
-                        <span>-</span>
-                    </li>
-                    <li class="info-box">
-                        <p>영업정지</p>
-                        <span>-</span>
-                    </li>
-                </ul>
-                <button class="edit-btn">수정하기</button>
-            </div>
-        </div>
+        <!-- 동적으로 생성되는 내용 -->
     </div>
 </section>
 
 
 
+
 </body>
 <script src="/resources/js/qsc/store_inspection/popup_middleCheck.js"></script>
-<script src="/resources/js/qsc/store_inspection/popup_inspection.js"></script>
 </html>

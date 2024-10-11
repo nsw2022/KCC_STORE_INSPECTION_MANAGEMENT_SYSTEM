@@ -259,68 +259,20 @@
 </section>
 
 <div id="go-inspection-wrap">
-    <button class="go-inspection" onclick="middleCheckInspection()">점검확인 완료</button>
-    <button class="go-inspection" onclick="tenpoirySave()">임시저장</button>
+    <button class="go-inspection" onclick="lastCheckInspection()">점검완료</button>
 </div>
 
 <%--  ----------------하단 세부결과 보기----------------  --%>
 
-<section id="inspection-middleCheck-list">
+<section id="inspection-lastCheck-list">
     <h2 class="item-title"></h2>
     <div class="check-item">
 
 
-        <div class="check-subitem">
-            <p class="subitem-title">영업취소</p>
-            <div class="subitem-info-wrapper">
-                <p>1. 소비기한 변조 및 삭제</p>
-                <ul class="subitem-info">
-                    <li class="info-box">
-                        <p>배점/결과</p>
-                        <span class="score">5 / 5</span>
-                    </li>
-                    <li class="info-box">
-                        <p>과태료</p>
-                        <span>-</span>
-                    </li>
-                    <li class="info-box">
-                        <p>영업정지</p>
-                        <span>-</span>
-                    </li>
-                </ul>
-                <button class="edit-btn">수정하기</button>
-
-                <%--        ----해당부분은 동적으로 변동이 될부분----        --%>
-                <jsp:include page="checkList_choice.jsp" />
-                <%--        ----해당부분은 동적으로 변동이 될부분----        --%>
-
-            </div>
-
-        </div>
-
-        <div class="check-subitem">
-            <p class="subitem-title">영업정지 1개월 이상</p>
-            <div class="subitem-info-wrapper">
-                <p>2. 표시사항 전부를 표시하지 않은 식품을 영업에 사용</p>
-                <ul class="subitem-info">
-                    <li class="info-box">
-                        <p>배점/결과</p>
-                        <span class="score">5 / 5</span>
-                    </li>
-                    <li class="info-box">
-                        <p>과태료</p>
-                        <span>-</span>
-                    </li>
-                    <li class="info-box">
-                        <p>영업정지</p>
-                        <span>-</span>
-                    </li>
-                </ul>
-                <button class="edit-btn">수정하기</button>
-            </div>
-        </div>
     </div>
 </section>
+
+
 
 </body>
 <script src="/resources/js/qsc/store_inspection/popup_lastCheck.js"></script>

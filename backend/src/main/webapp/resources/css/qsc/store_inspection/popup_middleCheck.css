@@ -628,18 +628,18 @@ body{
     }
 
     .info-details {
-        overflow: hidden; /* 자식 요소들의 float로 인한 깨짐 방지 */
+        overflow: hidden;
     }
 
     .info-details > span {
-        float: left; /* 왼쪽 정렬 */
-        width: calc(50% - 10px); /* 각 요소의 너비를 50%로 설정 */
-        margin-bottom: 10px; /* 아래쪽 여백 추가 */
-        margin-right: 10px; /* 오른쪽 여백 추가 */
+        float: left;
+        width: calc(50% - 10px);
+        margin-bottom: 10px;
+        margin-right: 10px;
     }
 
     .info-details > span:nth-child(2n) {
-        margin-right: 0; /* 짝수 번째 요소는 오른쪽 여백 제거 */
+        margin-right: 0;
     }
 
     .store-name {
