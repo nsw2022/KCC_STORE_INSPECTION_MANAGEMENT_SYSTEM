@@ -12,4 +12,9 @@ public class InspectionController {
     public void inspectionSchedule() {
 
     }
+
+    @GetMapping("/inspection_result/result_list")
+    public void inspectionResult() {
+
+    }
 }
