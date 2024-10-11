@@ -1,6 +1,9 @@
 body {
     font-family: "Noto Sans KR" !important;
 }
+.page-content{
+    height: 100vh !important;
+}
 .content {
     flex-grow: 1; /* 남은 공간을 모두 사용 */
     background-color: #f4f7ff;
@@ -116,7 +119,7 @@ body {
 
 
 
-/******************* accodion content *****************/
+/******************* accordion content *****************/
 .first-input-box{
     display: flex;
     justify-content: space-between;
