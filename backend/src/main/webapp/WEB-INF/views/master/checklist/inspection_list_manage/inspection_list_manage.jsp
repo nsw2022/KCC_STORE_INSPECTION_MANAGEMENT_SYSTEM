@@ -330,7 +330,7 @@
                             </div>
                             <div class="col-12 col-lg-6 d-flex align-items-center mb-2 position-relative">
                               <label class="col-form-label me-2" style="min-width: 50px;">부적합<br>강도</label>
-                              <input type="text" class="form-control" placeholder="100" list="strengthOptions">
+                              <input type="text" class="form-control" list="strengthOptions">
                               <datalist id="strengthOptions">
                                 <option value="크리티컬">
                                 <option value="메이져">
@@ -700,7 +700,6 @@
               <div class="modal-header">
                 <div class="large-category-group">
                   <button type="button" class="btn btn-primary">중대법규</button>
-                  <button type="button" class="btn btn-outline-primary">기타법규</button>
                 </div>
                 <button class="btn back-btn" data-bs-target="#moduleModal" data-bs-toggle="modal">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
