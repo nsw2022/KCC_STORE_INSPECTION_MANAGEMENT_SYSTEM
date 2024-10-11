@@ -84,14 +84,16 @@ body {
 .accordion-box {
     width: 49% !important;
     padding: 0px !important;
-    border-radius: 8px;
-    box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
 }
 
 .accordion-item{
     border-radius: 8px !important;
-    border-color: white !important;
-    /*box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;*/
+    border: none !important;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+
+}
+.accordion-button {
+    border-radius: 8px !important;
 }
 .middle-row .btn-light{
     width: 7vw;
