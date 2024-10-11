@@ -35,4 +35,5 @@ naver:
   maps:
     client:
       id: ${YOUR_CLIENT_ID}
+      key : ${YOUR_CLIENT_SECRET}
 
