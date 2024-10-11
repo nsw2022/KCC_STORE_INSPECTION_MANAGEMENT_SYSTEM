@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sims.home.dashboard.mapper.MemberMapper">
+    <select id="getMemberByMbrId" resultType="MemberDao">
+        select * from member where mbr_no = #{mbrNo}
+    </select>
+
+    <insert id="insertTestMember" parameterType="MemberDao">
+        INSERT INTO member (
+        MBR_ID, MBR_NO, MBR_PW, MBR_NM, MBR_ROLE_CD, MBR_STTS_CD, TEL, HIRE_DT, QUIT_DT, CRE_MBR_ID, UPD_MBR_ID, CRE_TM, UPD_TM, LAST_LOGIN_TM
+        ) VALUES (
+        MEMBER_SEQ.NEXTVAL,
+        #{mbrNo},
+        #{mbrPw},
+        #{mbrNm},
+        <foreach collection="mbrRoleCd" item="role" separator=",">
+            #{role}
+        </foreach>,
+        1,
+        '010-1234-5678',
+        '20241010',
+        NULL,
+        1,
+        NULL,
+        TO_CHAR(SYSDATE, 'YYYYMMDDHH24MI'),
+        NULL,
+        NULL
+        )
+    </insert>
+
+</mapper>

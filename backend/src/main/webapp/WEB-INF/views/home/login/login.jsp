@@ -33,12 +33,12 @@
 	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
 	integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
 	crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<link rel="stylesheet" href="/resources/css/login.css">
-<title>Document</title>
+<link rel="stylesheet" href="/resources/css/home/login/login.css">
+<title>점포점검관리시스템</title>
 </head>
 <!-- SweetAlert2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="/resources/js/login.js">
+<script src="/resources/js/home/login/login.js">
     
   </script>
 <body>
@@ -57,15 +57,17 @@
 						<div class="line_text">로그인이 필요합니다</div>
 						<div class="line"></div>
 					</div>
-					<div class="input_area">
+
+					<form class="input_area" action="/loginProcess" method="post">
+						<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 						<div class="empno_area d-flex border mb-2 align-items-center">
 							<i class="fa-regular fa-lg fa-envelope mx-2"
-								style="color: #c4c9ed;"></i> <input type="text"
+								style="color: #c4c9ed;"></i> <input type="text" name="mbrNo"
 								class="empno_input" placeholder="사번">
 						</div>
 						<div class="password_area d-flex border align-items-center">
 							<i class="bi bi-shield fa-lg mx-2" style="color: #c4c9ed;"></i> <input
-								type="password" class="password_input" placeholder="비밀번호">
+								type="password" name="mbrPw" class="password_input" placeholder="비밀번호" autocomplete="current-password">
 							<i class="fa-regular fa-lg fa-eye-slash mx-4"
 								style="color: #c4c9ed;"></i>
 						</div>
@@ -75,9 +77,9 @@
 							<p class="find_password_text mb-0">비밀번호 찾기</p>
 						</div>
 						<div class="login_btn_area mt-4">
-							<button class="login_btn">로그인</button>
+							<button type="submit" class="login_btn">로그인</button>
 						</div>
-					</div>
+					</form>
 				</div>
 			</div>
 			<div class="col-md-6 design_area border"></div>
