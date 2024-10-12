@@ -34,7 +34,8 @@
     <nav id="sidebar" class="sidebar-wrapper">
         <div class="sidebar-content">
             <div class="sidebar-brand">
-                <a href="#">SIMS</a>
+                <form id="home" action="/" method="get"></form>
+                <a href="#" onclick="document.getElementById('home').submit()">SIMS</a>
                 <div id="close-sidebar">
                     <i class="fas fa-times"></i>
                 </div>
@@ -54,10 +55,12 @@
                         <div class="sidebar-submenu">
                             <ul>
                                 <li>
-                                    <a href="#">가맹점 관리</a>
+                                    <form id="store_manage" action="/master/store_manage/store_list" method="get"></form>
+                                    <a href="#" onclick="document.getElementById('store_manage').submit()">가맹점 관리</a>
                                 </li>
                                 <li>
-                                    <a href="#">제품 관리</a>
+                                    <form id="product_manage" action="/master/product_manage/product_list" method="get"></form>
+                                    <a href="#" onclick="document.getElementById('product_manage').submit()">제품 관리</a>
                                 </li>
                             </ul>
                         </div>
@@ -69,13 +72,12 @@
                         <div class="sidebar-submenu">
                             <ul>
                                 <li>
-                                    <a href="#">체크리스트 관리</a>
+                                    <form id="checklist_list" action="/master/checklist/list" method="get"></form>
+                                    <a href="#" onclick="document.getElementById('checklist_list').submit()">체크리스트 관리</a>
                                 </li>
                                 <li>
-                                    <a href="#">분류 관리</a>
-                                </li>
-                                <li>
-                                    <a href="#">점검 항목 관리</a>
+                                    <form id="inspection_list" action="/master/inspection/list/manage" method="get"></form>
+                                    <a href="#" onclick="document.getElementById('inspection_list').submit()">점검 항목 관리</a>
                                 </li>
                             </ul>
                         </div>
@@ -87,16 +89,21 @@
                         <div class="sidebar-submenu">
                             <ul>
                                 <li>
-                                    <a href="#">가맹점 점검 계획 관리</a>
+                                    <form id="inspection_schedule" action="/qsc/inspection_schedule/schedule_list" method="get"></form>
+                                    <a href="#" onclick="document.getElementById('inspection_schedule').submit()">가맹점 점검 계획 관리</a>
+                                </li>
+
+                                <li>
+                                    <form id="inspection_schedule_detail" action="/qsc/store_inspection_schedule" method="get"></form>
+                                    <a href="#" onclick="document.getElementById('inspection_schedule_detail').submit()">가맹점 점검 일정 조회</a>
                                 </li>
                                 <li>
-                                    <a href="#">가맹점 점검</a>
+                                    <form id="inspection" action="/qsc/store_inspection" method="get"></form>
+                                    <a href="#" onclick="document.getElementById('inspection').submit()">가맹점 점검</a>
                                 </li>
                                 <li>
-                                    <a href="#">가맹점 점검 결과</a>
-                                </li>
-                                <li>
-                                    <a href="#">가맹점 점검 일정 조회</a>
+                                    <form id="inspection_result" action="/qsc/inspection_result/result_list" method="get"></form>
+                                    <a href="#" onclick="document.getElementById('inspection_result').submit()">가맹점 점검 결과</a>
                                 </li>
                             </ul>
                         </div>
@@ -112,17 +119,6 @@
     </div>
     <!-- sidebar-wrapper  -->
 </div>
-
-
-
-
-<%--<div class="page-wrapper2">--%>
-<%--    <main class="page-content">--%>
-<%--        <div class="container">--%>
-<%--            <h1>메인콘텐츠에용</h1>--%>
-<%--        </div>--%>
-<%--    </main>--%>
-<%--</div>--%>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
