@@ -52,24 +52,10 @@
             <%--     가맹점 점검페이지      --%>
                 <section id="today_inspection">
                     <div id="today_inspection_list_wrap">
-                        <h2>금주의 점검</h2>
-                        <p>이번주 점검 목록이 표시됩니다</p>
+                        <h2>오늘의 점검</h2>
+                        <p>선택한 날짜의 점검 목록이 표시됩니다</p>
                         <ul id="today_inspection_list">
-                            <li>
-                                <h4>위생점검</h4>
-                                <p class="today_inspection_list_title">혜화점 위생점검</p>
-                                <p class="today_inspection_list_date">2024.09.23</p>
-                            </li>
-                            <li>
-                                <h4>위생점검</h4>
-                                <p class="today_inspection_list_title">성신여대점 위생점검</p>
-                                <p class="today_inspection_list_date">2024.09.25</p>
-                            </li>
-                            <li>
-                                <h4>위생점검</h4>
-                                <p class="today_inspection_list_title">동대문점 위생점검</p>
-                                <p class="today_inspection_list_date">2024.09.27</p>
-                            </li>
+                            <!-- 동적으로 생성되는 부분 -->
                         </ul>
                     </div>
 
@@ -101,13 +87,13 @@
                         <table class="calendar">
                             <thead>
                             <tr>
-                                <th>Mo</th>
-                                <th>Tu</th>
-                                <th>We</th>
-                                <th>Th</th>
-                                <th>Fr</th>
-                                <th>Sa</th>
-                                <th>Su</th>
+                                <th>일</th>
+                                <th>월</th>
+                                <th>화</th>
+                                <th>수</th>
+                                <th>목</th>
+                                <th>금</th>
+                                <th>토</th>
                             </tr>
                             </thead>
                             <tbody id="calendar-body">
@@ -124,6 +110,7 @@
                     <div class="schedule-header">
                         <label for="checklist-select">체크리스트 선택 :</label>
                         <select id="checklist-select">
+                            <option value="all">전체</option>
                             <option value="위생 점검">위생 점검</option>
                             <option value="품질 점검">품질 점검</option>
                         </select>
@@ -141,42 +128,10 @@
                                 <th>토</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            <tr>
-                                <td class="empty-cell">
-                                    <span>9/28</span>
-                                </td>
-                                <td>
-                                    <span>9/29</span>
-                                    <button class="inspection-btn" onclick="openPopup('혜화점 위생 점검')">혜화점 위생 점검</button>
-                                    <button class="inspection-btn" onclick="openPopup('성신여대점 위생 점검')">성신여대점 위생 점검</button>
-                                    <button class="inspection-btn" onclick="openPopup('동대문점 위생 점검')">동대문점 위생 점검</button>
-                                </td>
-                                <td>
-                                    <span>9/30</span>
-                                </td>
-                                <td>
-                                    <span>10/1</span>
-                                    <button class="inspection-btn" onclick="openPopup('노원역점 위생 점검')">노원역점 위생 점검</button>
-                                    <button class="inspection-btn" onclick="openPopup('양실리점 위생 점검')">양실리점 위생 점검</button>
-                                </td>
-                                <td>
-                                    <span>10/2</span>
-                                </td>
-                                <td>
-                                    <span>10/3</span>
-                                    <button class="inspection-btn" onclick="openPopup('경희대점 위생 점검')">경희대점 위생 점검</button>
-                                    <button class="inspection-btn" onclick="openPopup('천호역점 위생 점검')">천호역점 위생 점검</button>
-                                    <button class="inspection-btn" onclick="openPopup('서울역점 위생 점검')">서울역점 위생 점검</button>
-                                    <button class="inspection-btn" onclick="openPopup('강남역점 위생 점검')">강남역점 위생 점검</button>
-                                    <button class="inspection-btn" onclick="openPopup('왕십리역점 위생 점검')">왕십리역점 위생 점검</button>
-                                </td>
-                                <td class="empty-cell">
-                                    <span>10/4</span>
-                                </td>
-                            </tr>
+                            <tbody id="schedule-table-body">
+                            <!-- 동적으로 생성될 부분 -->
                             </tbody>
-                            </table>
+                        </table>
                     </div>
                 </section>
 

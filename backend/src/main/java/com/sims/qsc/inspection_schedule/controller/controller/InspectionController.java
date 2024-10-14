@@ -13,8 +13,5 @@ public class InspectionController {
 
     }
 
-    @GetMapping("/inspection_result/result_list")
-    public void inspectionResult() {
 
-    }
 }

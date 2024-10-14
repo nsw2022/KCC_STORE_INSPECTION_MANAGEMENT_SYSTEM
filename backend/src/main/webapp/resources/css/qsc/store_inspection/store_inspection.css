@@ -11,7 +11,7 @@
 }
 
 #today_inspection_list_wrap {
-    width: 73%;
+    width: 72%;
     height: 370px;
     background-image: url('/resources/img/main_background.jpg'); /* 백그라운드 이미지 */
     background-size: cover;
@@ -80,7 +80,7 @@
 
 /*---------------------------달력---------------------------*/
 .calendar-container {
-    width: 300px;
+    width: 320px;
     height: 370px;
     padding: 20px;
     background-color: #fff;

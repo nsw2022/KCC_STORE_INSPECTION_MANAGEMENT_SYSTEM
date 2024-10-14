@@ -281,6 +281,17 @@ body {
 }
 
 
+.sidebar {
+    z-index: 1000; /* 사이드바의 z-index 값을 높게 설정 */
+    position: relative; /* 위치 속성 설정 (필요 시 추가) */
+}
+/* ag-Grid의 z-index를 낮게 설정 */
+.ag-theme-quartz {
+    z-index: 1 !important; /* 그리드의 z-index 값을 사이드바보다 낮게 설정 */
+    position: relative !important; /* 위치 속성 설정 (필요 시 추가) */
+}
+
+
 
 
 
@@ -289,15 +300,15 @@ body {
     .container {
         margin: 0.1rem 0.1rem;
     }
-    .sidebar {
-        z-index: 1000; /* 사이드바의 z-index 값을 높게 설정 */
-        position: relative; /* 위치 속성 설정 (필요 시 추가) */
-    }
-    /* ag-Grid의 z-index를 낮게 설정 */
-    .ag-theme-quartz {
-        z-index: 1 !important; /* 그리드의 z-index 값을 사이드바보다 낮게 설정 */
-        position: relative !important; /* 위치 속성 설정 (필요 시 추가) */
-    }
+    /*.sidebar {*/
+    /*    z-index: 1000; !* 사이드바의 z-index 값을 높게 설정 *!*/
+    /*    position: relative; !* 위치 속성 설정 (필요 시 추가) *!*/
+    /*}*/
+    /*!* ag-Grid의 z-index를 낮게 설정 *!*/
+    /*.ag-theme-quartz {*/
+    /*    z-index: 1 !important; !* 그리드의 z-index 값을 사이드바보다 낮게 설정 *!*/
+    /*    position: relative !important; !* 위치 속성 설정 (필요 시 추가) *!*/
+    /*}*/
     .top-box{
         padding: 0.5rem 0.5rem;
     }

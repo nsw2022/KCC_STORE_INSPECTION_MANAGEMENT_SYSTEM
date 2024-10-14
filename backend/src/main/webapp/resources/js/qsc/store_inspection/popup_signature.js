@@ -20,34 +20,43 @@ function initializeSignaturePad() {
     resizeCanvas();
 
     // 서명이 없으면 placeholder 보이기
-    canvas.addEventListener('mousedown', () => {
+    function hidePlaceholder() {
         document.querySelector('.signature-placeholder').style.display = 'none';
-    });
-    canvas.addEventListener('touchstart', () => {
-        document.querySelector('.signature-placeholder').style.display = 'none';
-    });
+        showClearButton();
+    }
+
+    canvas.addEventListener('mousedown', hidePlaceholder);
+    canvas.addEventListener('touchstart', hidePlaceholder);
+    canvas.addEventListener('pointerdown', hidePlaceholder); // 추가된 이벤트 리스너
 
     // 서명 초기화 함수
     const clearSignature = () => {
         signaturePad.clear();
         document.querySelector('.signature-placeholder').style.display = 'block';
+        hideClearButton();  // 서명 초기화 시 다시하기 버튼 숨기기
     };
 
-    // 서명 데이터를 서버에 제출할 준비를 하는 함수
-    const saveSignature = () => {
-        if (signaturePad.isEmpty()) {
-            alert('서명을 작성해주세요.');
-        } else {
-            const signatureData = signaturePad.toDataURL();
-            console.log('서명 데이터:', signatureData);
-            // 여기에 서버로 전송하는 로직을 추가하세요.
+    // 다시하기 버튼 생성 및 숨김 처리 함수
+    const showClearButton = () => {
+        let clearButton = document.getElementById('clear-signature-btn');
+        if (!clearButton) {
+            clearButton = document.createElement('button');
+            clearButton.id = 'clear-signature-btn';
+            clearButton.innerText = '다시하기';
+
+            clearButton.addEventListener('click', clearSignature);
+
+            const signatureArea = document.querySelector('.signature-area');
+            signatureArea.appendChild(clearButton);
         }
     };
 
-    // 예시: 서명을 지우는 버튼이 있을 경우
-    // document.getElementById('clear-signature-btn').addEventListener('click', clearSignature);
-    // 예시: 서명을 저장하는 버튼이 있을 경우
-    // document.getElementById('save-signature-btn').addEventListener('click', saveSignature);
+    const hideClearButton = () => {
+        const clearButton = document.getElementById('clear-signature-btn');
+        if (clearButton) {
+            clearButton.remove();  // 다시하기 버튼 제거
+        }
+    };
 }
 
 //----------------------데이터 보내기-----------------------

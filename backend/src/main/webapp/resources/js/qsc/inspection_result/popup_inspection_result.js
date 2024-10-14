@@ -338,7 +338,7 @@ function initializeTabs() {
     const tabs = document.querySelectorAll(".inspection-tab");
     const reportSummary = document.querySelector(".report-summary");
     const detailedResult = document.querySelector(".detailed-result");
-    const inspectionList = document.getElementById("inspection-lastCheck-list");
+    const inspectionList = document.getElementById("inspection-result-list");
 
     // 기본 상태 설정: 보고서 간략은 보이기, 세부결과는 숨기기
     reportSummary.style.display = "flex";
@@ -433,7 +433,7 @@ function generateDetailedItems() {
 // 상세보기 버튼 초기화 함수
 function initializeDetailButtons() {
     const detailButtons = document.querySelectorAll(".detail-btn");
-    const inspectionList = document.getElementById("inspection-lastCheck-list");
+    const inspectionList = document.getElementById("inspection-result-list");
 
     let lastOpenedIndex = null; // 마지막으로 열린 카테고리의 인덱스 추적
 
@@ -462,7 +462,7 @@ function initializeDetailButtons() {
             // 하단 상세 리스트 생성
             generateInspectionList(category);
 
-            // 상세보기 버튼 클릭 시 inspection-lastCheck-list를 보이기
+            // 상세보기 버튼 클릭 시 inspection-result-list를 보이기
             inspectionList.style.display = "block";
             inspectionList.scrollIntoView({ behavior: 'smooth', block: 'start' }); // 스크롤 이동
 
@@ -475,7 +475,7 @@ function initializeDetailButtons() {
 
 // 하단의 상세 리스트를 생성하는 함수
 function generateInspectionList(category) {
-    const inspectionList = document.getElementById('inspection-lastCheck-list');
+    const inspectionList = document.getElementById('inspection-result-list');
     const checkItem = inspectionList.querySelector('.check-item');
     checkItem.innerHTML = ''; // 기존 내용 제거
 
@@ -752,52 +752,10 @@ function adjustWrapperHeight(element) {
 }
 
 
-// 점검 완료 버튼 클릭 시 호출되는 함수
-function lastCheckInspection() {
-    // 임의로 데이터를 생성 (실제 데이터는 입력받은 데이터를 활용할 것)
-    const inspectionData = {
-        storeName: "KCC 크라상",
-        inspectorName: "노승우",
-        inspectionDate: "2024-09-24",
-        results: [
-            {
-                category: "중대법규",
-                score: 40,
-                appropriate: 30,
-                inappropriate: 10,
-                notApplicable: 0
-            },
-            {
-                category: "기타법규",
-                score: 10,
-                appropriate: 10,
-                inappropriate: 0,
-                notApplicable: 0
-            }
-            // 기타 결과 추가 가능
-        ]
-    };
 
-    // 데이터를 JSON 형식으로 변환
-    const inspectionDataJson = JSON.stringify(inspectionData);
-
-    // 폼을 생성하여 서버로 데이터를 POST 방식으로 전송
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = '/qsc/popup_lastCheck';  // 점검 완료 페이지로 전송
-
-    // 숨겨진 input 필드에 데이터를 담아 전송
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'inspectionData';
-    input.value = inspectionDataJson;
-
-    form.appendChild(input);
-
-    // 폼을 문서에 추가하고 제출
-    document.body.appendChild(form);
-    form.submit();
-
+// ------------------나가기 버튼 클릭-----------------
+function outInspectionResult() {
     // 팝업 창을 닫음
     window.close();  // 점검 완료 후 팝업창 종료
 }
+
