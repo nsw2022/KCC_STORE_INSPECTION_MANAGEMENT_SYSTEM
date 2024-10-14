@@ -44,8 +44,10 @@
             <div class="sidebar-menu">
                 <ul>
                     <li class="sidebar-dropdown">
+
                         <a href="#">
-                            <span>대시보드</span>
+                            <form id="dashBoard" action="/" method="get"></form>
+                            <a href="#" onclick="document.getElementById('dashBoard').submit()">대시보드</a>
                         </a>
                     </li>
                     <li class="sidebar-dropdown">
