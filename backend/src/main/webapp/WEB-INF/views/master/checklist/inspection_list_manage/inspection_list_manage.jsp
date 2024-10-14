@@ -130,7 +130,7 @@
                       <div class="title-box">
                         <span class="m-3" style="font: 400 15px Noto Sans KR;">대분류 등록 및 수정</span>
                         <div class="my-3">
-                          <button type="button" class="btn btn-primary me-3">저장</button>
+                          <button type="button" class="btn btn-primary me-3" >저장</button>
                         </div>
                       </div>
                       <div class="container">

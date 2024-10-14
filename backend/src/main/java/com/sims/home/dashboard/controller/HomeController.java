@@ -23,7 +23,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String index() {
-        return "index";
+        return "home/dashboard/dashboard";
     }
     
     @GetMapping("/login")
