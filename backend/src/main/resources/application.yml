@@ -25,7 +25,6 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
-
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
@@ -36,4 +35,4 @@ naver:
   maps:
     client:
       id: ${YOUR_CLIENT_ID}
-      key : ${YOUR_CLIENT_SECRET}
+      key: ${YOUR_CLIENT_SECRET}
