@@ -75,14 +75,14 @@
       <div
               class="top-box py-2"
       >
-        <div class="top-box-content my-4">
+        <div class="top-box-content my-4" style="margin-top: 0 !important;">
           <!-- row 안에 col로 그리드를 할경우 자동 양쪽마진 15px가 붙음으로 -->
           <!-- g-0을 해줘야 마진이 추가로 붙질않음 -->
           <!-- https://getbootstrap.kr/docs/5.3/layout/gutters/#%EA%B1%B0%ED%84%B0-%EC%A0%9C%EA%B1%B0 -->
           <!-- 검색 .g-0 -->
           <div class="d-flex justify-content-between align-items-center">
             <div class="">
-              <b id="가맹점">가맹점 점검 계획 관리</b>
+              <b id="가맹점">가맹점 점검 결과</b>
             </div>
             <div class="d-flex justify-content-between">
               <div class="top-button-wrapper px-2">
@@ -100,10 +100,10 @@
             <div class="row g-3 align-items-center pt-4 top-search-box d-flex">
               <!-- 가맹점 라벨과 검색 필드 -->
               <div class="col-lg-2 col-md-4 col-12">
-                <label for="storeSearch" class="form-label">가맹점</label>
+                <label for="storeSearch" class="form-label">매장명</label>
                 <div class="wrapper" data-autocomplete="store">
                   <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                    <span>가맹점 검색</span>
+                    <span>매장명 검색</span>
                     <i class="uil uil-angle-down"></i>
                   </div>
                   <div class="hide-list">
@@ -112,7 +112,7 @@
                               type="text"
                               class="form-control top-search"
                               id="storeSearch"
-                              placeholder="가맹점명을 입력해주세요"
+                              placeholder="매장명을 입력해주세요"
                       />
                       <ul class="options"></ul>
                     </div>
@@ -123,7 +123,7 @@
               <!-- 브랜드 라벨과 검색 필드 -->
               <div class="col-lg-2 col-md-4 col-12">
                 <label for="inspectorSearch" class="form-label">브랜드</label>
-                <div class="wrapper" data-autocomplete="inspector">
+                <div class="wrapper" data-autocomplete="BRAND">
                   <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
                     <span>브랜드 검색</span>
                     <i class="uil uil-angle-down"></i>
@@ -215,15 +215,7 @@
 
 
         <div class="middle-box py-2">
-          <div class="middle-content ">
-            <div class="d-flex justify-content-end mb-3">
-              <div class="px-2">
-                <div class="top-button top-reset"  id="addRowButton" >추가</div>
-              </div>
-              <div class="px-2">
-                <div class="top-button top-reset"  id="deleteRowButton">삭제</div>
-              </div>
-            </div>
+          <div class="middle-content">
             <div id="myGrid" class="ag-theme-alpine" style="height: 500px; width: 100%;"></div>
           </div>
         </div>
@@ -238,40 +230,11 @@
 
   </main>
 </div>
-<%-------------  modal -------------%>
-<div class="modal fade" id="masterChecklistModal" aria-hidden="true" aria-labelledby="masterChecklistList" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-    <div class="modal-content">
-
-      <%-------------- header --------------%>
-      <div class="modal-header">
-            <span class="modal-title fs-5" id="masterChecklistList" style="font: 450 16px 'Noto Sans KR'">
-              마스터체크리스트 선택
-            </span>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <%-------------- header --------------%>
-
-      <%-------------- body --------------%>
-      <div class="modal-body">
-
-      </div>
-      <%-------------- body --------------%>
-
-      <%-------------- footer --------------%>
-      <div class="modal-footer">
-        <button class="btn btn-secondary"  data-bs-dismiss="modal" aria-label="Close">취소</button>
-        <button class="" data-bs-dismiss="modal">선택</button>
-      </div>
-      <%-------------- footer --------------%>
-    </div>
-  </div>
-</div>
 
 
 
 
-<script src="/resources/js/qsc/store_inspection/popup_inspection.js"></script>
+
 <script src="/resources/js/qsc/inspection_result/result.js"></script>
 <!-- SweetAlert2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

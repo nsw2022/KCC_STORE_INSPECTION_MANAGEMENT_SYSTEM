@@ -46,22 +46,22 @@ $(function () {
      */
     filterOptions(query) {
       const filtered = this.dataList.filter((item) =>
-        item.toLowerCase().includes(query.toLowerCase()),
+          item.toLowerCase().includes(query.toLowerCase())
       );
 
       this.$options.empty();
       if (filtered.length > 0) {
         filtered.forEach((item) => {
           const isSelected =
-            item === this.$searchBtn.children().first().text()
-              ? "selected"
-              : "";
+              item === this.$searchBtn.children().first().text()
+                  ? "selected"
+                  : "";
           const li = `<li onclick="window.updateName(this)" class="${isSelected} autocomplete-item list-group-item list-group-item-action">${item}</li>`;
           this.$options.append(li);
         });
       } else {
         this.$options.html(
-          `<li class="list-group-item">찾으시는 항목이 없습니다.</li>`,
+            `<li class="list-group-item">찾으시는 항목이 없습니다.</li>`
         );
       }
     }
@@ -92,8 +92,8 @@ $(function () {
       // 외부 클릭 시 옵션 리스트 숨기기
       $(document).on("click", (e) => {
         if (
-          !this.$wrapper.is(e.target) &&
-          this.$wrapper.has(e.target).length === 0
+            !this.$wrapper.is(e.target) &&
+            this.$wrapper.has(e.target).length === 0
         ) {
           this.$wrapper.removeClass("active");
         }
@@ -186,7 +186,38 @@ $(function () {
       schedule_date: "2024.10.09",
       inspector: "노승우",
     },
-    // ... 나머지 데이터는 그대로 유지
+    {
+      no: 2,
+      store: "동대문점",
+      brand: "KCC 크라상",
+      checklist_name: "KCC 크라상 인상점검표",
+      schedule_date: "2024.10.09",
+      inspector: "이지훈",
+    },
+    {
+      no: 3,
+      store: "서울역점",
+      brand: "KCC 크라상",
+      checklist_name: "KCC 크라상 인상점검표",
+      schedule_date: "2024.10.09",
+      inspector: "유재원",
+    },
+    {
+      no: 4,
+      store: "성수역점",
+      brand: "KCC 크라상",
+      checklist_name: "KCC 크라상 인상점검표",
+      schedule_date: "2024.10.09",
+      inspector: "원승언",
+    },
+    {
+      no: 5,
+      store: "수유점",
+      brand: "KCC 크라상",
+      checklist_name: "KCC 크라상 인상점검표",
+      schedule_date: "2024.10.09",
+      inspector: "노승수",
+    },
   ];
 
   // 그리드 옵션 설정
@@ -226,9 +257,11 @@ $(function () {
         cellRenderer: function (params) {
           const button = document.createElement("button");
           button.innerText = "자세히 보기";
-          button.setAttribute("data-bs-toggle", "modal");
-          button.setAttribute("data-bs-target", "#masterChecklistModal");
           button.classList.add("modal_btn", "more");
+          // 클릭 시 팝업 함수 호출
+          button.onclick = function () {
+            openPopup(params.data.checklist_name); // 팝업으로 데이터 전송
+          };
           return button;
         },
         pinned: "right",
@@ -306,3 +339,54 @@ $(function () {
     }
   });
 });
+
+function openPopup(content) {
+  // 팝업 페이지 URL 설정
+  const popupUrl = '/qsc/popup_inspection_result'; // 팝업 페이지로 보낼 URL 설정
+
+  // 현재 화면 크기 확인
+  const screenWidth = window.innerWidth || document.documentElement.clientWidth || screen.width;
+  const screenHeight = window.innerHeight || document.documentElement.clientHeight || screen.height;
+
+  // 모바일 디바이스 확인 (가로 크기가 768px 이하인 경우)
+  const isMobile = screenWidth <= 768;
+
+  // 팝업 창 크기 설정 (화면의 90% 크기 또는 전체 크기)
+  const popupWidth = isMobile ? screenWidth : screenWidth * 0.8;
+  const popupHeight = isMobile ? screenHeight : screenHeight;
+
+  // 팝업 창의 중앙 위치 계산 (모바일은 무시)
+  const screenLeft = window.screenLeft || window.screenX;
+  const screenTop = window.screenTop || window.screenY;
+  const left = isMobile ? 0 : screenLeft + (screenWidth - popupWidth) / 2;
+  const top = isMobile ? 0 : screenTop + (screenHeight - popupHeight) / 2;
+
+  // 팝업 창 옵션 (위치 및 크기 포함)
+  const popupOptions = `width=${popupWidth},height=${popupHeight},top=${top},left=${left},scrollbars=yes,resizable=yes`;
+
+  // 팝업 창을 열기
+  const popupWindow = window.open('', '_blank', popupOptions);
+
+  // 팝업 창이 열렸는지 확인 후 폼을 팝업 창에서 제출
+  if (popupWindow) {
+    // 팝업 창에 form을 작성하여 POST 방식으로 데이터를 전송
+    const form = popupWindow.document.createElement("form");
+    form.method = "POST";
+    form.action = popupUrl;  // 팝업 창에서 처리할 URL
+
+    // 필요한 데이터를 form에 추가 (필요에 따라 수정 가능)
+    const input = popupWindow.document.createElement("input");
+    input.type = "hidden";
+    input.name = "inspectionContent";
+    input.value = content;  // content는 팝업으로 전송할 데이터
+
+    form.appendChild(input);
+
+    // form을 팝업창에 추가 후 제출
+    popupWindow.document.body.appendChild(form);
+    form.submit();
+  } else {
+    alert("팝업 차단이 발생했습니다. 팝업을 허용해 주세요.");
+  }
+}
+

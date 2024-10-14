@@ -134,7 +134,12 @@ list-group {
   border: 1px solid #3274fa;
 }
 
-/*  모달 끝 */
+.sidebar {
+  z-index: 1000; /* 사이드바의 z-index 값을 높게 설정 */
+  position: relative; /* 위치 속성 설정 (필요 시 추가) */
+}
+
+
 
 /* 가맹점 관리 top 영역 시작 */
 .top-box {
@@ -242,7 +247,8 @@ list-group {
   background-color: white;
   border-radius: 8px;
   box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
-  padding: 12px 30px;
+  padding: 30px;
+  box-sizing: border-box;
 }
 
 .top-box-content div div b {
@@ -309,7 +315,8 @@ input.top-search::-webkit-input-placeholder {
   background-color: white;
   border-radius: 8px;
   box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
-  padding: 12px 30px;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .middle-register {
@@ -401,7 +408,21 @@ table tr td input {
   color: white;
 }
 
+@media (max-width: 1000px){
+  .sidebar {
+    z-index: 1000; /* 사이드바의 z-index 값을 높게 설정 */
+    position: relative; /* 위치 속성 설정 (필요 시 추가) */
+  }
+
+  /* ag-Grid의 z-index를 낮게 설정 */
+  .ag-theme-alpine {
+    z-index: 1 !important; /* 그리드의 z-index 값을 사이드바보다 낮게 설정 */
+    position: relative !important; /* 위치 속성 설정 (필요 시 추가) */
+  }
+}
+
 @media (max-width: 600px) {
+  /*  모달 끝 */
   .calendar-body td {
     width: 30px;
     height: 30px;

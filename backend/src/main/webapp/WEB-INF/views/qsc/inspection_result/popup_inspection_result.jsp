@@ -23,43 +23,13 @@
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' integrity='sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==' crossorigin='anonymous'/>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="/resources/css/qsc/store_inspection/popup_lastCheck.css">
+    <link rel="stylesheet" href="/resources/css/qsc/store_inspection/popup_inspection.css">
+    <link rel="stylesheet" href="/resources/css/qsc/inspection_result/popup_inspection_result.css">
     <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js'></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
 </head>
 <body>
-
-<div class="progress-container">
-    <div class="step active">
-        <div class="circle complete">
-            <i class="fa-solid fa-check"></i>
-        </div>
-        <p>점검</p>
-    </div>
-    <div class="line active"></div>
-    <div class="step active">
-        <div class="circle complete">
-            <i class="fa-solid fa-check"></i>
-        </div>
-        <p>결과확인</p>
-    </div>
-    <div class="line active"></div>
-    <div class="step active">
-        <div class="circle complete">
-            <i class="fa-solid fa-check"></i>
-        </div>
-        <p>서명</p>
-    </div>
-    <div class="line active"></div>
-    <div class="step">
-        <div class="circle active">
-            <div class="inner-circle active"></div>
-        </div>
-        <p>확인</p>
-    </div>
-</div>
-
+<%--<p>입력된 기타사항: ${textareaData}</p>--%>
 <section class="inspection-detail">
     <div class="inspection-info">
         <table class="inspection-table">
@@ -77,7 +47,6 @@
         </table>
     </div>
 </section>
-
 <section class="inspection-section">
     <div class="inspection-tabs">
         <button class="inspection-tab active" data-tab="report-summary">보고서 간략</button>
@@ -158,12 +127,12 @@
 </section>
 
 <div id="go-inspection-wrap">
-    <button class="go-inspection" onclick="lastCheckInspection()">점검완료</button>
+    <button class="go-inspection" onclick="outInspectionResult()">나가기</button>
 </div>
 
 <%--  ----------------하단 세부결과 보기----------------  --%>
 
-<section id="inspection-lastCheck-list">
+<section id="inspection-result-list" style="display: none;">
     <h2 class="item-title"></h2>
     <div class="check-item">
         <!-- 동적으로 생성되는 내용 -->
@@ -172,6 +141,7 @@
 
 
 
+
 </body>
-<script src="/resources/js/qsc/store_inspection/popup_lastCheck.js"></script>
+<script src="/resources/js/qsc/inspection_result/popup_inspection_result.js"></script>
 </html>

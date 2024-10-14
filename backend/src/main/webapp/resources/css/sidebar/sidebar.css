@@ -5,7 +5,7 @@
   position: fixed;
   top: 0;
   left: -800px;
-  z-index: 999;
+  z-index: 1000;
   /*---------------*/
   display: none;
 }
@@ -334,9 +334,16 @@
     padding-left: 250px;
     box-sizing: border-box;
   }
+
 }
 
-@media screen and (max-width: 390px) {
+@media screen and (max-width: 1000px) {
+  .page-content > div {
+    padding: 20px 20px;
+  }
+}
+
+@media screen and (max-width: 400px) {
   .page-content > div {
     padding: 10px 10px;
   }

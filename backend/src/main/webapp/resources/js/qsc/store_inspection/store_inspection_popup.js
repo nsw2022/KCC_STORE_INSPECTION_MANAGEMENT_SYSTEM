@@ -30,27 +30,6 @@ function openPopup(content) {
     window.open(popupUrl, '_blank', popupOptions);
 }
 
-// function startInspection() {
-//     // 비어있는 데이터로 POST 요청 보내기
-//     fetch('/qsc/popup_page_inspection', {
-//         method: 'POST', // POST 요청
-//         headers: {
-//             'Content-Type': 'application/json', // JSON 형식으로 전송
-//         },
-//         body: JSON.stringify({}) // 비어있는 데이터 전송
-//     })
-//         .then(response => {
-//             if (response.ok) {
-//                 // 성공 시 현재 팝업창에서 리다이렉트
-//                 window.location.href = '/qsc/popup_page_inspection'; // 현재 팝업창에서 새 페이지로 이동
-//             } else {
-//                 alert('POST 요청 실패');
-//             }
-//         })
-//         .catch(error => {
-//             console.error('POST 요청 중 에러 발생:', error);
-//         });
-// }
 
 function startInspection() {
     // form 태그를 생성해서 POST 방식으로 페이지 전환

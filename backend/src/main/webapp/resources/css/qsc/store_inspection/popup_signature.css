@@ -197,6 +197,7 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 
 .signature-area canvas {
@@ -210,6 +211,25 @@ body{
     color: #999;
     text-align: center;
     font-size: 16px;
+}
+
+#clear-signature-btn{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+    border: solid 1px #D0D5DD;
+    border-radius: 10px;
+    background-color: white;
+    color: #9CA3AF;
+    padding: 10px;
+    box-sizing: border-box;
+}
+#clear-signature-btn:hover{
+    border: none;
+    background-color: #4318FF;
+    color: white;
+    transition: ease-out 0.3s;
 }
 
 .details-section {
