@@ -44,6 +44,9 @@
         .page-content {
             min-height: 100vh;
         }
+        .page-content > div{
+            padding: 40px!important;
+        }
     </style>
 
 
@@ -56,18 +59,18 @@
 
 </head>
 <body>
->
 
-<jsp:include page="../../sidebar/sidebar.jsp"/>
-
+<div class="sidebar">
+    <jsp:include page="../../sidebar/sidebar.jsp"/>
+</div>
 <div class="page-wrapper2">
     <main class="page-content">
         <div class="content">
             <!--  top 영역시작 -->
             <div
-                    class="top-box py-2"
+                    class="top-box pb-2"
             >
-                <div class="top-box-content my-4">
+                <div class="top-box-content mb-4">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <b id="가맹점">가맹점 점검 계획 관리</b>
@@ -164,7 +167,7 @@
                     <div class="middle-content ">
                         <div class="d-flex justify-content-end mb-3">
                             <div class="px-2">
-                                <div class="top-button top-reset"  id="addRowButton" >추가</div>
+                                <div class="top-button top-reset"  data-bs-toggle="modal" data-bs-target="#DetailStore" >추가</div>
                             </div>
                             <div class="px-2">
                                 <div class="top-button top-reset"  id="deleteRowButton">삭제</div>
