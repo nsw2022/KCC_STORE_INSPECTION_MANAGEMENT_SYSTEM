@@ -65,38 +65,40 @@
 <%--<div class="top-bar">--%>
 <%--    <span id="breadcrumb"><span class="parent-menu">체크리스트 관리</span></span>--%>
 <%--</div>--%>
+<div class="sidebar">
+    <jsp:include page="../../sidebar/sidebar.jsp"/>
+</div>
 
-<jsp:include page="../../sidebar/sidebar.jsp"/>
 
 <div class="page-wrapper2">
     <main class="page-content">
         <div class="content">
             <!--  top 영역시작 -->
             <div
-                    class="top-box py-2"
+                    class="top-box py-2" style="padding: 0 !important;"
             >
-                <div class="top-box-content my-4">
+                <div class="top-box-content my-4" style="margin-top: 0 !important;">
                     <!-- row 안에 col로 그리드를 할경우 자동 양쪽마진 15px가 붙음으로 -->
                     <!-- g-0을 해줘야 마진이 추가로 붙질않음 -->
                     <!-- https://getbootstrap.kr/docs/5.3/layout/gutters/#%EA%B1%B0%ED%84%B0-%EC%A0%9C%EA%B1%B0 -->
                     <!-- 검색 .g-0 -->
                     <div class="d-flex justify-content-between align-items-center">
-                        <div class="">
-                            <b id="가맹점">가맹점 점검 계획 관리</b>
+                        <div>
+                            <b>가맹점 점검 계획 관리</b>
                         </div>
                         <div class="d-flex justify-content-between">
-                            <div class="top-button-wrapper px-2">
+                            <div class="top-button-wrapper me-1">
                                 <div class="top-button top-lookup">조회</div>
                             </div>
                             <div class="">
-                                <div class="top-button-wrapper px-2">
+                                <div class="top-button-wrapper px-0">
                                     <div class="top-button top-reset" id="reset-selection-top">초기화</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <%-- 자동 완성 영역 --%>
-                    <div class="container-fluid">
+                    <div class="container-fluid px-0">
                         <div class="row g-3 align-items-center pt-4 top-search-box d-flex">
                             <!-- 가맹점 라벨과 검색 필드 -->
                             <div class="col-lg-2 col-md-4 col-12">

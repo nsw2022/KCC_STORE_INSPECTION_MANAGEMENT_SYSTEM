@@ -55,17 +55,17 @@ pageEncoding="UTF-8" %>
       <main class="page-content">
         <div class="container content">
           <%-- top box start--%>
-          <div class="row top-box mb-3">
-            <div class="col">
+          <div class="row top-box mb-3" style="margin-bottom: 40px !important;">
+            <div class="col px-0">
               <div class="top-content">
                 <div class="button-box" style="display: flex; justify-content: space-between; align-items: center;">
-                  <span class="m-3" style="font: 350 20px Noto Sans KR;">체크리스트 관리</span>
-                  <div class="my-3">
+                  <span class="m-3" style="font: 700 20px Noto Sans KR; margin: 0 !important;">체크리스트 관리</span>
+                  <div class="my-3" style="margin: 0 !important;">
                     <button type="button" class="btn btn-light me-3 select-btn" onclick="onAddRow()">조회</button>
-                    <button type="button" class="btn btn-light me-3 init-btn" onclick="onDeleteRow()">초기화</button>
+                    <button type="button" class="btn btn-light init-btn" onclick="onDeleteRow()">초기화</button>
                   </div>
                 </div>
-                <div class="container">
+                <div class="container px-0">
                   <div class="row first-input-box mb-3">
                     <div class="col-12 col-lg-3 d-flex align-items-center">
                       <label class="col-form-label me-2" style="min-width: 40px;">브랜드</label>
@@ -107,7 +107,7 @@ pageEncoding="UTF-8" %>
                     </div>
                   </div>
 
-                  <div class="row second-input-box mb-3">
+                  <div class="row second-input-box mb-0">
                     <div class="col-12 col-lg-3 d-flex align-items-center">
                       <label class="col-form-label me-2" style="min-width: 50px;">등록년월</label>
                       <input type="date" class="form-control" placeholder="2024-10-07">
@@ -140,14 +140,14 @@ pageEncoding="UTF-8" %>
           <%-- top box end--%>
 
           <%-- middle box start--%>
-          <div class="row middle-box mb-3">
-            <div class="col">
+          <div class="row middle-box">
+            <div class="col px-0">
               <div class="middle-content">
                 <div class="button-box" style="display: flex; justify-content: space-between; align-items: center;">
-                  <span class="m-3" style="font: 350 20px Noto Sans KR;">총 <span class="checklist_count" style="color: #0035BE"></span>개</span>
-                  <div class="my-3">
+                  <span class="ms-3" style="font: 350 20px Noto Sans KR;">총 <span class="checklist_count" style="color: #0035BE"></span>개</span>
+                  <div class="my-0">
                     <button type="button" class="btn btn-light me-3" onclick="onAddRow()">추가</button>
-                    <button type="button" class="btn btn-light me-3" onclick="onDeleteRow()">삭제</button>
+                    <button type="button" class="btn btn-light" onclick="onDeleteRow()">삭제</button>
                   </div>
                 </div>
                 <div>
@@ -159,15 +159,15 @@ pageEncoding="UTF-8" %>
           <%-- middle box end--%>
             <%-- bottom box start--%>
             <div class="row top-box mb-3">
-              <div class="col">
+              <div class="col px-0">
                 <div class="top-content">
                   <div class="button-box" style="display: flex; justify-content: space-between; align-items: center;">
-                    <span class="m-3" style="font: 350 20px Noto Sans KR;">체크리스트 상세</span>
-                    <div class="my-3">
-                      <button type="button" class="btn btn-primaty me-3 save-btn" onclick="onAddRow()">저장</button>
+                    <span class="m-0" style="font: 700 20px Noto Sans KR;">체크리스트 상세</span>
+                    <div class="my-0">
+                      <button type="button" class="btn btn-primaty save-btn" onclick="onAddRow()">저장</button>
                     </div>
                   </div>
-                  <div class="container">
+                  <div class="container px-0">
                     <div class="row first-input-box mb-3">
                       <div class="col-12 col-lg-3 d-flex align-items-center">
                         <label class="col-form-label me-2" style="min-width: 40px;">브랜드</label>
@@ -190,7 +190,7 @@ pageEncoding="UTF-8" %>
                       </div>
                     </div>
 
-                    <div class="row second-input-box mb-3">
+                    <div class="row second-input-box">
                       <div class="col-12 col-lg-3 d-flex align-items-center">
                         <label class="col-form-label me-2" style="min-width: 50px;">등록년월</label>
                         <input type="date" class="form-control" placeholder="2024-10-07">

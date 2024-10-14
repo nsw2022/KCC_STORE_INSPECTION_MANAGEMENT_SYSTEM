@@ -241,12 +241,13 @@ list-group {
   margin: 0 auto;
   background-color: white;
   border-radius: 8px;
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
-  padding: 12px 30px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  box-sizing: border-box;
 }
 
 .top-box-content div div b {
-  font-size: 1.5rem;
+  font-size: 1.2rem;
 }
 
 .top-button-wrapper {
@@ -308,8 +309,8 @@ input.top-search::-webkit-input-placeholder {
   margin: 0 auto;
   background-color: white;
   border-radius: 8px;
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
-  padding: 12px 30px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  padding: 20px;
 }
 
 .middle-register {
@@ -437,6 +438,17 @@ table tr td input {
 /* 비활성화된 모든 날짜에 대한 메시지 스타일 */
 #all-dates-disabled-message {
   display: none;
+}
+
+/* ag-Grid의 z-index를 낮게 설정 */
+.ag-theme-alpine {
+  z-index: 1 !important; /* 그리드의 z-index 값을 사이드바보다 낮게 설정 */
+  position: relative !important; /* 위치 속성 설정 (필요 시 추가) */
+}
+
+.sidebar {
+  z-index: 1000; /* 사이드바의 z-index 값을 높게 설정 */
+  position: relative; /* 위치 속성 설정 (필요 시 추가) */
 }
 
 /* 커스텀 달력 끝 */

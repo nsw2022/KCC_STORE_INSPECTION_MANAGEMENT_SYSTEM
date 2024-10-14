@@ -10,6 +10,27 @@ body {
   justify-content: center;
   flex-direction: column;
 }
+.container,
+.container-sm,
+.container-md,
+.container-lg,
+.container-xl,
+.container-xxl {
+  max-width: 100% !important; /* 모든 화면에서 100%로 설정 */
+  width: 100% !important;     /* 컨테이너 너비를 100%로 설정 */
+}
+/* 미디어 쿼리 덮어쓰기: min-width 제한 제거 */
+@media (min-width: 0px) {
+  .container,
+  .container-sm,
+  .container-md,
+  .container-lg,
+  .container-xl,
+  .container-xxl {
+    max-width: 100% !important; /* 모든 조건에서 100%로 설정 */
+  }
+}
+
 
 /************** top **************/
 .top-box{
@@ -17,20 +38,27 @@ body {
   height: 100%;
   background-color: #ffffff;
   border-radius: 8px;
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
-  padding: 12px 30px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  padding: 30px;
 }
 .top-box .select-btn{
-  width: 7vw;
+  width: 80px;
   background-color: #16DBCC;
-  border-radius: 15px;
+  height: 35px;
+  border-radius: 30px;
   color: #ffffff;
   border: none;
 }
+.select-btn:hover{
+  background-color: #3ab2a9 !important;
+  color: white !important;
+}
+
 .top-box .init-btn{
-  width: 7vw;
+  width: 80px;
   background-color: #ffffff;
-  border-radius: 15px;
+  height: 35px;
+  border-radius: 30px;
   color: #D0D5DD;
   border-color: #D0D5DD;
 }
@@ -69,7 +97,9 @@ body {
   border-color: #D0D5DD;
   border-radius: 10px;
 }
-
+.button-box{
+  margin-bottom: 20px !important;
+}
 
 
 
@@ -79,9 +109,10 @@ body {
   height: 100%;
   background-color: #ffffff;
   border-radius: 8px;
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
-  padding: 12px 30px;
-  padding: 1rem 2rem;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  padding: 30px 20px 20px 20px;
+  box-sizing: border-box;
+  margin-bottom: 40px;
 }
 .middle-box .btn{
   width: 7vw;
@@ -265,10 +296,14 @@ body {
 
 
 
-
-
-
-
+.ag-theme-quartz {
+  z-index: 1 !important; /* 그리드의 z-index 값을 사이드바보다 낮게 설정 */
+  position: relative !important; /* 위치 속성 설정 (필요 시 추가) */
+}
+.sidebar {
+  z-index: 1000; /* 사이드바의 z-index 값을 높게 설정 */
+  position: relative; /* 위치 속성 설정 (필요 시 추가) */
+}
 
 
 
@@ -318,15 +353,7 @@ body {
     margin-right: 0.1rem !important;
     border-radius: 15px;
   }
-  /* ag-Grid의 z-index를 낮게 설정 */
-  .ag-theme-quartz {
-    z-index: 1 !important; /* 그리드의 z-index 값을 사이드바보다 낮게 설정 */
-    position: relative !important; /* 위치 속성 설정 (필요 시 추가) */
-  }
-  .sidebar {
-    z-index: 1000; /* 사이드바의 z-index 값을 높게 설정 */
-    position: relative; /* 위치 속성 설정 (필요 시 추가) */
-  }
+
   .top-box .btn{
     font-size: 0.7rem;
     width: 15vw;

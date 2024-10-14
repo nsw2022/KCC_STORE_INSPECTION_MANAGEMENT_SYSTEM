@@ -76,6 +76,16 @@
             <div class="container mt-3">
               <div class="row first-input-box mb-3">
                 <div class="col-12 d-flex align-items-center justify-content-between p-0">
+                  <label class="col-form-label" style="width: 100px">체크리스트</br>제목</label>
+                  <input type="text" class="form-control" placeholder="체크리스트 제목">
+                  <datalist id="ownChecklistOptions">
+                    <option value="2024 위생 점검 체크리스트">
+                  </datalist>
+                </div>
+              </div>
+
+              <div class="row first-input-box mb-3">
+                <div class="col-12 d-flex align-items-center justify-content-between p-0">
                   <label class="col-form-label" style="width: 100px">마스터</br>체크리스트</label>
                   <input type="text" class="form-control" placeholder="마스터 체크리스트" data-bs-target="#masterChecklistModal" data-bs-toggle="modal" readonly>
                   <datalist id="useChecklistOptions">
