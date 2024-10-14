@@ -65,11 +65,10 @@
 <%--<div class="top-bar">--%>
 <%--    <span id="breadcrumb"><span class="parent-menu">체크리스트 관리</span></span>--%>
 <%--</div>--%>
+
 <div class="sidebar">
     <jsp:include page="../../sidebar/sidebar.jsp"/>
 </div>
-
-
 <div class="page-wrapper2">
     <main class="page-content">
         <div class="content">
@@ -226,7 +225,7 @@
                                 <div class="top-button top-reset"  id="deleteRowButton">삭제</div>
                             </div>
                         </div>
-                        <div id="myGrid" class="ag-theme-alpine" style="height: 500px; width: 100%;"></div>
+                        <div id="myGrid" class="ag-theme-quartz" style="height: 500px; width: 100%;"></div>
                     </div>
                 </div>
 
@@ -587,7 +586,7 @@
 <%--                    <button class="inspection-tab" data-tab="위생지도상황">위생지도상황</button>--%>
 
     <button class="inspection-tab" data-bs-target="#masterChecklistModal"
-            data-bs-toggle="modal" style="background-color: #afa4dd; color: white;>뒤로가기</button>
+            data-bs-toggle="modal" style="background-color: #afa4dd; color: white;">뒤로가기</button>
                 </div>
 <%--                <section class="inspection-list" id="중대법규">--%>
 <%--                    <div class="inspection-box">--%>

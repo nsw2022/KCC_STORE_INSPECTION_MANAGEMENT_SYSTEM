@@ -281,7 +281,7 @@
   display: inline-block;
   width: 100%;
   padding-top: 50px;
-  padding-left: 0; 
+  padding-left: 0;
   box-sizing: border-box;
   background-color: #f4f7ff;
 }
@@ -334,7 +334,6 @@
     padding-left: 250px;
     box-sizing: border-box;
   }
-
 }
 
 @media screen and (max-width: 1000px) {

@@ -484,7 +484,12 @@ table tr td input {
   background-color: #6e00fa !important;
   color: white;
 }
-
+@media (max-width: 1000px) {
+  .sidebar {
+    position: relative;
+    z-index: 1000;
+  }
+}
 @media (max-width: 991.98px) {
   /*.file_cus {*/
   /*  flex-direction: column;*/
@@ -625,16 +630,6 @@ table tr td input {
 
   .top-box-content div div b {
     font-size: 1.2rem !important;
-  }
-
-  .sidebar {
-    width: 100%; /* 모바일에서 사이드바를 전체 너비로 확장 */
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    height: auto;
-    background-color: #fff;
   }
 
   .content {

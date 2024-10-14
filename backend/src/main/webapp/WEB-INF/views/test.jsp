@@ -76,6 +76,66 @@
             margin-right: 10px;
             font-size: 16px;
         }
+
+        /* 교통 레이어 컨트롤 버튼 스타일 */
+        #trafficControlContainer {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+
+        #trafficControlContainer button {
+            display: block;
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        #trafficControlContainer label {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        #trafficControlContainer input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        /* 경로 토글 컨트롤 버튼 스타일 */
+        #routeControlContainer {
+            position: absolute;
+            top: 10px;
+            right: 150px; /* 교통 레이어 컨트롤과 겹치지 않도록 위치 조정 */
+            background: white;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+        }
+
+        #routeControlContainer button {
+            display: block;
+            width: 100%;
+            padding: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* **선택 사항: 총계 행 스타일링** */
+        .total-row {
+            font-weight: bold;
+            background-color: #f9f9f9;
+        }
     </style>
     <!-- Naver Maps API 스크립트 (API 키 필요) -->
     <script type="text/javascript"
@@ -92,6 +152,20 @@
 
 <!-- 에러 메시지 -->
 <div id="errorMessage"></div>
+
+<!-- 교통 레이어 컨트롤 -->
+<div id="trafficControlContainer">
+    <button id="traffic">교통 정보 토글</button>
+    <label>
+        <input type="checkbox" id="autorefresh">
+        자동 새로고침
+    </label>
+</div>
+
+<!-- 경로 토글 컨트롤 -->
+<div id="routeControlContainer">
+    <button id="toggleRouteBtn">경로 숨기기</button>
+</div>
 
 <!-- 지도 표시 영역 -->
 <div id="map"></div>
@@ -126,13 +200,15 @@
     <!-- 동적으로 채워질 내용 -->
     </tbody>
 </table>
+
 <script>
     // 모든 스크립트를 DOMContentLoaded 이벤트 내에 넣습니다.
     document.addEventListener("DOMContentLoaded", function () {
         // 글로벌 변수 선언
         var map = null;
         var polylines = [];
-        var colors = ['#FF0000', '#0000FF', '#00FF00', '#FFA500', '#800080']; // 경로 색상 배열
+        // 혼잡도 색상 매핑 제거 또는 사용하지 않도록 설정
+        // var congestionColorMap = { ... };
 
         // 마커 관리 변수
         var searchMarkers = []; // 목적지 검색 마커
@@ -143,6 +219,13 @@
 
         // 마커 아이콘 설정 변수
         var startIcon, endIcon, waypointIcon;
+
+        // 트래픽 레이어 및 관련 변수
+        var trafficLayer = null;
+        var trafficInterval = 300000; // 5분 (300,000 밀리초)
+
+        // 경로 표시 상태
+        var routesVisible = true;
 
         // Naver Maps API 로드 완료 시 실행되는 함수
         naver.maps.onJSContentLoaded = function () {
@@ -184,6 +267,14 @@
                 }
             };
             map = new naver.maps.Map('map', mapOptions);
+
+            // 트래픽 레이어 초기화
+            trafficLayer = new naver.maps.TrafficLayer({
+                interval: trafficInterval // 5분마다 새로고침
+            });
+
+            // 초기 트래픽 레이어 설정 (지도를 로드할 때 트래픽 레이어를 추가)
+            trafficLayer.setMap(map);
 
             // 지도 클릭 이벤트
             naver.maps.Event.addListener(map, 'click', function (e) {
@@ -241,6 +332,30 @@
             $('#testBtn').click(function () {
                 testDrivingRoute();
             });
+
+            // 트래픽 레이어 토글 버튼 이벤트
+            $('#traffic').on("click", function (e) {
+                e.preventDefault();
+                toggleTrafficLayer();
+            });
+
+            // 자동 새로고침 체크박스 이벤트
+            $("#autorefresh").on("click", function (e) {
+                var btn = $(this),
+                    checked = btn.is(":checked");
+
+                if (checked) {
+                    trafficLayer.startAutoRefresh();
+                } else {
+                    trafficLayer.endAutoRefresh();
+                }
+            });
+
+            // 경로 토글 버튼 이벤트 추가
+            $('#toggleRouteBtn').on("click", function (e) {
+                e.preventDefault();
+                toggleRoutesVisibility();
+            });
         }
 
         /**
@@ -269,7 +384,7 @@
                 url: '/api/map/GetCoordinates', // 경로 수정: '/Map/GetCoordinates' -> '/api/map/GetCoordinates'
                 method: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify({address: address}),
+                data: JSON.stringify({ address: address }),
                 success: function (response) {
                     if (response.status === 200) {
                         var data = response.data;
@@ -302,10 +417,10 @@
                 method: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({
-                    start: {x: startX, y: startY},
+                    start: { x: startX, y: startY },
                     addressList: getGoalList(goals),
                     viaPoints: viaPoints.map(function (point) {
-                        return {x: point.x, y: point.y};
+                        return { x: point.x, y: point.y };
                     }) // 서버에서 받은 경유지 목록을 전달
                 }),
                 success: function (response) {
@@ -313,14 +428,7 @@
                     if (response.code === 0 && response.route && response.route.trafast) {
                         var routes = response.route.trafast; // 'trafast' 배열을 routes로 설정
                         displayRouteResults(routes);
-                        drawRouteOnMap(routes);
-
-                        // 지도 중심을 첫 번째 경로의 출발지로 이동
-                        if (routes.length > 0) {
-                            var firstRoute = routes[0];
-                            var startCoordinates = firstRoute.summary.start.location;
-                            map.setCenter(new naver.maps.LatLng(startCoordinates[1], startCoordinates[0]));
-                        }
+                        // drawRouteOnMap(routes); // 이제 displayRouteResults에서 경로를 그리므로 주석 처리
                     } else {
                         alert('경로 검색에 실패했습니다: ' + (response.message || 'Unknown Error'));
                         console.error("SearchRoute Error:", response);
@@ -368,7 +476,7 @@
                 url: '/api/map/GetCoordinates', // 경로 수정: '/Map/GetCoordinates' -> '/api/map/GetCoordinates'
                 method: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify({address: startAddress}),
+                data: JSON.stringify({ address: startAddress }),
                 success: function (startResponse) {
                     console.log("GetCoordinates (Start) Response:", startResponse); // 디버깅용 로그
                     if (startResponse.status === 200) {
@@ -396,12 +504,12 @@
                                 url: '/api/map/GetCoordinates', // 경로 수정: '/Map/GetCoordinates' -> '/api/map/GetCoordinates'
                                 method: 'POST',
                                 contentType: 'application/json',
-                                data: JSON.stringify({address: address}),
+                                data: JSON.stringify({ address: address }),
                                 success: function (destResponse) {
                                     console.log("GetCoordinates (Destination) Response:", destResponse); // 디버깅용 로그
                                     if (destResponse.status === 200) {
                                         var destData = destResponse.data;
-                                        goals.push({x: destData.x, y: destData.y});
+                                        goals.push({ x: destData.x, y: destData.y });
                                     } else {
                                         alert('주소 검색에 실패했습니다: ' + destResponse.message);
                                         failed = true;
@@ -446,7 +554,7 @@
                     if (response.code === 0 && response.route && response.route.trafast) {
                         var routes = response.route.trafast;
                         displayRouteResults(routes);
-                        drawRouteOnMap(routes);
+                        // drawRouteOnMap(routes); // 이제 displayRouteResults에서 경로를 그리므로 주석 처리
 
                         // 지도 중심을 첫 번째 경로의 출발지로 이동
                         if (routes.length > 0) {
@@ -467,7 +575,6 @@
                 }
             });
         }
-
 
         /**
          * 마커와 정보창을 추가하는 함수
@@ -567,139 +674,6 @@
         }
 
         /**
-         * 사용자 위치를 가져와 지도에 표시
-         */
-        // function showUserLocation() {
-        //     if (navigator.geolocation) {
-        //         navigator.geolocation.getCurrentPosition(function(position) {
-        //             var userLat = position.coords.latitude;
-        //             var userLng = position.coords.longitude;
-        //
-        //             var userMarker = new naver.maps.Marker({
-        //                 position: new naver.maps.LatLng(userLat, userLng),
-        //                 map: map,
-        //                 title: '내 위치',
-        //                 icon: {
-        //                     url: 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_current.png', // 사용자 위치 아이콘 URL
-        //                     size: new naver.maps.Size(24, 37),
-        //                     origin: new naver.maps.Point(0, 0),
-        //                     anchor: new naver.maps.Point(12, 37)
-        //                 }
-        //             });
-        //
-        //             // 지도 중심을 사용자 위치로 이동
-        //             map.setCenter(new naver.maps.LatLng(userLat, userLng));
-        //         }, function(error) {
-        //             console.error("사용자 위치 가져오기 실패:", error);
-        //             alert("사용자 위치를 가져올 수 없습니다.");
-        //         });
-        //     } else {
-        //         alert("Geolocation을 지원하지 않는 브라우저입니다.");
-        //     }
-        // }
-
-        /**
-         * 경로 결과를 테이블에 표시하고 마커 추가
-         * @param {Array} routes - 경로 배열 (trafast 배열의 요소들)
-         */
-        function displayRouteResults(routes) {
-            $('#routeTableBody').empty();
-            showLoading();
-            hideError();
-
-            // 기존 폴리라인 제거
-            $.each(polylines, function (index, polyline) {
-                polyline.setMap(null);
-            });
-            polylines = [];
-
-            // 기존 마커 제거 (출발지, 도착지, 경유지)
-            if (startMarker) startMarker.setMap(null);
-            if (endMarker) endMarker.setMap(null);
-            $.each(waypointMarkers, function (index, marker) {
-                marker.setMap(null);
-            });
-            waypointMarkers = [];
-
-            // 경로별로 처리
-            routes.forEach(function (route, routeIndex) {
-                var summary = route.summary;
-                var startLocation = summary.start.location; // [x, y]
-                var goalLocation = summary.goal.location; // [x, y]
-                var waypoints = summary.waypoints || [];
-
-                // 마커 추가
-                addStartMarker({x: startLocation[0], y: startLocation[1]});
-                addEndMarker({x: goalLocation[0], y: goalLocation[1]});
-                addWaypointMarkers(waypoints);
-
-                // 테이블에 각 구간 추가
-                // 출발지 → 목적지1
-                if (waypoints.length > 0) {
-                    var firstWaypoint = waypoints[0];
-                    var row1 = '<tr>' +
-                        '<td>출발지</td>' +
-                        '<td>목적지 1</td>' +
-                        '<td>' + firstWaypoint.distance.toLocaleString() + ' m</td>' +
-                        '<td>' + Math.round(firstWaypoint.duration / 60000) + ' 분</td>' +
-                        '</tr>';
-                    $('#routeTableBody').append(row1);
-
-                    // 목적지1 → 목적지2, ..., 목적지N-1 → 목적지N
-                    for (var i = 1; i < waypoints.length; i++) {
-                        var currentWaypoint = waypoints[i];
-                        var previousWaypoint = waypoints[i - 1];
-                        var row = '<tr>' +
-                            '<td>목적지 ' + i + '</td>' +
-                            '<td>목적지 ' + (i + 1) + '</td>' +
-                            '<td>' + currentWaypoint.distance.toLocaleString() + ' m</td>' +
-                            '<td>' + Math.round(currentWaypoint.duration / 60000) + ' 분</td>' +
-                            '</tr>';
-                        $('#routeTableBody').append(row);
-                    }
-
-                    // 마지막 목적지 → 도착지
-                    var lastWaypoint = waypoints[waypoints.length - 1];
-                    var rowLast = '<tr>' +
-                        '<td>목적지 ' + waypoints.length + '</td>' +
-                        '<td>도착지</td>' +
-                        '<td>' + summary.goal.distance.toLocaleString() + ' m</td>' +
-                        '<td>' + Math.round(summary.goal.duration / 60000) + ' 분</td>' +
-                        '</tr>';
-                    $('#routeTableBody').append(rowLast);
-                } else {
-                    // 경유지가 없을 경우 출발지 → 도착지
-                    var row = '<tr>' +
-                        '<td>출발지</td>' +
-                        '<td>도착지</td>' +
-                        '<td>' + summary.goal.distance.toLocaleString() + ' m</td>' +
-                        '<td>' + Math.round(summary.goal.duration / 60000) + ' 분</td>' +
-                        '</tr>';
-                    $('#routeTableBody').append(row);
-                }
-
-                // 경로 그리기
-                var color = colors[routeIndex]; // 색상 배열의 인덱스에 따라 색상 할당
-                var path = route.path.map(function (coords) {
-                    return new naver.maps.LatLng(coords[1], coords[0]); // y, x
-                });
-                var polyline = new naver.maps.Polyline({
-                    map: map,
-                    path: path,
-                    strokeColor: color,
-                    strokeOpacity: 0.7,
-                    strokeWeight: 5
-                });
-                polylines.push(polyline);
-            });
-
-            // 지도 범위 조정 (전체 마커를 포함하도록)
-            adjustMapBounds();
-
-            hideLoading();
-        }
-
-        /**
          * 좌표로부터 주소를 가져오는 함수
          * @param {Object} coordinates - {x, y} 형식의 좌표 객체
          * @returns {Promise<string>} - 주소 문자열
@@ -736,6 +710,150 @@
         }
 
         /**
+         * 경로 결과를 테이블에 표시하고 마커 추가
+         * @param {Array} routes - 경로 배열 (trafast 배열의 요소들)
+         */
+        function displayRouteResults(routes) {
+            console.log("총길이 =  " + routes.length);
+            $('#routeTableBody').empty();
+            showLoading();
+            hideError();
+
+            // 기존 폴리라인 제거
+            $.each(polylines, function (index, polyline) {
+                polyline.setMap(null);
+            });
+            polylines = [];
+
+            // 기존 마커 제거 (출발지, 도착지, 경유지)
+            if (startMarker) startMarker.setMap(null);
+            if (endMarker) endMarker.setMap(null);
+            $.each(waypointMarkers, function (index, marker) {
+                marker.setMap(null);
+            });
+            waypointMarkers = [];
+
+            // 총계 변수 선언 및 초기화
+            var totalDistance = 0; // 전체 거리 (m)
+            var totalDuration = 0; // 전체 소요 시간 (분)
+
+            // 경로별로 처리
+            routes.forEach(function (route, routeIndex) {
+                var summary = route.summary;
+                var startLocation = summary.start.location; // [x, y]
+                var goalLocation = summary.goal.location; // [x, y]
+                var waypoints = summary.waypoints || [];
+                var sections = route.section || [];
+
+                console.log("Processing route:", routeIndex + 1);
+
+                // 마커 추가
+                addStartMarker({ x: startLocation[0], y: startLocation[1] });
+                addEndMarker({ x: goalLocation[0], y: goalLocation[1] });
+                addWaypointMarkers(waypoints);
+
+                // 테이블에 각 구간 추가
+                if (waypoints.length > 0) {
+                    var firstWaypoint = waypoints[0];
+                    var row1 = '<tr>' +
+                        '<td>출발지</td>' +
+                        '<td>목적지 1</td>' +
+                        '<td>' + firstWaypoint.distance.toLocaleString() + ' m</td>' +
+                        '<td>' + Math.round(firstWaypoint.duration / 60000) + ' 분</td>' +
+                        '</tr>';
+                    $('#routeTableBody').append(row1);
+
+                    // 총계 업데이트
+                    totalDistance += firstWaypoint.distance;
+                    totalDuration += Math.round(firstWaypoint.duration / 60000);
+
+                    // 목적지1 → 목적지2, ..., 목적지N-1 → 목적지N
+                    for (var i = 1; i < waypoints.length; i++) {
+                        var currentWaypoint = waypoints[i];
+                        var previousWaypoint = waypoints[i - 1];
+                        var row = '<tr>' +
+                            '<td>목적지 ' + i + '</td>' +
+                            '<td>목적지 ' + (i + 1) + '</td>' +
+                            '<td>' + currentWaypoint.distance.toLocaleString() + ' m</td>' +
+                            '<td>' + Math.round(currentWaypoint.duration / 60000) + ' 분</td>' +
+                            '</tr>';
+                        $('#routeTableBody').append(row);
+
+                        // 총계 업데이트
+                        totalDistance += currentWaypoint.distance;
+                        totalDuration += Math.round(currentWaypoint.duration / 60000);
+                    }
+
+                    // 마지막 목적지 → 도착지
+                    var lastWaypoint = waypoints[waypoints.length - 1];
+                    var rowLast = '<tr>' +
+                        '<td>목적지 ' + waypoints.length + '</td>' +
+                        '<td>도착지</td>' +
+                        '<td>' + summary.goal.distance.toLocaleString() + ' m</td>' +
+                        '<td>' + Math.round(summary.goal.duration / 60000) + ' 분</td>' +
+                        '</tr>';
+                    $('#routeTableBody').append(rowLast);
+
+                    // 총계 업데이트
+                    totalDistance += summary.goal.distance;
+                    totalDuration += Math.round(summary.goal.duration / 60000);
+                } else {
+                    // 경유지가 없을 경우 출발지 → 도착지
+                    var row = '<tr>' +
+                        '<td>출발지</td>' +
+                        '<td>도착지</td>' +
+                        '<td>' + summary.goal.distance.toLocaleString() + ' m</td>' +
+                        '<td>' + Math.round(summary.goal.duration / 60000) + ' 분</td>' +
+                        '</tr>';
+                    $('#routeTableBody').append(row);
+
+                    // 총계 업데이트
+                    totalDistance += summary.goal.distance;
+                    totalDuration += Math.round(summary.goal.duration / 60000);
+                }
+
+                // 경로 그리기: 단일 색상 적용 (예: 파란색)
+
+
+                console.log(sections)
+
+                var color = "#0000FF"; // 원하는 단일 색상으로 설정 (파란색)
+
+                // 콘솔에 색상 출력 (디버깅용)
+                console.log("경로 색상:", color);
+
+                // 모든 구간을 단일 색상으로 그리기
+                var pathCoordinates = route.path; // 전체 경로 포인트
+                var path = pathCoordinates.map(function (coords) {
+                    return new naver.maps.LatLng(coords[1], coords[0]); // y, x
+                });
+
+                var polyline = new naver.maps.Polyline({
+                    map: routesVisible ? map : null,
+                    path: path,
+                    strokeColor: color,
+                    strokeOpacity: 0.7,
+                    strokeWeight: 5 // 두께 조정 (필요시 변경)
+                });
+
+                polylines.push(polyline);
+            }); // routes.forEach 끝
+
+            // 총계 행 추가
+            var totalRow = '<tr class="total-row">' +
+                '<td colspan="2">총계</td>' +
+                '<td>' + totalDistance.toLocaleString() + ' m</td>' +
+                '<td>' + totalDuration.toLocaleString() + ' 분</td>' +
+                '</tr>';
+            $('#routeTableBody').append(totalRow);
+
+            // 지도 범위 조정 (전체 마커를 포함하도록)
+            adjustMapBounds();
+
+            hideLoading();
+        }
+
+        /**
          * 지도에 경로를 그립니다.
          */
         function drawRouteOnMap(routes) {
@@ -754,21 +872,13 @@
                 });
                 var polyline = new naver.maps.Polyline({
                     path: path,
-                    strokeColor: colors[index], // index만 사용
+                    strokeColor: "#0000FF", // 단일 색상 적용 (파란색)
                     strokeOpacity: 0.8,
                     strokeWeight: 3,
-                    map: map
+                    map: routesVisible ? map : null // 현재 경로 표시 상태에 따라 지도에 추가 또는 제거
                 });
                 polylines.push(polyline);
             });
-        }
-
-        /**
-         * 프론트엔드용 Coordinates 클래스 정의
-         */
-        function Coordinates(x, y) {
-            this.x = x;
-            this.y = y;
         }
 
         /**
@@ -811,23 +921,44 @@
                 bounds.extend(marker.getPosition());
             });
 
-            // if (!bounds.isEmpty()) {
-            //     map.fitBounds(bounds);
-            // }
+
         }
 
-        // **변경 사항 시작**
-        // 좌표를 토대로 검색하는 부분을 주석 처리
-        /*
         /**
-         * 좌표를 토대로 검색하는 함수 (현재 주석 처리)
+         * 트래픽 레이어 토글 함수
          */
-        /*
-        function coordinateBasedSearch() {
-            // 여기에 좌표를 토대로 검색하는 로직을 구현
+        function toggleTrafficLayer() {
+            if (trafficLayer.getMap()) {
+                trafficLayer.setMap(null);
+                $('#traffic').removeClass('control-on');
+                $("#autorefresh").parent().hide();
+            } else {
+                trafficLayer.setMap(map);
+                $('#traffic').addClass('control-on');
+                $("#autorefresh").parent().show();
+            }
         }
-        */
-        // **변경 사항 끝**
+
+        /**
+         * 경로(polylines)의 가시성을 토글하는 함수
+         */
+        function toggleRoutesVisibility() {
+            if (routesVisible) {
+                // 경로 숨기기
+                polylines.forEach(function (polyline) {
+                    polyline.setMap(null);
+                });
+                routesVisible = false;
+                $('#toggleRouteBtn').text('경로 표시하기');
+            } else {
+                // 경로 다시 표시하기
+                polylines.forEach(function (polyline) {
+                    polyline.setMap(map);
+                });
+                routesVisible = true;
+                $('#toggleRouteBtn').text('경로 숨기기');
+            }
+        }
     });
 </script>
 

@@ -351,7 +351,10 @@ public class MapTestService {
         List<Coordinates> goals = Arrays.asList(
                 new Coordinates(127.0792776, 37.6025393),
                 new Coordinates(127.0275579, 37.4980678),
-                new Coordinates(126.9134889, 37.5492583)
+//                new Coordinates(126.9134889, 37.5492583),
+
+                new Coordinates(127.0598799, 37.655456)
+
 
         );
         return getOptimizedDrivingRoute(start, goals, null);
