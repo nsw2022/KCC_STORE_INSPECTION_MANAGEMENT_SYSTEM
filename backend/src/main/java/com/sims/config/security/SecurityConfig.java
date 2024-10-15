@@ -14,46 +14,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+    private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
 
-    private static final String[] JSP_LIST = {
-            "/resources/**",
-            "/login",
-            "/membership",
-            "/nonUser/add",
-            "/main",
-            "/reservation/**",
-            "/join",
-            "/payment/**",
-            "/duplicated/**",
-            "/check/**",
-            "/admin/**",
-            "/check/payment",
-            "/WEB-INF/views/membership.jsp",
-            "/WEB-INF/views/login.jsp",
-            "/WEB-INF/views/main.jsp",
-            "/WEB-INF/views/reservation_detail.jsp",
-            "/WEB-INF/views/reservation_seat1.jsp",
-            "/WEB-INF/views/reservation_seat2.jsp",
-            "/WEB-INF/views/reservation_seat3.jsp",
-            "/WEB-INF/views/payment.jsp",
-            "/WEB-INF/views/payment_accept.jsp",
-            "/WEB-INF/views/payment_finish.jsp",
-            "/WEB-INF/views/payment.jsp",
-            "/WEB-INF/views/payment_accept.jsp",
-            "/WEB-INF/views/payment_finish.jsp"
-    };
-    private static final String[] USER_JSP_LIST = {
-            "/user/**",
-            "/WEB-INF/views/mypage.jsp",
-            "/WEB-INF/views/mypage_edit.jsp",
-            "/WEB-INF/views/reservation_list.jsp",
-            "/WEB-INF/views/login.jsp",
-            "/WEB-INF/views/main.jsp",
-            "/WEB-INF/views/reservation_detail.jsp",
-            "/WEB-INF/views/reservation_seat1.jsp",
-            "/WEB-INF/views/reservation_seat2.jsp",
-            "/WEB-INF/views/reservation_seat3.jsp"
-    };
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
@@ -73,19 +35,19 @@ public class SecurityConfig {
 
         http.formLogin(auth -> auth
                 .loginPage("/home/login/login")
-                .failureUrl("/login?error=true")
                 .successHandler(customAuthenticationSuccessHandler)
+                .failureHandler(customAuthenticationFailureHandler)
                 .usernameParameter("mbrNo")
                 .passwordParameter("mbrPw")
                 .loginProcessingUrl("/loginProcess")
         );
 
-//        http.logout(logout -> logout
-//                .logoutUrl("/logout")
-//                .logoutSuccessUrl("/login?logout=true")
-//                .invalidateHttpSession(true)
-//                .deleteCookies("JSESSIONID")
-//        );
+        http.logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login?logout=true")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+        );
 
         return http.build();
     }

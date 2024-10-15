@@ -12,6 +12,6 @@ public class LoginLogDao {
     private String connectionIp; // 접속 IP
     private String connectionOs; // 접속 OS
     private String connectionBrowser; // 접속 Browser
-    private boolean errorOccurrenceCd; // 오류 발생여부 코드
-    private boolean errorCode; // 오류 코드
+    private String errorOccurrenceCd; // 오류 발생여부 코드
+    private String errorCode; // 오류 코드
 }
