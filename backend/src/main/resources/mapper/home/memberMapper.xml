@@ -3,13 +3,13 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.sims.home.dashboard.mapper.MemberMapper">
+<mapper namespace="com.sims.home.member.mapper.MemberMapper">
     <select id="getMemberByMbrId" resultType="MemberDao">
-        select * from member where mbr_no = #{mbrNo}
+        select * from mbr where mbr_no = #{mbrNo}
     </select>
 
     <insert id="insertTestMember" parameterType="MemberDao">
-        INSERT INTO member (
+        INSERT INTO mbr (
         MBR_ID, MBR_NO, MBR_PW, MBR_NM, MBR_ROLE_CD, MBR_STTS_CD, TEL, HIRE_DT, QUIT_DT, CRE_MBR_ID, UPD_MBR_ID, CRE_TM, UPD_TM, LAST_LOGIN_TM
         ) VALUES (
         MEMBER_SEQ.NEXTVAL,
@@ -30,5 +30,10 @@
         NULL
         )
     </insert>
+
+
+    <update id="updateLastLoginDate">
+        update mbr set LAST_LOGIN_TM = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MI') WHERE MBR_NO = #{mbrNo}
+    </update>
 
 </mapper>

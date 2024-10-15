@@ -1,5 +1,6 @@
-package com.sims.config;
+package com.sims.config.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,7 +11,10 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+    private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+
     private static final String[] JSP_LIST = {
             "/resources/**",
             "/login",
@@ -68,8 +72,9 @@ public class SecurityConfig {
         );
 
         http.formLogin(auth -> auth
-                .loginPage("/login")
+                .loginPage("/home/login/login")
                 .failureUrl("/login?error=true")
+                .successHandler(customAuthenticationSuccessHandler)
                 .usernameParameter("mbrNo")
                 .passwordParameter("mbrPw")
                 .loginProcessingUrl("/loginProcess")

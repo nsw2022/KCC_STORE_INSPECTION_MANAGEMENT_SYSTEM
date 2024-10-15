@@ -1,10 +1,10 @@
-package com.sims.config;
+package com.sims.config.security;
 
 
-import com.sims.home.dashboard.vo.MemberDao;
+import com.sims.home.member.vo.MemberDao;
 
 
-import com.sims.home.dashboard.mapper.MemberMapper;
+import com.sims.home.member.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;

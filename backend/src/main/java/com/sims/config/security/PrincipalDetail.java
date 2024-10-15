@@ -1,7 +1,7 @@
-package com.sims.config;
+package com.sims.config.security;
 
 
-import com.sims.home.dashboard.vo.MemberDao;
+import com.sims.home.member.vo.MemberDao;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
