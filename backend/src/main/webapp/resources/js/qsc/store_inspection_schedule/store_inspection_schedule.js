@@ -206,7 +206,7 @@ function generateCalendar(date) {
 
     var div_calendar = $('#wrapper').find('.div_calendar');
 
-    var html = `<div class='text-end pe-1'></div>`;
+    var html = `<div class='text-end pe-2'></div>`;
 
     for (let i = 0; i < firstDay; i++) {
         div_calendar.append(html);
@@ -215,7 +215,7 @@ function generateCalendar(date) {
     for (let i = 1; i <= lastDay; i++) {
         // 날짜 칸
         const dayDiv = document.createElement("div");
-        dayDiv.className += 'text-end pe-1';
+        dayDiv.className += 'text-end pe-2';
         const day = i.toString().padStart(2, '0'); // 01, 02 형식으로 변환
         dayDiv.setAttribute('data-day', `${date.getFullYear()}-${date.getMonth() + 1}-${day}`);
 
@@ -253,7 +253,7 @@ function generateCalendar(date) {
     if (divLength % 7 !== 0) {
         for (let i = 1; i <= (7 - (divLength % 7)); i++) {
             const dayDiv = document.createElement("div");
-            dayDiv.className += 'text-end pe-1';
+            dayDiv.className += 'text-end pe-2';
             div_calendar.append(dayDiv);
         }
     }
