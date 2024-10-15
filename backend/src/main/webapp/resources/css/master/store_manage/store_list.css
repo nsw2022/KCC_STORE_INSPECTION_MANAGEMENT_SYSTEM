@@ -326,7 +326,7 @@ input[type="file"]:focus-visible ~ .file_btn,
   background-color: white;
   border-radius: 8px;
   box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
-  padding: 12px 30px;
+  padding: 30px;
 }
 
 .top-box-content div div b {
@@ -393,7 +393,7 @@ input.top-search::-webkit-input-placeholder {
   background-color: white;
   border-radius: 8px;
   box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
-  padding: 12px 30px;
+  padding: 30px;
 }
 
 .middle-register {
