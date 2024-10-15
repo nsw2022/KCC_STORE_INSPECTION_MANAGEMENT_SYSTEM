@@ -63,7 +63,7 @@
   <main class="page-content">
     <div class="container content">
       <%-- top box start--%>
-      <div class="row top-box mb-3">
+      <div class="row top-box">
         <div class="col">
           <div class="top-content">
             <div class="button-box" style="display: flex; justify-content: space-between; align-items: center;">
@@ -107,7 +107,7 @@
 
       <%-- middle box start--%>
         <div class="row middle-row d-flex justify-content-between">
-          <div class="col-lg-6 col-12 mb-3 accordion-box">
+          <div class="col-lg-6 col-12 accordion-box">
             <div class="accordion">
               <div class="accordion-item">
                 <h2 class="accordion-header">

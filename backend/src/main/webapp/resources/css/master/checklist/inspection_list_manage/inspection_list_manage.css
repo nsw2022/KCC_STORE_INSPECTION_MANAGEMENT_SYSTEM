@@ -4,6 +4,35 @@ body {
 .page-content{
     min-height: calc(100vh - 6px);
 }
+.content {
+    flex-grow: 1; /* 남은 공간을 모두 사용 */
+    background-color: #f4f7ff;
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.container,
+.container-sm,
+.container-md,
+.container-lg,
+.container-xl,
+.container-xxl {
+    max-width: 100% !important; /* 모든 화면에서 100%로 설정 */
+    width: 100% !important;     /* 컨테이너 너비를 100%로 설정 */
+}
+/* 미디어 쿼리 덮어쓰기: min-width 제한 제거 */
+@media (min-width: 0px) {
+    .container,
+    .container-sm,
+    .container-md,
+    .container-lg,
+    .container-xl,
+    .container-xxl {
+        max-width: 100% !important; /* 모든 조건에서 100%로 설정 */
+    }
+}
 
 /************** top **************/
 .top-box{
@@ -13,6 +42,7 @@ body {
     border-radius: 8px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     padding: 20px;
+    margin-bottom: 40px;
 }
 .top-box .select-btn{
     width: 7vw;

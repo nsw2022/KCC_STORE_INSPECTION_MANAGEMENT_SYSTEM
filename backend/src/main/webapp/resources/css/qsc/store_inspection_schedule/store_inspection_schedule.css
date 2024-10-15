@@ -206,6 +206,19 @@
   height: 90%;
 }
 
+#wrapper .div_calendar>div:first-child{
+  border-top-left-radius: 10px;
+}
+#wrapper .div_calendar>div:nth-child(7){
+  border-top-right-radius: 10px;
+}
+#wrapper .div_calendar>div:nth-child(29){
+  border-bottom-left-radius: 10px;
+}
+#wrapper .div_calendar>div:last-child{
+  border-bottom-right-radius: 10px;
+}
+
 #wrapper .div_week div {
   color: #5A5A5A;
   font: 500 1.2rem "Noto Sans KR";

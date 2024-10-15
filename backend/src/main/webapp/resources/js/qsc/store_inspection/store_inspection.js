@@ -185,26 +185,7 @@ function calender() {
 
         // 달력 날짜 채우기
         for (let i = firstDay; i < 7; i++) {
-            const cell = document.createElement('td');
-            cell.textContent = day++;
-            if (year === defaultYear && month === defaultMonth && parseInt(cell.textContent) === defaultDay) {
-                cell.classList.add('selected'); // 오늘 날짜를 기본 선택
-                selectedDate = cell;
-            }
-            cell.addEventListener('click', function () {
-                if (selectedDate) {
-                    selectedDate.classList.remove('selected');
-                }
-                selectedDate = cell;
-                cell.classList.add('selected');
-                const selectedYear = parseInt(yearSelect.value);
-                const selectedMonth = parseInt(monthSelect.value);
-                const selectedDay = parseInt(cell.textContent);
-                const date = new Date(selectedYear, selectedMonth, selectedDay);
-                generateTodayInspectionList(date);
-                generateScheduleTable(date);
-                scheduleScroll(); // 스케줄 테이블 생성 후 호출
-            });
+            const cell = createCalendarCell(day++, year, month);
             row.appendChild(cell);
         }
 
@@ -214,26 +195,7 @@ function calender() {
         while (day <= lastDate) {
             row = document.createElement('tr');
             for (let i = 0; i < 7 && day <= lastDate; i++) {
-                const cell = document.createElement('td');
-                cell.textContent = day++;
-                if (year === defaultYear && month === defaultMonth && parseInt(cell.textContent) === defaultDay) {
-                    cell.classList.add('selected'); // 오늘 날짜를 기본 선택
-                    selectedDate = cell;
-                }
-                cell.addEventListener('click', function () {
-                    if (selectedDate) {
-                        selectedDate.classList.remove('selected');
-                    }
-                    selectedDate = cell;
-                    cell.classList.add('selected');
-                    const selectedYear = parseInt(yearSelect.value);
-                    const selectedMonth = parseInt(monthSelect.value);
-                    const selectedDay = parseInt(cell.textContent);
-                    const date = new Date(selectedYear, selectedMonth, selectedDay);
-                    generateTodayInspectionList(date);
-                    generateScheduleTable(date);
-                    scheduleScroll(); // 스케줄 테이블 생성 후 호출
-                });
+                const cell = createCalendarCell(day++, year, month);
                 row.appendChild(cell);
             }
             calendarBody.appendChild(row);
@@ -241,19 +203,63 @@ function calender() {
 
         // 초기 로드시 오늘 날짜의 점검 목록과 스케줄 테이블 생성
         if (!selectedDate) {
-            const cells = calendarBody.querySelectorAll('td');
+            const cells = calendarBody.querySelectorAll('.day-content');
             cells.forEach(cell => {
-                if (cell.textContent == defaultDay) {
-                    cell.classList.add('selected');
-                    selectedDate = cell;
+                if (parseInt(cell.textContent) === defaultDay) {
+                    cell.parentElement.classList.add('selected');
+                    selectedDate = cell.parentElement;
                 }
             });
         }
-        const date = new Date(year, month, selectedDate ? parseInt(selectedDate.textContent) : 1);
+
+        const date = new Date(year, month, selectedDate ? parseInt(selectedDate.querySelector('.day-content').textContent) : 1);
         generateTodayInspectionList(date);
         generateScheduleTable(date);
         scheduleScroll(); // 초기 로드시 호출
     }
+
+    // 셀 생성 함수
+    function createCalendarCell(day, year, month) {
+        const cell = document.createElement('td');
+        const dayContent = document.createElement('div');
+        dayContent.classList.add('day-content');
+        dayContent.textContent = day;
+        cell.appendChild(dayContent);
+
+        // 오늘 날짜 자동 선택
+        if (year === defaultYear && month === defaultMonth && day === defaultDay) {
+            dayContent.classList.add('selected'); // selected 클래스 추가
+            selectedDate = dayContent;
+
+            // 초기 로드시 오늘 날짜의 점검 목록과 스케줄 테이블 생성
+            const date = new Date(year, month, day);
+            generateTodayInspectionList(date);
+            generateScheduleTable(date);
+            scheduleScroll(); // 스케줄 테이블 스크롤
+        }
+
+        // 클릭 이벤트 추가
+        dayContent.addEventListener('click', function () {
+            if (selectedDate) {
+                selectedDate.classList.remove('selected'); // 이전 선택 제거
+            }
+            selectedDate = dayContent; // 새로 선택된 요소로 갱신
+            dayContent.classList.add('selected'); // 선택된 날짜 표시
+
+            const selectedYear = parseInt(yearSelect.value);
+            const selectedMonth = parseInt(monthSelect.value);
+            const selectedDay = parseInt(dayContent.textContent);
+            const date = new Date(selectedYear, selectedMonth, selectedDay);
+
+            generateTodayInspectionList(date); // 점검 목록 생성
+            generateScheduleTable(date); // 스케줄 테이블 생성
+            scheduleScroll(); // 스케줄 테이블 스크롤
+        });
+
+        return cell;
+    }
+
+
 
     // 년도 및 월 선택 시 달력 갱신
     function updateCalendar() {
@@ -263,7 +269,7 @@ function calender() {
     }
 
     // 페이지 로드 시 초기 설정
-    populateYearSelect(1900, 2100, defaultYear); // 년도 드롭다운 생성
+    populateYearSelect(2024, 2100, defaultYear); // 년도 드롭다운 생성
     populateMonthSelect(defaultMonth); // 월 드롭다운 생성
     updateCalendar(); // 초기 달력 생성
 
@@ -282,15 +288,18 @@ function calender() {
     });
 }
 
+//좌측상단 오늘의 점검표시 함수
 function generateTodayInspectionList(date) {
     const listContainer = document.getElementById('today_inspection_list');
     listContainer.innerHTML = '';
 
     const dateStr = formatDate(date); // "YYYY/MM/DD" 형식으로 변환
+    let hasInspection = false; // 점검 여부를 추적하는 변수
 
     inspectionAllScheduleData.forEach(category => {
         category.SUB_CTH_NM.forEach(item => {
             if (item.INSP_PLAN_DT === dateStr) {
+                hasInspection = true; // 점검이 있음을 표시
                 const li = document.createElement('li');
                 const h4 = document.createElement('h4');
                 h4.textContent = category.CTG_NM;
@@ -307,8 +316,23 @@ function generateTodayInspectionList(date) {
             }
         });
     });
+
+// 점검이 없는 경우 "점검이 없습니다." 메시지 표시
+    if (!hasInspection) {
+        const noInspectionMsg = document.createElement('li');
+        const pTag = document.createElement('p');
+        pTag.textContent = '점검이 없습니다.';
+        pTag.classList.add('no-inspection-message');
+        noInspectionMsg.appendChild(pTag);
+        listContainer.appendChild(noInspectionMsg);
+    }
+
 }
 
+
+
+
+// 점검 한주 스케줄 표시 함수
 function generateScheduleTable(date) {
     const tableBody = document.getElementById('schedule-table-body');
     tableBody.innerHTML = '';
@@ -375,23 +399,124 @@ function scheduleScroll() {
     const tdElements = document.querySelectorAll('.schedule-table tbody td');
 
     tdElements.forEach(function(td) {
-        // td 안에 있는 버튼의 개수를 확인
-        const buttons = td.querySelectorAll('.inspection-btn');
-        console.log(`TD 내부 버튼 개수: ${buttons.length}`); // 디버깅을 위해 버튼 개수 출력
+        // td에 해당하는 날짜를 가져오기 위해 span 요소의 텍스트를 사용
+        const dateText = td.querySelector('span') ? td.querySelector('span').textContent : null;
+        if (!dateText) return;
 
-        // 버튼이 3개 이상일 경우에만 스크롤을 활성화
-        if (buttons.length >= 3) {
-            // 버튼을 감싸는 div 추가
-            const scrollableContent = document.createElement('div');
-            scrollableContent.classList.add('scrollable-content');
+        // 날짜 문자열을 파싱하여 Date 객체로 변환
+        const [month, day] = dateText.split('/').map(Number);
+        const selectedYear = parseInt(document.getElementById('year-select').value);
+        const date = new Date(selectedYear, month - 1, day);
 
-            // 버튼들을 scrollableContent 안으로 이동
-            buttons.forEach(function(button) {
-                scrollableContent.appendChild(button);
+        // 해당 날짜의 점검 항목을 모두 가져오기
+        const selectedChecklist = document.getElementById('checklist-select').value;
+        const dateStr = formatDate(date);
+
+        let allItems = [];
+        inspectionAllScheduleData.forEach(category => {
+            if (selectedChecklist === 'all' || category.CTG_NM === selectedChecklist) {
+                category.SUB_CTH_NM.forEach(item => {
+                    if (item.INSP_PLAN_DT === dateStr) {
+                        allItems.push({
+                            categoryName: category.CTG_NM,
+                            itemName: item.CHKLST_NM,
+                            planDate: item.INSP_PLAN_DT
+                        });
+                    }
+                });
+            }
+        });
+
+        // td에 있는 기존 버튼 제거
+        const existingButtons = td.querySelectorAll('.inspection-btn, .more-btn');
+        existingButtons.forEach(btn => btn.remove());
+
+        // 버튼들을 td에 추가
+        allItems.forEach((item, index) => {
+            if (index < 3) {
+                const button = document.createElement('button');
+                button.classList.add('inspection-btn');
+                button.textContent = item.itemName;
+                button.onclick = function() {
+                    openPopup(item.itemName);
+                };
+                td.appendChild(button);
+            }
+        });
+
+        // 버튼이 3개 이상일 경우 처리
+        if (allItems.length > 3) {
+            // 숨겨진 버튼의 개수를 계산하여 '+n 더보기' 버튼 생성
+            const extraCount = allItems.length - 3;
+            const moreButton = document.createElement('button');
+            moreButton.classList.add('more-btn');
+            moreButton.textContent = `+${extraCount} 더보기`;
+
+            // '+n 더보기' 버튼 클릭 시 모달 창 열기
+            moreButton.addEventListener('click', function() {
+                openModal(allItems);
             });
 
-            // td 안에 scrollableContent 추가
-            td.appendChild(scrollableContent);
+            td.appendChild(moreButton);
         }
     });
 }
+
+// 모달 창 열기 함수
+function openModal(items) {
+    // 모달 배경 요소 생성
+    let modalBackground = document.getElementById('modal-background');
+    if (!modalBackground) {
+        modalBackground = document.createElement('div');
+        modalBackground.id = 'modal-background';
+        modalBackground.classList.add('modal-background');
+        document.body.appendChild(modalBackground);
+    }
+
+    // 모달 내용 요소 생성
+    let modalContent = document.getElementById('modal-content');
+    if (!modalContent) {
+        modalContent = document.createElement('div');
+        modalContent.id = 'modal-content';
+        modalContent.classList.add('modal-content');
+        modalBackground.appendChild(modalContent);
+    }
+
+    // 모달 내용 초기화
+    modalContent.innerHTML = '<h2>점검 목록</h2>';
+
+    // 아이템들을 모달에 추가
+    items.forEach(function(item) {
+        const button = document.createElement('button');
+        button.classList.add('inspection-btn');
+        button.textContent = item.itemName;
+        button.onclick = function() {
+            openPopup(item.itemName);
+        };
+        modalContent.appendChild(button);
+    });
+
+    // 모달 닫기 버튼 추가
+    const closeButton = document.createElement('button');
+    closeButton.textContent = '닫기';
+    closeButton.classList.add('modal-close-btn');
+    closeButton.addEventListener('click', function() {
+        // 'show' 클래스 제거하여 애니메이션 시작
+        modalBackground.classList.remove('show');
+        modalContent.classList.remove('show');
+        // 애니메이션 후 display:none 처리
+        setTimeout(function() {
+            modalBackground.style.display = 'none';
+        }, 300); // transition 시간과 동일하게 설정
+    });
+    modalContent.appendChild(closeButton);
+
+    // 모달 표시 (display:flex 설정 후 약간의 지연을 주어 애니메이션 적용)
+    modalBackground.style.display = 'flex';
+    setTimeout(function() {
+        modalBackground.classList.add('show');
+        modalContent.classList.add('show');
+    }, 10);
+}
+
+
