@@ -213,25 +213,27 @@
 
                 </div>
                 <%--  top 영역끝  --%>
-
-
                 <div class="middle-box py-2">
                     <div class="middle-content ">
-                        <div class="d-flex justify-content-end mb-3">
-                            <div class="px-2">
-                                <div class="top-button top-reset"  id="addRowButton" >추가</div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div style="font-size: 20px">
+                                총 <b id="totalCount" style="color: #0035BE"></b>건
                             </div>
-                            <div class="px-2">
-                                <div class="top-button top-reset"  id="deleteRowButton">삭제</div>
+                            <div class="d-flex">
+                                <div class="px-2">
+                                    <div class="top-button top-reset" id="addRowButton">추가</div>
+                                </div>
+                                <div class="px-2">
+                                    <div class="top-button top-reset" id="deleteRowButton">삭제</div>
+                                </div>
                             </div>
                         </div>
-                        <div id="myGrid" class="ag-theme-quartz" style="height: 500px; width: 100%;"></div>
+                        <div id="myGrid" class="ag-theme-alpine" style="height: 500px; width: 100%;"></div>
                     </div>
                 </div>
 
-
                 <%--                    <!-- 중간 게시판 목록 끝 -->--%>
-
 
 
                 <%--  하단 점검 시작  --%>
@@ -395,6 +397,7 @@
                                         type="date"
                                         class="form-control"
                                         id="bottomScheduleDate"
+                                        min="<%= getTodayString() %>"
                                 />
                             </div>
                             <!-- 커스텀 달력 -->
@@ -431,7 +434,7 @@
                                         <div class="table-responsive">
                                             <table class="table table-bordered">
                                                 <thead class="table-light">
-                                                <tr>
+                                                <tr class="text-center">
                                                     <th>월</th>
                                                     <th>화</th>
                                                     <th>수</th>
@@ -466,7 +469,8 @@
     </main>
 </div>
 <%-------------  modal -------------%>
-<div class="modal fade" id="masterChecklistModal" aria-hidden="true" aria-labelledby="masterChecklistList" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+<div class="modal fade" id="masterChecklistModal" aria-hidden="true" aria-labelledby="masterChecklistList" tabindex="-1"
+     data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
 
@@ -482,7 +486,8 @@
             <%-------------- body --------------%>
             <div class="modal-body">
                 <div class="input-group mb-3 modal-search-box" style="    padding: .5rem 1rem;">
-                    <input type="text" class="form-control me-2" placeholder="체크리스트 검색" aria-label="Recipient's username" aria-describedby="button-addon2">
+                    <input type="text" class="form-control me-2" placeholder="체크리스트 검색"
+                           aria-label="Recipient's username" aria-describedby="button-addon2">
                     <button class="btn btn-outline-secondary" type="button" id="button-addon2">검색</button>
                 </div>
                 <ol class="list-group  scrollable-list ">
@@ -491,7 +496,8 @@
                             <span class="me-3">01</span>
                             <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
                         </div>
-                        <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                        <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2"
+                                data-bs-toggle="modal">
                             미리보기
                             <i class="fa-regular fa-eye"></i>
                         </button>
@@ -501,7 +507,8 @@
                             <span class="me-3">01</span>
                             <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
                         </div>
-                        <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                        <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2"
+                                data-bs-toggle="modal">
                             미리보기
                             <i class="fa-regular fa-eye"></i>
                         </button>
@@ -511,7 +518,8 @@
                             <span class="me-3">01</span>
                             <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
                         </div>
-                        <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                        <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2"
+                                data-bs-toggle="modal">
                             미리보기
                             <i class="fa-regular fa-eye"></i>
                         </button>
@@ -521,7 +529,8 @@
                             <span class="me-3">01</span>
                             <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
                         </div>
-                        <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                        <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2"
+                                data-bs-toggle="modal">
                             미리보기
                             <i class="fa-regular fa-eye"></i>
                         </button>
@@ -531,7 +540,8 @@
                             <span class="me-3">01</span>
                             <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
                         </div>
-                        <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                        <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2"
+                                data-bs-toggle="modal">
                             미리보기
                             <i class="fa-regular fa-eye"></i>
                         </button>
@@ -541,7 +551,8 @@
                             <span class="me-3">01</span>
                             <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
                         </div>
-                        <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+                        <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2"
+                                data-bs-toggle="modal">
                             미리보기
                             <i class="fa-regular fa-eye"></i>
                         </button>
@@ -551,12 +562,12 @@
                             <span class="me-3">01</span>
                             <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
                         </div>
-                        <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal" style="border-radius: 8px;">
+                        <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2"
+                                data-bs-toggle="modal" style="border-radius: 8px;">
                             미리보기
                             <i class="fa-regular fa-eye"></i>
                         </button>
                     </li>
-
 
 
                 </ol>
@@ -565,7 +576,7 @@
 
             <%-------------- footer --------------%>
             <div class="modal-footer">
-                <button class="btn btn-secondary"  data-bs-dismiss="modal" aria-label="Close">취소</button>
+                <button class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">취소</button>
                 <button class="" data-bs-dismiss="modal">선택</button>
             </div>
             <%-------------- footer --------------%>
@@ -575,359 +586,25 @@
 
 
 <%--    second modal     --%>
-<div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="details" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg" style="max-width : 1015px!important;">
+<div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="details" tabindex="-1"
+     data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg"
+         style="max-width : 1015px!important;">
         <div class="modal-content" style="overflow-y: scroll;">
             <section class="inspection-section">
                 <div class="inspection-tabs" style="">
-<%--                    <button class="inspection-tab active" data-tab="중대법규">중대법규</button>--%>
-<%--                    <button class="inspection-tab" data-tab="기타법규">기타법규</button>--%>
-<%--                    <button class="inspection-tab" data-tab="위생관리">위생관리</button>--%>
-<%--                    <button class="inspection-tab" data-tab="위생지도상황">위생지도상황</button>--%>
 
-    <button class="inspection-tab" data-bs-target="#masterChecklistModal"
-            data-bs-toggle="modal" style="background-color: #afa4dd; color: white;">뒤로가기</button>
+                    <button class="inspection-tab" data-bs-target="#masterChecklistModal"
+                            data-bs-toggle="modal" style="background-color: #afa4dd; color: white;">뒤로가기
+                    </button>
                 </div>
-<%--                <section class="inspection-list" id="중대법규">--%>
-<%--                    <div class="inspection-box">--%>
-<%--                        <div class="inspection-header">--%>
-<%--                            영업취소--%>
-<%--                            <span class="toggle-icon">▼</span>--%>
-<%--                        </div>--%>
-<%--                        <div class="inspection-content">--%>
-<%--                            <div class="inspection-content-detail">--%>
-<%--                                <p>1. 소비기한 변조 및 삭제</p>--%>
-<%--                                <button class="add-btn">+</button>--%>
-<%--                            </div>--%>
-
-<%--                            &lt;%&ndash;        ----해당부분은 동적으로 변동이 될부분----        &ndash;%&gt;--%>
-<%--                            <div class="inspection-content-wrapper">--%>
-<%--                                <!-- 사진 업로드 구역 -->--%>
-<%--                                <div class="answer-section">--%>
-<%--                                    <button class="answer-btn">예</button>--%>
-<%--                                    <button class="answer-btn">아니오</button>--%>
-<%--                                </div>--%>
-
-<%--                                <div class="photo-section">--%>
-<%--                                    <div class="photo-buttons">--%>
-<%--                                        <button class="photo-btn camera-btn">--%>
-<%--                                            <i class="fa-solid fa-camera"></i>사진촬영--%>
-<%--                                        </button>--%>
-<%--                                        <button class="photo-btn gallery-btn">--%>
-<%--                                            <i class="fa-regular fa-image"></i>갤러리--%>
-<%--                                        </button>--%>
-<%--                                    </div>--%>
-<%--                                    <div class="photo-boxes">--%>
-<%--                                        <div class="photo-box">사진 미등록</div>--%>
-<%--                                        <div class="photo-box">최대 2개</div>--%>
-<%--                                    </div>--%>
-<%--                                </div>--%>
-
-<%--                                <!-- 매장 정보 라디오 버튼 리스트 -->--%>
-<%--                                <div class="store-info">--%>
-<%--                                    <div class="tab-section">--%>
-<%--                                        <button class="tab-btn active">위치정보</button>--%>
-<%--                                        <button class="tab-btn">상세입력</button>--%>
-<%--                                    </div>--%>
-
-<%--                                    <!-- 위치정보 -->--%>
-<%--                                    <div class="content location-content">--%>
-<%--                                        <div class = "content location-content-list">--%>
-<%--                                            <label class="radio-label">--%>
-<%--                                                매장--%>
-<%--                                                <input type="radio" name="location">--%>
-<%--                                            </label>--%>
-<%--                                            <label class="radio-label">--%>
-<%--                                                카페--%>
-<%--                                                <input type="radio" name="location">--%>
-<%--                                            </label>--%>
-<%--                                            <label class="radio-label">--%>
-<%--                                                주방--%>
-<%--                                                <input type="radio" name="location">--%>
-<%--                                            </label>--%>
-<%--                                            <label class="radio-label">--%>
-<%--                                                기타--%>
-<%--                                                <input type="radio" name="location">--%>
-<%--                                            </label>--%>
-
-<%--                                        </div>--%>
-
-<%--                                        <!-- 기타사항 입력 -->--%>
-<%--                                        <div class="other-info">--%>
-<%--                                            <label>기타사항</label>--%>
-<%--                                            <textarea class="etc-input" name="responsibility" placeholder="기타사항을 입력해주세요"></textarea>--%>
-<%--                                        </div>--%>
-<%--                                    </div>--%>
-
-<%--                                    <!-- 상세입력 정보 (숨김 상태) -->--%>
-<%--                                    <div class="content detail-content">--%>
-<%--                                        <div class="input-group-cover">--%>
-<%--                                            <div class="input-group">--%>
-<%--                                                <label>제품명 (또는 상세위치)</label>--%>
-<%--                                                <input type="text" class="product-name" placeholder="제품명 입력">--%>
-<%--                                            </div>--%>
-<%--                                            <div class="input-group">--%>
-<%--                                                <label>위반수량</label>--%>
-<%--                                                <input type="text" class="violation-quantity" placeholder="위반수량 입력">--%>
-<%--                                            </div>--%>
-<%--                                        </div>--%>
-
-<%--                                        <div class="input-group">--%>
-<%--                                            <label>원인</label>--%>
-<%--                                            <textarea class="reason" placeholder="원인을 작성해주세요"></textarea>--%>
-<%--                                        </div>--%>
-<%--                                        <div class="input-group">--%>
-<%--                                            <label>개선조치사항</label>--%>
-<%--                                            <textarea class="action" placeholder="개선조치사항을 입력해주세요"></textarea>--%>
-<%--                                        </div>--%>
-<%--                                        <div class="input-group">--%>
-<%--                                            <label>위반사항</label>--%>
-<%--                                            <textarea class="violation" placeholder="위반사항을 입력해주세요"></textarea>--%>
-<%--                                        </div>--%>
-<%--                                        <div class="input-group">--%>
-<%--                                            <label>귀책사유</label>--%>
-<%--                                            <div class="radio-group">--%>
-<%--                                                <label>--%>
-<%--                                                    SV <input type="radio" name="responsibility" value="SV">--%>
-<%--                                                </label>--%>
-<%--                                                <label>--%>
-<%--                                                    점주 <input type="radio" name="responsibility" value="Owner">--%>
-<%--                                                </label>--%>
-<%--                                                <label>--%>
-<%--                                                    직원 <input type="radio" name="responsibility" value="Employee">--%>
-<%--                                                </label>--%>
-<%--                                                <label>--%>
-<%--                                                    기타 <input type="radio" name="responsibility" value="Other">--%>
-<%--                                                </label>--%>
-<%--                                            </div>--%>
-<%--                                            <textarea class="caupvd" placeholder="귀책사유를 입력해주세요"></textarea>--%>
-<%--                                        </div>--%>
-<%--                                    </div>--%>
-<%--                                </div>--%>
-
-
-<%--                            </div>--%>
-
-<%--                            &lt;%&ndash;        ----해당부분은 동적으로 변동이 될부분----        &ndash;%&gt;--%>
-<%--                        </div>--%>
-<%--                    </div>--%>
-
-<%--                    <div class="inspection-box">--%>
-<%--                        <div class="inspection-header">--%>
-<%--                            영업정지 1개월 이상--%>
-<%--                            <span class="toggle-icon">▼</span>--%>
-<%--                        </div>--%>
-<%--                        <div class="inspection-content">--%>
-<%--                            <div class="inspection-content-detail">--%>
-<%--                                <p>2. 표시사항 전부를 표시하지 않은 식품을 영업에 사용</p>--%>
-<%--                                <button class="add-btn">+</button>--%>
-<%--                            </div>--%>
-
-<%--                            &lt;%&ndash;        ----해당부분은 동적으로 변동이 될부분----        &ndash;%&gt;--%>
-<%--                            <div class="inspection-content-wrapper">--%>
-<%--                                <!-- 사진 업로드 구역 -->--%>
-<%--                                <div class="answer-section2">--%>
-<%--                                    <label class="radio-label2">--%>
-<%--                                        <input type="radio" name="rating" value="매우좋음" checked>--%>
-<%--                                        매우좋음--%>
-<%--                                    </label>--%>
-<%--                                    <label class="radio-label2">--%>
-<%--                                        <input type="radio" name="rating" value="좋음">--%>
-<%--                                        좋음--%>
-<%--                                    </label>--%>
-<%--                                    <label class="radio-label2">--%>
-<%--                                        <input type="radio" name="rating" value="보통">--%>
-<%--                                        보통--%>
-<%--                                    </label>--%>
-<%--                                    <label class="radio-label2">--%>
-<%--                                        <input type="radio" name="rating" value="나쁨">--%>
-<%--                                        나쁨--%>
-<%--                                    </label>--%>
-<%--                                    <label class="radio-label2">--%>
-<%--                                        <input type="radio" name="rating" value="매우나쁨">--%>
-<%--                                        매우나쁨--%>
-<%--                                    </label>--%>
-<%--                                </div>--%>
-
-
-<%--                                <div class="photo-section">--%>
-<%--                                    <div class="photo-buttons">--%>
-<%--                                        <button class="photo-btn camera-btn">--%>
-<%--                                            <i class="fa-solid fa-camera"></i>사진촬영--%>
-<%--                                        </button>--%>
-<%--                                        <button class="photo-btn gallery-btn">--%>
-<%--                                            <i class="fa-regular fa-image"></i>갤러리--%>
-<%--                                        </button>--%>
-<%--                                    </div>--%>
-<%--                                    <div class="photo-boxes">--%>
-<%--                                        <div class="photo-box">사진 미등록</div>--%>
-<%--                                        <div class="photo-box">최대 2개</div>--%>
-<%--                                    </div>--%>
-<%--                                </div>--%>
-
-<%--                                <!-- 매장 정보 라디오 버튼 리스트 -->--%>
-<%--                                <div class="store-info">--%>
-<%--                                    <div class="tab-section">--%>
-<%--                                        <button class="tab-btn active">위치정보</button>--%>
-<%--                                        <button class="tab-btn">상세입력</button>--%>
-<%--                                    </div>--%>
-
-<%--                                    <!-- 위치정보 -->--%>
-<%--                                    <div class="content location-content">--%>
-<%--                                        <div class = "content location-content-list">--%>
-<%--                                            <label class="radio-label">--%>
-<%--                                                매장--%>
-<%--                                                <input type="radio" name="location">--%>
-<%--                                            </label>--%>
-<%--                                            <label class="radio-label">--%>
-<%--                                                카페--%>
-<%--                                                <input type="radio" name="location">--%>
-<%--                                            </label>--%>
-<%--                                            <label class="radio-label">--%>
-<%--                                                주방--%>
-<%--                                                <input type="radio" name="location">--%>
-<%--                                            </label>--%>
-<%--                                            <label class="radio-label">--%>
-<%--                                                기타--%>
-<%--                                                <input type="radio" name="location">--%>
-<%--                                            </label>--%>
-
-<%--                                        </div>--%>
-
-<%--                                        <!-- 기타사항 입력 -->--%>
-<%--                                        <div class="other-info">--%>
-<%--                                            <label>기타사항</label>--%>
-<%--                                            <textarea class="etc-input" placeholder="기타사항을 입력해주세요"></textarea>--%>
-<%--                                        </div>--%>
-<%--                                    </div>--%>
-
-<%--                                    <!-- 상세입력 정보 (숨김 상태) -->--%>
-<%--                                    <div class="content detail-content">--%>
-<%--                                        <div class="input-group-cover">--%>
-<%--                                            <div class="input-group">--%>
-<%--                                                <label>제품명 (또는 상세위치)</label>--%>
-<%--                                                <input type="text" class="product-name" placeholder="제품명 입력">--%>
-<%--                                            </div>--%>
-<%--                                            <div class="input-group">--%>
-<%--                                                <label>위반수량</label>--%>
-<%--                                                <input type="text" class="violation-quantity" placeholder="위반수량 입력">--%>
-<%--                                            </div>--%>
-<%--                                        </div>--%>
-
-<%--                                        <div class="input-group">--%>
-<%--                                            <label>원인</label>--%>
-<%--                                            <textarea class="reason" placeholder="원인을 작성해주세요"></textarea>--%>
-<%--                                        </div>--%>
-<%--                                        <div class="input-group">--%>
-<%--                                            <label>개선조치사항</label>--%>
-<%--                                            <textarea class="action" placeholder="개선조치사항을 입력해주세요"></textarea>--%>
-<%--                                        </div>--%>
-<%--                                        <div class="input-group">--%>
-<%--                                            <label>위반사항</label>--%>
-<%--                                            <textarea class="violation" placeholder="위반사항을 입력해주세요"></textarea>--%>
-<%--                                        </div>--%>
-<%--                                        <div class="input-group">--%>
-<%--                                            <label>귀책사유</label>--%>
-<%--                                            <div class="radio-group">--%>
-<%--                                                <label>--%>
-<%--                                                    SV <input type="radio" name="responsibility" value="SV">--%>
-<%--                                                </label>--%>
-<%--                                                <label>--%>
-<%--                                                    점주 <input type="radio" name="responsibility" value="Owner">--%>
-<%--                                                </label>--%>
-<%--                                                <label>--%>
-<%--                                                    직원 <input type="radio" name="responsibility" value="Employee">--%>
-<%--                                                </label>--%>
-<%--                                                <label>--%>
-<%--                                                    기타 <input type="radio" name="responsibility" value="Other">--%>
-<%--                                                </label>--%>
-<%--                                            </div>--%>
-<%--                                            <textarea class="caupvd" placeholder="귀책사유를 입력해주세요"></textarea>--%>
-<%--                                        </div>--%>
-<%--                                    </div>--%>
-<%--                                </div>--%>
-
-
-<%--                            </div>--%>
-
-<%--                            &lt;%&ndash;        ----해당부분은 동적으로 변동이 될부분----        &ndash;%&gt;--%>
-
-<%--                        </div>--%>
-<%--                    </div>--%>
-
-<%--                    <div class="inspection-box">--%>
-<%--                        <div class="inspection-header">--%>
-<%--                            영업정지 15일 이상--%>
-<%--                            <span class="toggle-icon">▼</span>--%>
-<%--                        </div>--%>
-<%--                        <div class="inspection-content">--%>
-<%--                            <div class="inspection-content-detail">--%>
-<%--                                <p>3. 소비기한 경과</p>--%>
-<%--                                <button class="add-btn">+</button>--%>
-<%--                            </div>--%>
-<%--                        </div>--%>
-<%--                    </div>--%>
-
-<%--                    <div class="inspection-box">--%>
-<%--                        <div class="inspection-header">--%>
-<%--                            시정 명령--%>
-<%--                            <span class="toggle-icon">▼</span>--%>
-<%--                        </div>--%>
-<%--                        <div class="inspection-content">--%>
-<%--                            <div class="inspection-content-detail">--%>
-<%--                                <p>4. 영업신고 관련 위반</p>--%>
-<%--                                <button class="add-btn">+</button>--%>
-<%--                            </div>--%>
-<%--                        </div>--%>
-<%--                    </div>--%>
-
-<%--                    <div class="inspection-box">--%>
-<%--                        <div class="inspection-header">--%>
-<%--                            과태료--%>
-<%--                            <span class="toggle-icon">▼</span>--%>
-<%--                        </div>--%>
-<%--                        <div class="inspection-content">--%>
-<%--                            <div class="inspection-content-detail">--%>
-<%--                                <p>5. 무신고 소분판매</p>--%>
-<%--                                <button class="add-btn">+</button>--%>
-<%--                            </div>--%>
-<%--                            <div class="inspection-content-detail">--%>
-<%--                                <p>6. 건강검진 위반</p>--%>
-<%--                                <button class="add-btn">+</button>--%>
-<%--                            </div>--%>
-<%--                        </div>--%>
-<%--                    </div>--%>
-<%--                </section>--%>
-
-<%--                <section class="inspection-list" id="기타법규">--%>
-<%--                    <!-- 기타법규 관련 내용 -->--%>
-<%--                    <div class="inspection-box">--%>
-<%--                        <div class="inspection-header">기타법규 관련 내용 1</div>--%>
-<%--                    </div>--%>
-<%--                </section>--%>
-
-<%--                <section class="inspection-list" id="위생관리">--%>
-<%--                    <!-- 위생관리 관련 내용 -->--%>
-<%--                    <div class="inspection-box">--%>
-<%--                        <div class="inspection-header">위생관리 관련 내용 1</div>--%>
-<%--                    </div>--%>
-<%--                </section>--%>
-
-<%--                <section class="inspection-list" id="위생지도상황">--%>
-<%--                    <!-- 위생지도상황 관련 내용 -->--%>
-<%--                    <div class="inspection-box">--%>
-<%--                        <div class="inspection-header">위생지도상황 관련 내용 1</div>--%>
-<%--                    </div>--%>
-<%--                </section>--%>
-
-
             </section>
             <div class="modal-footer">
 
             </div>
         </div>
     </div>
-</div >
+</div>
 
 
 <script src="/resources/js/qsc/store_inspection/popup_inspection.js"></script>

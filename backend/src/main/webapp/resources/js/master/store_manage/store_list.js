@@ -463,5 +463,7 @@ $(function () {
     onDeleteRow();
   });
 
+  // 총 몇건
+  $("#totalCount").text(rowData.length);
   //  중간 테이블 영역 끝
 });

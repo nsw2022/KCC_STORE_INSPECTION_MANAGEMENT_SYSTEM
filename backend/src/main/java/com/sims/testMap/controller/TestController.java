@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 @RequiredArgsConstructor
 @Slf4j
-public class MapController {
+public class TestController {
     @Value("${naver.maps.client.id}")
     private String naverClientId;
 

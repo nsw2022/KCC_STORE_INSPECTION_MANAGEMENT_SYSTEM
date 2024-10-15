@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>가맹점 점검 계획 관리</title>
+    <title>가맹점 관리</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -73,7 +73,7 @@
                 <div class="top-box-content mb-4">
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <b id="가맹점">가맹점 점검 계획 관리</b>
+                            <b id="가맹점">가맹점 관리</b>
                         </div>
                         <div class="d-flex">
                             <div class="top-button-wrapper px-2">
@@ -85,8 +85,8 @@
                         </div>
                     </div>
                     <!-- 자동 완성 영역 -->
-                    <div class="container-fluid">
-                        <div class="row g-3 align-items-center pt-4 top-search-box">
+                    <div class="container-fluid px-0">
+                        <div class="row g-3 align-items-center pt-4  top-search-box">
                             <!-- 가맹점 라벨과 검색 필드 -->
                             <div class="col-12 col-md-4">
                                 <label for="storeSearch" class="form-label">가맹점</label>
@@ -165,12 +165,18 @@
                 <%--  중간 게시판 목록 시작 --%>
                 <div class="middle-box py-2">
                     <div class="middle-content ">
-                        <div class="d-flex justify-content-end mb-3">
+
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div style="font-size: 20px">
+                                총 <b id="totalCount" style="color: #0035BE"></b>건
+                            </div>
+                            <div class="d-flex">
                             <div class="px-2">
                                 <div class="top-button top-reset"  data-bs-toggle="modal" data-bs-target="#DetailStore" >추가</div>
                             </div>
                             <div class="px-2">
                                 <div class="top-button top-reset"  id="deleteRowButton">삭제</div>
+                            </div>
                             </div>
                         </div>
                         <div id="myGrid" class="ag-theme-alpine" style="height: 500px; width: 100%;"></div>
