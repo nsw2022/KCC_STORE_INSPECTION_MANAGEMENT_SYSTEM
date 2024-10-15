@@ -4,13 +4,14 @@ import lombok.*;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class LoginLogDao {
-    private int loginLogId; // 로그인로그 ID
-    private int connectionId; // 접속 ID
+    private String connectionId; // 접속 ID
     private String connectionIp; // 접속 IP
+    private String connectionOs; // 접속 OS
+    private String connectionBrowser; // 접속 Browser
     private boolean errorOccurrenceCd; // 오류 발생여부 코드
     private boolean errorCode; // 오류 코드
 }

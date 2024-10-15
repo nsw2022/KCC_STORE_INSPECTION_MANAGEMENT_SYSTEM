@@ -4,6 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sims.aop.mapper.LogMapper">
+    <insert id="insertLoginLog" parameterType="LoginLogDao">
+        INSERT INTO LOGINLOG (
+            "login_log_Id", "connection_id", "connection_ip", "connection_os", "connection_browser", "error_occurrence_cd", "error_code", "login_occurrence_date"
+        ) VALUES (loginlog_seq.NEXTVAL, #{connectionId}, #{connectionIp}, #{connectionOs}, #{connectionBrowser}, 1, NULL, TO_CHAR(SYSDATE, 'YYYYMMDDHH24MI'))
+    </insert>
+
 
 
 </mapper>
