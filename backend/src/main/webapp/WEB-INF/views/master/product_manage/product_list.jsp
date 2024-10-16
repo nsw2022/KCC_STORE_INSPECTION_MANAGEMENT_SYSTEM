@@ -77,7 +77,7 @@
                                     </div>
 
                                     <!-- 검색 입력 및 옵션이 포함된 숨겨진 목록 -->
-                                    <div class="hide-list mt-4 border border-1">
+                                    <div class="hide-list mt-2 border border-1">
                                         <div class="search">
                                             <div class="search_input_area d-flex align-items-center justify-content-between py-2 px-3 border border-1">
                                                 <input type="text" class="top-search" placeholder="제품명을 입력해주세요."/>
@@ -137,7 +137,7 @@
                             </div>
 
                             <!-- 검색 입력 및 옵션이 포함된 숨겨진 목록 -->
-                            <div class="hide-list mt-4 border border-1">
+                            <div class="hide-list border border-1">
                                 <div class="search">
                                     <div class="search_input_area d-flex align-items-center justify-content-between py-2 px-3 border border-1">
                                         <input type="text" class="top-search" placeholder="브랜드 입력"/>

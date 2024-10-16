@@ -825,17 +825,67 @@ $(function () {
       },
       { field: "inspector", headerName: "점검자", width: 150, minWidth: 110 },
       {
-        headerName: "자세히보기",
+        headerName: "관리",
         field: "more",
         width: 150,
         minWidth: 120,
         cellRenderer: function (params) {
-          const button = document.createElement("button");
-          button.innerText = "자세히 보기";
-          button.setAttribute("data-bs-toggle", "modal");
-          button.setAttribute("data-bs-target", "#masterChecklistModal");
-          button.classList.add("modal_btn", "more");
-          return button;
+          // jQuery를 사용하여 컨테이너 div 생성
+          const $container = $("<div>", {
+            class: "edit-container",
+            css: { position: "relative", cursor: "pointer" },
+          });
+
+          // SVG 요소 생성
+          const $svg = $(`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 15 15">
+                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+                        </svg>
+                    `);
+
+          // '자세히보기' 옵션 div 생성
+          const $editDiv = $('<div class="edit-options">자세히보기</div>');
+
+          // SVG 클릭 시 '수정' 옵션 표시
+          $svg.on("click", function (e) {
+            e.stopPropagation(); // 이벤트 버블링 방지
+
+            // 모든 다른 'edit-options' 숨기기
+            $(".edit-options").not($editDiv).removeClass("show");
+
+            // SVG의 위치 계산
+            const offset = $svg.offset();
+            const svgHeight = $svg.outerHeight();
+
+            // 'edit-options' 위치 설정 (SVG 아래에 표시)
+            $editDiv.css({
+              top: offset.top + svgHeight + 2, // SVG 바로 아래에 2px 간격
+              left: offset.left + $svg.outerWidth() / 2 - 43, // SVG의 중앙에 왼쪽으로 이동
+              transform: "translateX(-50%)", // 가로 중앙 정3
+            });
+
+            // 'show' 클래스 토글
+            $editDiv.toggleClass("show");
+          });
+
+          // '수정' 옵션 클릭 시 모달 열기
+          $editDiv.on("click", function (e) {
+            e.stopPropagation(); // 이벤트 버블링 방지
+
+            // 모달 열기
+            $("#masterChecklistModal").modal("show");
+
+            // 'edit-options' 숨기기
+            $editDiv.removeClass("show");
+          });
+
+          // 컨테이너에 SVG 추가
+          $container.append($svg);
+
+          // 'edit-options'를 body에 추가
+          $("body").append($editDiv);
+
+          return $container[0]; // DOM 요소 반환
         },
         pinned: "right",
       },
@@ -916,5 +966,11 @@ $(function () {
 
   // 총 몇건
   $("#totalCount").text(rowData.length);
+
+  // 문서 전체에 클릭 이벤트 바인딩하여 Popover 숨기기
+  $(document).on("click", function () {
+    $(".edit-options").removeClass("show");
+  });
+
   //  중간 테이블 영역 끝
 });
