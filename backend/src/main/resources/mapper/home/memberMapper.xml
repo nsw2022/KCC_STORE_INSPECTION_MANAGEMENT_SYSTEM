@@ -5,35 +5,74 @@
 
 <mapper namespace="com.sims.home.member.mapper.MemberMapper">
     <select id="getMemberByMbrId" resultType="MemberDao">
-        select * from mbr where mbr_no = #{mbrNo}
+        SELECT /* MemberMapper.getMemberByMbrId 유재원 */
+            MBR_ID,
+            MBR_NO,
+            MBR_PW,
+            MBR_NM,
+            MBR_ROLE_CD,
+            MBR_STTS_CD,
+            TEL,
+            HIRE_DT,
+            QUIT_DT,
+            CRE_MBR_ID,
+            UPD_MBR_ID,
+            CRE_TM,
+            UPD_TM,
+            LAST_LOGIN_TM
+        FROM
+            MBR
+        WHERE
+            MBR_NO = #{mbrNo}
     </select>
 
     <insert id="insertTestMember" parameterType="MemberDao">
-        INSERT INTO mbr (
-        MBR_ID, MBR_NO, MBR_PW, MBR_NM, MBR_ROLE_CD, MBR_STTS_CD, TEL, HIRE_DT, QUIT_DT, CRE_MBR_ID, UPD_MBR_ID, CRE_TM, UPD_TM, LAST_LOGIN_TM
-        ) VALUES (
-        MEMBER_SEQ.NEXTVAL,
-        #{mbrNo},
-        #{mbrPw},
-        #{mbrNm},
-        <foreach collection="mbrRoleCd" item="role" separator=",">
-            #{role}
-        </foreach>,
-        1,
-        '010-1234-5678',
-        '20241010',
-        NULL,
-        1,
-        NULL,
-        TO_CHAR(SYSDATE, 'YYYYMMDDHH24MI'),
-        NULL,
-        NULL
+        INSERT
+        INTO
+            MBR ( /* MemberMapper.insertTestMember 유재원 */
+            MBR_ID,
+            MBR_NO,
+            MBR_PW,
+            MBR_NM,
+            MBR_ROLE_CD,
+            MBR_STTS_CD,
+            TEL,
+            HIRE_DT,
+            QUIT_DT,
+            CRE_MBR_ID,
+            UPD_MBR_ID,
+            CRE_TM,
+            UPD_TM,
+            LAST_LOGIN_TM
+        )
+        VALUES (
+            MEMBER_SEQ.NEXTVAL,
+            #{mbrNo},
+            #{mbrPw},
+            #{mbrNm},
+            <foreach collection="mbrRoleCd" item="role" separator=",">
+                #{role}
+            </foreach>,
+            1,
+            '010-1234-5678',
+            '20241010',
+            NULL,
+            1,
+            NULL,
+            TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI'),
+            NULL,
+            NULL
         )
     </insert>
 
 
     <update id="updateLastLoginDate">
-        update mbr set LAST_LOGIN_TM = TO_CHAR(SYSDATE, 'YYYYMMDDHH24MI') WHERE MBR_NO = #{mbrNo}
+        UPDATE /* MemberMapper.updateLastLoginDate 유재원 */
+            MBR
+        SET
+            LAST_LOGIN_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+        WHERE
+            MBR_NO = #{mbrNo}
     </update>
 
 </mapper>
