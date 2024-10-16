@@ -487,7 +487,7 @@
             <div class="modal-body">
                 <div class="input-group mb-3 modal-search-box" style="    padding: .5rem 1rem;">
                     <input type="text" class="form-control me-2" placeholder="체크리스트 검색"
-                           aria-label="Recipient's username" aria-describedby="button-addon2">
+                           aria-label="Recipient's username" aria-describedby="button-addon2" style="width: 75%">
                     <button class="btn btn-outline-secondary" type="button" id="button-addon2">검색</button>
                 </div>
                 <ol class="list-group  scrollable-list ">
