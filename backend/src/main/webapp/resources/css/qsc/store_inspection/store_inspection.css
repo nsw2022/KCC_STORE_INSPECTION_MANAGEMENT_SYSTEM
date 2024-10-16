@@ -168,17 +168,6 @@ table.calendar td {
     overflow: hidden;
 }
 
-/*table.calendar td.selected {*/
-/*    background-color: #6e00fa;*/
-/*    color: white;*/
-/*    border-radius: 50%;*/
-/*}*/
-
-/*table.calendar td:hover {*/
-/*    background-color: #cccccc;*/
-/*    color: white;*/
-/*    border-radius: 50%;*/
-/*}*/
 
 .day-content {
     margin: 0 auto;
