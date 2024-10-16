@@ -5,8 +5,6 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class LoginLogDao {
     private String connectionId; // 접속 ID
     private String connectionIp; // 접속 IP
