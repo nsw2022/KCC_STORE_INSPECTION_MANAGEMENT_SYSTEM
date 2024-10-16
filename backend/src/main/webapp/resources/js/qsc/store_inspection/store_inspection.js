@@ -122,7 +122,6 @@ const inspectionAllScheduleData = [
 
 document.addEventListener('DOMContentLoaded', function () {
     calender();
-    scheduleScroll();
 });
 
 
@@ -171,71 +170,52 @@ function calender() {
     function generateCalendar(month, year) {
         calendarBody.innerHTML = ''; // 기존 달력 내용 초기화
 
-        const firstDay = new Date(year, month, 1).getDay(); // 해당 월의 첫 번째 날의 요일
+        const firstDay = new Date(year, month, 1).getDay(); // 해당 월의 첫 번째 날의 요일 (0: 일요일)
         const lastDate = new Date(year, month + 1, 0).getDate(); // 해당 월의 마지막 날짜
 
         let day = 1;
-        let row = document.createElement('tr');
+        let row;
 
-        // 일요일 시작에 맞게 빈 칸 채우기
-        for (let i = 0; i < firstDay; i++) {
-            const emptyCell = document.createElement('td');
-            row.appendChild(emptyCell);
-        }
+        // 총 주 수 계산 (첫 주 + 마지막 주의 빈 칸을 고려)
+        const totalDays = firstDay + lastDate;
+        const totalWeeks = Math.ceil(totalDays / 7);
 
-        // 달력 날짜 채우기
-        for (let i = firstDay; i < 7; i++) {
-            const cell = createCalendarCell(day++, year, month);
-            row.appendChild(cell);
-        }
-
-        calendarBody.appendChild(row);
-
-        // 남은 날짜 채우기
-        while (day <= lastDate) {
+        for (let week = 0; week < totalWeeks; week++) {
             row = document.createElement('tr');
-            for (let i = 0; i < 7 && day <= lastDate; i++) {
-                const cell = createCalendarCell(day++, year, month);
+
+            for (let i = 0; i < 7; i++) {
+                const currentDayIndex = week * 7 + i;
+                const cell = document.createElement('td');
+
+                if (currentDayIndex >= firstDay && day <= lastDate) {
+                    const dayContent = createCalendarCell(day++, year, month);
+                    cell.appendChild(dayContent);
+                }
+
                 row.appendChild(cell);
             }
+
             calendarBody.appendChild(row);
         }
 
         // 초기 로드시 오늘 날짜의 점검 목록과 스케줄 테이블 생성
-        if (!selectedDate) {
-            const cells = calendarBody.querySelectorAll('.day-content');
-            cells.forEach(cell => {
-                if (parseInt(cell.textContent) === defaultDay) {
-                    cell.parentElement.classList.add('selected');
-                    selectedDate = cell.parentElement;
-                }
-            });
-        }
-
-        const date = new Date(year, month, selectedDate ? parseInt(selectedDate.querySelector('.day-content').textContent) : 1);
+        const selectedDay = selectedDate ? parseInt(selectedDate.textContent) : defaultDay;
+        const date = new Date(year, month, selectedDay);
         generateTodayInspectionList(date);
         generateScheduleTable(date);
-        scheduleScroll(); // 초기 로드시 호출
     }
+
 
     // 셀 생성 함수
     function createCalendarCell(day, year, month) {
-        const cell = document.createElement('td');
         const dayContent = document.createElement('div');
         dayContent.classList.add('day-content');
         dayContent.textContent = day;
-        cell.appendChild(dayContent);
 
         // 오늘 날짜 자동 선택
         if (year === defaultYear && month === defaultMonth && day === defaultDay) {
             dayContent.classList.add('selected'); // selected 클래스 추가
             selectedDate = dayContent;
-
-            // 초기 로드시 오늘 날짜의 점검 목록과 스케줄 테이블 생성
-            const date = new Date(year, month, day);
-            generateTodayInspectionList(date);
-            generateScheduleTable(date);
-            scheduleScroll(); // 스케줄 테이블 스크롤
         }
 
         // 클릭 이벤트 추가
@@ -253,11 +233,11 @@ function calender() {
 
             generateTodayInspectionList(date); // 점검 목록 생성
             generateScheduleTable(date); // 스케줄 테이블 생성
-            scheduleScroll(); // 스케줄 테이블 스크롤
         });
 
-        return cell;
+        return dayContent;
     }
+
 
 
 
@@ -284,7 +264,6 @@ function calender() {
         const selectedDay = selectedDate ? parseInt(selectedDate.textContent) : defaultDay;
         const date = new Date(selectedYear, selectedMonth, selectedDay);
         generateScheduleTable(date);
-        scheduleScroll(); // 스케줄 테이블 생성 후 호출
     });
 }
 
@@ -330,8 +309,6 @@ function generateTodayInspectionList(date) {
 }
 
 
-
-
 // 점검 한주 스케줄 표시 함수
 function generateScheduleTable(date) {
     const tableBody = document.getElementById('schedule-table-body');
@@ -350,7 +327,7 @@ function generateScheduleTable(date) {
 
         const td = document.createElement('td');
         const span = document.createElement('span');
-        span.textContent = `${cellDate.getMonth()+1}/${cellDate.getDate()}`;
+        span.textContent = `${cellDate.getMonth() + 1}/${cellDate.getDate()}`;
         td.appendChild(span);
 
         // 일요일(0)과 토요일(6)에 empty-cell 클래스 추가
@@ -358,59 +335,8 @@ function generateScheduleTable(date) {
             td.classList.add('empty-cell');
         }
 
-        // 해당 날짜의 점검 항목 추가
+        // 해당 날짜의 점검 항목 가져오기
         const dateStr = formatDate(cellDate);
-
-        inspectionAllScheduleData.forEach(category => {
-            if (selectedChecklist === 'all' || category.CTG_NM === selectedChecklist) {
-                category.SUB_CTH_NM.forEach(item => {
-                    if (item.INSP_PLAN_DT === dateStr) {
-                        const button = document.createElement('button');
-                        button.classList.add('inspection-btn');
-                        button.textContent = item.CHKLST_NM;
-                        button.onclick = function() {
-                            openPopup(item.CHKLST_NM);
-                        };
-                        td.appendChild(button);
-                    }
-                });
-            }
-        });
-
-        weekRow.appendChild(td);
-    }
-
-    tableBody.appendChild(weekRow);
-}
-
-function formatDate(date) {
-    const year = date.getFullYear();
-    const month = ('0'+(date.getMonth()+1)).slice(-2);
-    const day = ('0'+date.getDate()).slice(-2);
-    return `${year}/${month}/${day}`;
-}
-
-
-
-
-
-function scheduleScroll() {
-    // 모든 td 요소를 선택
-    const tdElements = document.querySelectorAll('.schedule-table tbody td');
-
-    tdElements.forEach(function(td) {
-        // td에 해당하는 날짜를 가져오기 위해 span 요소의 텍스트를 사용
-        const dateText = td.querySelector('span') ? td.querySelector('span').textContent : null;
-        if (!dateText) return;
-
-        // 날짜 문자열을 파싱하여 Date 객체로 변환
-        const [month, day] = dateText.split('/').map(Number);
-        const selectedYear = parseInt(document.getElementById('year-select').value);
-        const date = new Date(selectedYear, month - 1, day);
-
-        // 해당 날짜의 점검 항목을 모두 가져오기
-        const selectedChecklist = document.getElementById('checklist-select').value;
-        const dateStr = formatDate(date);
 
         let allItems = [];
         inspectionAllScheduleData.forEach(category => {
@@ -427,10 +353,6 @@ function scheduleScroll() {
             }
         });
 
-        // td에 있는 기존 버튼 제거
-        const existingButtons = td.querySelectorAll('.inspection-btn, .more-btn');
-        existingButtons.forEach(btn => btn.remove());
-
         // 버튼들을 td에 추가
         allItems.forEach((item, index) => {
             if (index < 3) {
@@ -444,9 +366,8 @@ function scheduleScroll() {
             }
         });
 
-        // 버튼이 3개 이상일 경우 처리
+        // 버튼이 3개 이상일 경우 '+n 더보기' 버튼 추가
         if (allItems.length > 3) {
-            // 숨겨진 버튼의 개수를 계산하여 '+n 더보기' 버튼 생성
             const extraCount = allItems.length - 3;
             const moreButton = document.createElement('button');
             moreButton.classList.add('more-btn');
@@ -459,8 +380,22 @@ function scheduleScroll() {
 
             td.appendChild(moreButton);
         }
-    });
+
+        weekRow.appendChild(td);
+    }
+
+    tableBody.appendChild(weekRow);
 }
+
+
+
+function formatDate(date) {
+    const year = date.getFullYear();
+    const month = ('0'+(date.getMonth()+1)).slice(-2);
+    const day = ('0'+date.getDate()).slice(-2);
+    return `${year}/${month}/${day}`;
+}
+
 
 // 모달 창 열기 함수
 function openModal(items) {

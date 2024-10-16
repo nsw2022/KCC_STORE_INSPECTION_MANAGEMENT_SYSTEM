@@ -20,4 +20,9 @@ public class TestController {
         return "test";
     }
 
+    @GetMapping("/pdfTest")
+    public String pdfTest(Model model) {
+        return "pdfTest";
+    }
+
 }

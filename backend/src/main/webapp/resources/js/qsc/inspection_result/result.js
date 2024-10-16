@@ -46,22 +46,22 @@ $(function () {
      */
     filterOptions(query) {
       const filtered = this.dataList.filter((item) =>
-          item.toLowerCase().includes(query.toLowerCase())
+        item.toLowerCase().includes(query.toLowerCase()),
       );
 
       this.$options.empty();
       if (filtered.length > 0) {
         filtered.forEach((item) => {
           const isSelected =
-              item === this.$searchBtn.children().first().text()
-                  ? "selected"
-                  : "";
+            item === this.$searchBtn.children().first().text()
+              ? "selected"
+              : "";
           const li = `<li onclick="window.updateName(this)" class="${isSelected} autocomplete-item list-group-item list-group-item-action">${item}</li>`;
           this.$options.append(li);
         });
       } else {
         this.$options.html(
-            `<li class="list-group-item">찾으시는 항목이 없습니다.</li>`
+          `<li class="list-group-item">찾으시는 항목이 없습니다.</li>`,
         );
       }
     }
@@ -92,8 +92,8 @@ $(function () {
       // 외부 클릭 시 옵션 리스트 숨기기
       $(document).on("click", (e) => {
         if (
-            !this.$wrapper.is(e.target) &&
-            this.$wrapper.has(e.target).length === 0
+          !this.$wrapper.is(e.target) &&
+          this.$wrapper.has(e.target).length === 0
         ) {
           this.$wrapper.removeClass("active");
         }
@@ -255,14 +255,62 @@ $(function () {
         width: 150,
         minWidth: 120,
         cellRenderer: function (params) {
-          const button = document.createElement("button");
-          button.innerText = "자세히 보기";
-          button.classList.add("modal_btn", "more");
-          // 클릭 시 팝업 함수 호출
-          button.onclick = function () {
-            openPopup(params.data.checklist_name); // 팝업으로 데이터 전송
-          };
-          return button;
+          // jQuery를 사용하여 컨테이너 div 생성
+          const $container = $("<div>", {
+            class: "edit-container",
+            css: { position: "relative", cursor: "pointer" },
+          });
+
+          // SVG 요소 생성
+          const $svg = $(`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 15 15">
+                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+                        </svg>
+                    `);
+
+          // '자세히보기' 옵션 div 생성
+          const $editDiv = $('<div class="edit-options">자세히보기</div>');
+
+          // SVG 클릭 시 '수정' 옵션 표시
+          $svg.on("click", function (e) {
+            e.stopPropagation(); // 이벤트 버블링 방지
+
+            // 모든 다른 'edit-options' 숨기기
+            $(".edit-options").not($editDiv).removeClass("show");
+
+            // SVG의 위치 계산
+            const offset = $svg.offset();
+            const svgHeight = $svg.outerHeight();
+
+            // 'edit-options' 위치 설정 (SVG 아래에 표시)
+            $editDiv.css({
+              top: offset.top + svgHeight + 2, // SVG 바로 아래에 2px 간격
+              left: offset.left + $svg.outerWidth() / 2 - 43, // SVG의 중앙에 왼쪽으로 이동
+              transform: "translateX(-50%)", // 가로 중앙 정3
+            });
+
+            // 'show' 클래스 토글
+            $editDiv.toggleClass("show");
+          });
+
+          // '수정' 옵션 클릭 시 모달 열기
+          $editDiv.on("click", function (e) {
+            e.stopPropagation(); // 이벤트 버블링 방지
+
+            // 모달 열기
+            openPopup(params.data.checklist_name); // 팝업으로 데이터 전송 - 다른페이지에서는  $("#masterChecklistModal").modal("show");
+
+            // 'edit-options' 숨기기
+            $editDiv.removeClass("show");
+          });
+
+          // 컨테이너에 SVG 추가
+          $container.append($svg);
+
+          // 'edit-options'를 body에 추가
+          $("body").append($editDiv);
+
+          return $container[0]; // DOM 요소 반환
         },
         pinned: "right",
       },
@@ -342,11 +390,15 @@ $(function () {
 
 function openPopup(content) {
   // 팝업 페이지 URL 설정
-  const popupUrl = '/qsc/popup_inspection_result'; // 팝업 페이지로 보낼 URL 설정
+  const popupUrl = "/qsc/popup_inspection_result"; // 팝업 페이지로 보낼 URL 설정
 
   // 현재 화면 크기 확인
-  const screenWidth = window.innerWidth || document.documentElement.clientWidth || screen.width;
-  const screenHeight = window.innerHeight || document.documentElement.clientHeight || screen.height;
+  const screenWidth =
+    window.innerWidth || document.documentElement.clientWidth || screen.width;
+  const screenHeight =
+    window.innerHeight ||
+    document.documentElement.clientHeight ||
+    screen.height;
 
   // 모바일 디바이스 확인 (가로 크기가 768px 이하인 경우)
   const isMobile = screenWidth <= 768;
@@ -365,20 +417,20 @@ function openPopup(content) {
   const popupOptions = `width=${popupWidth},height=${popupHeight},top=${top},left=${left},scrollbars=yes,resizable=yes`;
 
   // 팝업 창을 열기
-  const popupWindow = window.open('', '_blank', popupOptions);
+  const popupWindow = window.open("", "_blank", popupOptions);
 
   // 팝업 창이 열렸는지 확인 후 폼을 팝업 창에서 제출
   if (popupWindow) {
     // 팝업 창에 form을 작성하여 POST 방식으로 데이터를 전송
     const form = popupWindow.document.createElement("form");
     form.method = "POST";
-    form.action = popupUrl;  // 팝업 창에서 처리할 URL
+    form.action = popupUrl; // 팝업 창에서 처리할 URL
 
     // 필요한 데이터를 form에 추가 (필요에 따라 수정 가능)
     const input = popupWindow.document.createElement("input");
     input.type = "hidden";
     input.name = "inspectionContent";
-    input.value = content;  // content는 팝업으로 전송할 데이터
+    input.value = content; // content는 팝업으로 전송할 데이터
 
     form.appendChild(input);
 
@@ -389,4 +441,7 @@ function openPopup(content) {
     alert("팝업 차단이 발생했습니다. 팝업을 허용해 주세요.");
   }
 }
-
+// 문서 전체에 클릭 이벤트 바인딩하여 Popover 숨기기
+$(document).on("click", function () {
+  $(".edit-options").removeClass("show");
+});

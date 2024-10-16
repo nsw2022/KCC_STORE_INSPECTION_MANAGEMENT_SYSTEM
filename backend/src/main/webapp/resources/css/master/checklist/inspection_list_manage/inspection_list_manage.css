@@ -44,20 +44,34 @@ body {
     padding: 20px;
     margin-bottom: 40px;
 }
+
 .top-box .select-btn{
-    width: 7vw;
+    width: 80px;
     background-color: #16DBCC;
-    border-radius: 15px;
+    height: 35px;
+    border-radius: 30px;
     color: #ffffff;
     border: none;
 }
+.select-btn:hover{
+    background-color: #3ab2a9 !important;
+    color: white !important;
+}
+
 .top-box .init-btn{
-    width: 7vw;
+    width: 80px;
     background-color: #ffffff;
-    border-radius: 15px;
-    color: #D0D5DD;
+    height: 35px;
+    border-radius: 30px;
+    color: #858d9d !important;
     border-color: #D0D5DD;
 }
+
+.init-btn:hover{
+    background-color: #e1e1e1 !important;
+    transition: 0.3s ease-out;
+}
+
 .input-box{
     display: flex;
     justify-content: center;
@@ -110,12 +124,20 @@ body {
 .accordion-button {
     border-radius: 8px !important;
 }
+
 .middle-row .btn-light{
-    width: 7vw;
+    width: 80px;
     background-color: #ffffff;
-    border-radius: 15px;
-    color: #D0D5DD;
+    height: 35px;
+    border-radius: 30px;
+    color: #858d9d !important;
     border-color: #D0D5DD;
+    line-height: 20px;
+}
+
+.middle-row .btn-light:hover{
+    background-color: #e1e1e1 !important;
+    transition: 0.3s ease-out;
 }
 
 .title-box{
@@ -125,8 +147,13 @@ body {
     border-radius: 8px;
 }
 .title-box .btn{
-    width: 7vw;
-    border-radius: 15px;
+    width: 80px;
+    background-color: #4318FF !important;
+    height: 35px;
+    border-radius: 30px !important;
+    color: #ffffff !important;
+    line-height: 15px !important;
+    border: none !important;
 }
 
 
@@ -306,10 +333,7 @@ body {
 
 
 
-
-
-
-@media (max-width: 400px) {
+@media (max-width: 650px) {
     .container {
         margin: 0.1rem 0.1rem;
     }
@@ -383,6 +407,10 @@ body {
     .title-box .btn{
         width: 50px;
         font-size: 0.7rem;
+    }
+
+    .accordion-box{
+        margin-bottom: 20px !important;
     }
 
 
