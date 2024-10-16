@@ -1,4 +1,4 @@
-package com.sims.home.dashboard.vo;
+package com.sims.home.member.vo;
 
 import lombok.*;
 
@@ -16,7 +16,7 @@ public class MemberDao {
     private String mbrPw; // 비밀번호
     private String mbrNm; // 사용자명
     private List<String> mbrRoleCd; // 사용자 권한 코드
-    private int mbrSttsCd; // 사용자 상태 코드
+    private String mbrSttsCd; // 사용자 상태 코드
     private String tel; // 전화번호
     private String hireDt; // 입사일자
     private String quitDt; // 퇴사일자
@@ -28,7 +28,7 @@ public class MemberDao {
 
     @Builder
     public MemberDao(int mbrId, String mbrNo, String mbrPw, String mbrNm,
-                     List<String> mbrRoleCd, int mbrSttsCd, String tel,
+                     List<String> mbrRoleCd, String mbrSttsCd, String tel,
                      String hireDt, String quitDt, int creMbrId,
                      int updMbrId, String creTm, String updTm, String lastLoginTm) {
         this.mbrId = mbrId;

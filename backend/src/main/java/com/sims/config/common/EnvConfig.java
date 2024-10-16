@@ -1,4 +1,4 @@
-package com.sims.config;
+package com.sims.config.common;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;

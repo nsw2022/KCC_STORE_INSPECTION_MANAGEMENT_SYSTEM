@@ -1,8 +1,8 @@
-package com.sims.home.dashboard.service;
+package com.sims.home.member.service;
 
-import com.sims.home.dashboard.vo.MemberDao;
-import com.sims.home.dashboard.mapper.MemberMapper;
-import com.sims.home.dashboard.vo.MemberRegistRequest;
+import com.sims.home.member.vo.MemberDao;
+import com.sims.home.member.mapper.MemberMapper;
+import com.sims.home.member.vo.MemberRegistRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,7 +20,7 @@ public class MemberServiceImpl implements MemberService{
     private final BCryptPasswordEncoder encoder;
 
     @Override
-    public int regist(MemberRegistRequest member) {
+    public int insertMember(MemberRegistRequest member) {
         List<String> roleCodes = new ArrayList<>();
         roleCodes.add(member.getMbrRoleCd());
 
@@ -29,12 +29,12 @@ public class MemberServiceImpl implements MemberService{
                 .mbrPw(encoder.encode(member.getMbrPw()))
                 .mbrNm(member.getMbrNm())
                 .mbrRoleCd(roleCodes)
-                .mbrSttsCd(1)
+                .mbrSttsCd(Integer.toString(1))
                 .tel(member.getTel())
                 .hireDt(member.getHireDt())
                 .build();
 
         log.info("member = {}", newMember);
-        return memberMapper.insertTestMember(newMember);
+        return memberMapper.insertMember(newMember);
     }
 }

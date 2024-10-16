@@ -1,4 +1,4 @@
-package com.sims.home.dashboard.vo;
+package com.sims.home.member.vo;
 
 import lombok.*;
 
