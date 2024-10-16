@@ -463,66 +463,23 @@ $(function () {
       $calendarBody.empty();
 
       // 첫 번째 날과 마지막 날짜 계산
-      const firstDay = new Date(year, month, 1).getDay();
+      const firstDay = new Date(year, month, 1).getDay(); // 일요일=0
       const lastDate = new Date(year, month + 1, 0).getDate();
 
       let day = 1;
       let $row = $("<tr></tr>");
 
       // 월요일 시작으로 설정 (일요일을 0으로 간주)
-      for (let i = 0; i < (firstDay === 0 ? 6 : firstDay - 1); i++) {
+      const startDayIndex = (firstDay === 0 ? 6 : firstDay - 1);
+
+      // 첫 번째 주의 빈 칸 채우기
+      for (let i = 0; i < startDayIndex; i++) {
         $row.append($("<td></td>"));
       }
 
       // 첫 주 날짜 채우기
-      for (
-        let i = firstDay === 0 ? 6 : firstDay - 1;
-        i < 7 && day <= lastDate;
-        i++, day++
-      ) {
-        const $cell = $("<td></td>").text(day);
-        const dateString = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`; // 'YYYY-MM-DD' 형식
-
-        // 오늘 날짜인지 확인
-        const isToday =
-          day === todayDate && month === todayMonth && year === todayYear;
-
-        // 오늘 이전 날짜인지 확인
-        if (
-          year < todayYear ||
-          (year === todayYear && month < todayMonth) ||
-          (year === todayYear && month === todayMonth && day < todayDate)
-        ) {
-          // 오늘 이전 날짜는 비활성화
-          $cell.addClass("disabled");
-        } else {
-          // 선택된 날짜인지 확인
-          if (selectedCalendarDates.includes(dateString)) {
-            $cell.addClass("selected");
-          }
-
-          // 오늘 날짜에 특별한 스타일 적용
-          if (isToday) {
-            $cell.addClass("today");
-          }
-
-          // 클릭 이벤트 추가
-          $cell.on("click", function () {
-            if ($(this).hasClass("disabled")) return;
-
-            if ($(this).hasClass("selected")) {
-              $(this).removeClass("selected");
-              removeDateCard(dateString);
-            } else {
-              $(this).addClass("selected");
-              addDateCard(dateString);
-            }
-          });
-        }
-
-        // 데이터 속성 추가
-        $cell.attr("data-date", dateString);
-
+      for (let i = startDayIndex; i < 7 && day <= lastDate; i++, day++) {
+        const $cell = createCalendarCell(day, month, year);
         $row.append($cell);
       }
 
@@ -531,55 +488,68 @@ $(function () {
       // 나머지 주 날짜 채우기
       while (day <= lastDate) {
         $row = $("<tr></tr>");
-        for (let i = 0; i < 7 && day <= lastDate; i++, day++) {
-          const $cell = $("<td></td>").text(day);
-          const dateString = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`; // 'YYYY-MM-DD' 형식
-
-          // 오늘 날짜인지 확인
-          const isToday =
-            day === todayDate && month === todayMonth && year === todayYear;
-
-          // 오늘 이전 날짜인지 확인
-          if (
-            year < todayYear ||
-            (year === todayYear && month < todayMonth) ||
-            (year === todayYear && month === todayMonth && day < todayDate)
-          ) {
-            // 오늘 이전 날짜는 비활성화
-            $cell.addClass("disabled");
+        for (let i = 0; i < 7; i++) {
+          if (day <= lastDate) {
+            const $cell = createCalendarCell(day, month, year);
+            $row.append($cell);
+            day++;
           } else {
-            // 선택된 날짜인지 확인
-            if (selectedCalendarDates.includes(dateString)) {
-              $cell.addClass("selected");
-            }
-
-            // 오늘 날짜에 특별한 스타일 적용
-            if (isToday) {
-              $cell.addClass("today");
-            }
-
-            // 클릭 이벤트 추가
-            $cell.on("click", function () {
-              if ($(this).hasClass("disabled")) return;
-
-              if ($(this).hasClass("selected")) {
-                $(this).removeClass("selected");
-                removeDateCard(dateString);
-              } else {
-                $(this).addClass("selected");
-                addDateCard(dateString);
-              }
-            });
+            // **남은 빈 칸 채우기**
+            $row.append($("<td></td>"));
           }
-
-          // 데이터 속성 추가
-          $cell.attr("data-date", dateString);
-
-          $row.append($cell);
         }
         $calendarBody.append($row);
       }
     }
+
+// 셀 생성 함수 분리
+    function createCalendarCell(day, month, year) {
+      const $cell = $("<td></td>").text(day);
+      const dateString = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`; // 'YYYY-MM-DD' 형식
+
+      // 오늘 날짜인지 확인
+      const isToday =
+          day === todayDate && month === todayMonth && year === todayYear;
+
+      // 오늘 이전 날짜인지 확인
+      if (
+          year < todayYear ||
+          (year === todayYear && month < todayMonth) ||
+          (year === todayYear && month === todayMonth && day < todayDate)
+      ) {
+        // 오늘 이전 날짜는 비활성화
+        $cell.addClass("disabled");
+      } else {
+        // 선택된 날짜인지 확인
+        if (selectedCalendarDates.includes(dateString)) {
+          $cell.addClass("selected");
+        }
+
+        // 오늘 날짜에 특별한 스타일 적용
+        if (isToday) {
+          $cell.addClass("today");
+        }
+
+        // 클릭 이벤트 추가
+        $cell.on("click", function () {
+          if ($(this).hasClass("disabled")) return;
+
+          if ($(this).hasClass("selected")) {
+            $(this).removeClass("selected");
+            removeDateCard(dateString);
+          } else {
+            $(this).addClass("selected");
+            addDateCard(dateString);
+          }
+        });
+      }
+
+      // 데이터 속성 추가
+      $cell.attr("data-date", dateString);
+
+      return $cell;
+    }
+
 
     /**
      * 월 및 연도 선택 시 달력 갱신 및 과거 월 비활성화
