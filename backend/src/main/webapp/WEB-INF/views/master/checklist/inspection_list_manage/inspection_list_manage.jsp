@@ -67,10 +67,10 @@
         <div class="col">
           <div class="top-content">
             <div class="button-box" style="display: flex; justify-content: space-between; align-items: center;">
-              <span class="m-3" style="font: 350 20px Noto Sans KR;">점검 항목 관리</span>
-              <div class="my-3">
-                <button type="button" class="btn btn-light me-3 select-btn" onclick="onAddRow()">조회</button>
-                <button type="button" class="btn btn-light me-3 init-btn" onclick="onDeleteRow()">초기화</button>
+              <span class="m-3" style="font: 700 20px Noto Sans KR; margin: 0 !important;">점검 항목 관리</span>
+              <div class="my-3" style="margin: 0 !important;">
+                <button type="button" class="btn btn-light me-3 select-btn p-0" onclick="onAddRow()">조회</button>
+                <button type="button" class="btn btn-light init-btn  p-0" onclick="onDeleteRow()">초기화</button>
               </div>
             </div>
             <div class="container mt-3">
@@ -83,7 +83,6 @@
                   </datalist>
                 </div>
               </div>
-
               <div class="row first-input-box mb-3">
                 <div class="col-12 d-flex align-items-center justify-content-between p-0">
                   <label class="col-form-label" style="width: 100px">마스터</br>체크리스트</label>
@@ -93,7 +92,7 @@
                   </datalist>
                 </div>
               </div>
-              <div class="row first-input-box mb-3">
+              <div class="row first-input-box">
                 <div class="col-12 d-flex align-items-center justify-content-between p-0">
                   <label class="col-form-label" style="width: 100px">모듈</label>
                   <input type="text" class="form-control" placeholder="모듈" data-bs-target="#moduleModal" data-bs-toggle="modal" readonly>

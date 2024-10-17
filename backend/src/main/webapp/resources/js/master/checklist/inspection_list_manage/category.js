@@ -30,8 +30,6 @@ const gridOptions = {
         defaultMinWidth: 10               // 컬럼 최소사이즈
     },
     rowHeight: 45,
-    pagination: true,
-    paginationAutoPageSize: true,
 
     rowSelection: 'multiple',
     rowDragManaged: true,
