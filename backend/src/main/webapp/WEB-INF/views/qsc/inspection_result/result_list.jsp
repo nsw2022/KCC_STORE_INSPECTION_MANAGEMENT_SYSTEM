@@ -75,25 +75,29 @@
     <div class="content">
       <!--  top 영역시작 -->
       <div
-              class="top-box py-2" style="padding: 0 !important;"
+              class="top-box"
       >
-        <div class="top-box-content my-4" style="margin-top: 0 !important;">
+
+        <div class="row top-box-content my-4" style="margin-top: 0 !important; margin: 0 auto;">
+          <div class="col">
           <!-- row 안에 col로 그리드를 할경우 자동 양쪽마진 15px가 붙음으로 -->
           <!-- g-0을 해줘야 마진이 추가로 붙질않음 -->
           <!-- https://getbootstrap.kr/docs/5.3/layout/gutters/#%EA%B1%B0%ED%84%B0-%EC%A0%9C%EA%B1%B0 -->
           <!-- 검색 .g-0 -->
           <div class="d-flex justify-content-between align-items-center">
-            <div class="">
+            <div class="" style="display: flex">
               <b>가맹점 점검 결과</b>
-            </div>
-            <div class="d-flex justify-content-between">
-              <div class="top-button-wrapper me-1">
-                <div class="top-button top-lookup">조회</div>
+              <div class="top-drop-down">
+                <button>
+                  <i class="fa-solid fa-angle-right"></i>
+                </button>
               </div>
-              <div class="">
-                <div class="top-button-wrapper px-0">
-                  <div class="top-button top-reset" id="reset-selection-top">초기화</div>
-                </div>
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <div class="my-3" style="margin: 0 !important;">
+                <button type="button" class="btn btn-light me-3 select-btn p-0" onclick="onAddRow()">조회</button>
+                <button type="button" class="btn btn-light init-btn p-0" onclick="onDeleteRow()">초기화</button>
               </div>
             </div>
           </div>
@@ -210,15 +214,15 @@
               </div>
             </div>
           </div>
-
-
+          </div>
         </div>
+
         <%--  top 영역끝  --%>
 
 
         <div class="middle-box py-2">
           <div class="middle-content">
-            <div id="myGrid" class="ag-theme-alpine" style="height: 500px; width: 100%;"></div>
+            <div id="myGrid" class="ag-theme-alpine" style="height: 610px; width: 100%;"></div>
           </div>
         </div>
 
