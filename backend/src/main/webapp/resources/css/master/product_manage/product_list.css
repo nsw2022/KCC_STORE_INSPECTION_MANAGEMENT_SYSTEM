@@ -1,5 +1,9 @@
 /** 본문 */
 
+.page-wrapper {
+	z-index : 1000;
+}
+
 /* ag-Grid의 z-index를 낮게 설정 */
 .ag-theme-quartz {
   z-index: 1 !important; /* 그리드의 z-index 값을 사이드바보다 낮게 설정 */
@@ -30,10 +34,11 @@
   border-radius: 8px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   background-color: #ffffff;
+  padding : 30px;
 }
 
 .header_text {
-  font: 500 1.5rem "Noto Sans KR";
+  font: 800 20px "Noto Sans KR";
   color: #000000;
 }
 
@@ -42,6 +47,7 @@
   background-color: #f4f4f4;
   padding-top: 12px;
   padding-bottom: 12px;
+  
 }
 
 .header_input_area i:hover {
@@ -122,7 +128,7 @@
 
 .hide-list {
   display: none;
-  padding: 20px;
+  padding: 15px 10px 10px 10px;
   margin-top: 0px;
   background: #fff !important;
   border-radius: 7px;
@@ -133,13 +139,11 @@
 
 .wrapper.active .hide-list {
   display: block;
+  margin-top : 13px !important;
 }
 
 .hide-list .search {
   position: relative;
-}
-.modal-body .top-search {
-  /*background-color: #f4f4f4;*/
 }
 
 .hide-list .options {
@@ -170,9 +174,9 @@
 
 .options li,
 .options p {
-  height: 50px;
+  height: 40px;
   padding: 0px 13px;
-  font-size: 21px;
+  font : 400 13px "Noto Sans KR";
 }
 
 .options li:hover,
@@ -199,26 +203,38 @@
 .options p {
   color: #9ca3af;
   width: 85%;
-  font: 500 1rem "Noto Sans KR";
+  font: 400 13px "Noto Sans KR";
 }
 
 .wrapper {
   position: relative;
 }
 
-.hide-list {
-  width: 100%;
-}
-
-.options li {
-  font: 500 1rem "Noto Sans KR";
-}
 
 /** 본문 헤더 검색 영역 끝*/
 
 /** 본문 헤더 끝 */
 
 /** 본문 내용 */
+
+/* 홀수 row */
+.ag-row-even {
+  font: 350 13px "Noto Sans KR";
+  color: #232323 !important;
+  overflow: auto;
+}
+/* 짝수 row*/
+.ag-row-odd {
+  font: 350 13px "Noto Sans KR";
+  color: #232323 !important;
+  overflow: auto;
+}
+
+/* header */
+.ag-header-row {
+  font: 600 14px "Noto Sans KR";
+  color: #718ebf !important;
+}
 
 .ag-cell-wrapper > .ag-cell-value > .btn-container {
   width: 100%;
@@ -289,10 +305,14 @@
 /** 최대 width가 1400일 때 끝 */
 
 /** 최대 width가 992일 때 */
-@media screen and (max-width: 992px) {
+@media screen and (max-width: 1000px) {
   .page-content {
     padding-left: 30px !important;
     padding-right: 30px;
+  }
+  
+  .hide-list {
+  	width : 100%;
   }
 
   .container {
@@ -378,10 +398,11 @@
 
 .modal-header {
   border-bottom: none;
+  
 }
 
 .modal-header h1 {
-  font: 500 1.5rem "Noto Sans KR";
+  font : 700 20px "Noto Sans KR";
   color: #000000;
 }
 
@@ -391,9 +412,13 @@
 .modal-body .row > :nth-child(n) > :last-child {
   background-color: #f4f4f4;
   border: none;
-  font: 500 1.15rem "Noto Sans KR";
+  font: 400 13px "Noto Sans KR";
   border-radius: 10px;
   color: #9ca3af;
+}
+
+.modal-body .hide-list {
+	width : 100%;
 }
 
 .modal-body input {
@@ -403,7 +428,7 @@
 
 .modal-body .row.justify-content-between > :nth-child(n) > :first-child {
   color: #5a5a5a;
-  font: 500 1.15rem "Noto Sans KR";
+  font: 500 15px "Noto Sans KR";
 }
 
 .modal-body .row > :nth-child(n) :last-child::placeholder {
@@ -412,19 +437,33 @@
 
 .modal-body .label_text {
   color: #5a5a5a;
-  font: 500 1.25rem "Noto Sans KR";
+  font: 500 15px "Noto Sans KR";
+  padding-left : 24px;
+}
+
+.radio_input_area {
+	padding-left : 24px !important;
+	display: flex;
 }
 
 .modal-body .row .radio_input_area label {
   color: #9ca3af;
-  font: 500 1.15rem "Noto Sans KR";
+  font: 400 13px "Noto Sans KR";
+}
+
+.radio_input_area input {
+	margin-top : 1px;
 }
 
 /** 모달 본문 영역 끝 */
 
 /** 모달 footer 영역 */
 .modal-footer {
-  border-top: none;
+  padding-bottom : 0px !important;
+}
+
+.modal-footer :nth-child(n) {
+	font: 400 15px "Noto Sans KR";
 }
 
 .btn-cancel {
@@ -434,7 +473,6 @@
   width: 100px;
   height: 45px;
   color: #5a5a5a;
-  font: 500 1.15rem "Noto Sans KR";
 }
 
 .btn-register {
@@ -443,7 +481,6 @@
   width: 100px;
   height: 45px;
   color: #ffffff;
-  font: 500 1.15rem "Noto Sans KR";
   background-color: #4318ff;
 }
 
@@ -458,7 +495,7 @@
   }
 
   .modal-dialog .modal-content {
-    padding: 0 !important;
+    padding: 0px 0px 16px 0px !important;
   }
 
   .radio_input_area input {
@@ -466,7 +503,11 @@
   }
 
   .modal-body .row .radio_input_area label {
-    font: 500 1rem "Noto Sans KR";
+    font: 400 13px "Noto Sans KR";
+  }
+  
+  .modal-body >:nth-child(n) {
+  	margin-bottom : 8px !important;
   }
 }
 

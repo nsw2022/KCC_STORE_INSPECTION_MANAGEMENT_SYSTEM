@@ -59,12 +59,12 @@
                     <!-- 검색 영억 -->
                     <div
                         class="row container-header d-flex align-items-center justify-content-between mx-0">
-                        <div class="col-xl-4 md-4 mx-0 inspector_area d-flex align-items-center row p-0">
-                            <div class="inspector_text col-md-5 pe-0 mb-3">점검자 검색:</div>
+                        <div class="col-xl-3 md-4 mx-0 inspector_area d-flex align-items-center row p-0">
+                            <div class="inspector_text col-md-4 pe-0 mb-3">점검자 검색</div>
                             <div
-                                class="input_area border border-1 d-flex flex-column justify-content-between align-items-center col-md-7 mb-3"
+                                class="input_area d-flex flex-column justify-content-between align-items-center col-md-8 mb-3"
                                 data-autocomplete="inspector">
-                                <div class="search-btn top-search d-flex">
+                                <div class="search-btn top-search d-flex border border-1">
                                     <span>선택해주세요.</span>
                                     <i class="uil uil-angle-down"></i>
                                 </div>
@@ -72,20 +72,19 @@
                                 <div class="hide-list border border-1">
                                     <div class="search">
                                       <div class="input_area d-flex justify-content-between align-items-center border border-1">
-                                        <input type="text" class="px-3 py-2 top-search border border-1" placeholder="점검자 검색"/>
-                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                        <input type="text" class="px-3 py-1 top-search border border-1" placeholder="점검자 검색"/>
                                       </div>
-                                      <ul class="options my-0"></ul>
+                                      <ul class="options my-1"></ul>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-xl-4 md-4 mx-0 inspection_type_area d-flex align-items-center row p-0">
-                            <div class="inspection_type_text col-md-5 pe-0 mb-3">점검 유형 선택:</div>
+                            <div class="inspection_type_text col-md-4 pe-0 mb-3">점검 유형 선택</div>
                             <div
-                                class="input_area border border-1 d-flex flex-column justify-content-between align-items-center col-md-7 mb-3"
+                                class="input_area  d-flex flex-column justify-content-between align-items-center col-md-8 mb-3"
                                 data-autocomplete="inspection_type">
-                                <div class="search-btn top-search d-flex">
+                                <div id ="input_type" class="search-btn top-search d-flex border border-1">
                                     <span>선택해주세요.</span>
                                     <i class="uil uil-angle-down"></i>
                                 </div>
@@ -93,10 +92,9 @@
                                 <div class="hide-list border border-1">
                                     <div class="search">
                                       <div class="input_area d-flex justify-content-between align-items-center border border-1">
-                                        <input type="text" class="px-3 py-2 top-search border border-1" placeholder="점검 유형 검색"/>
-                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                        <input type="text" class="px-3 py-1 top-search" placeholder="점검 유형 검색"/>
                                       </div>
-                                      <ul class="options my-0"></ul>
+                                      <ul class="options my-1"></ul>
                                     </div>
                                 </div>
                             </div>

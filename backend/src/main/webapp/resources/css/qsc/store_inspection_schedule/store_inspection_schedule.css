@@ -6,6 +6,11 @@
   background-color: #ffffff;
 }
 
+.page-wrapper {
+	z-index : 1000;	
+}
+
+
 .page-content {
   margin-top: 50px;
   padding: 40px !important;
@@ -39,11 +44,20 @@
   border-radius: 10px;
   outline: none;
   border: none !important;
+  margin : 0;
+  font : 400 13px "Noto Sans KR";
+  color: #858D9D;
+}
+
+.container-header>div input::placeholder {
+  font : 400 13px "Noto Sans KR";
+  color: #858D9D;
+}
+
+.row > .inspection_type_area {
+	margin-right : 180px !important;
 } 
 
-.input_area .fa-magnifying-glass {
-  margin-right: auto;
-}
 
 .search .input_area {
   height: 45px;
@@ -51,8 +65,12 @@
 
 .container-header .input_area {
   border-radius: 10px;
-  height: 52px;
+  height: 35px;
   padding: 0;
+}
+
+.uil-angle-down {
+	font-size : 23px;
 }
 
 .select_date_btn_area button {
@@ -61,7 +79,6 @@
   border: none;
   
 }
-
 
 
 .date_text {
@@ -74,9 +91,8 @@
 .date_text,
 .container-header input,
 .container-header .inspector_text,
-.container-header .inspection_type_text,
-.options li{
-  font: 500 1.1em "Noto Sans KR";
+.container-header .inspection_type_text{
+  font: 500 15px "Noto Sans KR";
   color : #636363;
 }
 
@@ -87,13 +103,14 @@
 
 .top-search {
   width: 100%;
-  font: 500 1.2em "Noto Sans KR";
-  color: #636363;
+  font: 400 13px "Noto Sans KR";
+  color: #858D9D;
+  padding : 0px 10px 0px 15px;
+  border-radius : 10px;
 }
 
-.top-search {
-  padding: 0.75rem;
-
+#input_type, .hide-list {
+	margin-right : 12px;
 }
 
 
@@ -115,15 +132,19 @@
 
 .hide-list {
   display: none;
-  padding: 20px 10px 10px 10px;
-  margin-top: 4px;
+  padding: 15px 10px 0px 10px;
   background: #fff;
   border-radius: 7px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
+.inspector_area .hide-list {
+	margin-right : 0px;
+}
+
 .input_area.active .hide-list {
   display: block;
+  width : 100%;
 }
 
 .hide-list .search {
@@ -132,8 +153,8 @@
 
 .options p {
   padding: 0 13px;
-  color: #636363;
-  font: 500 1rem "Noto Sans KR";
+  color: #858D9D;
+  font: 400 13px "Noto Sans KR";
 }
 
 .hide-list .options {
@@ -163,12 +184,18 @@
 
 .options li {
   padding: 0px 13px;
+  color: #858D9D;
+  font : 400 13px "Noto Sans KR";
+  height : 40px;
 }
+
+
 
 .options li:hover,
 .autocomplete-item.selected {
   border-radius: 5px;
   background: #f2f2f2;
+  font : 500 13px "Noto Sans KR";
 }
 
 /** 본문 헤더 영역 끝 */
@@ -221,7 +248,7 @@
 
 #wrapper .div_week div {
   color: #5A5A5A;
-  font: 500 1.2rem "Noto Sans KR";
+  font: 500 15px "Noto Sans KR";
   margin: 30px 0 20px 0;
 }
 
@@ -244,7 +271,7 @@
 #wrapper .text-end .day_div_content .store_inspection {
   text-align: left;
   color: #5A5A5A;
-  font: 500 .9rem "Noto Sans KR";
+  font: 400 14px "Noto Sans KR";
   border-radius: 5px;
   border: 1px solid #d6d6d6;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
@@ -254,9 +281,13 @@
   
 }
 
+.store_inspection :hover {
+	font: 500 14px "Noto Sans KR";
+}
+
 #wrapper .day_div_header > :nth-child(n) {
   height: 100%;
-  font: 500 .9rem "Noto Sans KR";
+  font: 400 13px "Noto Sans KR";
 }
 
 #wrapper .day_div_header > button {
@@ -314,7 +345,7 @@ word-break: break-all;
   color : #5A5A5A;
   border-radius: 10px;
   text-align: left;
-  font: 500 1rem "Noto Sans KR";
+  font: 400 13px "Noto Sans KR";
   height: 28%;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
   padding-right: .5rem !important;
@@ -467,6 +498,10 @@ word-break: break-all;
   .inspection_type_text {
     padding-left: 12px;
   }
+  
+  .hide-list {
+  	margin-right : 0;
+  }
 
   .input_area.active .hide-list{
     width: 100%;
@@ -482,6 +517,31 @@ word-break: break-all;
   .hide-list .options {
     margin-top: 10px !important;
   }
+  
+  .row > .inspection_type_area {
+  	margin-right : 0 !important;
+  }
+  
+  #input_type {
+  	margin-right : 0;
+  }
+  
+  .row > .select_date_btn_area {
+  	height : 35px;
+  	width : 50% !important;
+  	margin-left : auto !important; 
+  	
+  }
+  
+  .date_text,
+  .select_date_btn_area button  {
+  	height : 21px;
+  }
+  
+  
+  
+  
+  
 
   /* 캘린더 헤더 영역 끝 */
   
@@ -504,7 +564,7 @@ word-break: break-all;
   }
 
   #wrapper > .div_calendar >:nth-child(7n) > .store_list_detail {
-    right: 10%;
+    right: 7%;
   }
 
   #wrapper {
@@ -542,10 +602,11 @@ word-break: break-all;
   }
 
   #wrapper .day_div_header :nth-child(n) {
-    font: 500 1rem "Noto Sans KR";
+    font: 400 13px "Noto Sans KR";
   }
 
   .store_cnt {
+    display: block !important;
     margin: auto;
   }
 
@@ -571,7 +632,7 @@ word-break: break-all;
   }
 
   .container-fluid > .row > :nth-child(n) {
-    width: 85%;
+    width: 100%;
   }
 
   .inspection_type_text ,
@@ -615,8 +676,12 @@ word-break: break-all;
     }
 
     #wrapper .store_list_detail {
-      width: 41%;
+      width: 60%;
     }
+ 
+ 	.store_list .store_inspection {
+ 		height : 30%;
+ 	} 
  
     .store_list {
       height: 62%;
@@ -632,11 +697,45 @@ word-break: break-all;
     padding-left: 30px !important;
     padding-right: 30px;
   }
+  
+  #wrapper > .div_calendar >:nth-child(7n) > .store_list_detail {
+   right : 10%
+  }
 
   /* 캘린더 헤더 */
   .container-header > div input {
     width: 80%;
   }
+  
+  .page-content > .container-fluid > .row {
+  	justify-content: space-between !important;
+  }
+  
+  .container-fluid > .row > :nth-child(n) {
+  	width : 100%;
+  }
+  
+  .date_text {
+	 font: 500 12px "Noto Sans KR";
+	 color: #636363;
+  }
+  
+  #wrapper .day_div_header :nth-child(n) {
+  	width: 100%;
+  }
+  
+  .text-end > .day_div_header {
+  	padding-left : 0px !important;
+  }
+  
+  #wrapper .text-end {
+  	padding-right : 4px !important;
+  }
+  
+  .text-end > .day_div_header > span {
+  	text-align:  center;
+  }
+  
 
   /* 캘린더 헤더 끝 */
   /* 캘린더 본문 */
@@ -644,9 +743,11 @@ word-break: break-all;
     font: 500 1rem "Noto Sans KR";
     margin-top: 10px;
   }
+  
+  
 
   #wrapper > .div_calendar > :nth-child(7n) > .store_list_detail {
-    right: 18%;
+    right: 11%;
   }
 
   #wrapper .day_div_header {
@@ -711,10 +812,17 @@ word-break: break-all;
   .modal-body .checklist_item {
     margin: 0 !important;
   }
+  
 }
 
-@media (max-width: 400px) {
+
+@media screen and (max-width: 400px) {
   .page-content {
     padding: 10px !important;
   }
+  
+  
+  
+
+  
 }
