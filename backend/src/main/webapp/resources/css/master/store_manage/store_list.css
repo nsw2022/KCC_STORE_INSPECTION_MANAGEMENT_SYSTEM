@@ -242,6 +242,7 @@ input[type="file"]:focus-visible ~ .file_btn,
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
+  line-height: 1.2 !important;
 }
 
 .search-btn i {
@@ -370,15 +371,6 @@ input[type="file"]:focus-visible ~ .file_btn,
   background-color: #e1e1e1;
 }
 
-input.top-search::-webkit-input-placeholder {
-  background-image: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQujvGvIxeVPUNWJWCxEA94dTFFxjjPK1khMQ&s);
-  background-size: 32px;
-  background-position: right;
-  background-repeat: no-repeat;
-  text-indent: 5px;
-  color: #aaa;
-}
-
 /* 가맹점 관리 top 영역 끝 */
 
 /* 중간 게시판 목록 시작 */
@@ -440,6 +432,25 @@ table td {
 
 table tr td input {
   vertical-align: middle;
+}
+
+/* header */
+.ag-header-row {
+  font: 600 14px "Noto Sans KR";
+  color: #718ebf !important;
+}
+
+/* 홀수 row */
+.ag-row-even {
+  font: 350 13px "Noto Sans KR";
+  color: #232323 !important;
+  overflow: auto;
+}
+/* 짝수 row*/
+.ag-row-odd {
+  font: 350 13px "Noto Sans KR";
+  color: #232323 !important;
+  overflow: auto;
 }
 
 /* 중간 게시판 목록 끝 */
@@ -606,14 +617,6 @@ table tr td input {
     font-size: 0.75rem;
   }
 
-  input.top-search::-webkit-input-placeholder {
-    background-image: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQujvGvIxeVPUNWJWCxEA94dTFFxjjPK1khMQ&s);
-    background-size: 24px;
-    background-position: right;
-    background-repeat: no-repeat;
-    color: #aaa;
-  }
-
   table {
     font-size: 0.7rem;
     min-width: 600px; /* 적절한 최소 너비 설정 */
@@ -648,6 +651,47 @@ table tr td input {
 
   .list-group button {
     font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 1170px) {
+  .wrapper.active {
+    position: relative;
+  }
+
+  .hide-list {
+    display: none;
+    padding: 20px;
+    margin-top: 4px;
+    background: #fff;
+    border-radius: 7px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    z-index: 3;
+    width: 100%;
+  }
+}
+
+@media (max-width: 400px) {
+  /* header */
+  .ag-header-row {
+    font: 600 14px "Noto Sans KR";
+    color: #718ebf !important;
+    font-size: 0.7rem !important;
+  }
+  /* 홀수 row */
+  .ag-row-even {
+    font: 350 13px "Noto Sans KR";
+    color: #232323 !important;
+    overflow: auto;
+    font-size: 0.7rem !important;
+  }
+  /* 짝수 row*/
+  .ag-row-odd {
+    font: 350 13px "Noto Sans KR";
+    color: #232323 !important;
+    overflow: auto;
+    font-size: 0.7rem !important;
   }
 }
 
