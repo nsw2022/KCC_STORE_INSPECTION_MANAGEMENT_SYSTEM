@@ -67,18 +67,14 @@
         <div class="col">
           <div class="top-content">
             <div class="button-box" style="display: flex; justify-content: space-between; align-items: center;">
-
               <div class="d-flex justify-content-start">
-              <p class="m-3" style="font: 700 20px Noto Sans KR; margin: 0 !important;">점검 항목 관리</p>
+                <p class="m-3" style="font: 700 20px Noto Sans KR; margin: 0 !important;">점검 항목 관리</p>
                 <div class="top-drop-down">
                   <button>
                     <i class="fa-solid fa-angle-right"></i>
                   </button>
                 </div>
               </div>
-
-
-
               <div class="my-3" style="margin: 0 !important;">
                 <button type="button" class="btn btn-light me-3 select-btn p-0" onclick="onAddRow()">조회</button>
                 <button type="button" class="btn btn-light init-btn  p-0" onclick="onDeleteRow()">초기화</button>
