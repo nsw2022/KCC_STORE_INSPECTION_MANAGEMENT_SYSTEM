@@ -342,6 +342,7 @@ $(function () {
    * @todo responseBody로 받아올것이라면 여기서 Ajax로 데이터를 요청하면 됨
    */
   const autocompleteData = {
+
     // 가맹점
     store: [
       "-전체",
@@ -365,6 +366,7 @@ $(function () {
 
     // 브랜드
     BRAND: ["-전체-", "KCC 크라상", "KCC 카페", "KCC 디저트"],
+
 
     // 마스터 체크리스트
     MASTER_CHKLST: ["-전체-", "품질점검체크리스트", "기획점검체크리스트"],

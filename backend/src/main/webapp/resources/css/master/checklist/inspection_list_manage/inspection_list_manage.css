@@ -114,7 +114,7 @@ body {
 .accordion-box {
   width: 48% !important;
   padding: 0px !important;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
 }
 
 .accordion-item {
@@ -359,6 +359,7 @@ body {
   /*}*/
   .top-box {
     padding: 0.5rem 0.5rem;
+    margin-bottom: 20px !important;
   }
   .top-box .btn {
     font-size: 0.7rem;
@@ -462,4 +463,40 @@ body {
   .collapseThree,
   .collapseFour {
   }
+}
+
+/*------------드롭다운 버튼-----------*/
+.top-drop-down{
+  width: 26px;
+  height: 26px;
+  margin-left: 15px;
+  margin-top: 2px;
+}
+
+
+.top-drop-down>button{
+  width: 100%;
+  height: 100%;
+  border: solid 2px #858D9D;
+  border-radius: 50%;
+  color: #858D9D;
+  font-size: 12px;
+  background: none;
+}
+.top-drop-down>button:hover{
+  color: white;
+  border: none;
+  background-color: #4318FF;
+  transition: ease-out 0.3s;
+}
+
+
+.top-content .container {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
+}
+
+.top-drop-down button i {
+  transition: transform 0.3s ease-in-out;
 }
