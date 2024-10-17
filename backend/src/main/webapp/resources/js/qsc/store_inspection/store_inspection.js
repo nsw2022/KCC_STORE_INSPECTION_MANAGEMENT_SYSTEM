@@ -1,128 +1,364 @@
 const inspectionAllScheduleData = [
     {
-        CTG_NM: "위생 점검",
-        SUB_CTH_NM: [
+        INSP_MBR_ID: 1,
+        INSP_MBR_NAME: "이지훈",
+        INSP_TYPE : [
             {
-                CHKLST_NM:"홍대점 위생점검",
-                INSP_PLAN_DT:"2024/10/11"
+                CTG_NM: "위생 점검",
+                SUB_CTH_NM: [
+                    {
+                        CHKLST_NM:"홍대점 위생점검",
+                        INSP_PLAN_DT:"2024/10/11",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"혜화점 위생점검",
+                        INSP_PLAN_DT:"2024/10/14",
+                        INSP_STTS_CD:"IS002"
+                    },
+                    {
+                        CHKLST_NM:"성신여대점 위생점검",
+                        INSP_PLAN_DT:"2024/10/14",
+                        INSP_STTS_CD:"IS002"
+                    },
+                    {
+                        CHKLST_NM:"동대문점 위생점검",
+                        INSP_PLAN_DT:"2024/10/14",
+                        INSP_STTS_CD:"IS002"
+                    },
+                    {
+                        CHKLST_NM:"노원역점 위생점검",
+                        INSP_PLAN_DT:"2024/10/16",
+                        INSP_STTS_CD:"IS002"
+                    },
+                    {
+                        CHKLST_NM:"천호역점 위생점검",
+                        INSP_PLAN_DT:"2024/10/16",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"노원역점 위생점검",
+                        INSP_PLAN_DT:"2024/10/16",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"경희대점 위생점검",
+                        INSP_PLAN_DT:"2024/10/18",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"서울역점 위생점검",
+                        INSP_PLAN_DT:"2024/10/18",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"강남역점 위생점검",
+                        INSP_PLAN_DT:"2024/10/18",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"왕십리역점 위생점검",
+                        INSP_PLAN_DT:"2024/10/18",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"군자역점 위생점검",
+                        INSP_PLAN_DT:"2024/10/18",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"이태원점 위생점검",
+                        INSP_PLAN_DT:"2024/10/22",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"국민대점 위생점검",
+                        INSP_PLAN_DT:"2024/10/24",
+                        INSP_STTS_CD:"IS001"
+                    },
+                ]
             },
             {
-                CHKLST_NM:"혜화점 위생점검",
-                INSP_PLAN_DT:"2024/10/14"
-            },
-            {
-                CHKLST_NM:"성신여대점 위생점검",
-                INSP_PLAN_DT:"2024/10/14"
-            },
-            {
-                CHKLST_NM:"동대문점 위생점검",
-                INSP_PLAN_DT:"2024/10/14"
-            },
-            {
-                CHKLST_NM:"노원역점 위생점검",
-                INSP_PLAN_DT:"2024/10/16"
-            },
-            {
-                CHKLST_NM:"천호역점 위생점검",
-                INSP_PLAN_DT:"2024/10/16"
-            },
-            {
-                CHKLST_NM:"노원역점 위생점검",
-                INSP_PLAN_DT:"2024/10/16"
-            },
-            {
-                CHKLST_NM:"경희대점 위생점검",
-                INSP_PLAN_DT:"2024/10/18"
-            },
-            {
-                CHKLST_NM:"서울역점 위생점검",
-                INSP_PLAN_DT:"2024/10/18"
-            },
-            {
-                CHKLST_NM:"강남역점 위생점검",
-                INSP_PLAN_DT:"2024/10/18"
-            },
-            {
-                CHKLST_NM:"왕십리역점 위생점검",
-                INSP_PLAN_DT:"2024/10/18"
-            },
-            {
-                CHKLST_NM:"군자역점 위생점검",
-                INSP_PLAN_DT:"2024/10/18"
-            },
-            {
-                CHKLST_NM:"이태원점 위생점검",
-                INSP_PLAN_DT:"2024/10/22"
-            },
-            {
-                CHKLST_NM:"국민대점 위생점검",
-                INSP_PLAN_DT:"2024/10/24"
-            },
+                CTG_NM: "품질 점검",
+                SUB_CTH_NM: [
+                    {
+                        CHKLST_NM:"혜화점 품질점검",
+                        INSP_PLAN_DT:"2024/10/11",
+                        INSP_STTS_CD:"IS002"
+                    },
+                    {
+                        CHKLST_NM:"성신여대점 품질점검",
+                        INSP_PLAN_DT:"2024/10/15",
+                        INSP_STTS_CD:"IS002"
+                    },
+                    {
+                        CHKLST_NM:"동대문점 품질점검",
+                        INSP_PLAN_DT:"2024/10/15",
+                        INSP_STTS_CD:"IS002"
+                    },
+                    {
+                        CHKLST_NM:"명동점 품질점검",
+                        INSP_PLAN_DT:"2024/10/15",
+                        INSP_STTS_CD:"IS002"
+                    },
+                    {
+                        CHKLST_NM:"노원역점 품질점검",
+                        INSP_PLAN_DT:"2024/10/17",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"천호역점 품질점검",
+                        INSP_PLAN_DT:"2024/10/17",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"경희대점 품질점검",
+                        INSP_PLAN_DT:"2024/10/21",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"서울역점 품질점검",
+                        INSP_PLAN_DT:"2024/10/21",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"강남역점 품질점검",
+                        INSP_PLAN_DT:"2024/10/21",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"왕십리역점 품질점검",
+                        INSP_PLAN_DT:"2024/10/21",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"군자역점 품질점검",
+                        INSP_PLAN_DT:"2024/10/21",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"이태원점 품질점검",
+                        INSP_PLAN_DT:"2024/10/23",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"국민대점 품질점검",
+                        INSP_PLAN_DT:"2024/10/25",
+                        INSP_STTS_CD:"IS001"
+                    },
+                ]
+            }
         ]
     },
     {
-        CTG_NM: "품질 점검",
-        SUB_CTH_NM: [
+        INSP_MBR_ID: 2,
+        INSP_MBR_NAME: "노승우",
+        INSP_TYPE : [
             {
-                CHKLST_NM:"혜화점 품질점검",
-                INSP_PLAN_DT:"2024/10/11"
+                CTG_NM: "위생 점검",
+                SUB_CTH_NM: [
+                    {
+                        CHKLST_NM:"홍대점 위생점검",
+                        INSP_PLAN_DT:"2024/10/11",
+                        INSP_STTS_CD:"IS002"
+                    },
+                    {
+                        CHKLST_NM:"혜화점 위생점검",
+                        INSP_PLAN_DT:"2024/10/14",
+                        INSP_STTS_CD:"IS002"
+                    },
+                    {
+                        CHKLST_NM:"성신여대점 위생점검",
+                        INSP_PLAN_DT:"2024/10/14",
+                        INSP_STTS_CD:"IS002"
+                    },
+                    {
+                        CHKLST_NM:"동대문점 위생점검",
+                        INSP_PLAN_DT:"2024/10/14",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"신촌점 위생점검",
+                        INSP_PLAN_DT:"2024/10/14",
+                        INSP_STTS_CD:"IS002"
+                    },
+                    {
+                        CHKLST_NM:"합정역점 위생점검",
+                        INSP_PLAN_DT:"2024/10/14",
+                        INSP_STTS_CD:"IS002"
+                    },
+                    {
+                        CHKLST_NM:"공덕역점 위생점검",
+                        INSP_PLAN_DT:"2024/10/14",
+                        INSP_STTS_CD:"IS002"
+                    },
+                    {
+                        CHKLST_NM:"노원역점 위생점검",
+                        INSP_PLAN_DT:"2024/10/16",
+                        INSP_STTS_CD:"IS002"
+                    },
+                    {
+                        CHKLST_NM:"천호역점 위생점검",
+                        INSP_PLAN_DT:"2024/10/16",
+                        INSP_STTS_CD:"IS002"
+                    },
+                    {
+                        CHKLST_NM:"노원역점 위생점검",
+                        INSP_PLAN_DT:"2024/10/16",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"경희대점 위생점검",
+                        INSP_PLAN_DT:"2024/10/18",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"용산역점 위생점검",
+                        INSP_PLAN_DT:"2024/10/18",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"서울역점 위생점검",
+                        INSP_PLAN_DT:"2024/10/18",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"강남역점 위생점검",
+                        INSP_PLAN_DT:"2024/10/18",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"왕십리역점 위생점검",
+                        INSP_PLAN_DT:"2024/10/18",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"군자역점 위생점검",
+                        INSP_PLAN_DT:"2024/10/18",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"이태원점 위생점검",
+                        INSP_PLAN_DT:"2024/10/22",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"국민대점 위생점검",
+                        INSP_PLAN_DT:"2024/10/24",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"안암점 위생점검",
+                        INSP_PLAN_DT:"2024/10/24",
+                        INSP_STTS_CD:"IS001"
+                    },
+                ]
             },
             {
-                CHKLST_NM:"성신여대점 품질점검",
-                INSP_PLAN_DT:"2024/10/15"
-            },
-            {
-                CHKLST_NM:"동대문점 품질점검",
-                INSP_PLAN_DT:"2024/10/15"
-            },
-            {
-                CHKLST_NM:"명동점 품질점검",
-                INSP_PLAN_DT:"2024/10/15"
-            },
-            {
-                CHKLST_NM:"노원역점 품질점검",
-                INSP_PLAN_DT:"2024/10/17"
-            },
-            {
-                CHKLST_NM:"천호역점 품질점검",
-                INSP_PLAN_DT:"2024/10/17"
-            },
-            {
-                CHKLST_NM:"경희대점 품질점검",
-                INSP_PLAN_DT:"2024/10/21"
-            },
-            {
-                CHKLST_NM:"서울역점 품질점검",
-                INSP_PLAN_DT:"2024/10/21"
-            },
-            {
-                CHKLST_NM:"강남역점 품질점검",
-                INSP_PLAN_DT:"2024/10/21"
-            },
-            {
-                CHKLST_NM:"왕십리역점 품질점검",
-                INSP_PLAN_DT:"2024/10/21"
-            },
-            {
-                CHKLST_NM:"군자역점 품질점검",
-                INSP_PLAN_DT:"2024/10/21"
-            },
-            {
-                CHKLST_NM:"이태원점 품질점검",
-                INSP_PLAN_DT:"2024/10/23"
-            },
-            {
-                CHKLST_NM:"국민대점 품질점검",
-                INSP_PLAN_DT:"2024/10/25"
-            },
+                CTG_NM: "품질 점검",
+                SUB_CTH_NM: [
+                    {
+                        CHKLST_NM:"혜화점 품질점검",
+                        INSP_PLAN_DT:"2024/10/11",
+                        INSP_STTS_CD:"IS002"
+                    },
+                    {
+                        CHKLST_NM:"성신여대점 품질점검",
+                        INSP_PLAN_DT:"2024/10/15",
+                        INSP_STTS_CD:"IS002"
+                    },
+                    {
+                        CHKLST_NM:"동대문점 품질점검",
+                        INSP_PLAN_DT:"2024/10/15",
+                        INSP_STTS_CD:"IS002"
+                    },
+                    {
+                        CHKLST_NM:"명동점 품질점검",
+                        INSP_PLAN_DT:"2024/10/15",
+                        INSP_STTS_CD:"IS002"
+                    },
+                    {
+                        CHKLST_NM:"노원역점 품질점검",
+                        INSP_PLAN_DT:"2024/10/17",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"천호역점 품질점검",
+                        INSP_PLAN_DT:"2024/10/17",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"경희대점 품질점검",
+                        INSP_PLAN_DT:"2024/10/21",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"서울역점 품질점검",
+                        INSP_PLAN_DT:"2024/10/21",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"강남역점 품질점검",
+                        INSP_PLAN_DT:"2024/10/21",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"왕십리역점 품질점검",
+                        INSP_PLAN_DT:"2024/10/21",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"군자역점 품질점검",
+                        INSP_PLAN_DT:"2024/10/21",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"이태원점 품질점검",
+                        INSP_PLAN_DT:"2024/10/23",
+                        INSP_STTS_CD:"IS001"
+                    },
+                    {
+                        CHKLST_NM:"국민대점 품질점검",
+                        INSP_PLAN_DT:"2024/10/25",
+                        INSP_STTS_CD:"IS001"
+                    },
+                ]
+            }
         ]
-    }
+    },
+
 ]
 
 
 document.addEventListener('DOMContentLoaded', function () {
+    populateInspectorSelect();
     calender();
 });
+
+//점검자 필터링
+function populateInspectorSelect() {
+    const inspMbrSelect = document.getElementById('insp-mbr');
+    inspMbrSelect.innerHTML = ''; // 기존 옵션 초기화
+
+    // 기본값 추가 (예: "전체" 또는 "점검자 선택")
+    const defaultOption = document.createElement('option');
+    defaultOption.value = 'all';
+    defaultOption.textContent = '전체';
+    inspMbrSelect.appendChild(defaultOption);
+
+    // INSP_MBR_NAME들을 드롭다운에 추가
+    inspectionAllScheduleData.forEach(inspector => {
+        const option = document.createElement('option');
+        option.value = inspector.INSP_MBR_ID; // 또는 inspector.INSP_MBR_NAME 사용 가능
+        option.textContent = inspector.INSP_MBR_NAME;
+        inspMbrSelect.appendChild(option);
+    });
+}
+
+function getSelectedInspector() {
+    const inspMbrSelect = document.getElementById('insp-mbr');
+    return inspMbrSelect.value; // 'all' 또는 INSP_MBR_ID 반환
+}
 
 
 function calender() {
@@ -132,10 +368,11 @@ function calender() {
     const checklistSelect = document.getElementById('checklist-select');
     let selectedDate = null;
 
+
     const today = new Date(); // 오늘 날짜 객체 생성
     const defaultYear = today.getFullYear(); // 오늘의 년도
     const defaultMonth = today.getMonth(); // 오늘의 월 (0부터 시작)
-    const defaultDay = today.getDate(); // 오늘의 일
+    let defaultDay = new Date().getDate(); // 전역 변수로 이동
 
     // 년도 드롭다운 생성 함수
     function populateYearSelect(startYear = 1900, endYear = 2100, defaultYear) {
@@ -165,6 +402,7 @@ function calender() {
             monthSelect.appendChild(option);
         });
     }
+
 
     // 달력 생성 함수
     function generateCalendar(month, year) {
@@ -206,7 +444,7 @@ function calender() {
     }
 
 
-    // 셀 생성 함수
+    // 날짜 선택 함수
     function createCalendarCell(day, year, month) {
         const dayContent = document.createElement('div');
         dayContent.classList.add('day-content');
@@ -217,6 +455,45 @@ function calender() {
             dayContent.classList.add('selected'); // selected 클래스 추가
             selectedDate = dayContent;
         }
+
+
+        // 현재 날짜를 "YYYY/MM/DD" 형식으로 변환
+        const currentDate = new Date(year, month, day);
+        const dateStr = formatDate(currentDate);
+
+        // 오늘 날짜 객체 생성 (시간 부분을 제거하여 날짜만 비교)
+        const todayDate = new Date();
+        todayDate.setHours(0, 0, 0, 0);
+
+        // 선택된 점검자 가져오기
+        const selectedInspector = getSelectedInspector();
+
+        // 해당 날짜가 오늘 이전인지 확인
+        const isPastDate = currentDate < todayDate;
+
+        // 해당 날짜에 미완료된 점검이 있는지 확인
+        let hasIncompleteInspection = false;
+
+        if (isPastDate) {
+            inspectionAllScheduleData.forEach(inspector => {
+                // 선택된 점검자에 따라 필터링 ('all'인 경우 모두 포함)
+                if (selectedInspector === 'all' || selectedInspector == inspector.INSP_MBR_ID) {
+                    inspector.INSP_TYPE.forEach(category => {
+                        category.SUB_CTH_NM.forEach(item => {
+                            if (item.INSP_PLAN_DT === dateStr && item.INSP_STTS_CD === 'IS001') {
+                                hasIncompleteInspection = true;
+                            }
+                        });
+                    });
+                }
+            });
+        }
+
+        // 미완료된 점검이 있는 경우 'incomplete' 클래스 추가
+        if (hasIncompleteInspection) {
+            dayContent.classList.add('incomplete');
+        }
+
 
         // 클릭 이벤트 추가
         dayContent.addEventListener('click', function () {
@@ -258,13 +535,29 @@ function calender() {
     yearSelect.addEventListener('change', updateCalendar);
 
     // 체크리스트 선택 변경 시 스케줄 테이블 갱신
+    document.getElementById('insp-mbr').addEventListener('change', function() {
+        const selectedYear = parseInt(document.getElementById('year-select').value);
+        const selectedMonth = parseInt(document.getElementById('month-select').value);
+        const selectedDay = selectedDate ? parseInt(selectedDate.textContent) : defaultDay;
+        const date = new Date(selectedYear, selectedMonth, selectedDay);
+
+        // 달력 업데이트
+        generateCalendar(selectedMonth, selectedYear);
+        // 오늘의 점검 목록 업데이트
+        generateTodayInspectionList(date);
+        // 스케줄 테이블 업데이트
+        generateScheduleTable(date);
+    });
+
     checklistSelect.addEventListener('change', function() {
         const selectedYear = parseInt(yearSelect.value);
         const selectedMonth = parseInt(monthSelect.value);
         const selectedDay = selectedDate ? parseInt(selectedDate.textContent) : defaultDay;
         const date = new Date(selectedYear, selectedMonth, selectedDay);
+        generateTodayInspectionList(date); // 필요에 따라 추가
         generateScheduleTable(date);
     });
+
 }
 
 //좌측상단 오늘의 점검표시 함수
@@ -275,28 +568,69 @@ function generateTodayInspectionList(date) {
     const dateStr = formatDate(date); // "YYYY/MM/DD" 형식으로 변환
     let hasInspection = false; // 점검 여부를 추적하는 변수
 
-    inspectionAllScheduleData.forEach(category => {
-        category.SUB_CTH_NM.forEach(item => {
-            if (item.INSP_PLAN_DT === dateStr) {
-                hasInspection = true; // 점검이 있음을 표시
-                const li = document.createElement('li');
-                const h4 = document.createElement('h4');
-                h4.textContent = category.CTG_NM;
-                const pTitle = document.createElement('p');
-                pTitle.classList.add('today_inspection_list_title');
-                pTitle.textContent = item.CHKLST_NM;
-                const pDate = document.createElement('p');
-                pDate.classList.add('today_inspection_list_date');
-                pDate.textContent = item.INSP_PLAN_DT.replace(/\//g, '.');
-                li.appendChild(h4);
-                li.appendChild(pTitle);
-                li.appendChild(pDate);
-                listContainer.appendChild(li);
-            }
-        });
+    const selectedInspector = getSelectedInspector();
+    const MAX_VISIBLE_ITEMS = 5; // 처음에 보여줄 최대 항목 수
+    let itemCount = 0; // 생성된 항목 수를 추적
+    let hiddenItems = []; // 숨겨진 항목들을 저장할 배열
+
+    inspectionAllScheduleData.forEach(inspector => {
+        // 선택된 점검자에 따라 필터링 ('all'인 경우 모두 포함)
+        if (selectedInspector === 'all' || selectedInspector == inspector.INSP_MBR_ID) {
+            inspector.INSP_TYPE.forEach(category => {
+                category.SUB_CTH_NM.forEach(item => {
+                    if (item.INSP_PLAN_DT === dateStr) {
+                        hasInspection = true;
+                        const li = document.createElement('li');
+                        const h4 = document.createElement('h4');
+                        h4.textContent = category.CTG_NM;
+                        const pTitle = document.createElement('p');
+                        pTitle.classList.add('today_inspection_list_title');
+                        pTitle.textContent = item.CHKLST_NM;
+                        const pDate = document.createElement('p');
+                        pDate.classList.add('today_inspection_list_date');
+                        pDate.textContent = item.INSP_PLAN_DT.replace(/\//g, '.');
+                        li.appendChild(h4);
+                        li.appendChild(pTitle);
+                        li.appendChild(pDate);
+
+                        // 항목 개수에 따라 처리
+                        if (itemCount < MAX_VISIBLE_ITEMS) {
+                            listContainer.appendChild(li);
+                        } else {
+                            li.style.display = 'none'; // 처음엔 숨김 처리
+                            hiddenItems.push(li); // 숨겨진 항목에 추가
+                        }
+                        itemCount++;
+                    }
+                });
+            });
+        }
     });
 
-// 점검이 없는 경우 "점검이 없습니다." 메시지 표시
+    // 5개 이상일 때 "+n개 더보기" div 생성
+    if (hiddenItems.length > 0) {
+        const moreLi = document.createElement('li');
+        const moreP = document.createElement('p');
+        moreP.classList.add('today_inspection_list_title');
+        moreP.textContent = `+${hiddenItems.length}개 더보기`;
+        moreP.style.cursor = 'pointer';
+
+        // 스타일을 직접 적용
+        moreLi.style.display = 'flex';
+        moreLi.style.justifyContent = 'center';
+        moreLi.style.alignItems = 'center';
+        moreLi.style.padding = '0';
+
+        moreP.addEventListener('click', () => {
+            hiddenItems.forEach(item => (item.style.display = '')); // 숨겨진 항목 표시
+            moreLi.style.display = 'none'; // 더보기 항목 숨기기
+        });
+
+        moreLi.appendChild(moreP);
+        listContainer.appendChild(moreLi);
+    }
+
+    // 점검이 없는 경우 "점검이 없습니다." 메시지 표시
     if (!hasInspection) {
         const noInspectionMsg = document.createElement('li');
         const pTag = document.createElement('p');
@@ -305,8 +639,9 @@ function generateTodayInspectionList(date) {
         noInspectionMsg.appendChild(pTag);
         listContainer.appendChild(noInspectionMsg);
     }
-
 }
+
+
 
 
 // 점검 한주 스케줄 표시 함수
@@ -319,6 +654,7 @@ function generateScheduleTable(date) {
     weekStartDate.setDate(date.getDate() - date.getDay()); // 일요일로 설정
 
     const selectedChecklist = document.getElementById('checklist-select').value;
+    const selectedInspector = getSelectedInspector();
 
     const weekRow = document.createElement('tr');
     for (let i = 0; i < 7; i++) {
@@ -339,14 +675,19 @@ function generateScheduleTable(date) {
         const dateStr = formatDate(cellDate);
 
         let allItems = [];
-        inspectionAllScheduleData.forEach(category => {
-            if (selectedChecklist === 'all' || category.CTG_NM === selectedChecklist) {
-                category.SUB_CTH_NM.forEach(item => {
-                    if (item.INSP_PLAN_DT === dateStr) {
-                        allItems.push({
-                            categoryName: category.CTG_NM,
-                            itemName: item.CHKLST_NM,
-                            planDate: item.INSP_PLAN_DT
+        inspectionAllScheduleData.forEach(inspector => {
+            // 선택된 점검자에 따라 필터링 ('all'인 경우 모두 포함)
+            if (selectedInspector === 'all' || selectedInspector == inspector.INSP_MBR_ID) {
+                inspector.INSP_TYPE.forEach(category => {
+                    if (selectedChecklist === 'all' || category.CTG_NM === selectedChecklist) {
+                        category.SUB_CTH_NM.forEach(item => {
+                            if (item.INSP_PLAN_DT === dateStr) {
+                                allItems.push({
+                                    categoryName: category.CTG_NM,
+                                    itemName: item.CHKLST_NM,
+                                    planDate: item.INSP_PLAN_DT
+                                });
+                            }
                         });
                     }
                 });
@@ -386,6 +727,7 @@ function generateScheduleTable(date) {
 
     tableBody.appendChild(weekRow);
 }
+
 
 
 
