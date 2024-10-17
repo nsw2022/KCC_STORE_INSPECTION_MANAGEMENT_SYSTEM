@@ -373,8 +373,8 @@ $(function () {
       {
         headerName: "관리",
         field: "more",
-        width: 150,
-        minWidth: 120,
+        width: 100,
+        minWidth: 53,
         cellRenderer: function (params) {
           // jQuery를 사용하여 컨테이너 div 생성
           const $container = $("<div>", {
