@@ -67,7 +67,14 @@
         <div class="col">
           <div class="top-content">
             <div class="button-box" style="display: flex; justify-content: space-between; align-items: center;">
-              <span class="m-3" style="font: 700 20px Noto Sans KR; margin: 0 !important;">점검 항목 관리</span>
+              <div class="d-flex justify-content-start">
+                <p class="m-3" style="font: 700 20px Noto Sans KR; margin: 0 !important;">점검 항목 관리</p>
+                <div class="top-drop-down">
+                  <button>
+                    <i class="fa-solid fa-angle-right"></i>
+                  </button>
+                </div>
+              </div>
               <div class="my-3" style="margin: 0 !important;">
                 <button type="button" class="btn btn-light me-3 select-btn p-0" onclick="onAddRow()">조회</button>
                 <button type="button" class="btn btn-light init-btn  p-0" onclick="onDeleteRow()">초기화</button>
@@ -78,23 +85,17 @@
                 <div class="col-12 d-flex align-items-center justify-content-between p-0">
                   <label class="col-form-label" style="width: 100px">체크리스트</br>제목</label>
                   <input type="text" class="form-control" placeholder="체크리스트 제목">
-                  <datalist id="ownChecklistOptions">
-                    <option value="2024 위생 점검 체크리스트">
-                  </datalist>
                 </div>
               </div>
               <div class="row first-input-box mb-3">
                 <div class="col-12 d-flex align-items-center justify-content-between p-0">
                   <label class="col-form-label" style="width: 100px">마스터</br>체크리스트</label>
                   <input type="text" class="form-control" placeholder="마스터 체크리스트" data-bs-target="#masterChecklistModal" data-bs-toggle="modal" readonly>
-                  <datalist id="useChecklistOptions">
-                    <option value="2024 위생 점검 체크리스트">
-                  </datalist>
                 </div>
               </div>
               <div class="row first-input-box">
                 <div class="col-12 d-flex align-items-center justify-content-between p-0">
-                  <label class="col-form-label" style="width: 100px">모듈</label>
+                  <label class="col-form-label" style="width: 100px">모듈</br>선택</label>
                   <input type="text" class="form-control" placeholder="모듈" data-bs-target="#moduleModal" data-bs-toggle="modal" readonly>
                 </div>
               </div>
@@ -161,7 +162,7 @@
             </div>
           </div>
 
-          <div class="col-lg-6 col-12 mb-3 accordion-box">
+          <div class="col-lg-6 col-12 accordion-box">
             <div class="accordion">
               <div class="accordion-item">
                 <h2 class="accordion-header">
@@ -213,7 +214,7 @@
             </div>
           </div>
 
-          <div class="col-lg-6 col-12 mb-3 accordion-box">
+          <div class="col-lg-6 col-12 accordion-box">
             <div class="accordion">
               <div class="accordion-item">
                 <h2 class="accordion-header">
@@ -288,7 +289,7 @@
             </div>
           </div>
 
-          <div class="col-lg-6 col-12 mb-3 accordion-box">
+          <div class="col-lg-6 col-12 accordion-box">
             <div class="accordion">
               <div class="accordion-item">
                 <h2 class="accordion-header">

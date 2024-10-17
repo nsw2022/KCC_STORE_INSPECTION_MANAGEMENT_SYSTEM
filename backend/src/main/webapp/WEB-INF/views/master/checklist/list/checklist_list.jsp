@@ -58,11 +58,18 @@ pageEncoding="UTF-8" %>
       <main class="page-content">
         <div class="container content">
           <%-- top box start--%>
-          <div class="row top-box mb-3" style="margin-bottom: 40px !important;">
+          <div class="row top-box">
             <div class="col ">
               <div class="top-content">
                 <div class="button-box" style="display: flex; justify-content: space-between; align-items: center;">
-                  <span class="m-3" style="font: 700 20px Noto Sans KR; margin: 0 !important;">체크리스트 관리</span>
+                  <div class="d-flex justify-content-start">
+                    <p class="m-3" style="font: 700 20px Noto Sans KR; margin: 0 !important;">체크리스트 관리</p>
+                    <div class="top-drop-down">
+                      <button>
+                        <i class="fa-solid fa-angle-right"></i>
+                      </button>
+                    </div>
+                  </div>
                   <div class="my-3" style="margin: 0 !important;">
                     <button type="button" class="btn btn-light me-3 select-btn p-0" onclick="onAddRow()">조회</button>
                     <button type="button" class="btn btn-light init-btn p-0" onclick="onDeleteRow()">초기화</button>
@@ -95,7 +102,6 @@ pageEncoding="UTF-8" %>
                           </div>
                         </div>
                       </div>
-
                       <!-- 체크리스트명 -->
                       <div class="col-lg-3 col-md-6 col-12">
                         <label for="checklistName" class="form-label">체크리스트</label>
@@ -118,7 +124,7 @@ pageEncoding="UTF-8" %>
                         </div>
                       </div>
 
-                      <!-- 가맹점 -->
+                      <!-- 마스터 체크리스트 -->
                       <div class="col-lg-3 col-md-6 col-12">
                         <label for="storeSearch" class="form-label">마스터 체크리스트</label>
                         <div class="wrapper" data-autocomplete="MASTER_CHKLST">
@@ -175,7 +181,7 @@ pageEncoding="UTF-8" %>
                         </div>
                       </div>
 
-                      <!-- 빈도 -->
+                      <!-- 마스터여부 -->
                       <div class="col-lg-3 col-md-6 col-12">
                         <label class="form-label">마스터여부</label>
                         <div class="wrapper" data-autocomplete="STATUS">
@@ -197,7 +203,7 @@ pageEncoding="UTF-8" %>
                         </div>
                       </div>
 
-                      <!-- 횟수 -->
+                      <!-- 사용여부 -->
                       <div class="col-lg-3 col-md-6 col-12">
                         <label class="form-label">사용여부</label>
                         <!-- 빈도에 따라 동적으로 옵션이 추가될 예정 -->
@@ -258,41 +264,91 @@ pageEncoding="UTF-8" %>
                   </div>
                   <div class="container px-0">
                     <div class="row first-input-box mb-3">
-                      <div class="col-12 col-lg-3 d-flex align-items-center">
-                        <label class="col-form-label me-2" style="min-width: 50px;">브랜드</label>
-                        <input type="text" class="form-control" placeholder="브랜드" list="useBrandOptions">
+                      <!-- 점검유형 -->
+                      <div class="col-lg-3 col-md-6 col-12">
+                        <label for="inspectionType" class="form-label">브랜드</label>
+                        <div class="wrapper" data-autocomplete="BRAND">
+                          <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
+                            <span>브랜드</span>
+                            <i class="uil uil-angle-down"></i>
+                          </div>
+                          <div class="hide-list">
+                            <div class="search">
+                              <input
+                                      type="text"
+                                      class="form-control top-search"
+                                      id="brandName2"
+                                      placeholder="브랜드명을 입력해주세요"
+                              />
+                              <ul class="options"></ul>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div class="col-12 col-lg-3 d-flex align-items-center">
-                        <label class="col-form-label me-2" style="min-width: 90px;">체크리스트명</label>
-                        <input type="text" class="form-control" placeholder="체크리스트명">
+                      <!-- 체크리스트명 -->
+                      <div class="col-lg-3 col-md-6 col-12">
+                        <label for="checklistName" class="form-label">체크리스트</label>
+                        <div class="wrapper" data-autocomplete="CHKLST">
+                          <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
+                            <span>체크리스트</span>
+                            <i class="uil uil-angle-down"></i>
+                          </div>
+                          <div class="hide-list">
+                            <div class="search">
+                              <input
+                                      type="text"
+                                      class="form-control top-search"
+                                      id="checklistName2"
+                                      placeholder="체크리스트를 입력해주세요"
+                              />
+                              <ul class="options"></ul>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div class="col-12 col-lg-3 d-flex align-items-center">
-                        <label class="col-form-label me-2" style="min-width: 120px; font: 400 16px Noto Sans KR;">마스터체크리스트</label>
+                      <!-- 마스터 체크리스트 -->
+                      <div class="col-lg-3 col-md-6 col-12">
+                        <label for="storeSearch" class="form-label">마스터 체크리스트</label>
+                        <div class="wrapper" data-autocomplete="MASTER_CHKLST">
+                          <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
+                            <span>마스터 체크리스트</span>
+                            <i class="uil uil-angle-down"></i>
+                          </div>
+                          <div class="hide-list">
+                            <div class="search">
+                              <input
+                                      type="text"
+                                      class="form-control top-search"
+                                      id="masterChecklist2"
+                                      placeholder="마스터 체크리스트명을 입력해주세요"
+                              />
+                              <ul class="options"></ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
 
-                          <input type="text" class="form-control" placeholder="마스터체크리스트" data-bs-target="#masterChecklistModal" data-bs-toggle="modal" readonly>
-<%--                        <div type="text" class="form-control" data-bs-target="#masterChecklistModal" data-bs-toggle="modal"></div>--%>
-
+                      <!-- 점검유형 -->
+                      <div class="col-lg-3 col-md-6 col-12">
+                        <label for="brandSearch" class="form-label">점검유형</label>
+                        <div class="wrapper" data-autocomplete="INSP">
+                          <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
+                            <span>점검유형</span>
+                            <i class="uil uil-angle-down"></i>
+                          </div>
+                          <div class="hide-list">
+                            <div class="search">
+                              <input
+                                      type="text"
+                                      class="form-control top-search"
+                                      id="inspectionType2"
+                                      placeholder="점검유형을 입력해주세요"
+                              />
+                              <ul class="options"></ul>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div class="col-12 col-lg-3 d-flex align-items-center">
-                        <label class="col-form-label me-2" style="min-width: 60px;">점검유형</label>
-                        <input type="text" class="form-control" placeholder="점검유형" list="useInspectionTypeOptions">
-                      </div>
-                    </div>
-
-                    <div class="row second-input-box">
-                      <div class="col-12 col-lg-3 d-flex align-items-center">
-                        <label class="col-form-label me-2" style="min-width: 60px;">등록년월</label>
-                        <input type="date" class="form-control" placeholder="2024-10-07">
-                      </div>
-                      <div class="col-12 col-lg-3 d-flex align-items-center">
-                        <label class="col-form-label me-2" style="min-width: 60px;">마스터여부</label>
-                        <input type="checkbox" >
-                      </div>
-                      <div class="col-12 col-lg-3 d-flex align-items-center">
-                        <label class="col-form-label me-2" style="min-width: 50px;">사용여부</label>
-                        <input type="checkbox">
-                      </div>
-                      <div class="col-12 col-md-3" style="height: 0px"></div>
                     </div>
                   </div>
 
