@@ -59,13 +59,13 @@ pageEncoding="UTF-8" %>
         <div class="container content">
           <%-- top box start--%>
           <div class="row top-box mb-3" style="margin-bottom: 40px !important;">
-            <div class="col px-0">
+            <div class="col ">
               <div class="top-content">
                 <div class="button-box" style="display: flex; justify-content: space-between; align-items: center;">
                   <span class="m-3" style="font: 700 20px Noto Sans KR; margin: 0 !important;">체크리스트 관리</span>
                   <div class="my-3" style="margin: 0 !important;">
-                    <button type="button" class="btn btn-light me-3 select-btn" onclick="onAddRow()">조회</button>
-                    <button type="button" class="btn btn-light init-btn" onclick="onDeleteRow()">초기화</button>
+                    <button type="button" class="btn btn-light me-3 select-btn p-0" onclick="onAddRow()">조회</button>
+                    <button type="button" class="btn btn-light init-btn p-0" onclick="onDeleteRow()">초기화</button>
                   </div>
                 </div>
 
@@ -162,23 +162,14 @@ pageEncoding="UTF-8" %>
                         </div>
                       </div>
 
-                      <!-- 점검 예정일 라벨과 필드 -->
-                      <%!
-                        String getTodayString() {
-                          SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // 날짜 형식 지정
-                          return sdf.format(new Date()); // 현재 날짜를 위에서 지정한 형식으로 포맷팅
-                        }
-                      %>
                       <div class="col-lg-3 col-md-4 col-12">
-                        <label for="topScheduleDate" class="form-label">점검 예정일</label>
+                        <label for="topScheduleDate" class="form-label">등록일</label>
                         <div class="wrapper" data-autocomplete="sv">
                           <div class="search">
                             <input
                                     type="date"
                                     class="form-control top-search"
                                     id="topScheduleDate"
-                                    placeholder="예정일을 입력해주세요"
-                                    min="<%= getTodayString() %>"
                             />
                           </div>
                         </div>
@@ -186,20 +177,47 @@ pageEncoding="UTF-8" %>
 
                       <!-- 빈도 -->
                       <div class="col-lg-3 col-md-6 col-12">
-                        <label for="frequency" class="form-label">마스터여부</label>
-                        <select id="frequency" name="frequency" class="form-select">
-                          <option value="yes" selected>사용</option>
-                          <option value="no">사용안함</option>
-                        </select>
+                        <label class="form-label">마스터여부</label>
+                        <div class="wrapper" data-autocomplete="STATUS">
+                          <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
+                            <span>마스터여부</span>
+                            <i class="uil uil-angle-down"></i>
+                          </div>
+                          <div class="hide-list">
+                            <div class="search">
+                              <input
+                                      type="text"
+                                      class="form-control top-search"
+                                      id="isMaster"
+                                      placeholder="마스터체크리스트명"
+                              />
+                              <ul class="options"></ul>
+                            </div>
+                          </div>
+                        </div>
                       </div>
 
                       <!-- 횟수 -->
                       <div class="col-lg-3 col-md-6 col-12">
-                        <label for="count" class="form-label">사용여부</label>
-                        <select id="count" name="count" class="form-select">
-                          <option value="none" selected>없음</option>
-                          <!-- 빈도에 따라 동적으로 옵션이 추가될 예정 -->
-                        </select>
+                        <label class="form-label">사용여부</label>
+                        <!-- 빈도에 따라 동적으로 옵션이 추가될 예정 -->
+                        <div class="wrapper" data-autocomplete="STATUS">
+                          <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
+                            <span>사용여부</span>
+                            <i class="uil uil-angle-down"></i>
+                          </div>
+                          <div class="hide-list">
+                            <div class="search">
+                              <input
+                                      type="text"
+                                      class="form-control top-search"
+                                      id="isUsing"
+                                      placeholder="사용여부"
+                              />
+                              <ul class="options"></ul>
+                            </div>
+                          </div>
+                        </div>
 
                       </div>
                     </div>
