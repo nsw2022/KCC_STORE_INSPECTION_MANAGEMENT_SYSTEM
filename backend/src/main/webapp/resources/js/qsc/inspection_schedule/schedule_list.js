@@ -470,7 +470,7 @@ $(function () {
       let $row = $("<tr></tr>");
 
       // 월요일 시작으로 설정 (일요일을 0으로 간주)
-      const startDayIndex = (firstDay === 0 ? 6 : firstDay - 1);
+      const startDayIndex = firstDay === 0 ? 6 : firstDay - 1;
 
       // 첫 번째 주의 빈 칸 채우기
       for (let i = 0; i < startDayIndex; i++) {
@@ -502,20 +502,20 @@ $(function () {
       }
     }
 
-// 셀 생성 함수 분리
+    // 셀 생성 함수 분리
     function createCalendarCell(day, month, year) {
       const $cell = $("<td></td>").text(day);
       const dateString = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`; // 'YYYY-MM-DD' 형식
 
       // 오늘 날짜인지 확인
       const isToday =
-          day === todayDate && month === todayMonth && year === todayYear;
+        day === todayDate && month === todayMonth && year === todayYear;
 
       // 오늘 이전 날짜인지 확인
       if (
-          year < todayYear ||
-          (year === todayYear && month < todayMonth) ||
-          (year === todayYear && month === todayMonth && day < todayDate)
+        year < todayYear ||
+        (year === todayYear && month < todayMonth) ||
+        (year === todayYear && month === todayMonth && day < todayDate)
       ) {
         // 오늘 이전 날짜는 비활성화
         $cell.addClass("disabled");
@@ -549,7 +549,6 @@ $(function () {
 
       return $cell;
     }
-
 
     /**
      * 월 및 연도 선택 시 달력 갱신 및 과거 월 비활성화
@@ -726,6 +725,51 @@ $(function () {
 
   // 모달 영역 끝
 
+  function toggleSearchBox() {
+    const toggleButton = document.querySelector(".top-drop-down button"); // 버튼 선택
+    const icon = toggleButton.querySelector("i"); // 아이콘 선택
+    const searchSection = document.querySelector(
+      ".top-box .bottom-box-content  ",
+    ); // 검색 섹션 선택 --> 해당 부분은 접을 부분(custom)할 것
+
+    // 초기 상태: 검색 섹션 닫힘
+    let isOpen = false;
+
+    // 초기 스타일 설정
+    searchSection.style.maxHeight = "0";
+    searchSection.style.overflow = "hidden"; // 내용 숨김
+
+    // CSS 트랜지션을 추가하여 부드러운 애니메이션 효과
+    searchSection.style.transition =
+      "max-height 0.3s ease, transform 0.3s ease";
+
+    // 버튼 클릭 이벤트 리스너
+    toggleButton.addEventListener("click", () => {
+      isOpen = !isOpen; // 상태 토글
+
+      if (isOpen) {
+        searchSection.style.maxHeight = `${searchSection.scrollHeight}px`; // 자연스럽게 열기
+        searchSection.style.maxHeight = `${searchSection.scrollHeight}px`; // 자연스럽게 열기
+        icon.style.transform = "rotate(-90deg)"; // 아이콘 180도 회전
+      } else {
+        searchSection.style.maxHeight = "0"; // 높이를 0으로 줄여서 닫기
+        icon.style.transform = "rotate(0deg)"; // 아이콘 원래 상태로
+
+        // 애니메이션이 끝나면 overflow를 hidden으로 설정
+        searchSection.addEventListener(
+          "transitionend",
+          () => {
+            if (!isOpen) searchSection.style.overflow = "hidden";
+          },
+          { once: true }, // 이벤트가 한 번만 실행되도록 설정
+        );
+      }
+    });
+  }
+
+  // 함수 호출
+  toggleSearchBox();
+
   // ROW 데이타 정의
   // ROW 데이터 정의
   const rowData = [
@@ -809,7 +853,7 @@ $(function () {
         cellStyle: { backgroundColor: "#ffffff" },
       },
       { field: "no", headerName: "No", width: 80, minWidth: 50 },
-      { field: "store", headerName: "가맹점", width: 150, minWidth: 50 }, // Adjusted width for uniformity
+      { field: "store", headerName: "가맹점", width: 150, minWidth: 50 },
       { field: "brand", headerName: "브랜드", width: 150, minWidth: 110 },
       {
         field: "checklist_name",
@@ -827,8 +871,8 @@ $(function () {
       {
         headerName: "관리",
         field: "more",
-        width: 150,
-        minWidth: 120,
+        width: 100,
+        minWidth: 53,
         cellRenderer: function (params) {
           // jQuery를 사용하여 컨테이너 div 생성
           const $container = $("<div>", {

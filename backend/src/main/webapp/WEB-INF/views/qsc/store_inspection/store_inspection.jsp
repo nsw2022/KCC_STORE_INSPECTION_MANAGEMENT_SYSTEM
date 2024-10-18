@@ -209,5 +209,4 @@
 </div>
 </body>
 <script src="/resources/js/qsc/store_inspection/store_inspection.js"></script>
-<script src="/resources/js/qsc/store_inspection/store_inspection_popup.js"></script>
 </html>

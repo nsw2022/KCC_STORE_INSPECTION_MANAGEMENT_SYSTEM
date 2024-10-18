@@ -246,7 +246,7 @@ pageEncoding="UTF-8" %>
                   </div>
                 </div>
                 <div>
-                  <div id="myGrid" style="height: 60vh; width:100%" class="ag-theme-quartz mb-3"></div>
+                  <div id="myGrid" style="height: 45vh; width:100%" class="ag-theme-quartz mb-3"></div>
                 </div>
               </div>
             </div>
