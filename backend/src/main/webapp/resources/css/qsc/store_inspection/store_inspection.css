@@ -128,20 +128,24 @@ body {
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.calendar-header select{
+    float: left;
+    margin-right: 20px;
     margin-bottom: 20px;
-}
-
-#month-select {
     padding: 5px;
-    border: none;
+    border: solid 1px #cccccc !important;
     border-radius: 8px;
     font-size: 16px;
     color: #6b6b6b;
 }
+
+/*#month-select {*/
+/*    padding: 5px;*/
+/*    border: none;*/
+/*    border-radius: 8px;*/
+/*    font-size: 16px;*/
+/*    color: #6b6b6b;*/
+/*}*/
 
 #year {
     font-size: 18px;
@@ -187,6 +191,11 @@ table.calendar td {
 
 table.calendar td .selected{
     background-color: #6e00fa;
+    color: white;
+}
+
+table.calendar td .incomplete{
+    background-color: #EC3B57;
     color: white;
 }
 
@@ -280,7 +289,7 @@ table.calendar td .selected{
     text-align: center;
     border: 1px solid #ddd;
     width: 150px;
-    font: 500 18px "Noto Sans KR";
+    font: 500 16px "Noto Sans KR";
     color: #5A5A5A;
 }
 
@@ -301,12 +310,13 @@ table.calendar td .selected{
     color: #5A5A5A;
 }
 .schedule-table tbody td button {
-    font: 500 14px "Noto Sans KR";
+    font: 400 14px "Noto Sans KR";
     color: #5A5A5A;
     margin-top: 10px;
 }
 .schedule-table tbody td button:hover{
-    background: #4A00E0;
+    font-weight: 500;
+    background: #4A00E0 !important;
     color: white;
     transition: ease-out 0.3s;
 }
@@ -417,11 +427,11 @@ table.calendar td .selected{
 .more-btn {
     position: absolute;
     left: 10px;
-    top: -4px;
+    top: -2px;
     background-color: #eee;
     border: none;
     padding: 5px;
-    font-size: 10px;
+    font-size: 12px !important;
     cursor: pointer;
     border-radius: 5px;
     color: #5A5A5A;
@@ -547,11 +557,24 @@ table.calendar td .selected{
     vertical-align: middle;
 }
 
+@media (max-width: 1300px) {
+    .modal-content{
+        width: 50% !important;
+    }
+}
+
+@media (max-width: 1000px) {
+    .modal-content{
+        width: 80% !important;
+    }
+}
+
 /* 반응형 테이블을 위한 스타일 (작은 화면에서 테이블 스크롤) */
 @media (max-width: 768px) {
     .store-info-table {
         overflow-x: auto;
     }
+
 }
 
 

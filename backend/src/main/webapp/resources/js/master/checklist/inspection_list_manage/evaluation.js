@@ -32,9 +32,6 @@ const gridOptions3 = {
     },
     rowHeight: 45,
 
-    pagination: true,
-    paginationAutoPageSize: true,
-
     rowSelection: 'multiple',
     rowDragManaged: true,
     rowDragEntireRow: true,

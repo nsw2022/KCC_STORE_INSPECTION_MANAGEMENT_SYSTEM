@@ -7,6 +7,7 @@ const rowData = [
     master_checklist_name: "2023 체크리스트",
     inspection_type: "기획점검",
     create_date: "2024-10-07",
+    is_master_checklist: "Y",
     status: "Y",
   },
   {
@@ -16,6 +17,7 @@ const rowData = [
     master_checklist_name: "2023 체크리스트",
     inspection_type: "기획점검",
     create_date: "2024-10-06",
+    is_master_checklist: "N",
     status: "Y",
   },
   {
@@ -25,6 +27,7 @@ const rowData = [
     master_checklist_name: "2023 체크리스트",
     inspection_type: "기획점검",
     create_date: "2024-10-05",
+    is_master_checklist: "N",
     status: "N",
   },
   {
@@ -34,6 +37,7 @@ const rowData = [
     master_checklist_name: "2023 체크리스트",
     inspection_type: "기획점검",
     create_date: "2024-10-04",
+    is_master_checklist: "N",
     status: "Y",
   },
   {
@@ -43,6 +47,7 @@ const rowData = [
     master_checklist_name: "2023 체크리스트",
     inspection_type: "기획점검",
     create_date: "2024-10-03",
+    is_master_checklist: "N",
     status: "Y",
   },
 ];
@@ -69,7 +74,8 @@ const gridOptions = {
       minWidth: 110,
     },
     { field: "inspection_type", headerName: "점검유형", minWidth: 110 },
-    { field: "create_date", headerName: "등록년월", minWidth: 110 },
+    { field: "create_date", headerName: "등록일", minWidth: 110 },
+    { field: "is_master_checklist", headerName: "마스터 체크리스 여부", minWidth: 70 },
     { field: "status", headerName: "사용여부", minWidth: 70 },
     {
       field: "action",
@@ -92,7 +98,7 @@ const gridOptions = {
                     `);
 
         // '자세히보기' 옵션 div 생성
-        const $editDiv = $('<div class="edit-options">자세히보기</div>');
+        const $editDiv = $('<div class="edit-options">점검 항목 관리</div>');
 
         // SVG 클릭 시 '수정' 옵션 표시
         $svg.on("click", function (e) {
@@ -120,8 +126,8 @@ const gridOptions = {
         $editDiv.on("click", function (e) {
           e.stopPropagation(); // 이벤트 버블링 방지
 
-          // 모달 열기
-          $("#masterChecklistModal").modal("show");
+
+          location.href = "/master/inspection/list/manage";
 
           // 'edit-options' 숨기기
           $editDiv.removeClass("show");
@@ -336,8 +342,10 @@ $(function () {
    * @todo responseBody로 받아올것이라면 여기서 Ajax로 데이터를 요청하면 됨
    */
   const autocompleteData = {
+
     // 가맹점
     store: [
+      "-전체",
       "혜화점",
       "종로점",
       "청량리점",
@@ -348,19 +356,22 @@ $(function () {
     ],
 
     // 점검자
-    inspector: ["노승우", "이지훈", "유재원", "원승언", "노승수"],
+    inspector: ["-전체-", "노승우", "이지훈", "유재원", "원승언", "노승수"],
 
     // 점검 유형
-    INSP: ["정기 점검", "제품 점검"],
+    INSP: ["-전체-", "정기 점검", "제품 점검"],
 
     // 체크리스트
-    CHKLST: ["KCC 크라상 위생 점검표", "KCC 카페 제품 점검표"],
+    CHKLST: ["-전체-", "KCC 크라상 위생 점검표", "KCC 카페 제품 점검표"],
 
     // 브랜드
-    BRAND: ["KCC 크라상", "KCC 카페", "KCC 디저트"],
+    BRAND: ["-전체-", "KCC 크라상", "KCC 카페", "KCC 디저트"],
+
 
     // 마스터 체크리스트
-    MASTER_CHKLST: ["품질점검체크리스트", "기획점검체크리스트"],
+    MASTER_CHKLST: ["-전체-", "품질점검체크리스트", "기획점검체크리스트"],
+
+    STATUS: ["-전체-", "Y", "N"],
   };
 
   // 자동완성 인스턴스를 초기화하고 wrapper 요소에 저장
@@ -376,4 +387,45 @@ $(function () {
 // 문서 전체에 클릭 이벤트 바인딩하여 Popover 숨기기
 $(document).on("click", function () {
   $(".edit-options").removeClass("show");
+});
+
+
+function toggleSearchBox() {
+  const toggleButton = document.querySelector('.top-drop-down button'); // 버튼 선택
+  const icon = toggleButton.querySelector('i'); // 아이콘 선택
+  const searchSection = document.querySelector('.top-box .bottom-box-content'); // 검색 섹션 선택 --> 해당 부분은 접을 부분(custom)할 것
+
+  // 초기 상태: 검색 섹션 닫힘
+  let isOpen = false;
+
+  // 초기 스타일 설정
+  searchSection.style.maxHeight = '0';
+  searchSection.style.overflow = 'hidden'; // 내용 숨김
+
+  // 버튼 클릭 이벤트 리스너
+  toggleButton.addEventListener('click', () => {
+    isOpen = !isOpen; // 상태 토글
+
+    if (isOpen) {
+      searchSection.style.overflow = 'hidden'; // 열리는 동안 내용이 넘치지 않도록 설정
+      searchSection.style.maxHeight = `${searchSection.scrollHeight}px`; // 자연스럽게 열기
+      icon.style.transform = 'rotate(-90deg)'; // 아이콘 180도 회전
+    } else {
+      searchSection.style.maxHeight = '0'; // 높이를 0으로 줄여서 닫기
+      icon.style.transform = 'rotate(0deg)'; // 아이콘 원래 상태로
+
+      // 애니메이션이 끝나면 overflow를 hidden으로 설정
+      searchSection.addEventListener(
+          'transitionend',
+          () => {
+            if (!isOpen) searchSection.style.overflow = 'hidden';
+          },
+          { once: true } // 이벤트가 한 번만 실행되도록 설정
+      );
+    }
+  });
+}
+// 페이지 로딩 후 함수 실행
+document.addEventListener('DOMContentLoaded', () => {
+  toggleSearchBox(); // 함수 호출
 });

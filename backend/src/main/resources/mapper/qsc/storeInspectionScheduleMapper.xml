@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sims.qsc.store_inspection_schedule.mapper.StoreInspectionScheduleMapper">
+    <select id="getStoreInspectionSchedule" resultType="com.sims.qsc.store_inspection_schedule.vo.StoreInspectionScheduleDao">
+        SELECT 
+	        insp_schd_id, 
+	        store_nm, mbr_nm, 
+	        chklst_nm, 
+	        insp_type_cd,
+	        insp_plan_dt 
+        FROM insp_schd insc INNER JOIN insp_plan inpl
+		ON insc.insp_plan_id = inpl.insp_plan_id INNER JOIN store st
+		ON st.store_id = insc.store_id INNER JOIN chklst ch
+		ON ch.chklst_id = inpl.chklst_id INNER JOIN mbr
+		ON mbr.mbr_id = st.insp_mbr_id
+		WHERE st.insp_mbr_id in (select mbr_id from mbr where mbr_role_cd ='MR004')
+		ORDER BY insp_plan_dt
+    </select>
+
+  
+
+</mapper>

@@ -42,7 +42,7 @@ renderOptions(selectedItem = null) {
 this.$options.empty();
 this.dataList.forEach((item) => {
 const isSelected = item === selectedItem ? "selected" : "";
-const li = `<li onclick="window.updateName(this)" class="${isSelected} autocomplete-item my-2">${item}</li>`;
+const li = `<li onclick="window.updateName(this)" class="${isSelected} autocomplete-item">${item}</li>`;
 this.$options.append(li);
 });
 }
@@ -59,7 +59,7 @@ item.toLowerCase().includes(query.toLowerCase()),
 
 this.$options.empty();
 if (filtered.length > 0) {
-filtered.forEach((item) => {
+filtered.forEach((item) => {	
 const isSelected =
 item === this.$searchBtn.children().first().text()
   ? "selected"
@@ -140,7 +140,7 @@ instance.updateSelected(selectedText);
 *
 */
 const autocompleteData = {
-inspector: ["노승우", "이지훈", "유재원", "원승언", "노승수"],
+inspector: ["노승우", "이지훈", "유재원", "원승언", "노승수", "유재수", "이지수", "원승수"],
 
 inspection_type: ["위생 점검", "제품 점검", "정기 점검", "기획 점검", "비정기 점검"],
 };
@@ -217,7 +217,8 @@ function generateCalendar(date) {
         const dayDiv = document.createElement("div");
         dayDiv.className += 'text-end pe-2';
         const day = i.toString().padStart(2, '0'); // 01, 02 형식으로 변환
-        dayDiv.setAttribute('data-day', `${date.getFullYear()}-${date.getMonth() + 1}-${day}`);
+        const month =(date.getMonth()+1).toString().padStart(2, '0');
+        dayDiv.setAttribute('data-day', `${date.getFullYear()}-${month}-${day}`);
 
         // 날짜 칸의 헤더 영역
         var dayDivHeader = document.createElement("div");
@@ -237,7 +238,7 @@ function generateCalendar(date) {
         const dayDiv_content = document.createElement("div");
         dayDiv_content.className += 'day_div_content ps-2';
                             
-        dayDiv_content.setAttribute('data-day', `${date.getFullYear()}-${date.getMonth() + 1}-${day}`);
+        dayDiv_content.setAttribute('data-day', `${date.getFullYear()}-${month}-${day}`);
         
 
         dayDiv.append(dayDiv_content);
@@ -264,6 +265,9 @@ document.addEventListener("DOMContentLoaded", function () {
     generateCalendar(currentDate);
 });
 
+
+
+
 $(function () {
     // 토 / 일의 경우 backgroun가 #cccccc였는데 밑의 filter function구문으로 다른 요일의 배경색과 같이 만들어줌
     $('#wrapper').children().filter(function () {
@@ -286,100 +290,65 @@ $(function () {
         } else if (day_div_children_length > 35) {
             $('.div_calendar').children().css('height', '16.6%');
         }
-        // 날짜마다 점검할 장소(날짜 칸의 본문영역에 들어감) - 예시용이므로 바꾸는 것이 필수적임!
-      const calendar_content = $('.day_div_content[data-day="2024-10-01"],.day_div_content[data-day="2024-10-07"],.day_div_content[data-day="2024-10-18"] ,.day_div_content[data-day="2024-10-21"], .day_div_content[data-day="2024-11-21"]');
-      let inspection_places = 
-      `
-      
-      <div class="store_inspection align-items-center ps-2 mb-2 d-flex" data-bs-toggle="modal" data-bs-target="#storeChecklistModal">
-        <div class="store_inspection_store">혜화점 위생 점검</div>  
-        <div class="store_inspection_inspector hide">점검자: <span class="inspector_text">이지훈</span></div>  
-      </div>
-      <div class="store_inspection align-items-center ps-2 mb-2 d-flex" data-bs-toggle="modal" data-bs-target="#storeChecklistModal">
-        <div class="store_inspection_store">성신여대점 위생 점검</div>  
-        <div class="store_inspection_inspector hide">점검자: <span class="inspector_text">이지훈</span></div>  
-      </div>
-      <div class="store_inspection align-items-center ps-2 mb-2 d-flex" data-bs-toggle="modal" data-bs-target="#storeChecklistModal">
-        <div class="store_inspection_store">동대문점 위생 점검</div>  
-        <div class="store_inspection_inspector hide">점검자: <span class="inspector_text">이지훈</span></div>  
-      </div>
-      <div class="store_inspection align-items-center ps-2 mb-2 d-flex" data-bs-toggle="modal" data-bs-target="#storeChecklistModal">
-        <div class="store_inspection_store">왕십리점 위생 점검</div>  
-        <div class="store_inspection_inspector hide">점검자: <span class="inspector_text">이지훈</span></div>  
-      </div>
-      <div class="store_inspection align-items-center align-items-center ps-2 mb-2 d-flex" data-bs-toggle="modal" data-bs-target="#storeChecklistModal">
-        <div class="store_inspection_store">성수점 위생 점검</div>  
-        <div class="store_inspection_inspector hide">점검자: <span class="inspector_text">이지훈</span></div>  
-      </div>
-      <div class="store_inspection align-items-center ps-2 mb-2 d-flex" data-bs-toggle="modal" data-bs-target="#storeChecklistModal">
-        <div class="store_inspection_store">경희대점 위생 점검</div>  
-        <div class="store_inspection_inspector hide">점검자: <span class="inspector_text">이지훈</span></div>  
-      </div>
-      <div class="store_inspection align-items-center ps-2 mb-2 d-flex" data-bs-toggle="modal" data-bs-target="#storeChecklistModal">
-        <div class="store_inspection_store">강남점 위생 점검</div>  
-        <div class="store_inspection_inspector hide">점검자: <span class="inspector_text">이지훈</span></div>  
-      </div>
-      <div class="store_inspection align-items-center ps-2 mb-2 d-flex" data-bs-toggle="modal" data-bs-target="#storeChecklistModal">
-        <div class="store_inspection_store">회현점 위생 점검</div>  
-        <div class="store_inspection_inspector hide">점검자: <span class="inspector_text">이지훈</span></div>  
-      </div>
-      <div class="store_inspection align-items-center ps-2 mb-2 d-flex" data-bs-toggle="modal" data-bs-target="#storeChecklistModal">
-        <div class="store_inspection_store">명동점 위생 점검</div>  
-        <div class="store_inspection_inspector hide">점검자: <span class="inspector_text">이지훈</span></div>  
-      </div>
-      <div class="store_inspection align-items-center ps-2 mb-2 d-flex" data-bs-toggle="modal" data-bs-target="#storeChecklistModal">
-        <div class="store_inspection_store">청량리점 위생 점검</div>  
-        <div class="store_inspection_inspector hide">점검자: <span class="inspector_text">이지훈</span></div>  
-      </div>
-      
-      `;
-      calendar_content.append(inspection_places);
+        
+    
+    $.ajax({
+		url : '/qsc/schedule',
+		method : 'GET',
+		success : function(data) {
+		// 날짜마다 점검할 장소(날짜 칸의 본문영역에 들어감) 
+					
+			$.each(data, function (index, item) {
+				let insp_plan_date = item.inspPlanDt.replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3');
+				let insp_date_content = $(`.day_div_content[data-day='${insp_plan_date}']`);
+				let chklst_nm = item.chklstNm.replace('체크리스트', '');
+				let store_nm = item.storeNm;
+				let inspector_nm = item.mbrNm;
+				console.log(inspector_nm);
+				let inspection_places =
+				`
+					<div class="store_inspection align-items-center ps-2 mb-2 d-flex" data-bs-toggle="modal" data-bs-target="#storeChecklistModal">
+				        <div class="store_inspection_store">${store_nm + ' ' + chklst_nm}</div>  
+				    	<div class="store_inspection_inspector hide">점검자: <span class="inspector_text">${inspector_nm}</span></div>  
+				    </div>
+				`;	
+				insp_date_content.append(inspection_places);
+			})
+			
+    	// 날짜마다 점검할 장소 목록 끝
+    	
+    	// 점검할 장소 목록의 크기가 날짜 칸보다 클 경우 버튼이 생김(날짜 칸의 헤더영역에 들어감)
 
-      const calendar_content2 = $('.day_div_content[data-day="2024-10-04"],.day_div_content[data-day="2024-10-09"],.day_div_content[data-day="2024-10-12"] ,.day_div_content[data-day="2024-10-29"]');
-      let inspection_places2 = 
-      `
-      <div class="store_inspection ps-2 align-items-center mb-2 d-flex" data-bs-toggle="modal" data-bs-target="#storeChecklistModal">
-        <div class="store_inspection_store">강남점 위생 점검</div>  
-        <div class="store_inspection_inspector hide">점검자: <span class="inspector_text">이지훈</span></div>  
-      </div>
-      <div class="store_inspection ps-2 align-items-center mb-2 d-flex" data-bs-toggle="modal" data-bs-target="#storeChecklistModal">
-        <div class="store_inspection_store">회현점 위생 점검</div>  
-        <div class="store_inspection_inspector hide">점검자: <span class="inspector_text">이지훈</span></div>  
-      </div>
-      <div class="store_inspection ps-2 align-items-center mb-2 d-flex" data-bs-toggle="modal" data-bs-target="#storeChecklistModal">
-        <div class="store_inspection_store">명동점 위생 점검</div>  
-        <div class="store_inspection_inspector hide">점검자: <span class="inspector_text">이지훈</span></div>  
-      </div>
-      <div class="store_inspection ps-2 align-items-center mb-2 d-flex" data-bs-toggle="modal" data-bs-target="#storeChecklistModal">
-        <div class="store_inspection_store">청량리점 위생 점검</div>  
-        <div class="store_inspection_inspector hide">점검자: <span class="inspector_text">이지훈</span></div>  
-      </div>
-      `;
-      calendar_content2.append(inspection_places2);
-
-      // 날짜마다 점검할 장소 목록 예시 끝
-
-      // 점검할 장소 목록의 크기가 날짜 칸보다 클 경우 버튼이 생김(날짜 칸의 헤더영역에 들어감)
-
-      let span_cnt = $('#wrapper .div_calendar .text-end .day_div_header span');
+        let span_cnt = $('#wrapper .div_calendar .text-end .day_div_header span');
 
     
-      $.each(span_cnt, function (index, item) {
-        // 점검할 장소 목록
-        let store_inspection_places = $(this).parent('.day_div_header').siblings().find('.store_inspection').length;
+        $.each(span_cnt, function (index, item) {
+          // 점검할 장소 목록
+          let store_inspection_places = $(this).parent('.day_div_header').siblings().find('.store_inspection').length;
         
-        // 버튼 만들기
-        if(store_inspection_places > 4)    {
-            let html = `<button class="more_btn border border-1 d-flex align-items-center"><span class="store_cnt">${store_inspection_places-4}</span><span class="ms-1">더보기</span></button>`;
+          // 버튼 만들기
+          if(store_inspection_places > 4)    {
+              let html = `<button class="more_btn border border-1 d-flex align-items-center"><span class="store_cnt">${store_inspection_places-4}</span><span class="ms-1">더보기</span></button>`;
+              $(this).before(html);
+          } else if(store_inspection_places > 0) {
+            let html = `<button class="more_btn border border-1 d-flex align-items-center"><span class="store_cnt">${store_inspection_places}</span><span class="ms-1">더보기</span></button>`;
+            
+
             $(this).before(html);
-        } else if(store_inspection_places > 0) {
-          let html = `<button class="more_btn border border-1 d-flex align-items-center"><span class="store_cnt">${store_inspection_places-4}</span><span class="ms-1">더보기</span></button>`;
-
-          $(this).before(html);
-        }
+            $('.store_cnt').css('display', 'none');
+          }
         
-      })
+        })
+		
+		}
+		
+		
+	})		
+
+
+      
     
+      let span_cnt = $('#wrapper .div_calendar .text-end .day_div_header span');
 
       $(window).resize(function () {
         changeMoreBtnText(window.innerWidth, span_cnt);
@@ -394,9 +363,6 @@ $(function () {
 
     // 캘린더 안의 개수에 따른 높이 조절 function 끝
     
-    
-    // 페이지 내의 width 크기
-    let totalWidth = window.innerWidth;
     
     // 페이지의 width에 따라 더보기 버튼의 형태 변형
 

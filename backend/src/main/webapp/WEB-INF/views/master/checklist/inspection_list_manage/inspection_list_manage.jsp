@@ -67,10 +67,17 @@
         <div class="col">
           <div class="top-content">
             <div class="button-box" style="display: flex; justify-content: space-between; align-items: center;">
-              <span class="m-3" style="font: 350 20px Noto Sans KR;">점검 항목 관리</span>
-              <div class="my-3">
-                <button type="button" class="btn btn-light me-3 select-btn" onclick="onAddRow()">조회</button>
-                <button type="button" class="btn btn-light me-3 init-btn" onclick="onDeleteRow()">초기화</button>
+              <div class="d-flex justify-content-start">
+                <p class="m-3" style="font: 700 20px Noto Sans KR; margin: 0 !important;">점검 항목 관리</p>
+                <div class="top-drop-down">
+                  <button>
+                    <i class="fa-solid fa-angle-right"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="my-3" style="margin: 0 !important;">
+                <button type="button" class="btn btn-light me-3 select-btn p-0" onclick="onAddRow()">조회</button>
+                <button type="button" class="btn btn-light init-btn  p-0" onclick="onDeleteRow()">초기화</button>
               </div>
             </div>
             <div class="container mt-3">
@@ -78,24 +85,17 @@
                 <div class="col-12 d-flex align-items-center justify-content-between p-0">
                   <label class="col-form-label" style="width: 100px">체크리스트</br>제목</label>
                   <input type="text" class="form-control" placeholder="체크리스트 제목">
-                  <datalist id="ownChecklistOptions">
-                    <option value="2024 위생 점검 체크리스트">
-                  </datalist>
                 </div>
               </div>
-
               <div class="row first-input-box mb-3">
                 <div class="col-12 d-flex align-items-center justify-content-between p-0">
                   <label class="col-form-label" style="width: 100px">마스터</br>체크리스트</label>
                   <input type="text" class="form-control" placeholder="마스터 체크리스트" data-bs-target="#masterChecklistModal" data-bs-toggle="modal" readonly>
-                  <datalist id="useChecklistOptions">
-                    <option value="2024 위생 점검 체크리스트">
-                  </datalist>
                 </div>
               </div>
-              <div class="row first-input-box mb-3">
+              <div class="row first-input-box">
                 <div class="col-12 d-flex align-items-center justify-content-between p-0">
-                  <label class="col-form-label" style="width: 100px">모듈</label>
+                  <label class="col-form-label" style="width: 100px">모듈</br>선택</label>
                   <input type="text" class="form-control" placeholder="모듈" data-bs-target="#moduleModal" data-bs-toggle="modal" readonly>
                 </div>
               </div>
@@ -124,7 +124,7 @@
                       </div>
                     </div>
                     <div>
-                      <div id="categoryGrid" style="height: 371px; width:100%" class="ag-theme-quartz mb-2"></div>
+                      <div id="categoryGrid" style="height: 324px; width:100%" class="ag-theme-quartz mb-2"></div>
                     </div>
                     <div class="update-box border border-light-subtle mb-2">
                       <div class="title-box">
@@ -162,7 +162,7 @@
             </div>
           </div>
 
-          <div class="col-lg-6 col-12 mb-3 accordion-box">
+          <div class="col-lg-6 col-12 accordion-box">
             <div class="accordion">
               <div class="accordion-item">
                 <h2 class="accordion-header">
@@ -199,16 +199,7 @@
                               <label class="col-form-label me-2" style="min-width: 50px;">사용여부</label>
                               <input type="checkbox" class="form-check-label" checked>
                             </div>
-                            <div class="col-12 col-lg-6 d-flex align-items-center mb-2 penalty position-relative">
-                              <label class="col-form-label me-2" style="min-width: 50px;">과태료</label>
-                              <input type="text" class="form-control penalty-input" placeholder="0">
-                              <span class="unit" style="margin-right: 8px; font: 300 11px Noto Sans KR">만원</span>
-                            </div>
-                            <div class="col-12 col-lg-6 d-flex align-items-center mb-2 suspention position-relative">
-                              <label class="col-form-label me-2" style="min-width: 50px;">영업정지</label>
-                              <input type="text" class="form-control suspention-input" placeholder="0">
-                              <span class="unit" style="margin-right: 8px; font: 300 11px Noto Sans KR">일</span>
-                            </div>
+
                           </div>
                         </div>
                       </div>
@@ -223,7 +214,7 @@
             </div>
           </div>
 
-          <div class="col-lg-6 col-12 mb-3 accordion-box">
+          <div class="col-lg-6 col-12 accordion-box">
             <div class="accordion">
               <div class="accordion-item">
                 <h2 class="accordion-header">
@@ -265,11 +256,8 @@
                                 <option value="단답형">
                               </datalist>
                             </div>
-                            <div class="col-12 col-lg-3 d-flex align-items-center mb-2">
-                              <label class="col-form-label me-2" style="min-width: 50px;">사용여부</label>
-                              <input type="checkbox" class="form-check-label" checked>
-                            </div>
-                            <div class="col-12 col-lg-3 d-flex align-items-center mb-2">
+
+                            <div class="col-12 col-lg-6 d-flex align-items-center mb-2">
                               <label class="col-form-label me-2" style="min-width: 50px;">사용여부</label>
                               <input type="checkbox" class="form-check-label" checked>
                             </div>
@@ -301,7 +289,7 @@
             </div>
           </div>
 
-          <div class="col-lg-6 col-12 mb-3 accordion-box">
+          <div class="col-lg-6 col-12 accordion-box">
             <div class="accordion">
               <div class="accordion-item">
                 <h2 class="accordion-header">
@@ -318,7 +306,7 @@
                       </div>
                     </div>
                     <div>
-                      <div id="choiceListGrid" style="height: 420px; width:100%" class="ag-theme-quartz mb-2"></div>
+                      <div id="choiceListGrid" style="height: 370px; width:100%" class="ag-theme-quartz mb-2"></div>
                     </div>
                     <div class="update-box border border-light-subtle mb-2">
                       <div class="title-box">
@@ -330,9 +318,13 @@
                       <div class="container">
                         <div class="update-box-content">
                           <div class="row first-input-box mb-3">
-                            <div class="col-12 col-lg-12 d-flex align-items-center mb-2">
+                            <div class="col-12 col-lg-6 d-flex align-items-center mb-2">
                               <label class="col-form-label me-2" style="min-width: 50px;">선택지<br>내용</label>
                               <input type="text" class="form-control" placeholder="적합">
+                            </div>
+                            <div class="col-12 col-lg-6 d-flex align-items-center mb-2">
+                              <label class="col-form-label me-2" style="min-width: 50px;">사용여부</label>
+                              <input type="checkbox" class="form-check-label" checked>
                             </div>
                             <div class="col-12 col-lg-6 d-flex align-items-center mb-2 position-relative">
                               <label class="col-form-label me-2" style="min-width: 50px;">선택지<br>점수</label>
@@ -346,6 +338,16 @@
                                 <option value="메이져">
                                 <option value="마이너">
                               </datalist>
+                            </div>
+                            <div class="col-12 col-lg-6 d-flex align-items-center mb-2 penalty position-relative">
+                              <label class="col-form-label me-2" style="min-width: 50px;">과태료</label>
+                              <input type="text" class="form-control penalty-input" placeholder="0">
+                              <span class="unit" style="margin-right: 8px; font: 300 11px Noto Sans KR">만원</span>
+                            </div>
+                            <div class="col-12 col-lg-6 d-flex align-items-center mb-2 suspention position-relative">
+                              <label class="col-form-label me-2" style="min-width: 50px;">영업정지</label>
+                              <input type="text" class="form-control suspention-input" placeholder="0">
+                              <span class="unit" style="margin-right: 8px; font: 300 11px Noto Sans KR">일</span>
                             </div>
                           </div>
                         </div>

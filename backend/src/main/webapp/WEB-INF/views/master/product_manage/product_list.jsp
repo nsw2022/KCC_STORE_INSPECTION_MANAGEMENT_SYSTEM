@@ -64,7 +64,7 @@
             <!-- 본문 -->
             <div class="row middle-box mb-3">
                 <div class="col">
-                    <div class="middle-content p-5">
+                    <div class="middle-content">
                         <div class="header_area mb-5 d-flex align-items-center justify-content-between row mx-0">
                             <div class="header_text mb-4">제품 관리</div>
                             <div class="header_input_area border border-1 px-0 d-flex align-items-center justify-content-between col-6">
@@ -77,11 +77,10 @@
                                     </div>
 
                                     <!-- 검색 입력 및 옵션이 포함된 숨겨진 목록 -->
-                                    <div class="hide-list mt-2 border border-1">
+                                    <div class="hide-list border border-1">
                                         <div class="search">
                                             <div class="search_input_area d-flex align-items-center justify-content-between py-2 px-3 border border-1">
                                                 <input type="text" class="top-search" placeholder="제품명을 입력해주세요."/>
-                                                <i class="fa-solid fa-magnifying-glass fa-lg"></i>
                                             </div>
                                             <ul class="options"></ul>
                                         </div>
@@ -124,11 +123,11 @@
             <div class="modal-body">
                 <div class="row mx-0 mb-4 justify-content-between">
                     <div class="productName_input_area col-md-5 row m-0 p-0">
-                        <label for="productName" class="col-12 py-2 mb-3">제품명</label>
+                        <label for="productName" class="col-12 py-2 mb-2">제품명</label>
                         <input type="text" id="productName" class="ps-3 py-2" placeholder="제품명 입력">
                     </div>
                     <div class="brandName_input_area col-md-6 row p-0 m-0">
-                        <label for="brandName" class="py-2 mb-3">브랜드</label>
+                        <label for="brandName" class="py-2 mb-2">브랜드</label>
                         <div class="wrapper p-0" data-autocomplete="store">
                             <!-- Search Button -->
                             <div class="search-btn top-search py-2">
@@ -141,7 +140,6 @@
                                 <div class="search">
                                     <div class="search_input_area d-flex align-items-center justify-content-between py-2 px-3 border border-1">
                                         <input type="text" class="top-search" placeholder="브랜드 입력"/>
-                                        <i class="fa-solid fa-magnifying-glass fa-lg"></i>
                                     </div>
                                     <ul class="options"></ul>
                                 </div>
@@ -151,11 +149,11 @@
                 </div>
                 <div class="row mx-0 mb-4 justify-content-between">
                     <div class="expiration_input_area col-md-5 row m-0 p-0">
-                        <label for="expiration" class="col-12 py-2 mb-3">소비기한(일수)</label>
+                        <label for="expiration" class="col-12 py-2 mb-2">소비기한(일수)</label>
                         <input type="number" class="ps-3 py-2" id="expiration" placeholder="소비기한 입력">
                     </div>
                     <div class="price_input_area p-0 col-md-6 m-0 row">
-                        <label for="price" class="py-2 col-12 mb-3">가격(원)</label>
+                        <label for="price" class="py-2 col-12 mb-2">가격(원)</label>
                         <input type="number" id="price" class="ps-3 py-2" placeholder="가격 입력">
                     </div>
                 </div>

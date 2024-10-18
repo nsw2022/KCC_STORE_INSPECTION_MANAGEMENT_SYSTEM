@@ -52,7 +52,7 @@
             <%--     가맹점 점검페이지      --%>
                 <section id="today_inspection">
                     <div id="today_inspection_list_wrap">
-                        <h2>오늘의 점검</h2>
+                        <h2>점검 목록</h2>
                         <p>선택한 날짜의 점검 목록이 표시됩니다</p>
                         <ul id="today_inspection_list">
                             <!-- 동적으로 생성되는 부분 -->
@@ -81,6 +81,10 @@
                                 <option value="9">October</option>
                                 <option value="10">November</option>
                                 <option value="11">December</option>
+                            </select>
+
+                            <select id="insp-mbr">
+                                <!-- JS에서 동적으로 추가 -->
                             </select>
                         </div>
 
