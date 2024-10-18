@@ -47,6 +47,11 @@
         .page-content > div{
             padding: 40px!important;
         }
+        @media (max-width: 1000px) {
+            .page-content > div{
+                padding: 20px 20px!important;
+            }
+        }
     </style>
 
 
@@ -65,133 +70,127 @@
 </div>
 <div class="page-wrapper2">
     <main class="page-content">
-        <div class="content">
-            <!--  top 영역시작 -->
-            <div
-                    class="top-box pb-2"
-            >
-                <div class="top-box-content mb-4">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <b id="가맹점">가맹점 관리</b>
-                        </div>
-                        <div class="d-flex">
-                            <div class="top-button-wrapper px-2">
-                                <div class="top-button top-lookup">조회</div>
+        <div class="container content">
+            <%-- top box start--%>
+            <div class="row top-box mb-3" style="margin-bottom: 40px !important;">
+                <div class="col ">
+                    <div class="top-content">
+                        <div class="button-box" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="d-flex justify-content-start">
+                                <span class="m-3" style="font: 700 20px Noto Sans KR; margin: 0 !important;">가맹점 관리</span>
+                                <div class="top-drop-down">
+                                    <button>
+                                        <i class="fa-solid fa-angle-right"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <div class="top-button-wrapper px-2">
-                                <div class="top-button top-reset" id="reset-selection-top">초기화</div>
+
+                            <div class="my-3" style="margin: 0 !important;">
+                                <button type="button" class="btn btn-light me-3 select-btn p-0" >조회</button>
+                                <button type="button" class="btn btn-light init-btn p-0" id="reset-selection-top">초기화</button>
                             </div>
                         </div>
-                    </div>
-                    <!-- 자동 완성 영역 -->
-                    <div class="container-fluid px-0">
-                        <div class="row g-3 align-items-center pt-4  top-search-box">
-                            <!-- 가맹점 라벨과 검색 필드 -->
-                            <div class="col-12 col-md-4">
-                                <label for="storeSearch" class="form-label">가맹점</label>
-                                <div class="wrapper" data-autocomplete="store">
-                                    <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                                        <span>가맹점 검색</span>
-                                        <i class="uil uil-angle-down"></i>
+
+                        <div class="bottom-box-content my-4">
+                            <!-- 검색 필드 섹션 -->
+                            <div class="container-fluid px-0">
+                                <div class="row g-3 align-items-center">
+
+                                    <!-- 가맹점 라벨과 검색 필드 -->
+                                    <div class="col-12 col-md-4">
+                                        <label for="storeSearch" class="form-label">가맹점</label>
+                                        <div class="wrapper" data-autocomplete="store">
+                                            <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
+                                                <span>가맹점 검색</span>
+                                                <i class="uil uil-angle-down"></i>
+                                            </div>
+                                            <div class="hide-list">
+                                                <div class="search">
+                                                    <input
+                                                            type="text"
+                                                            class="form-control top-search"
+                                                            id="storeSearch"
+                                                            placeholder="가맹점명을 입력해주세요"
+                                                            aria-label="가맹점 검색"
+                                                    />
+                                                    <ul class="options"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="hide-list">
-                                        <div class="search">
-                                            <input
-                                                    type="text"
-                                                    class="form-control top-search"
-                                                    id="storeSearch"
-                                                    placeholder="가맹점명을 입력해주세요"
-                                                    aria-label="가맹점 검색"
-                                            />
-                                            <ul class="options"></ul>
+
+                                    <!-- 브랜드 라벨과 검색 필드 -->
+                                    <div class="col-12 col-md-4">
+                                        <label for="inspectorSearch" class="form-label">브랜드</label>
+                                        <div class="wrapper" data-autocomplete="inspector">
+                                            <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
+                                                <span>브랜드 검색</span>
+                                                <i class="uil uil-angle-down"></i>
+                                            </div>
+                                            <div class="hide-list">
+                                                <div class="search">
+                                                    <input
+                                                            type="text"
+                                                            class="form-control top-search"
+                                                            id="inspectorSearch"
+                                                            placeholder="브랜드명을 입력해주세요"
+                                                            aria-label="브랜드 검색"
+                                                    />
+                                                    <ul class="options"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 점검자 라벨과 검색 필드 -->
+                                    <div class="col-12 col-md-4">
+                                        <label for="inspector" class="form-label">점검자</label>
+                                        <div class="wrapper" data-autocomplete="inspector">
+                                            <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
+                                                <span>점검자 검색</span>
+                                                <i class="uil uil-angle-down"></i>
+                                            </div>
+                                            <div class="hide-list">
+                                                <div class="search">
+                                                    <input
+                                                            type="text"
+                                                            class="form-control top-search"
+                                                            id="inspector"
+                                                            placeholder="점검자를 입력해주세요"
+                                                            aria-label="점검자 검색"
+                                                    />
+                                                    <ul class="options"></ul>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- 브랜드 라벨과 검색 필드 -->
-                            <div class="col-12 col-md-4">
-                                <label for="inspectorSearch" class="form-label">브랜드</label>
-                                <div class="wrapper" data-autocomplete="inspector">
-                                    <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                                        <span>브랜드 검색</span>
-                                        <i class="uil uil-angle-down"></i>
-                                    </div>
-                                    <div class="hide-list">
-                                        <div class="search">
-                                            <input
-                                                    type="text"
-                                                    class="form-control top-search"
-                                                    id="inspectorSearch"
-                                                    placeholder="브랜드명을 입력해주세요"
-                                                    aria-label="브랜드 검색"
-                                            />
-                                            <ul class="options"></ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 점검자 라벨과 검색 필드 -->
-                            <div class="col-12 col-md-4">
-                                <label for="inspector" class="form-label">점검자</label>
-                                <div class="wrapper" data-autocomplete="inspector">
-                                    <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                                        <span>점검자 검색</span>
-                                        <i class="uil uil-angle-down"></i>
-                                    </div>
-                                    <div class="hide-list">
-                                        <div class="search">
-                                            <input
-                                                    type="text"
-                                                    class="form-control top-search"
-                                                    id="inspector"
-                                                    placeholder="점검자를 입력해주세요"
-                                                    aria-label="점검자 검색"
-                                            />
-                                            <ul class="options"></ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
-                    </div>
-                </div>
-
-
-                <%--  top 영역끝  --%>
-
-                <%--  중간 게시판 목록 시작 --%>
-                <div class="middle-box py-2">
-                    <div class="middle-content ">
-
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div style="font-size: 20px">
-                                총 <b id="totalCount" style="color: #0035BE"></b>건
-                            </div>
-                            <div class="d-flex">
-                            <div class="px-2">
-                                <div class="top-button top-reset"  data-bs-toggle="modal" data-bs-target="#DetailStore" >추가</div>
-                            </div>
-                            <div class="px-2">
-                                <div class="top-button top-reset"  id="deleteRowButton">삭제</div>
-                            </div>
-                            </div>
-                        </div>
-                        <div id="myGrid" class="ag-theme-alpine" style="height: 500px; width: 100%;"></div>
                     </div>
                 </div>
-
-
-                <%--  <!-- 중간 게시판 목록 끝 -->--%>
-
-
             </div>
+            <%-- top box end--%>
 
+            <%-- middle box start--%>
+            <div class="row middle-box">
+                <div class="col px-0">
+                    <div class="middle-content">
+                        <div class="button-box" style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="ms-3" style="font: 350 20px Noto Sans KR;">총 <span class="checklist_count" style="color: #0035BE"></span>개</span>
+                            <div class="my-0">
+                                <button type="button" class="btn btn-light me-3" id="addRowButton" >추가</button>
+                                <button type="button" class="btn btn-light" id="deleteRowButton">삭제</button>
+                            </div>
+                        </div>
+                        <div>
+                            <div id="myGrid" style="height: 60vh; width:100%" class="ag-theme-quartz mb-3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <%-- middle box end--%>
         </div>
-
-
     </main>
 </div>
 <%-- 모달 시작 --%>
