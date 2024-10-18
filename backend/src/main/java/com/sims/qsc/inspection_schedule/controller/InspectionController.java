@@ -1,4 +1,4 @@
-package com.sims.qsc.inspection_schedule.controller.controller;
+package com.sims.qsc.inspection_schedule.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

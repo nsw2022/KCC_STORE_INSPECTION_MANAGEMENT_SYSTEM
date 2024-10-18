@@ -1,4 +1,4 @@
-package com.sims.master.store_manage.controller.controller;
+package com.sims.master.store_manage.controller;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
