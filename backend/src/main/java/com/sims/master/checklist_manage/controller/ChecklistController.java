@@ -1,4 +1,4 @@
-package com.sims.master.checklist_manage.controller.controller;
+package com.sims.master.checklist_manage.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
