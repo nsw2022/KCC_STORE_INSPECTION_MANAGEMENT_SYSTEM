@@ -39,7 +39,7 @@ const inspectionAllScheduleData = [
                     {
                         CHKLST_NM:"노원역점 위생점검",
                         INSP_PLAN_DT:"2024/10/16",
-                        INSP_STTS_CD:"IS001"
+                        INSP_STTS_CD:"IS002"
                     },
                     {
                         CHKLST_NM:"경희대점 위생점검",
@@ -104,12 +104,12 @@ const inspectionAllScheduleData = [
                     {
                         CHKLST_NM:"노원역점 품질점검",
                         INSP_PLAN_DT:"2024/10/17",
-                        INSP_STTS_CD:"IS001"
+                        INSP_STTS_CD:"IS002"
                     },
                     {
                         CHKLST_NM:"천호역점 품질점검",
                         INSP_PLAN_DT:"2024/10/17",
-                        INSP_STTS_CD:"IS001"
+                        INSP_STTS_CD:"IS002"
                     },
                     {
                         CHKLST_NM:"경희대점 품질점검",
@@ -175,7 +175,7 @@ const inspectionAllScheduleData = [
                     {
                         CHKLST_NM:"동대문점 위생점검",
                         INSP_PLAN_DT:"2024/10/14",
-                        INSP_STTS_CD:"IS001"
+                        INSP_STTS_CD:"IS002"
                     },
                     {
                         CHKLST_NM:"신촌점 위생점검",
@@ -280,12 +280,12 @@ const inspectionAllScheduleData = [
                     {
                         CHKLST_NM:"노원역점 품질점검",
                         INSP_PLAN_DT:"2024/10/17",
-                        INSP_STTS_CD:"IS001"
+                        INSP_STTS_CD:"IS002"
                     },
                     {
                         CHKLST_NM:"천호역점 품질점검",
                         INSP_PLAN_DT:"2024/10/17",
-                        INSP_STTS_CD:"IS001"
+                        INSP_STTS_CD:"IS002"
                     },
                     {
                         CHKLST_NM:"경희대점 품질점검",
@@ -685,13 +685,30 @@ function generateScheduleTable(date) {
                                 allItems.push({
                                     categoryName: category.CTG_NM,
                                     itemName: item.CHKLST_NM,
-                                    planDate: item.INSP_PLAN_DT
+                                    planDate: item.INSP_PLAN_DT,
+                                    statusCode: item.INSP_STTS_CD // 상태 코드 추가
                                 });
                             }
                         });
                     }
                 });
             }
+        });
+
+        // 미완료된 점검 항목을 먼저 오도록 정렬
+        allItems.sort((a, b) => {
+            const today = new Date();
+            today.setHours(0,0,0,0);
+
+            const dateA = new Date(a.planDate.replace(/\//g, '-'));
+            const dateB = new Date(b.planDate.replace(/\//g, '-'));
+            dateA.setHours(0,0,0,0);
+            dateB.setHours(0,0,0,0);
+
+            const isIncompleteA = dateA < today && a.statusCode === 'IS001' ? 1 : 0;
+            const isIncompleteB = dateB < today && b.statusCode === 'IS001' ? 1 : 0;
+
+            return isIncompleteB - isIncompleteA; // isIncomplete가 높은 것부터 정렬
         });
 
         // 버튼들을 td에 추가
@@ -703,6 +720,24 @@ function generateScheduleTable(date) {
                 button.onclick = function() {
                     openPopup(item.itemName);
                 };
+
+                // 아이템의 날짜와 상태를 확인하여 스타일 적용
+                const itemDate = new Date(item.planDate.replace(/\//g, '-'));
+                const todayDate = new Date();
+                todayDate.setHours(0,0,0,0); // 오늘 날짜의 시간을 0시로 설정
+                itemDate.setHours(0,0,0,0); // 아이템 날짜의 시간을 0시로 설정
+
+                if (itemDate < todayDate) {
+                    if (item.statusCode === 'IS001') {
+                        // 미완료된 이전 날짜의 점검인 경우 배경색 변경
+                        button.style.backgroundColor = '#EC3B57';
+                        button.style.color = 'white';
+                    } else if (item.statusCode === 'IS002') {
+                        // 완료된 이전 날짜의 점검인 경우 배경색 변경
+                        button.style.backgroundColor = '#eeeeee';
+                    }
+                }
+
                 td.appendChild(button);
             }
         });
@@ -731,6 +766,8 @@ function generateScheduleTable(date) {
 
 
 
+
+
 function formatDate(date) {
     const year = date.getFullYear();
     const month = ('0'+(date.getMonth()+1)).slice(-2);
@@ -741,6 +778,22 @@ function formatDate(date) {
 
 // 모달 창 열기 함수
 function openModal(items) {
+    // 미완료된 점검 항목을 먼저 오도록 정렬
+    items.sort((a, b) => {
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        const dateA = new Date(a.planDate.replace(/\//g, '-'));
+        const dateB = new Date(b.planDate.replace(/\//g, '-'));
+        dateA.setHours(0,0,0,0);
+        dateB.setHours(0,0,0,0);
+
+        const isIncompleteA = dateA < today && a.statusCode === 'IS001' ? 1 : 0;
+        const isIncompleteB = dateB < today && b.statusCode === 'IS001' ? 1 : 0;
+
+        return isIncompleteB - isIncompleteA;
+    });
+
     // 모달 배경 요소 생성
     let modalBackground = document.getElementById('modal-background');
     if (!modalBackground) {
@@ -770,6 +823,18 @@ function openModal(items) {
         button.onclick = function() {
             openPopup(item.itemName);
         };
+
+        // 아이템의 날짜와 상태를 확인하여 스타일 적용
+        const itemDate = new Date(item.planDate.replace(/\//g, '-'));
+        const todayDate = new Date();
+        todayDate.setHours(0,0,0,0);
+        itemDate.setHours(0,0,0,0);
+
+        if (itemDate < todayDate && item.statusCode === 'IS001') {
+            button.style.backgroundColor = '#EC3B57';
+            button.style.color = 'white';
+        }
+
         modalContent.appendChild(button);
     });
 
@@ -795,5 +860,3 @@ function openModal(items) {
         modalContent.classList.add('show');
     }, 10);
 }
-
-
