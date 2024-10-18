@@ -27,10 +27,17 @@ public class StoreInspectionController {
         return "qsc/store_inspection/store_inspection"; // JSP 경로
     }
 
-
+    //점검페이지 -> 점검시작팝업페이지
     @GetMapping("/popup_page")
     public String openPopupPage() {
         return "qsc/store_inspection/popup_page"; // popup_page.jsp로 이동
+    }
+
+    //점검페이지 -> 점검결과팝업페이지
+    @GetMapping("/popup_inspection_result")
+    public String showInspectionResult(Model model) {
+        // 필요한 데이터 처리 및 모델에 추가
+        return "qsc/inspection_result/popup_inspection_result"; // 반환할 뷰의 이름
     }
 
     @PostMapping("/popup_page_inspection")
