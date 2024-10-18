@@ -680,6 +680,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// 높이 재조정 함수 (리사이즈 시 호출)
+function adjustWrapperHeight(element) {
+    if (element.style.display === "block") {
+        element.style.height = "auto"; // 높이 자동 조정
+        const newHeight = element.scrollHeight + "px"; // 새로운 높이 계산
+        element.style.height = newHeight; // 새 높이 설정
+    }
+}
+
+
 // -------------------------데이터 전달 함수-------------------------
 function checkInspection() {
     // 모든 textarea 데이터를 가져옴

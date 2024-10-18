@@ -195,7 +195,7 @@ table.calendar td .selected{
 }
 
 table.calendar td .incomplete{
-    background-color: #ff8585;
+    background-color: #EC3B57;
     color: white;
 }
 
@@ -316,7 +316,7 @@ table.calendar td .incomplete{
 }
 .schedule-table tbody td button:hover{
     font-weight: 500;
-    background: #4A00E0;
+    background: #4A00E0 !important;
     color: white;
     transition: ease-out 0.3s;
 }

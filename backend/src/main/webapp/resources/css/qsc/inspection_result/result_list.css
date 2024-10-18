@@ -559,7 +559,9 @@ table tr td input {
 }
 
 @media (max-width: 600px) {
-
+  .top-box-content>.col{
+    margin-top: 10px;
+  }
 
   /*  모달 끝 */
   .calendar-body td {
@@ -575,7 +577,7 @@ table tr td input {
   }
 
   .top-box-content{
-    padding: 15px 15px 10px 15px;
+    padding: 20px 15px;
   }
 
   .top-box-content div div div b {
