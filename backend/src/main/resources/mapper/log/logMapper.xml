@@ -22,10 +22,7 @@
             #{connectionOs},
             #{connectionBrowser},
             CASE
-                WHEN
-                    #{errorOccurrenceCd} = 1
-                THEN '1'
-                ELSE '0'
+                WHEN #{errorOccurrenceCd} = 1 THEN '1' ELSE '0'
             END,
             NULL,
             TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')

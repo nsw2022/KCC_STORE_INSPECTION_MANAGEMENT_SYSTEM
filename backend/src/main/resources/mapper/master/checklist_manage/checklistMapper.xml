@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sims.master.checklist_manage.mapper.ChecklistMapper">
+    <select id="getChecklistAll" resultType="ChecklistVo">
+        SELECT /* ChecklistMapper.getChecklistAll 유재원 */
+            CHKLST.CHKLST_ID,
+            BRAND_NM.DTL_CD_NM AS BRAND_NM,
+            MASTER_CHKLST.CHKLST_NM AS MASTER_CHKLST_NM,
+            CHKLST.CHKLST_NM,
+            CHKLST.CHKLST_USE_W,
+            INSP_TYPE_NM.DTL_CD_NM AS INSP_TYPE_NM,
+            TO_CHAR(TO_DATE(CHKLST.CRE_TM, 'YYYYMMDDHH24MI'), 'YYYY.MM.DD') AS CRE_TM
+        FROM CHKLST
+                LEFT JOIN COMM_CD_DTL BRAND_NM
+                    ON CHKLST.BRAND_CD = BRAND_NM.DTL_CD
+                LEFT JOIN COMM_CD_DTL INSP_TYPE_NM
+                    ON CHKLST.INSP_TYPE_CD = INSP_TYPE_NM.DTL_CD
+                LEFT JOIN CHKLST MASTER_CHKLST
+                    ON CHKLST.MASTER_CHKLST_ID = MASTER_CHKLST.CHKLST_ID
+        ORDER BY CHKLST.CHKLST_ID
+    </select>
+</mapper>
