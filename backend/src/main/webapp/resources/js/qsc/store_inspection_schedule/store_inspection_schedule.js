@@ -140,10 +140,70 @@ instance.updateSelected(selectedText);
 *
 */
 const autocompleteData = {
-inspector: ["노승우", "이지훈", "유재원", "원승언", "노승수", "유재수", "이지수", "원승수"],
+	
+inspector: [],
 
-inspection_type: ["위생 점검", "제품 점검", "정기 점검", "기획 점검", "비정기 점검"],
+inspection_type: []
 };
+
+/**
+ * ajax 안에 있는 변수는 ajax안에서만 존재할 수 있음 => 지역 변수이기 때문!
+ * 그리고 ajax는 비동기이기 때문에 외부에서 꺼내오는게 쉽지 않음 그러므로 async를 false로 주면 해결이 된다.
+ * @return 점검자들 / 점검 유형들 나열
+ */
+let inspectors;
+let inspection_types;
+function autoCompleteSearchElement(inspectors, inspection_types) {
+	
+	/**
+	 * @return 점검자들 반환
+	 */
+	$.ajax({
+		url: "/qsc/store-inspection-schedule/inspectors",
+		method : 'GET',
+		async : false,
+		dataType : 'json',
+		success : function (data) {
+			if(data) {
+				inspectors = data;
+				let all = '전체';
+				inspectors.unshift(all);
+			} else {
+				inspectors = null;
+			}
+		}
+	});
+	
+	/**
+	 * @return 점검 유형들 반환
+	 */
+	$.ajax({
+		url: '/qsc/store-inspection-schedule/inspection-types',
+		method : 'GET',
+		async : false,
+		dataType : 'json',
+		success : function (data) {
+			if(data) {
+				inspection_types = data;
+				let all ='전체';
+				inspection_types.unshift(all);
+			} else {
+				inspection_types = null;
+			}
+		}
+		
+	})
+	
+	autocompleteData.inspector = inspectors;
+	autocompleteData.inspection_type = inspection_types;
+	
+}	
+
+autoCompleteSearchElement(inspectors);
+
+
+
+
 
 // 자동완성 인스턴스를 초기화하고 input_area 요소에 저장
 $(".input_area").each(function () {
@@ -269,6 +329,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 $(function () {
+	/** 점검자가 들어올 경우 전체 검색 X */
+	let username = $('input[type="hidden"]').val();
+	if(username.slice(0,1) === 'C') {
+		$('.hide-list li:first-child()').eq(0).remove();
+	}
+	
+	
     // 토 / 일의 경우 backgroun가 #cccccc였는데 밑의 filter function구문으로 다른 요일의 배경색과 같이 만들어줌
     $('#wrapper').children().filter(function () {
         if ($(this).text() === '토' || $(this).text() === '일') {
@@ -276,13 +343,47 @@ $(function () {
         }
     })
     
-    // 캘린더 date 개수
-    let day_div_children_length = document.getElementById('wrapper').childNodes[3].childNodes.length;
+    
+    // 점검할 장소 목록의 크기가 날짜 칸보다 클 경우 버튼이 생김(날짜 칸의 헤더영역에 들어감)
+	function showBtn(span_cnt) {
+		$('.more_btn').remove();
+
+		
+        $.each(span_cnt, function (index, item) {
+          // 점검할 장소 목록
+          let store_inspection_places = $(this).parent('.day_div_header').siblings().find('.store_inspection').length;
+        
+          // 버튼 만들기
+          if(store_inspection_places > 4)    {
+			  if(window.innerWidth > 1200) {
+	              let html = `<button class="more_btn border border-1 d-flex align-items-center"><span class="store_cnt">${store_inspection_places-4}</span><span class="ms-1">더보기</span></button>`;
+	              $(this).before(html);			  
+			  } else {
+				  let html = `<button class="more_btn border border-1 d-flex align-items-center"><span class="store_cnt">${store_inspection_places}</span><span class="ms-1">더보기</span></button>`;
+	              $(this).before(html);
+			  }
+          } else if(store_inspection_places > 0) {
+	            if(window.innerWidth > 1200) {
+		            let html = `<button class="more_btn border border-1 d-flex align-items-center"><span class="store_cnt"></span><span class="ms-1">더보기</span></button>`;
+		            $(this).before(html);						
+				} else {
+				  let html = `<button class="more_btn border border-1 d-flex align-items-center"><span class="store_cnt">${store_inspection_places}</span><span class="ms-1">더보기</span></button>`;
+	              $(this).before(html);
+				}
+          }
+        
+        })					
+	}
+    // 점검할 장소 목록의 크기가 날짜 칸보다 클 경우 버튼이 생김(날짜 칸의 헤더영역에 들어감) 끝
+    
+    
     
 
     // 캘린더 안의 개수에 따른 높이 조절
-    function resize_height(day_div_children_length) {
-        day_div_children_length = document.getElementById('wrapper').childNodes[3].childNodes.length
+    
+    function resizeheight() {
+	    // 캘린더 date 개수
+        day_div_children_length = document.getElementById('wrapper').childNodes[3].childNodes.length;
         if(day_div_children_length <=28) {
             $('.div_calendar').children().css('height', '25%');
         } else if (day_div_children_length <= 35) {
@@ -290,93 +391,23 @@ $(function () {
         } else if (day_div_children_length > 35) {
             $('.div_calendar').children().css('height', '16.6%');
         }
-        
-    
-    $.ajax({
-		url : '/qsc/schedule',
-		method : 'GET',
-		success : function(data) {
-		// 날짜마다 점검할 장소(날짜 칸의 본문영역에 들어감) 
-					
-			$.each(data, function (index, item) {
-				let insp_plan_date = item.inspPlanDt.replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3');
-				let insp_date_content = $(`.day_div_content[data-day='${insp_plan_date}']`);
-				let chklst_nm = item.chklstNm.replace('체크리스트', '');
-				let store_nm = item.storeNm;
-				let inspector_nm = item.mbrNm;
-				console.log(inspector_nm);
-				let inspection_places =
-				`
-					<div class="store_inspection align-items-center ps-2 mb-2 d-flex" data-bs-toggle="modal" data-bs-target="#storeChecklistModal">
-				        <div class="store_inspection_store">${store_nm + ' ' + chklst_nm}</div>  
-				    	<div class="store_inspection_inspector hide">점검자: <span class="inspector_text">${inspector_nm}</span></div>  
-				    </div>
-				`;	
-				insp_date_content.append(inspection_places);
-			})
-			
-    	// 날짜마다 점검할 장소 목록 끝
-    	
-    	// 점검할 장소 목록의 크기가 날짜 칸보다 클 경우 버튼이 생김(날짜 칸의 헤더영역에 들어감)
-
-        let span_cnt = $('#wrapper .div_calendar .text-end .day_div_header span');
-
-    
-        $.each(span_cnt, function (index, item) {
-          // 점검할 장소 목록
-          let store_inspection_places = $(this).parent('.day_div_header').siblings().find('.store_inspection').length;
-        
-          // 버튼 만들기
-          if(store_inspection_places > 4)    {
-              let html = `<button class="more_btn border border-1 d-flex align-items-center"><span class="store_cnt">${store_inspection_places-4}</span><span class="ms-1">더보기</span></button>`;
-              $(this).before(html);
-          } else if(store_inspection_places > 0) {
-            let html = `<button class="more_btn border border-1 d-flex align-items-center"><span class="store_cnt">${store_inspection_places}</span><span class="ms-1">더보기</span></button>`;
-            
-
-            $(this).before(html);
-            $('.store_cnt').css('display', 'none');
-          }
-        
-        })
-		
-		}
-		
-		
-	})		
-
-
-      
-    
-      let span_cnt = $('#wrapper .div_calendar .text-end .day_div_header span');
-
-      $(window).resize(function () {
-        changeMoreBtnText(window.innerWidth, span_cnt);
-      });
-
-      changeMoreBtnText(window.innerWidth, span_cnt);
-
-      // 점검할 장소 목록의 크기가 날짜 칸보다 클 경우 버튼이 생김(날짜 칸의 헤더영역에 들어감) 끝
-    
     
     }
-
-    // 캘린더 안의 개수에 따른 높이 조절 function 끝
     
+    // 캘린더 안의 개수에 따른 높이 조절 function 끝
     
     // 페이지의 width에 따라 더보기 버튼의 형태 변형
 
-    
-    function changeMoreBtnText(width, span_cnt) {
+    function changeMoreBtnText(width, span) {
         if(width <= 1200) {
-            $.each(span_cnt, function(index, item) {
+            $.each(span, function(index, item) {
                 
                 let store_cnt = $(this).parent('.day_div_header').siblings().find('.store_inspection').length;
                 $(this).siblings().find('.store_cnt').text(store_cnt);
                 $(this).siblings().find('.store_cnt').css('display', 'block');
             })
         } else if(width >1200) {
-            $.each(span_cnt, function(index, item) {
+            $.each(span, function(index, item) {
                 
                 let store_cnt = $(this).parent('.day_div_header').siblings().find('.store_inspection').length;
                 $(this).siblings().find('.store_cnt').text(store_cnt-4);
@@ -389,16 +420,61 @@ $(function () {
 
     // 페이지의 width에 따라 더보기 버튼의 형태 변형 function 끝
     
+    // 달력 보여주기
+    function showDate(path, way) {
+		
+    $.ajax({
+			url : path,
+			method : way,
+			success : function(data) {
+				// 날짜마다 점검할 장소(날짜 칸의 본문영역에 들어감) 
+				$('.store_inspection').remove();
+				$.each(data, function (index, item) {			
+				let insp_plan_date = item.inspPlanDt.replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3');
+				let insp_date_content = $(`.day_div_content[data-day='${insp_plan_date}']`);
+				let store_nm = item.storeNm;
+				let inspector_nm = item.mbrNm +'(' + item.mbrNo + ')';
+				let inspection_places =
+				`
+					<div class="store_inspection align-items-center ps-2 mb-2 d-flex" data-bs-toggle="modal" data-bs-target="#storeChecklistModal">
+				        <div class="store_inspection_store">${store_nm + ' ' + item.inspTypeCd}</div>  
+				    	<div class="store_inspection_inspector hide">점검자: <span class="inspector_text">${inspector_nm}</span></div>  
+				    </div>
+				`;	
+				insp_date_content.append(inspection_places);
+			
+				})
+				
+				// 날짜마다 점검할 장소 목록 끝
 
+				let span = $('#wrapper .div_calendar .text-end .day_div_header span');
+				/** 가맹점 수에 따라 버튼 형식 변경 */
+				showBtn(span);
+				
+				changeMoreBtnText(window.innerWidth, span);
+						
+				$(window).resize(function () {
+				  changeMoreBtnText(window.innerWidth, span);
+				});
+			}
+			
+		})
+	}	
+	
+	let path ='/qsc/store-inspection-schedule/schedules';
+	let way = 'GET';
+	showDate(path, way);
 
+    
+    
+    
+    
+    
     // 처음 화면에도 캘린더 세로 개수에 따라 높이를 조절해야하기 때문에 resize_height function 사용함
-    resize_height(day_div_children_length);
+    resizeheight();
     
 
-    // 날짜 세로 크기를 조절
-    $('.select_date_btn_area >button').click(function () {
-        resize_height(day_div_children_length);
-    });
+    
 
     // 가맹점 상세 목록 닫힐 때 원래 목록 보여주기
     function show_original_store_list(context) {
@@ -407,7 +483,7 @@ $(function () {
         
         // 4개의 가맹점 목록
         let store_list = context.parents('.text-end').find('.store_inspection');
-        
+        	
         context.parents('.store_list_detail').addClass('hide');
         context.parents('.text-end').find('.store_inspection').addClass('d-flex').removeClass('row');
         context.parents('.text-end').find('.store_inspection').children().removeClass('col-xxl-6');
@@ -458,8 +534,8 @@ $(function () {
       calendar_box.prepend(html);
 
 
-      let store_list_area = $('.store_list');
-      store_list_area.append(store_list);
+      
+      $('.store_list').append(store_list);
       
 
       $(this).parents('.day_div_header').addClass('hide');
@@ -470,7 +546,7 @@ $(function () {
     
     // 가맹점 목록 자세히 보여주기 닫기 
 
-    $('body').on('click','.text-end[data-day^="20"] .close_btn', function () {
+    $('body').on('click','.text-end .close_btn', function () {
       show_original_store_list($(this));
       $(this).parents('.store_list_detail').empty();
     });
@@ -479,29 +555,130 @@ $(function () {
 
 
     // 가맹점 점검할 체크리스트 목록 보여주기
-    $('.store_inspection').click(function () {
-      
-      
-      // 가맹점 점검 목록의 부모 요소
-      let parent = $(this).parent();
+    $('body').on('click','.store_inspection' ,function () {
 
-      // 해당 가맹점을 점검하는 점검자 이름
-      let inspector_name = $(this).children().eq(1).text();
-
-      // 가맹점명
-      let store_name = $(this).children().eq(0).text().split(" ")[0];
-
-      $('.modal_inspector_name').text(inspector_name);
-      $('.modal_store_name').text(store_name);
-
+		let storeNm = $(this).children().eq(0).text().split(" ")[0];
+		let inspPlanDt = $(this).parents('.text-end').data('day').replace(/-/ig,'');
+		let params = [storeNm, inspPlanDt];
+		
+		
+		$.ajax({
+			url: `/qsc/store-inspection-schedule/chklst/${storeNm}/${inspPlanDt}`,
+			method: 'POST',
+			dataType : 'json',
+			data : JSON.stringify(params),
+			success : function(data) {
+				let inspector_name ='점검자: ' + data[0].mbrNm +'(' + data[0].mbrNo +')';
+      			$('.modal_inspector_name').text(inspector_name);
+      			$('.modal_store_name').text(data[0].storeNm);
+      			$.each(data, function (index, item) {
+		      		let num = (index+1).toString().padStart(2, '0');
+	      			let chklstNm = item.chklstNm;
+	      			
+	      			let html = 
+	      			`
+						<div class="checklist_item_area d-flex align-items-center">
+							<div class="checklist_number">${num}</div>
+							<div class="checklist_item">${chklstNm}</div>
+						</div>
+					`;
+					
+					$('.modal-body').append(html);	
+				})
+				
+			}
+		})
 
     })
+    
+    
+    /** 모달창에서 닫기 버튼 누를 때 modal-body에 있는 자식 요소 삭제 */
+  	$('.modal-header > .btn-close').click(function () {
+		$('.modal-body').children().remove();
+	})  
+	
+	function changeDateBySearch(inspectorNo, inspTypeCdText) {
+		if(inspectorNo && inspTypeCdText) {
+			let path = `/qsc/store-inspection-schedule/search/${inspectorNo}/${inspTypeCdText}`
+			let way = 'POST';
+			showDate(path, way);
+			
+		} else if(inspectorNo && !inspTypeCdText) {
+			let path = `/qsc/store-inspection-schedule/no/${inspectorNo}`
+			let way = 'POST';
+			showDate(path, way);
+		} else if(!inspectorNo && inspTypeCdText ){
+			let path = `/qsc/store-inspection-schedule/type/${inspTypeCdText}`;
+			let way = 'POST';
+			showDate(path, way);
+		} else {
+			let path ='/qsc/store-inspection-schedule/schedules';
+			let way = 'GET';
+			showDate(path, way);
+		}
+	}
+	
+	/** 점검유형을 점검유형 코드로 변환 */
+	function changeInspTypeCd() {
+		let text = $('.hide-list').eq(1).find('.selected').text();
+		if(text ==='제품점검') {
+			text = 'IT001';
+		} else if(text === '위생점검') {
+			text = 'IT002'
+		} else if(text === '정기점검') {
+			text = 'IT003'
+		} else if(text === '비정기점검') {
+			text = 'IT004'
+		} else if(text === '기획점검') {
+			text = 'IT005'
+		} else {
+			text = null;	
+		}
+		return text;
+	}
+		
+	/** 검색 단어에 따라 일정 달력 변경 */
+	$('.hide-list ul').click(function () {
+		let inspectoreNmAndNoText = $('.hide-list').eq(0).find('.selected').text();
+		let inspectorNo = inspectoreNmAndNoText.match(/\((.*?)\)/);
+		if(inspectorNo) {
+			inspectorNo = inspectorNo[1];
+		}
+		
+		let inspTypeCdText = changeInspTypeCd();
+		changeDateBySearch(inspectorNo, inspTypeCdText);
+	})
+	
+	// 날짜 세로 크기를 조절 && 필터에 따라 일정 변경
+    $('.select_date_btn_area >button').click(function () {
+        resizeheight();		
+        let inspectoreNmAndNoText = $('.hide-list').eq(0).find('.selected').text();
+		let inspectorNo = inspectoreNmAndNoText.match(/\((.*?)\)/);
+		if(inspectorNo) {
+			inspectorNo = inspectorNo[1];
+		}
+		
+		let inspTypeCdText = changeInspTypeCd();
+        
+		changeDateBySearch(inspectorNo, inspTypeCdText);
+        
+    });
+	
 
 /* 캘린더 본문 JS 끝 */
     
   
-  
+ 
 
+})
 
-
+/** 모달(가맹점 점검체크리스트 목록)창에서 esc눌렀을 경우에 modal-body에 있는 자식요소들이 쌓이므로 esc했을 때도 자식 요소 삭제 */
+$(document).keydown(function(event) {
+	if(event.keyCode == 27 || event.which == 27) {
+	    let flag = $('.modal').hasClass('show');
+	    console.log(flag);
+	    if(!flag) {
+		    $('.modal-body').children().remove();	
+		}  					
+	}
 })

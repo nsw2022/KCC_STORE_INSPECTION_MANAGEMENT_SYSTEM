@@ -7,8 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class StoreInspectionScheduleDao {
-	private int inspSchdId;
+public class StoreInspectionSchedule {
+	private String inspMbrNo;
+	private String svMbrNo;
 	private String storeNm;
 	private String mbrNm;
 	private String chklstNm;
