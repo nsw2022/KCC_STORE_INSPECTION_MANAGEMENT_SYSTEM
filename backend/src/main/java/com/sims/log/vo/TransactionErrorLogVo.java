@@ -12,10 +12,9 @@ import lombok.ToString;
 @Setter
 @Builder
 @ToString
-public class TransactionLogVo {
-
+public class TransactionErrorLogVo {
     /** 트랜잭션 ID */
-    private String trgId;
+    private String trgErrId;
 
     /** 실행일자 */
     private String execDt;
@@ -41,9 +40,9 @@ public class TransactionLogVo {
     /** 등록자 IP */
     private String regMbrIp; // 등록자 IP
 
-    /** 트랜잭션 상태 코드 */
-    private String trgSttsCd; // 트랜잭션 상태 코드
+    /** 에러 코드 */
+    private String errCd; // 트랜잭션 상태 코드
 
-    /** 응답 시간 (ms) */
-    private String resMs; // 응답 시간
+    /** 에러 메세지 */
+    private String errMsg; // 트랜잭션 상태 코드
 }

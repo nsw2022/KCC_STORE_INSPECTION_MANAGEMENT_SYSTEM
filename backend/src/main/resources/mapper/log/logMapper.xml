@@ -60,4 +60,33 @@
                #{resMs}
         )
     </insert>
+
+    <insert id="insertTransactionErrorLog" parameterType="TransactionErrorLogVo">
+        INSERT INTO TRG_ERR_LOG( /* LogMapper.insertTransactionErrorLog 유재원 */
+            TRG_ERR_ID,
+            EXEC_DT,
+            URL,
+            REQUEST_TYPE,
+            METHOD,
+            PRAM_COUNT,
+            PRAM_CONTENT,
+            REG_MBR_ID,
+            REG_MBR_IP,
+            ERR_CD,
+            ERR_MSG
+        )
+        VALUES(
+                TRG_ERR_LOG_SEQ.NEXTVAL,
+                TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MISS'),
+                #{url},
+                #{requestType},
+                #{method},
+                #{pramCount},
+                #{pramContent},
+                #{regMbrId},
+                #{regMbrIp},
+                #{errCd},
+                #{errMsg}
+        )
+    </insert>
 </mapper>

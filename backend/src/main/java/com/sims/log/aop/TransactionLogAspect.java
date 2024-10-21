@@ -42,15 +42,9 @@ public class TransactionLogAspect {
 
     @Pointcut("execution(* com.sims..service.*Impl.*(..))")
     public void serviceMethods() {}
-//
-//    @Before("serviceMethods()")
-//    public void beforeServiceMethod(JoinPoint joinPoint) {
-//        requestTime = System.currentTimeMillis();
-//        log.info("requestTime = {}", requestTime);
-//    }
 
     @Around("serviceMethods()")
-    public Object logTransaction(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object TransactionLog(ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis(); // 요청 시간
         log.info("requestTime = {}", startTime);
 
