@@ -123,39 +123,12 @@
 									<div class="modal-header pe-3 ps-4 py-3 justify-content-between">
 										<div class="modal-title modal_store_name" id="storeChecklistModalLabel"></div>
 										<div class="modal_inspector_area">
-											<div class="modal_inspector_name px-3 py-2 border border-1"></div>
+											<div class="modal_inspector_name ps-3 pe-1 py-2 border border-1"><span class=""></span></div>
 										</div>
 										<button type="button" class="btn-close ms-0" data-bs-dismiss="modal" aria-label="Close"></button>
 									</div>
 									<div class="modal-body py-0 mb-3">
-										<div class="checklist_item_area d-flex align-items-center">
-											<div class="checklist_number">01</div>
-											<div class="checklist_item me-5">KCC 크라상 위생 점검 체크리스트</div>
-										</div>
-										<div class="checklist_item_area d-flex align-items-center">
-											<div class="checklist_number">02</div>
-											<div class="checklist_item me-5">KCC 크라상 제품 점검 체크리스트</div>
-										</div>
-										<div class="checklist_item_area d-flex align-items-center">
-											<div class="checklist_number">03</div>
-											<div class="checklist_item me-5">KCC 크라상 정기 점검 체크리스트</div>
-										</div>
-										<div class="checklist_item_area d-flex align-items-center">
-											<div class="checklist_number">04</div>
-											<div class="checklist_item me-5">KCC 크라상 비정기 점검 체크리스트</div>
-										</div>
-										<div class="checklist_item_area d-flex align-items-center">
-											<div class="checklist_number">05</div>
-											<div class="checklist_item me-5">KCC 크라상 기획 점검 체크리스트</div>
-										</div>
-										<div class="checklist_item_area d-flex align-items-center">
-											<div class="checklist_number">06</div>
-											<div class="checklist_item me-5">KCC 크라상 위생 점검 체크리스트</div>
-										</div>
-										<div class="checklist_item_area d-flex align-items-center">
-											<div class="checklist_number">07</div>
-											<div class="checklist_item me-5">KCC 크라상 위생 점검 체크리스트</div>
-										</div>
+										
 									</div>
 								</div>
 							</div>
@@ -167,6 +140,7 @@
 
         <!-- 본문 끝 -->
 <script src="/resources/js/qsc/store_inspection_schedule/store_inspection_schedule.js"></script>
+<input type="hidden" value="${username}">
 
 </body>
 </html>

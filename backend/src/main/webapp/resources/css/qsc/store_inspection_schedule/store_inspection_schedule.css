@@ -322,7 +322,7 @@ word-break: break-all;
 
 #wrapper .store_list_detail {
   background-color: #fff8e5;
-    width: 23%;
+    width: 26%;
     height: 27%;
     overflow-y: auto;
     position: absolute;
@@ -378,7 +378,7 @@ word-break: break-all;
 
 /** 모달 영역 */
 .modal-dialog {
-  max-width: 450px;
+  max-width: 450px !important;
 }
 
 .modal-dialog .modal-content {
@@ -392,18 +392,18 @@ word-break: break-all;
   }
 
   .modal_store_name {
-    font: 500 1.25rem "Noto Sans KR";
+    font: 500 15px "Noto Sans KR";
     color: #5a5a5a;
   }
 
   .modal_inspector_area {
-    width: 45%;
+    width: 53%;
   }
 
   .modal_inspector_name {
-    font: 500 1rem "Noto Sans KR";
+    font: 400 15px "Noto Sans KR";
     color: #5A5A5A;
-    width: 75%;
+    width: 100%;
     border-radius: 10px;
   }
 
@@ -418,7 +418,7 @@ word-break: break-all;
     background-color: #fff8e5;
     border: 1px solid #cccccc;
     color: #5A5A5A;
-    font: 500 1rem "Noto Sans KR";
+    font: 400 15px "Noto Sans KR";
     padding: 1rem;
     height: 26%;
     border-radius: 10px;
@@ -431,7 +431,7 @@ word-break: break-all;
   }
 
   .checklist_item {
-    margin-left: auto;
+    margin : 0 auto;
   }
 
 
@@ -670,7 +670,7 @@ word-break: break-all;
       font: 500 0.8rem "Noto Sans KR";
     }
 
-    #wrapper > .div_calendar >:nth-child(7n),
+    #wrapper > .div_calendar >:nth-child(7n-2) > .store_list_detail,
     #wrapper > .div_calendar >:nth-child(7n-1) > .store_list_detail {
       right: 15%;
     }
@@ -701,10 +701,15 @@ word-break: break-all;
   #wrapper > .div_calendar >:nth-child(7n) > .store_list_detail {
    right : 10%
   }
+  
 
   /* 캘린더 헤더 */
   .container-header > div input {
     width: 80%;
+  }
+  
+  .modal-header {
+  	padding : 1rem 0.5rem !important;
   }
   
   .page-content > .container-fluid > .row {
@@ -787,7 +792,7 @@ word-break: break-all;
   /* 캘린더 본문 끝 */
   /* 모달 */
   .modal-dialog {
-    max-width: 300px;
+    max-width: 330px !important;
     margin-left: auto !important;
     margin-right: auto !important;
   }
@@ -798,19 +803,36 @@ word-break: break-all;
 
   .modal_inspector_name,
   .checklist_item_area {
-    font: 500 .75rem "Noto Sans KR";
+    font: 400 12px "Noto Sans KR";
+  }
+  .modal-content .modal-header {
+  	padding : 0 !important;
   }
 
   .modal_store_name {
-    font: 500 1rem "Noto Sans KR";
+    font: 500 13px "Noto Sans KR";
   }
 
-  .modal_inspector_name {
+  .modal_inspector_area .modal_inspector_name {
     margin: 0 auto;
+    padding-left : 8px !important;
   }
 
   .modal-body .checklist_item {
     margin: 0 !important;
+  }
+  
+  .modal-content .modal-body {
+  	padding : 0 !important;
+  	margin-bottom : 0 !important;
+  }
+  
+  .modal .modal-content {
+  	padding : 12px !important;
+  }
+  
+  .modal .modal_inspector_area {
+  	width : 54%
   }
   
 }
