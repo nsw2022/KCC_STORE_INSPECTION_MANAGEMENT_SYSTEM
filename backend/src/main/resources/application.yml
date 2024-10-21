@@ -29,7 +29,7 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
   mapper-locations: classpath:mapper/**/*.xml
-  type-aliases-package: com.sims.home.dashboard.vo, com.sims.home.member.vo, com.sims.aop.vo
+  type-aliases-package: com.sims.home.dashboard.vo, com.sims.home.member.vo, com.sims.log.vo
 
 naver:
   maps:

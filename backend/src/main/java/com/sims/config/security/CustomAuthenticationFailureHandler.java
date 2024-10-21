@@ -1,7 +1,7 @@
 package com.sims.config.security;
 
-import com.sims.aop.mapper.LogMapper;
-import com.sims.aop.vo.LoginLogDao;
+import com.sims.log.mapper.LogMapper;
+import com.sims.log.vo.LoginLogVo;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,7 +28,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         log.info("login OS = {}", getClientOS(request.getHeader("USER-AGENT")));
         log.info("login browser = {}", getClientBrowser(request.getHeader("USER-AGENT")));
 
-        LoginLogDao loginLogDao = LoginLogDao.builder()
+        LoginLogVo loginLogVo = LoginLogVo.builder()
                 .connectionId(request.getParameter("mbrNo"))
                 .connectionIp(request.getRemoteAddr())
                 .connectionOs(getClientOS(request.getHeader("USER-AGENT")))
@@ -36,7 +36,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
                 .errorOccurrenceCd("1")
                 .build();
 
-        logMapper.insertLoginLog(loginLogDao);
+        logMapper.insertLoginLog(loginLogVo);
 
         response.sendRedirect("/login?error");
 

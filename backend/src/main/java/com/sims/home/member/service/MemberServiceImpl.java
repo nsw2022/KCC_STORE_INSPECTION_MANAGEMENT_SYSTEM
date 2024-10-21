@@ -19,6 +19,11 @@ public class MemberServiceImpl implements MemberService{
     private final MemberMapper memberMapper;
     private final BCryptPasswordEncoder encoder;
 
+    /**
+     * 회원가입 처리 Service
+     * @param member
+     * @return MemberDao
+     */
     @Override
     public int insertMember(MemberRegistRequest member) {
         List<String> roleCodes = new ArrayList<>();
@@ -32,9 +37,10 @@ public class MemberServiceImpl implements MemberService{
                 .mbrSttsCd(Integer.toString(1))
                 .tel(member.getTel())
                 .hireDt(member.getHireDt())
+                .creMbrId(member.getCreMbrId())
                 .build();
 
         log.info("member = {}", newMember);
-        return memberMapper.insertMember(newMember);
+        return memberMapper.insertMbr(newMember);
     }
 }

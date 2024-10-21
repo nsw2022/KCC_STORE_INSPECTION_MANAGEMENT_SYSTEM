@@ -21,7 +21,7 @@ public class PrincipalDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        MemberDao member = memberMapper.getMemberByMbrId(username);
+        MemberDao member = memberMapper.getMbrByMbrId(username);
         if(member == null){
             throw new UsernameNotFoundException("User Not Found");
         }
