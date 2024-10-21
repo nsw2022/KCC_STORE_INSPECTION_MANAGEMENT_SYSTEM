@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sims.home.member.mapper.MemberMapper">
-    <select id="getMemberByMbrId" resultType="MemberDao">
+    <select id="getMbrByMbrId" resultType="MemberDao">
         SELECT /* MemberMapper.getMemberByMbrId 유재원 */
             MBR_ID,
             MBR_NO,
@@ -26,10 +26,14 @@
             MBR_NO = #{mbrNo}
     </select>
 
-    <insert id="insertTestMember" parameterType="MemberDao">
+    <select id="getMbrIdByMbrNo">
+        SELECT MBR_ID FROM MBR WHERE MBR_NO = #{mbrNo}
+    </select>
+
+    <insert id="insertMbr" parameterType="MemberDao">
         INSERT
         INTO
-            MBR ( /* MemberMapper.insertTestMember 유재원 */
+            MBR ( /* MemberMapper.insertMember 유재원 */
             MBR_ID,
             MBR_NO,
             MBR_PW,
@@ -57,7 +61,7 @@
             '010-1234-5678',
             '20241010',
             NULL,
-            1,
+            #{creMbrId},
             NULL,
             TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI'),
             NULL,

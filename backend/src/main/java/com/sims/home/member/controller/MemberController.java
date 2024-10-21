@@ -1,6 +1,5 @@
 package com.sims.home.member.controller;
 
-
 import com.sims.home.member.service.MemberService;
 import com.sims.home.member.vo.MemberRegistRequest;
 import lombok.RequiredArgsConstructor;
@@ -19,16 +18,28 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class MemberController {
     private final MemberService memberService;
 
+    /**
+     * 로그인 화면
+     * @return login
+     */
     @GetMapping("/login")
     public String login() {
         return "home/login/login";
     }
 
-    @PostMapping("/loginProcess")
+    /**
+     * 로그인 처리
+     */
+    @PostMapping("/loginprocess")
     public String loginProcess() {
         return "redirect:/";
     }
 
+    /**
+     * 회원가입 처리
+     * @param member
+     * @return
+     */
     @PostMapping("/regist")
     @ResponseBody
     public ResponseEntity<String> insertMember(@RequestBody MemberRegistRequest member) {

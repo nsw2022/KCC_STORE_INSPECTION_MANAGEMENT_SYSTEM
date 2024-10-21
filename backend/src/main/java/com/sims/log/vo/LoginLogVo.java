@@ -1,11 +1,11 @@
-package com.sims.aop.vo;
+package com.sims.log.vo;
 
 import lombok.*;
 
 @Getter
 @Setter
 @Builder
-public class LoginLogDao {
+public class LoginLogVo {
     private String connectionId; // 접속 ID
     private String connectionIp; // 접속 IP
     private String connectionOs; // 접속 OS

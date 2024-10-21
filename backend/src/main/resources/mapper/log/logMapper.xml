@@ -3,20 +3,20 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.sims.aop.mapper.LogMapper">
-    <insert id="insertLoginLog" parameterType="LoginLogDao">
+<mapper namespace="com.sims.log.mapper.LogMapper">
+    <insert id="insertLoginLog" parameterType="LoginLogVo">
         INSERT INTO LOGINLOG ( /* LogMapper.insertLoginLog 유재원 */
-            "LOGIN_LOG_ID",
-            "CONNECTION_ID",
-            "CONNECTION_IP",
-            "CONNECTION_OS",
-            "CONNECTION_BROWSER",
-            "ERROE_OCCURRENCE_CD",
-            "ERROE_CODE",
-            "LOGIN_OCCURRENCE_DATE"
+            LOGIN_LOG_ID,
+            CONNECTION_ID,
+            CONNECTION_IP,
+            CONNECTION_OS,
+            CONNECTION_BROWSER,
+            ERROR_OCCURRENCE_CD,
+            ERROR_CODE,
+            LOGIN_OCCURRENCE_DATE
         )
         VALUES (
-            loginlog_seq.NEXTVAL,
+            LOGINLOG_SEQ.NEXTVAL,
             #{connectionId},
             #{connectionIp},
             #{connectionOs},
@@ -28,7 +28,36 @@
                 ELSE '0'
             END,
             NULL,
-            TO_CHAR(current_date, 'YYYYMMDDHH24MI')
+            TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+        )
+    </insert>
+
+    <insert id="insertTransactionLog" parameterType="TransactionLogVo">
+        INSERT INTO TRG_LOG( /* LogMapper.insertTransactionLog 유재원 */
+            TRG_ID,
+            EXEC_DT,
+            URL,
+            REQUEST_TYPE,
+            METHOD,
+            PRAM_COUNT,
+            PRAM_CONTENT,
+            REG_MBR_ID,
+            REG_MBR_IP,
+            TRG_STTS_CD,
+            RES_MS
+        )
+        VALUES(
+               TRG_LOG_SEQ.NEXTVAL,
+               TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MISS'),
+               #{url},
+               #{requestType},
+               #{method},
+               #{pramCount},
+               #{pramContent},
+               #{regMbrId},
+               #{regMbrIp},
+               #{trgSttsCd},
+               #{resMs}
         )
     </insert>
 </mapper>

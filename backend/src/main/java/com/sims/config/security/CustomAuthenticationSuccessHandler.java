@@ -1,7 +1,7 @@
 package com.sims.config.security;
 
-import com.sims.aop.mapper.LogMapper;
-import com.sims.aop.vo.LoginLogDao;
+import com.sims.log.mapper.LogMapper;
+import com.sims.log.vo.LoginLogVo;
 import com.sims.home.member.mapper.MemberMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,7 +35,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         memberMapper.updateLastLoginDate(authentication.getName());
 
-        LoginLogDao loginLogDao = LoginLogDao.builder()
+        LoginLogVo loginLogVo = LoginLogVo.builder()
                 .connectionId(authentication.getName())
                 .connectionIp(request.getRemoteAddr())
                 .connectionOs(getClientOS(request.getHeader("USER-AGENT")))
@@ -43,7 +43,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                 .errorOccurrenceCd("0")
                 .build();
 
-        logMapper.insertLoginLog(loginLogDao);
+        logMapper.insertLoginLog(loginLogVo);
 
         response.sendRedirect("/");
     }

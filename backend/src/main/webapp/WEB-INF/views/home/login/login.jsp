@@ -58,7 +58,7 @@
 						<div class="line"></div>
 					</div>
 
-					<form class="input_area" action="/loginProcess" method="post">
+					<form class="input_area" action="/loginprocess" method="post">
 						<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 						<div class="empno_area d-flex border mb-2 align-items-center">
 							<i class="fa-regular fa-lg fa-envelope mx-2"

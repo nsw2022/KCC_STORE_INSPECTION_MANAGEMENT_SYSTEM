@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .failureHandler(customAuthenticationFailureHandler)
                 .usernameParameter("mbrNo")
                 .passwordParameter("mbrPw")
-                .loginProcessingUrl("/loginProcess")
+                .loginProcessingUrl("/loginprocess")
         );
 
         http.logout(logout -> logout
