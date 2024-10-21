@@ -1,12 +1,11 @@
 package com.sims.log.aop;
 
+import com.sims.config.common.ClientInfo;
 import com.sims.home.member.mapper.MemberMapper;
 import com.sims.log.mapper.LogMapper;
 import com.sims.log.vo.TransactionLogVo;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -31,8 +30,6 @@ import java.util.Arrays;
 @Component
 @Slf4j
 public class TransactionLogAspect {
-    private long requestTime;
-    private long responseTime;
 
     @Autowired
     private MemberMapper memberMapper;
@@ -55,12 +52,20 @@ public class TransactionLogAspect {
         log.info("responseTime = {}", endTime);
         log.info("responseTime - requestTime = {}ms", endTime - startTime);
 
+
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String mbrId = "anonymousUser".equals(auth.getName()) ? auth.getName() : Integer.toString(memberMapper.getMbrIdByMbrNo(auth.getName()));
+
+        String agent = request.getHeader("USER-AGENT");
+        String os = ClientInfo.getClientOS(agent);
+        String browser = ClientInfo.getClientBrowser(agent);
+        log.info("os = {}", os);
+        log.info("browser = {}", browser);
+
 
         TransactionLogVo transactionLogVo = TransactionLogVo.builder()
                 .url(request.getRequestURI())
@@ -72,6 +77,8 @@ public class TransactionLogAspect {
                 .regMbrIp(request.getRemoteAddr())
                 .trgSttsCd("1")
                 .resMs(Long.toString(endTime - startTime))
+                .resBrowser(browser)
+                .resOs(os)
                 .build();
 
         log.info("transactionLogVo = {}", transactionLogVo);

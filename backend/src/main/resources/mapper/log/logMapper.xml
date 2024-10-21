@@ -41,7 +41,9 @@
             REG_MBR_ID,
             REG_MBR_IP,
             TRG_STTS_CD,
-            RES_MS
+            RES_MS,
+            RES_BROWSER,
+            RES_OS
         )
         VALUES(
                TRG_LOG_SEQ.NEXTVAL,
@@ -54,7 +56,9 @@
                #{regMbrId},
                #{regMbrIp},
                #{trgSttsCd},
-               #{resMs}
+               #{resMs},
+               #{resBrowser},
+               #{resOs}
         )
     </insert>
 
@@ -70,7 +74,9 @@
             REG_MBR_ID,
             REG_MBR_IP,
             ERR_CD,
-            ERR_MSG
+            ERR_MSG,
+            RES_BROWSER,
+            RES_OS
         )
         VALUES(
                 TRG_ERR_LOG_SEQ.NEXTVAL,
@@ -83,7 +89,9 @@
                 #{regMbrId},
                 #{regMbrIp},
                 #{errCd},
-                #{errMsg}
+                #{errMsg},
+                #{resBrowser},
+                #{resOs}
         )
     </insert>
 </mapper>

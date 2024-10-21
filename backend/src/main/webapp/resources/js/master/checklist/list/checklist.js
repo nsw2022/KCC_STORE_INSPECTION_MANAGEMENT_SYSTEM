@@ -1,23 +1,25 @@
-const rowData = [];
+// 전역 변수로 rowData와 gridApi 선언
+let rowData = [];
+let gridApi = null;
+let gridOptions = null;
+
 async function loadData() {
   try {
     const response = await fetch("https://localhost:8081/master/checklist/list");
     const data = await response.json();
 
     // rowData에 데이터를 할당
-    const rowData = data.map((item) => {
-      // masterChklstNm이 null이면 is_master_checklist 속성에 'N'을 추가
+    rowData = data.map((item) => {
       if (item.masterChklstNm === null) {
         item.is_master_checklist = 'N';
       } else {
-        item.is_master_checklist = 'Y'; // null이 아닐 경우 'Y'로 설정
+        item.is_master_checklist = 'Y';
       }
-      return item; // 수정된 item을 반환
+      return item;
     });
 
-
-    // 그리드 설정 객체에 rowData 업데이트 후 그리드 생성
-    const gridOptions = {
+    // 그리드 설정 객체
+    gridOptions = {
       rowData: rowData,
       columnDefs: [
         {
@@ -49,10 +51,10 @@ async function loadData() {
             });
 
             const $svg = $(`
-                          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 15 15">
-                              <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
-                          </svg>
-                      `);
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 15 15">
+                <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+              </svg>
+            `);
 
             const $editDiv = $('<div class="edit-options">점검 항목 관리</div>');
 
@@ -98,8 +100,13 @@ async function loadData() {
       },
     };
 
+    // 그리드 API 생성 및 설정
     const gridDiv = document.querySelector("#myGrid");
-    const gridApi = agGrid.createGrid(gridDiv, gridOptions);
+    gridApi = agGrid.createGrid(gridDiv, gridOptions);
+
+    // 체크리스트 카운트 업데이트 함수 호출
+    updateChecklistCount();
+
   } catch (error) {
     console.error("Error fetching data:", error);
   }
@@ -108,43 +115,42 @@ async function loadData() {
 // 데이터 로딩 함수 호출
 loadData();
 
-
-// 체크리스트 개수를 업데이트하는 함수
+// 체크리스트 카운트 업데이트 함수
 function updateChecklistCount() {
   const checklistCount = document.querySelector(".checklist_count");
-  checklistCount.textContent = rowData.length; // 현재 rowData 길이를 업데이트
+  checklistCount.textContent = rowData.length;
 }
 
-// 처음 페이지 로드 시 checklist_count 값 설정
-updateChecklistCount();
-
+// 새로운 Row 생성 함수
 function createNewRowData() {
-  var newData = {
-    no: rowData.length + 1,
-    brand: "",
-    checklist_name: "",
-    master_checklist_name: "",
-    inspection_type: "",
-    create_date: "",
-    status: "",
+  return {
+    chklstId: rowData.length + 1,
+    brandNm: "",
+    chklstNm: "",
+    masterChklstNm: "",
+    inspTypeNm: "",
+    creTm: "",
+    is_master_checklist: "",
+    chklstUseW: "",
   };
-  return newData;
 }
 
+// Row 추가 함수
 function onAddRow() {
-  var newItem = createNewRowData();
+  const newItem = createNewRowData();
   rowData.push(newItem);
   gridApi.applyTransaction({ add: [newItem] });
   updateChecklistCount();
 }
 
+// Row 삭제 함수
 function onDeleteRow() {
-  var selectedRows = gridApi.getSelectedRows();
+  const selectedRows = gridApi.getSelectedRows();
   if (selectedRows.length > 0) {
     gridApi.applyTransaction({ remove: selectedRows });
 
     selectedRows.forEach((row) => {
-      const index = rowData.findIndex((data) => data.no === row.no);
+      const index = rowData.findIndex((data) => data.chklstId === row.chklstId);
       if (index > -1) {
         rowData.splice(index, 1);
       }
@@ -154,6 +160,9 @@ function onDeleteRow() {
     alert("삭제할 항목을 선택하세요.");
   }
 }
+
+
+
 
 $(function () {
   class Autocomplete {
@@ -287,30 +296,15 @@ $(function () {
   const autocompleteData = {
 
     // 가맹점
-    store: [
-      "-전체",
-      "혜화점",
-      "종로점",
-      "청량리점",
-      "안산점",
-      "부평점",
-      "용산점",
-      "답십리점",
-    ],
-
+    store: ["-전체", "혜화점", "종로점", "청량리점", "안산점", "부평점", "용산점", "답십리점",],
     // 점검자
     inspector: ["-전체-", "노승우", "이지훈", "유재원", "원승언", "노승수"],
-
     // 점검 유형
     INSP: ["-전체-", "정기 점검", "제품 점검"],
-
     // 체크리스트
     CHKLST: ["-전체-", "KCC 크라상 위생 점검표", "KCC 카페 제품 점검표"],
-
     // 브랜드
     BRAND: ["-전체-", "KCC 크라상", "KCC 카페", "KCC 디저트"],
-
-
     // 마스터 체크리스트
     MASTER_CHKLST: ["-전체-", "품질점검체크리스트", "기획점검체크리스트"],
 

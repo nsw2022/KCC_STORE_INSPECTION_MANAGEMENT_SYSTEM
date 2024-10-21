@@ -171,6 +171,10 @@ body {
   padding: 0px 13px;
   font-size: 13px;
 }
+#topScheduleDate:focus{
+  border-color: #ced4da !important;
+  box-shadow: none !important;
+}
 
 
 /************** middle **************/

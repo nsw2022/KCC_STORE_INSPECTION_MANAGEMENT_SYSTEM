@@ -86,7 +86,7 @@ pageEncoding="UTF-8" %>
                         <label for="inspectionType" class="form-label">브랜드</label>
                         <div class="wrapper" data-autocomplete="BRAND">
                           <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                            <span>브랜드</span>
+                            <span>브랜드 검색</span>
                             <i class="uil uil-angle-down"></i>
                           </div>
                           <div class="hide-list">
