@@ -433,7 +433,7 @@ $(function () {
 				let insp_plan_date = item.inspPlanDt.replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3');
 				let insp_date_content = $(`.day_div_content[data-day='${insp_plan_date}']`);
 				let store_nm = item.storeNm;
-				let inspector_nm = item.mbrNm +'(' + item.mbrNo + ')';
+				let inspector_nm = item.mbrNm +'(' + item.inspMbrNo + ')';
 				let inspection_places =
 				`
 					<div class="store_inspection align-items-center ps-2 mb-2 d-flex" data-bs-toggle="modal" data-bs-target="#storeChecklistModal">
@@ -568,7 +568,7 @@ $(function () {
 			dataType : 'json',
 			data : JSON.stringify(params),
 			success : function(data) {
-				let inspector_name ='점검자: ' + data[0].mbrNm +'(' + data[0].mbrNo +')';
+				let inspector_name ='점검자: ' + data[0].mbrNm +'(' + data[0].inspMbrNo +')';
       			$('.modal_inspector_name').text(inspector_name);
       			$('.modal_store_name').text(data[0].storeNm);
       			$.each(data, function (index, item) {

@@ -7,7 +7,7 @@
     <select id="getStoreInspectionSchedule" resultType="com.sims.qsc.store_inspection_schedule.vo.StoreInspectionSchedule">
         SELECT /* StoreInspectionScheduleMapper.getStoreInspectionSchedule 원승언 */
         	DISTINCT
-			    MBR_NO AS INSP_MBR_NO,
+			    MB.MBR_NO AS INSP_MBR_NO,
 			    MBR_NM,
 			    CHKLST_NM,
 			    INSP_PLAN_DT,
