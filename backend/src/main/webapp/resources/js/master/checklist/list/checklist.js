@@ -1,207 +1,156 @@
-// ROW 데이타 정의
-const rowData = [
-  {
-    no: 1,
-    brand: "KCC베이커리",
-    checklist_name: "2024 체크리스트",
-    master_checklist_name: "2023 체크리스트",
-    inspection_type: "기획점검",
-    create_date: "2024-10-07",
-    is_master_checklist: "Y",
-    status: "Y",
-  },
-  {
-    no: 2,
-    brand: "KCC베이커리",
-    checklist_name: "2024 체크리스트",
-    master_checklist_name: "2023 체크리스트",
-    inspection_type: "기획점검",
-    create_date: "2024-10-06",
-    is_master_checklist: "N",
-    status: "Y",
-  },
-  {
-    no: 3,
-    brand: "KCC베이커리",
-    checklist_name: "2024 체크리스트",
-    master_checklist_name: "2023 체크리스트",
-    inspection_type: "기획점검",
-    create_date: "2024-10-05",
-    is_master_checklist: "N",
-    status: "N",
-  },
-  {
-    no: 4,
-    brand: "KCC베이커리",
-    checklist_name: "2024 체크리스트",
-    master_checklist_name: "2023 체크리스트",
-    inspection_type: "기획점검",
-    create_date: "2024-10-04",
-    is_master_checklist: "N",
-    status: "Y",
-  },
-  {
-    no: 5,
-    brand: "KCC베이커리",
-    checklist_name: "2024 체크리스트",
-    master_checklist_name: "2023 체크리스트",
-    inspection_type: "기획점검",
-    create_date: "2024-10-03",
-    is_master_checklist: "N",
-    status: "Y",
-  },
-];
+// 전역 변수로 rowData와 gridApi 선언
+let rowData = [];
+let gridApi = null;
+let gridOptions = null;
 
-// 통합 설정 객체
-const gridOptions = {
-  rowData: rowData,
-  columnDefs: [
-    // 컬럼 정의
-    {
-      minWidth: 45,
-      width: 70,
-      headerCheckboxSelection: true,
-      checkboxSelection: true,
-      resizable: true,
-      cellStyle: { backgroundColor: "#ffffff" },
-    },
-    { field: "no", headerName: "no", width: 80, minWidth: 50 },
-    { field: "brand", headerName: "브랜드", minWidth: 110 },
-    { field: "checklist_name", headerName: "체크리스트명", minWidth: 110 },
-    {
-      field: "master_checklist_name",
-      headerName: "마스터 체크리스트",
-      minWidth: 110,
-    },
-    { field: "inspection_type", headerName: "점검유형", minWidth: 110 },
-    { field: "create_date", headerName: "등록일", minWidth: 110 },
-    { field: "is_master_checklist", headerName: "마스터 체크리스 여부", minWidth: 70 },
-    { field: "status", headerName: "사용여부", minWidth: 70 },
-    {
-      field: "action",
-      headerName: "관리",
-      width: 100,
-      minWidth: 53,
-      pinned: "right",
-      cellRenderer: function (params) {
-        // jQuery를 사용하여 컨테이너 div 생성
-        const $container = $("<div>", {
-          class: "edit-container",
-          css: { position: "relative", cursor: "pointer" },
-        });
+async function loadData() {
+  try {
+    const response = await fetch("https://localhost:8081/master/checklist/list");
+    const data = await response.json();
 
-        // SVG 요소 생성
-        const $svg = $(`
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 15 15">
-                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
-                        </svg>
-                    `);
+    // rowData에 데이터를 할당
+    rowData = data.map((item) => {
+      if (item.masterChklstNm === null) {
+        item.is_master_checklist = 'N';
+      } else {
+        item.is_master_checklist = 'Y';
+      }
+      return item;
+    });
 
-        // '자세히보기' 옵션 div 생성
-        const $editDiv = $('<div class="edit-options">점검 항목 관리</div>');
+    // 그리드 설정 객체
+    gridOptions = {
+      rowData: rowData,
+      columnDefs: [
+        {
+          minWidth: 45,
+          width: 70,
+          headerCheckboxSelection: true,
+          checkboxSelection: true,
+          resizable: true,
+          cellStyle: { backgroundColor: "#ffffff" },
+        },
+        { field: "chklstId", headerName: "no", width: 80, minWidth: 50 },
+        { field: "brandNm", headerName: "브랜드", minWidth: 110 },
+        { field: "chklstNm", headerName: "체크리스트명", minWidth: 110 },
+        { field: "masterChklstNm", headerName: "마스터 체크리스트", minWidth: 110 },
+        { field: "inspTypeNm", headerName: "점검유형", minWidth: 110 },
+        { field: "creTm", headerName: "등록일", minWidth: 110 },
+        { field: "is_master_checklist", headerName: "마스터 체크리스 여부", minWidth: 70 },
+        { field: "chklstUseW", headerName: "사용여부", minWidth: 70 },
+        {
+          field: "action",
+          headerName: "관리",
+          width: 100,
+          minWidth: 53,
+          pinned: "right",
+          cellRenderer: function (params) {
+            const $container = $("<div>", {
+              class: "edit-container",
+              css: { position: "relative", cursor: "pointer" },
+            });
 
-        // SVG 클릭 시 '수정' 옵션 표시
-        $svg.on("click", function (e) {
-          e.stopPropagation(); // 이벤트 버블링 방지
+            const $svg = $(`
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 15 15">
+                <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+              </svg>
+            `);
 
-          // 모든 다른 'edit-options' 숨기기
-          $(".edit-options").not($editDiv).removeClass("show");
+            const $editDiv = $('<div class="edit-options">점검 항목 관리</div>');
 
-          // SVG의 위치 계산
-          const offset = $svg.offset();
-          const svgHeight = $svg.outerHeight();
+            $svg.on("click", function (e) {
+              e.stopPropagation();
+              $(".edit-options").not($editDiv).removeClass("show");
 
-          // 'edit-options' 위치 설정 (SVG 아래에 표시)
-          $editDiv.css({
-            top: offset.top + svgHeight + 2, // SVG 바로 아래에 2px 간격
-            left: offset.left + $svg.outerWidth() / 2 - 43, // SVG의 중앙에 왼쪽으로 이동
-            transform: "translateX(-50%)", // 가로 중앙 정3
-          });
+              const offset = $svg.offset();
+              const svgHeight = $svg.outerHeight();
+              $editDiv.css({
+                top: offset.top + svgHeight + 2,
+                left: offset.left + $svg.outerWidth() / 2 - 43,
+                transform: "translateX(-50%)",
+              });
 
-          // 'show' 클래스 토글
-          $editDiv.toggleClass("show");
-        });
+              $editDiv.toggleClass("show");
+            });
 
-        // '수정' 옵션 클릭 시 모달 열기
-        $editDiv.on("click", function (e) {
-          e.stopPropagation(); // 이벤트 버블링 방지
+            $editDiv.on("click", function (e) {
+              e.stopPropagation();
+              location.href = "/master/inspection/list/manage";
+              $editDiv.removeClass("show");
+            });
 
+            $container.append($svg);
+            $("body").append($editDiv);
 
-          location.href = "/master/inspection/list/manage";
-
-          // 'edit-options' 숨기기
-          $editDiv.removeClass("show");
-        });
-
-        // 컨테이너에 SVG 추가
-        $container.append($svg);
-
-        // 'edit-options'를 body에 추가
-        $("body").append($editDiv);
-
-        return $container[0]; // DOM 요소 반환
+            return $container[0];
+          },
+          autoHeight: true,
+        },
+      ],
+      autoSizeStrategy: {
+        type: "fitGridWidth",
+        defaultMinWidth: 10,
       },
-      autoHeight: true,
-    },
-  ],
+      rowHeight: 45,
+      rowSelection: "multiple",
+      pagination: true,
+      paginationAutoPageSize: true,
+      onCellClicked: (params) => {
+        console.log("cell was clicked", params);
+      },
+    };
 
-  autoSizeStrategy: {
-    // 자동사이즈정책
-    type: "fitGridWidth", // 그리드넓이기준으로
-    defaultMinWidth: 10, // 컬럼 최소사이즈
-  },
-  rowHeight: 45, // row 높이지정
-  rowSelection: "multiple",
-  // 페이지 설정
-  pagination: true,
-  paginationAutoPageSize: true, // 요게 열려있으면 아래껀 무시당함!
-  // paginationPageSizeSelector: [5, 10, 20, 30],  // 원하는 페이지 수 나열
-  // paginationPageSize: 10,    // 디폴트 사이즈 선택, 위에 selector 중 하나를 선택
-  onCellClicked: (params) => {
-    console.log("cell was clicked", params);
-  },
-};
+    // 그리드 API 생성 및 설정
+    const gridDiv = document.querySelector("#myGrid");
+    gridApi = agGrid.createGrid(gridDiv, gridOptions);
 
-const gridDiv = document.querySelector("#myGrid");
-//  new agGrid.Grid(gridDiv, gridOptions);  // deprecated
-const gridApi = agGrid.createGrid(gridDiv, gridOptions);
+    // 체크리스트 카운트 업데이트 함수 호출
+    updateChecklistCount();
 
-// 체크리스트 개수를 업데이트하는 함수
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+
+// 데이터 로딩 함수 호출
+loadData();
+
+// 체크리스트 카운트 업데이트 함수
 function updateChecklistCount() {
   const checklistCount = document.querySelector(".checklist_count");
-  checklistCount.textContent = rowData.length; // 현재 rowData 길이를 업데이트
+  checklistCount.textContent = rowData.length;
 }
 
-// 처음 페이지 로드 시 checklist_count 값 설정
-updateChecklistCount();
-
+// 새로운 Row 생성 함수
 function createNewRowData() {
-  var newData = {
-    no: rowData.length + 1,
-    brand: "",
-    checklist_name: "",
-    master_checklist_name: "",
-    inspection_type: "",
-    create_date: "",
-    status: "",
+  return {
+    chklstId: rowData.length + 1,
+    brandNm: "",
+    chklstNm: "",
+    masterChklstNm: "",
+    inspTypeNm: "",
+    creTm: "",
+    is_master_checklist: "",
+    chklstUseW: "",
   };
-  return newData;
 }
 
+// Row 추가 함수
 function onAddRow() {
-  var newItem = createNewRowData();
+  const newItem = createNewRowData();
   rowData.push(newItem);
   gridApi.applyTransaction({ add: [newItem] });
   updateChecklistCount();
 }
 
+// Row 삭제 함수
 function onDeleteRow() {
-  var selectedRows = gridApi.getSelectedRows();
+  const selectedRows = gridApi.getSelectedRows();
   if (selectedRows.length > 0) {
     gridApi.applyTransaction({ remove: selectedRows });
 
     selectedRows.forEach((row) => {
-      const index = rowData.findIndex((data) => data.no === row.no);
+      const index = rowData.findIndex((data) => data.chklstId === row.chklstId);
       if (index > -1) {
         rowData.splice(index, 1);
       }
@@ -211,6 +160,9 @@ function onDeleteRow() {
     alert("삭제할 항목을 선택하세요.");
   }
 }
+
+
+
 
 $(function () {
   class Autocomplete {
@@ -344,30 +296,15 @@ $(function () {
   const autocompleteData = {
 
     // 가맹점
-    store: [
-      "-전체",
-      "혜화점",
-      "종로점",
-      "청량리점",
-      "안산점",
-      "부평점",
-      "용산점",
-      "답십리점",
-    ],
-
+    store: ["-전체", "혜화점", "종로점", "청량리점", "안산점", "부평점", "용산점", "답십리점",],
     // 점검자
     inspector: ["-전체-", "노승우", "이지훈", "유재원", "원승언", "노승수"],
-
     // 점검 유형
     INSP: ["-전체-", "정기 점검", "제품 점검"],
-
     // 체크리스트
     CHKLST: ["-전체-", "KCC 크라상 위생 점검표", "KCC 카페 제품 점검표"],
-
     // 브랜드
     BRAND: ["-전체-", "KCC 크라상", "KCC 카페", "KCC 디저트"],
-
-
     // 마스터 체크리스트
     MASTER_CHKLST: ["-전체-", "품질점검체크리스트", "기획점검체크리스트"],
 

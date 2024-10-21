@@ -45,4 +45,10 @@ public class TransactionErrorLogVo {
 
     /** 에러 메세지 */
     private String errMsg; // 트랜잭션 상태 코드
+
+    /** 요청 브라우저 */
+    private String resBrowser;
+
+    /** 요청 OS */
+    private String resOs;
 }

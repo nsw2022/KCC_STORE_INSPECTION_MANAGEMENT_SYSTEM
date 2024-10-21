@@ -30,20 +30,26 @@ public class TransactionLogVo {
     private String method;
 
     /** 파라미터 개수 */
-    private int pramCount; // 파라미터 개수
+    private int pramCount;
 
     /** 파라미터 내용 */
     private String pramContent;
 
     /** 등록자 ID */
-    private String regMbrId; // 등록자 ID
+    private String regMbrId;
 
     /** 등록자 IP */
-    private String regMbrIp; // 등록자 IP
+    private String regMbrIp;
 
     /** 트랜잭션 상태 코드 */
-    private String trgSttsCd; // 트랜잭션 상태 코드
+    private String trgSttsCd;
 
     /** 응답 시간 (ms) */
-    private String resMs; // 응답 시간
+    private String resMs;
+
+    /** 요청 브라우저 */
+    private String resBrowser;
+
+    /** 요청 OS */
+    private String resOs;
 }

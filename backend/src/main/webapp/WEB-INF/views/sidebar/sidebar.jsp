@@ -74,7 +74,7 @@
                         <div class="sidebar-submenu">
                             <ul>
                                 <li>
-                                    <form id="checklist_list" action="/master/checklist/list" method="get"></form>
+                                    <form id="checklist_list" action="/master/checklist" method="get"></form>
                                     <a href="#" onclick="document.getElementById('checklist_list').submit()">체크리스트 관리</a>
                                 </li>
                                 <li>

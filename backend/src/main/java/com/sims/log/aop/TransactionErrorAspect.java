@@ -1,5 +1,6 @@
 package com.sims.log.aop;
 
+import com.sims.config.common.ClientInfo;
 import com.sims.home.member.mapper.MemberMapper;
 import com.sims.log.mapper.LogMapper;
 import com.sims.log.vo.TransactionErrorLogVo;
@@ -44,6 +45,12 @@ public class TransactionErrorAspect {
             Method method = methodSignature.getMethod();
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
+            String agent = request.getHeader("USER-AGENT");
+            String os = ClientInfo.getClientOS(agent);
+            String browser = ClientInfo.getClientBrowser(agent);
+            log.info("os = {}", os);
+            log.info("browser = {}", browser);
+
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             String mbrId = "anonymousUser".equals(auth.getName()) ? auth.getName() : Integer.toString(memberMapper.getMbrIdByMbrNo(auth.getName()));
 
@@ -57,6 +64,8 @@ public class TransactionErrorAspect {
                     .regMbrIp(request.getRemoteAddr())
                     .errCd("ORA-" + String.valueOf(oracleErrorCode))
                     .errMsg(oracleErrorMessage)
+                    .resBrowser(browser)
+                    .resOs(os)
                     .build();
             logMapper.insertTransactionErrorLog(transactionErrorLogVo);
         } else {
