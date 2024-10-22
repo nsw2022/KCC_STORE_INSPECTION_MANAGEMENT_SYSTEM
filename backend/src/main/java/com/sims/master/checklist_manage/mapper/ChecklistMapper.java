@@ -7,7 +7,6 @@ import java.util.List;
 
 @Mapper
 public interface ChecklistMapper {
-
     public List<ChecklistResponse> selectChecklistAll();
 
     public int deleteChecklistByChklstId(int chklstId);
