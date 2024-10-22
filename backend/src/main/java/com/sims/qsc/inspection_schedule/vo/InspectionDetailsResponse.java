@@ -10,7 +10,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class InspectionDetailsBuilder {
+public class InspectionDetailsResponse { // 삭제 여부는 스케줄러에 달렸드아.. 가맹점별 체크리스트 조회
     private Integer storeId;
     private String storeNm;
     private Integer inspPlanId;

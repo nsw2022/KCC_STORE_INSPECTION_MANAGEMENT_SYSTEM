@@ -5,69 +5,69 @@
 
 <mapper namespace="com.sims.qsc.inspection_schedule.mapper.InspectionScheduleMapper">
 
-    <select id="getFilteredInspectionScheduleList" resultType="com.sims.qsc.inspection_schedule.vo.InspectionScheduleBuilder">
+    <select id="selectFilteredInspectionScheduleList" resultType="com.sims.qsc.inspection_schedule.vo.InspectionScheduleRequest">
         SELECT  /* InspectionScheduleMapper.getInspectionScheduleList 노승우 */
-            sto.store_nm,
-            sto.store_id,
+            STO.STORE_NM,
+            STO.STORE_ID,
         CASE
-            WHEN sto.brand_cd = 'B001' THEN 'KCC 크라상'
-            WHEN sto.brand_cd = 'B002' THEN 'KCC 도넛'
-            WHEN sto.brand_cd = 'B003' THEN 'KCC 브레드'
-            WHEN sto.brand_cd = 'B004' THEN 'KCC 카페'
+            WHEN STO.BRAND_CD = 'B001' THEN 'KCC 크라상'
+            WHEN STO.BRAND_CD = 'B002' THEN 'KCC 도넛'
+            WHEN STO.BRAND_CD = 'B003' THEN 'KCC 브레드'
+            WHEN STO.BRAND_CD = 'B004' THEN 'KCC 카페'
         END AS BRAND_NM,
-            chk.chklst_nm,
-            isc.insp_plan_dt,
-            mbr.mbr_nm,
-            inp.cnt_cd,
-            inp.frq_cd
-        FROM insp_schd isc
-            INNER JOIN STORE sto
-                ON sto.store_id = isc.store_id
-            INNER JOIN insp_plan inp
-                ON inp.insp_plan_id = isc.insp_plan_id
-            INNER JOIN chklst chk
-                ON chk.chklst_id = inp.chklst_id
-            INNER JOIN mbr
-                ON mbr.mbr_id = sto.insp_mbr_id
-            WHERE inp.insp_plan_use_w = 'Y'
+            CHK.CHKLST_NM,
+            ISC.INSP_PLAN_DT,
+            MBR.MBR_NM,
+            INP.CNT_CD,
+            INP.FRQ_CD
+        FROM INSP_SCHD ISC
+            INNER JOIN STORE STO
+                ON STO.STORE_ID = ISC.STORE_ID
+            INNER JOIN INSP_PLAN INP
+                ON INP.INSP_PLAN_ID = ISC.INSP_PLAN_ID
+            INNER JOIN CHKLST CHK
+                ON CHK.CHKLST_ID = INP.CHKLST_ID
+            INNER JOIN MBR
+                ON MBR.MBR_ID = STO.INSP_MBR_ID
+            WHERE INP.INSP_PLAN_USE_W = 'Y'
         <if test="storeNm != null and storeNm != ''">
-            AND sto.store_nm LIKE '%' || #{storeNm} || '%'
+            AND STO.STORE_NM LIKE '%' || #{storeNm} || '%'
         </if>
         <if test="brandNm != null and brandNm != ''">
         <choose>
             <when test="brandNm == 'KCC 크라상'">
-                AND sto.brand_cd = 'B001'
+                AND STO.BRAND_CD = 'B001'
             </when>
             <when test="brandNm == 'KCC 도넛'">
-                AND sto.brand_cd = 'B002'
+                AND STO.BRAND_CD = 'B002'
             </when>
             <when test="brandNm == 'KCC 브레드'">
-                AND sto.brand_cd = 'B003'
+                AND STO.BRAND_CD = 'B003'
             </when>
             <when test="brandNm == 'KCC 카페'">
-                AND sto.brand_cd = 'B004'
+                AND STO.BRAND_CD = 'B004'
             </when>
             <otherwise>
-                AND sto.brand_cd IS NOT NULL
+                AND STO.BRAND_CD IS NOT NULL
             </otherwise>
         </choose>
         </if>
         <if test="scheduleDate != null and scheduleDate != ''">
-            AND isc.insp_plan_dt LIKE '%' || #{scheduleDate} || '%'
+            AND ISC.INSP_PLAN_DT LIKE '%' || #{scheduleDate} || '%'
         </if>
         <if test="chklstNm != null and chklstNm != ''">
-            AND chk.chklst_nm LIKE '%' || #{chklstNm} || '%'
+            AND CHK.CHKLST_NM LIKE '%' || #{chklstNm} || '%'
         </if>
         <if test="inspector != null and inspector != ''">
-            AND mbr.mbr_nm LIKE '%' || #{inspector} || '%'
+            AND MBR.MBR_NM LIKE '%' || #{inspector} || '%'
         </if>
         <if test="cntCd != null and cntCd !=''" >
-            AND inp.cnt_cd LIKE '%' || #{cntCd} || '%'
+            AND INP.CNT_CD LIKE '%' || #{cntCd} || '%'
         </if>
         <if test="frqCd != null and frqCd !=''" >
-            AND inp.frq_cd LIKE '%' || #{frqCd} || '%'
+            AND INP.FRQ_CD LIKE '%' || #{frqCd} || '%'
         </if>
-        ORDER BY isc.insp_plan_dt DESC
+        ORDER BY ISC.INSP_PLAN_DT DESC
     </select>
 
 
@@ -114,8 +114,8 @@
     </select>
 
 
-    <select id="getInspectionDetails"
-            resultType="com.sims.qsc.inspection_schedule.vo.InspectionDetailsBuilder">
+    <select id="selectInspectionDetails"
+            resultType="com.sims.qsc.inspection_schedule.vo.InspectionDetailsResponse">
         SELECT S.STORE_ID, /* InspectionScheduleMapper.getInspectionDetails 노승우 */
                S.STORE_NM,
                IP.INSP_PLAN_ID,
