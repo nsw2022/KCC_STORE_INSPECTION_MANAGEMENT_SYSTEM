@@ -5,7 +5,8 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import com.sims.qsc.store_inspection_schedule.vo.StoreInspectionSchedule;
+import com.sims.qsc.store_inspection_schedule.vo.StoreInspectionScheduleRequest;
+import com.sims.qsc.store_inspection_schedule.vo.StoreInspectionScheduleResponse;
 
 
 
@@ -15,7 +16,7 @@ public interface StoreInspectionScheduleMapper {
 	 * 점검 일정 내용 달력에 표시 
 	 * @return StoreInspectionSchedule을 List로 리턴
 	 */
-	public List<StoreInspectionSchedule> getStoreInspectionSchedule();
+	public List<StoreInspectionScheduleResponse> selectStoreInspectionSchedule();
 	
 
 	/**
@@ -24,7 +25,7 @@ public interface StoreInspectionScheduleMapper {
 	 * @param {string} inspPlanDt 점검계획일정
 	 * @return storeNm과 inspPlanDt를 받아와 StoreInspectionSchedule List로 리턴
 	 */
-	public List<StoreInspectionSchedule> getStoreInspectionSchedule(@Param("storeNm") String storeNm, 
+	public List<StoreInspectionScheduleRequest> selectStoreInspectionSchedule(@Param("storeNm") String storeNm, 
 																	@Param("inspPlanDt") String inspPlanDt);
 
 	
@@ -32,13 +33,13 @@ public interface StoreInspectionScheduleMapper {
 	 * 점검 일정에서 모든 점검자들을 볼 수 있음.
 	 * @return 점검자들의 이름을 List로 리턴.
 	 */
-	public List<String> getInspectorList();
+	public List<String> selectInspectorList();
 	
 	/**
 	 * 점검 일정에서 모든 점검 유형을 볼 수 있음
 	 * @return 점검유형 종류들을 LIST로 리턴
 	 */
-	public List<String> getInspectionType();
+	public List<String> selectInspectionType();
 	
 
 	/**
@@ -47,7 +48,7 @@ public interface StoreInspectionScheduleMapper {
 	 * @param {string} inspTypeCd 점검유형
 	 * @return mbrNo와 inspTypeCd 둘 다 받거나 하나만 받아와서 동적으로 처리하여 StoreInspectionSchedule List로 리턴
 	 */
-	public List<StoreInspectionSchedule> getStoreInspectionScheduleByFilter(@Param("inspMbrNo") String mbrNo,
+	public List<StoreInspectionScheduleRequest> selectStoreInspectionScheduleByFilter(@Param("inspMbrNo") String mbrNo,
 																			@Param("inspTypeCd") String inspTypeCd,
 																			@Param("svMbrNo") String svMbrNo);
 	/**
@@ -56,5 +57,5 @@ public interface StoreInspectionScheduleMapper {
 	 * @param {string} inspMbrNo 점검자 사원번호
 	 * @return List<String>
 	 */
-	public List<String> getInspectorList(@Param("svMbrNo") String svMbrNo, @Param("inspMbrNo") String inspMbrNo);
+	public List<String> selectInspectorList(@Param("svMbrNo") String svMbrNo, @Param("inspMbrNo") String inspMbrNo);
 }

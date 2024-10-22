@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sims.qsc.store_inspection_schedule.service.StoreInspectionScheduleService;
-import com.sims.qsc.store_inspection_schedule.vo.StoreInspectionSchedule;
+import com.sims.qsc.store_inspection_schedule.vo.StoreInspectionScheduleRequest;
+import com.sims.qsc.store_inspection_schedule.vo.StoreInspectionScheduleResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,27 +51,27 @@ public class StoreInspectionScheduleController {
     */
    @ResponseBody
    @GetMapping("/store-inspection-schedule/schedules")
-   public ResponseEntity<List<StoreInspectionSchedule>> storeInspectionScheduleList() throws Exception {
+   public ResponseEntity<?> storeInspectionScheduleList() throws Exception {
 	   Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 	   String username = auth.getName();
 	   String usernameCode = username.substring(0,1);
 	   
 	   if(usernameCode.equals("S")) {
-		   List<StoreInspectionSchedule> list = storeInspectionScheduleService.getScheduleListByMbrNoAndInspTypeCd(null, null, username);
+		   List<StoreInspectionScheduleRequest> list = storeInspectionScheduleService.selectScheduleListByMbrNoAndInspTypeCd(null, null, username);
 		   if(list.isEmpty()) {
 			   return new ResponseEntity<>(HttpStatus.NOT_FOUND);		   
 		   } else {
 			   return new ResponseEntity<>(list, HttpStatus.OK);
 		   }
 	   } else if(usernameCode.equals("C")) {
-		   List<StoreInspectionSchedule> list = storeInspectionScheduleService.getScheduleListByMbrNoAndInspTypeCd(username, null, null);
+		   List<StoreInspectionScheduleRequest> list = storeInspectionScheduleService.selectScheduleListByMbrNoAndInspTypeCd(username, null, null);
 		   if(list.isEmpty()) {
 			   return new ResponseEntity<>(HttpStatus.NOT_FOUND);		   
 		   } else {
 			   return new ResponseEntity<>(list, HttpStatus.OK);
 		   }
 	   } else {
-		   List<StoreInspectionSchedule> list = storeInspectionScheduleService.getScheduleList();
+		   List<StoreInspectionScheduleResponse> list = storeInspectionScheduleService.selectScheduleList();
 		   if(list.isEmpty()) {
 			   return new ResponseEntity<>(HttpStatus.NOT_FOUND);		   
 		   } else {
@@ -93,21 +94,21 @@ public class StoreInspectionScheduleController {
 	   String usernameCode = username.substring(0,1);
 	   
 	   if(usernameCode.equals("S")) {
-		   List<String> list = storeInspectionScheduleService.getInspectorListByMbr(username, null);
+		   List<String> list = storeInspectionScheduleService.selectInspectorListByMbr(username, null);
 		   if(list.isEmpty()) {
 			   return new ResponseEntity<>(HttpStatus.NOT_FOUND);		   
 		   } else {
 			   return new ResponseEntity<>(list, HttpStatus.OK);
 		   }
 	   } else if(usernameCode.equals("C")) {
-		   List<String> list = storeInspectionScheduleService.getInspectorListByMbr(null, username);
+		   List<String> list = storeInspectionScheduleService.selectInspectorListByMbr(null, username);
 		   if(list.isEmpty()) {
 			   return new ResponseEntity<>(HttpStatus.NOT_FOUND);		   
 		   } else {
 			   return new ResponseEntity<>(list, HttpStatus.OK);
 		   }
 	   } else {
-		   List<String> list = storeInspectionScheduleService.getInspectorList();
+		   List<String> list = storeInspectionScheduleService.selectInspectorList();
 		   if(list.isEmpty()) {
 			   return new ResponseEntity<>(HttpStatus.NOT_FOUND);		   
 		   } else {
@@ -125,8 +126,8 @@ public class StoreInspectionScheduleController {
     */
    @ResponseBody
    @PostMapping("/store-inspection-schedule/chklst/{storeNm}/{inspPlanDt}")
-   public ResponseEntity<List<StoreInspectionSchedule>> storeChklstSchedule(@PathVariable("storeNm") String storeNm, @PathVariable("inspPlanDt") String inspPlanDt) {
-	   List<StoreInspectionSchedule> storeChklstSchdList = storeInspectionScheduleService.getScheduleListByStoreNmAndInspPlanDt(storeNm, inspPlanDt);
+   public ResponseEntity<List<StoreInspectionScheduleRequest>> storeChklstSchedule(@PathVariable("storeNm") String storeNm, @PathVariable("inspPlanDt") String inspPlanDt) {
+	   List<StoreInspectionScheduleRequest> storeChklstSchdList = storeInspectionScheduleService.selectScheduleListByStoreNmAndInspPlanDt(storeNm, inspPlanDt);
 	   if(storeChklstSchdList.isEmpty()) {
 		   return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	   } else {
@@ -141,7 +142,7 @@ public class StoreInspectionScheduleController {
    @ResponseBody
    @GetMapping("/store-inspection-schedule/inspection-types")
    public ResponseEntity<List<String>> inspectionTypeList() {
-	   List<String> inspectionTypes =storeInspectionScheduleService.getInspectionTypeList();
+	   List<String> inspectionTypes =storeInspectionScheduleService.selectInspectionTypeList();
 	   if(inspectionTypes.isEmpty()) {
 		   return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	   } else {
@@ -156,8 +157,8 @@ public class StoreInspectionScheduleController {
     */
    @ResponseBody
    @PostMapping("/store-inspection-schedule/no/{mbrNo}")
-   public ResponseEntity<List<StoreInspectionSchedule>> storeInspectionScheduleByMbrNo(@PathVariable("mbrNo") String mbrNo) {
-	   List<StoreInspectionSchedule> list = storeInspectionScheduleService.getScheduleListByMbrNoAndInspTypeCd(mbrNo, null, null);
+   public ResponseEntity<List<StoreInspectionScheduleRequest>> storeInspectionScheduleByMbrNo(@PathVariable("mbrNo") String mbrNo) {
+	   List<StoreInspectionScheduleRequest> list = storeInspectionScheduleService.selectScheduleListByMbrNoAndInspTypeCd(mbrNo, null, null);
 	   if(list.isEmpty()) {
 		 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	   } else {
@@ -172,8 +173,8 @@ public class StoreInspectionScheduleController {
     */
    @ResponseBody
    @PostMapping("/store-inspection-schedule/type/{inspTypeCd}")
-   public ResponseEntity<List<StoreInspectionSchedule>> storeInspectionScheduleByInspTypeCd(@PathVariable("inspTypeCd") String inspTypeCd) {
-	   List<StoreInspectionSchedule> list = storeInspectionScheduleService.getScheduleListByMbrNoAndInspTypeCd(null, inspTypeCd, null);
+   public ResponseEntity<List<StoreInspectionScheduleRequest>> storeInspectionScheduleByInspTypeCd(@PathVariable("inspTypeCd") String inspTypeCd) {
+	   List<StoreInspectionScheduleRequest> list = storeInspectionScheduleService.selectScheduleListByMbrNoAndInspTypeCd(null, inspTypeCd, null);
 	   if(list.isEmpty()) {
 		   return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	   } else {
@@ -189,8 +190,8 @@ public class StoreInspectionScheduleController {
     */
    @ResponseBody
    @PostMapping("/store-inspection-schedule/search/{mbrNo}/{inspTypeCd}")
-   public ResponseEntity<List<StoreInspectionSchedule>> storeInspectionScheduleByInspTypeCd(@PathVariable("mbrNo") String mbrNo, @PathVariable("inspTypeCd") String inspTypeCd) {
-	   List<StoreInspectionSchedule> list = storeInspectionScheduleService.getScheduleListByMbrNoAndInspTypeCd(mbrNo, inspTypeCd, null);
+   public ResponseEntity<List<StoreInspectionScheduleRequest>> storeInspectionScheduleByInspTypeCd(@PathVariable("mbrNo") String mbrNo, @PathVariable("inspTypeCd") String inspTypeCd) {
+	   List<StoreInspectionScheduleRequest> list = storeInspectionScheduleService.selectScheduleListByMbrNoAndInspTypeCd(mbrNo, inspTypeCd, null);
 	   if(list.isEmpty()) {
 		   return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	   } else {

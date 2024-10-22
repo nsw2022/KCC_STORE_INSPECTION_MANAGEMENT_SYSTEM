@@ -171,7 +171,9 @@ $(function () {
       const $wrapper = $(this);
       const instance = $wrapper.data("autocompleteInstance");
       if (instance) {
-        instance.updateSelected("선택 해 주세요.");
+		let text = $(this).siblings('label').text() + ' 검색';
+		
+        instance.updateSelected(text);
       }
     });
   });
@@ -341,51 +343,7 @@ $(function () {
   // 처음 페이지 로드 시 checklist_count 값 설정
   updateChecklistCount();
 
-  // 새로운 행 데이터를 생성하는 함수
-  function createNewRowData() {
-    var newData = {
-      no: rowData.length + 1,
-      store: "",
-      brand: "",
-      checklist_name: "",
-      schedule_date: "",
-      inspector: "",
-    };
-    return newData;
-  }
-
-  // '추가' 버튼 클릭 이벤트 리스너
-  $("#addRowButton").on("click", function () {
-    var newItem = createNewRowData();
-    rowData.push(newItem);
-    gridOptions.api.applyTransaction({ add: [newItem] });
-    updateChecklistCount();
-  });
-
-  // '삭제' 버튼 클릭 이벤트 리스너
-  $("#deleteRowButton").on("click", function () {
-    var selectedRows = gridOptions.api.getSelectedRows();
-    if (selectedRows.length > 0) {
-      gridOptions.api.applyTransaction({ remove: selectedRows });
-
-      selectedRows.forEach(function (row) {
-        var index = rowData.findIndex(function (data) {
-          return data.no === row.no;
-        });
-        if (index > -1) {
-          rowData.splice(index, 1);
-        }
-      });
-      updateChecklistCount();
-    } else {
-      Swal.fire({
-        title: "경고!",
-        text: "삭제할 항목을 선택해주세요.",
-        icon: "warning",
-        confirmButtonText: "확인",
-      });
-    }
-  });
+  
 });
 
 function openPopup(content) {
