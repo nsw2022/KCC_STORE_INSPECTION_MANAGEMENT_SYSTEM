@@ -51,7 +51,12 @@
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
 
 </head>
-
+<%!
+    String getTodayString() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // 날짜 형식 지정
+        return sdf.format(new Date()); // 현재 날짜를 위에서 지정한 형식으로 포맷팅
+    }
+%>
 
 <div class="sidebar">
     <jsp:include page="../../sidebar/sidebar.jsp"/>
@@ -84,15 +89,15 @@
 
                         <div class="bottom-box-content my-4">
                             <!-- 검색 필드 섹션 -->
-                            <div class="container-fluid px-0">
+                            <div class="container-fluid top-box-content px-0">
                                 <div class="row g-3 align-items-center">
 
                                     <!-- 가맹점 라벨과 검색 필드 -->
                                     <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-12">
-                                        <label for="storeSearch" class="form-label">가맹점</label>
+                                        <label for="topStoreSearch" class="form-label">가맹점</label>
                                         <div class="wrapper" data-autocomplete="store">
                                             <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                                                <span>가맹점 검색</span>
+                                                <span id="storeNm">가맹점 검색</span>
                                                 <i class="uil uil-angle-down"></i>
                                             </div>
                                             <div class="hide-list">
@@ -100,7 +105,7 @@
                                                     <input
                                                             type="text"
                                                             class="form-control top-search"
-                                                            id="storeSearch"
+                                                            id="topStoreSearch"
                                                             placeholder="가맹점명을 입력해주세요"
                                                     />
                                                     <ul class="options"></ul>
@@ -111,10 +116,10 @@
 
                                     <!-- 브랜드 라벨과 검색 필드 -->
                                     <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-12">
-                                        <label for="inspectorSearch" class="form-label">브랜드</label>
-                                        <div class="wrapper" data-autocomplete="inspector">
+                                        <label for="topBrandSearch" class="form-label">브랜드</label>
+                                        <div class="wrapper" data-autocomplete="BRAND">
                                             <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                                                <span>브랜드 검색</span>
+                                                <span id="brandNm">브랜드 검색</span>
                                                 <i class="uil uil-angle-down"></i>
                                             </div>
                                             <div class="hide-list">
@@ -122,7 +127,7 @@
                                                     <input
                                                             type="text"
                                                             class="form-control top-search"
-                                                            id="inspectorSearch"
+                                                            id="topBrandSearch"
                                                             placeholder="브랜드명을 입력해주세요"
                                                     />
                                                     <ul class="options"></ul>
@@ -131,12 +136,7 @@
                                         </div>
                                     </div>
 
-                                    <%!
-                                        String getTodayString() {
-                                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // 날짜 형식 지정
-                                            return sdf.format(new Date()); // 현재 날짜를 위에서 지정한 형식으로 포맷팅
-                                        }
-                                    %>
+
                                     <!-- 점검 예정일 라벨과 필드 -->
                                     <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-12">
                                         <label for="topScheduleDate" class="form-label">점검 예정일</label>
@@ -147,7 +147,7 @@
                                                         class="form-control top-search"
                                                         id="topScheduleDate"
                                                         placeholder="예정일을 입력해주세요"
-                                                        min="<%= getTodayString() %>"
+
                                                 />
                                             </div>
                                         </div>
@@ -155,10 +155,10 @@
 
                                     <!-- 체크리스트명 라벨과 검색 필드 -->
                                     <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 col-12">
-                                        <label for="svSearchInput" class="form-label">체크리스트</label>
+                                        <label for="topChkLst" class="form-label">체크리스트</label>
                                         <div class="wrapper" data-autocomplete="CHKLST">
                                             <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                                                <span>체크리스트 검색</span>
+                                                <span id="chklstNm">체크리스트 검색</span>
                                                 <i class="uil uil-angle-down"></i>
                                             </div>
                                             <div class="hide-list">
@@ -166,7 +166,7 @@
                                                     <input
                                                             type="text"
                                                             class="form-control top-search"
-                                                            id="svSearchInput"
+                                                            id="topChkLst"
                                                             placeholder="체크리스트를 입력해주세요"
                                                     />
                                                     <ul class="options"></ul>
@@ -177,10 +177,10 @@
 
                                     <!-- 점검자 라벨과 검색 필드 -->
                                     <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 col-12">
-                                        <label for="inspector" class="form-label">점검자</label>
+                                        <label for="topInspector" class="form-label">점검자</label>
                                         <div class="wrapper" data-autocomplete="inspector">
                                             <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                                                <span>점검자 검색</span>
+                                                <span id="inspector">점검자 검색</span>
                                                 <i class="uil uil-angle-down"></i>
                                             </div>
                                             <div class="hide-list">
@@ -188,7 +188,7 @@
                                                     <input
                                                             type="text"
                                                             class="form-control top-search"
-                                                            id="inspector"
+                                                            id="topInspector"
                                                             placeholder="점검자를 입력해주세요"
                                                     />
                                                     <ul class="options"></ul>
@@ -197,6 +197,28 @@
                                         </div>
                                     </div>
 
+
+                                    <!-- 빈도 -->
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="top-frequency" class="form-label ">빈도</label>
+                                        <select id="top-frequency" name="frequency" class="form-select bottom-select">
+                                            <option value="all" selected>전체</option>
+                                            <option value="none">빈도없음</option>
+                                            <option value="daily">일별</option>
+                                            <option value="weekly">주별</option>
+                                            <option value="monthly">월별</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- 횟수 -->
+                                    <div class="col-lg-3 col-md-6 col-12">
+                                        <label for="top-count" class="form-label">횟수</label>
+                                        <select id="top-count" name="count" class="form-select bottom-select">
+                                            <option value="none" selected>전체</option>
+                                            <!-- 빈도에 따라 동적으로 옵션이 추가될 예정 -->
+                                        </select>
+
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -212,11 +234,11 @@
                     <div class="middle-content">
                         <div class="button-box"
                              style="display: flex; justify-content: space-between; align-items: center;">
-                            <span class="ms-3" style="font: 350 20px Noto Sans KR;">총 <span class="checklist_count"
+                            <span class="ms-3" style="font: 350 20px Noto Sans KR;">총 <span id="checklist_count"
                                                                                             style="color: #0035BE"></span>개</span>
                             <div class="my-0">
-                                <button type="button" class="btn btn-light me-3" onclick="onAddRow()">추가</button>
-                                <button type="button" class="btn btn-light" onclick="onDeleteRow()">삭제</button>
+                                <button type="button" class="btn btn-light me-3" id="addRowButton">추가</button>
+                                <button type="button" class="btn btn-light" id="deleteRowButton">삭제</button>
                             </div>
                         </div>
                         <div>
@@ -240,7 +262,7 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="container px-0">
+                        <div class="container px-0 bottom-box-filter">
                             <div class="row g-3 align-items-center pt-4">
 
                                 <!-- 점검유형 -->

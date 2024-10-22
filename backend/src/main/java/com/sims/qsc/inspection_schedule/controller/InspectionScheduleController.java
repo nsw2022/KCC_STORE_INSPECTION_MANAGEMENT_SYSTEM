@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/qsc")
-public class InspectionController {
+public class InspectionScheduleController {
 
-    @GetMapping("/inspection_schedule/schedule_list")
+    @GetMapping("/inspection-schedule/schedule-list")
     public void inspectionSchedule() {
 
     }

@@ -91,12 +91,12 @@
                         <div class="sidebar-submenu">
                             <ul>
                                 <li>
-                                    <form id="inspection_schedule" action="/qsc/inspection_schedule/schedule_list" method="get"></form>
+                                    <form id="inspection_schedule" action="/qsc/inspection-schedule/schedule-list" method="get"></form>
                                     <a href="#" onclick="document.getElementById('inspection_schedule').submit()">가맹점 점검 계획 관리</a>
                                 </li>
 
                                 <li>
-                                    <form id="inspection_schedule_detail" action="/qsc/store_inspection_schedule" method="get"></form>
+                                    <form id="inspection_schedule_detail" action="/qsc/store-inspection-schedule" method="get"></form>
                                     <a href="#" onclick="document.getElementById('inspection_schedule_detail').submit()">가맹점 점검 일정 조회</a>
                                 </li>
                                 <li>
