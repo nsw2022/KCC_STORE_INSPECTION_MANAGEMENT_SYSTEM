@@ -2,12 +2,13 @@
 let rowData = [];
 let gridApi = null;
 let gridOptions = null;
+let selectedRowNo = 0;
 
 async function loadData() {
   try {
-    const response = await fetch("https://localhost:8081/master/checklist/list");
+    const response = await fetch("https://localhost:8081/master/checklist/list")
     const data = await response.json();
-
+    console.log(data);
     // rowData에 데이터를 할당
     rowData = data.map((item) => {
       if (item.masterChklstNm === null) {
@@ -30,7 +31,7 @@ async function loadData() {
           resizable: true,
           cellStyle: { backgroundColor: "#ffffff" },
         },
-        { field: "chklstId", headerName: "no", width: 80, minWidth: 50 },
+        { field: "chklstId", headerName: "No", width: 80, minWidth: 50 },
         { field: "brandNm", headerName: "브랜드", minWidth: 110 },
         { field: "chklstNm", headerName: "체크리스트명", minWidth: 110 },
         { field: "masterChklstNm", headerName: "마스터 체크리스트", minWidth: 110 },
@@ -96,7 +97,17 @@ async function loadData() {
       pagination: true,
       paginationAutoPageSize: true,
       onCellClicked: (params) => {
+<<<<<<< Updated upstream
         console.log("cell was clicked", params);
+=======
+        console.log("cell was clicked", params.data);
+        selectedRowNo = params.data.chklstId;
+        console.log(selectedRowNo);
+        $(".brandPlaceholder").text(params.data.brandNm);
+        $(".checklistPlaceholder").text(params.data.chklstNm);
+        $(".masterChecklistPlaceholder").text(params.data.masterChklstNm);
+        $(".inspectionTypePlaceholder").text(params.data.inspTypeNm);
+>>>>>>> Stashed changes
       },
     };
 
@@ -160,9 +171,54 @@ function onDeleteRow() {
     alert("삭제할 항목을 선택하세요.");
   }
 }
-
-
-
+function confirmationDialog() {
+  Swal.fire({
+    title: "확인",
+    text: "체크리스트를 저장하시겠습니까?",
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "확인",
+    cancelButtonText: "취소",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // 체크리스트를 서버에 저장하는 fetch 요청
+      fetch("https://localhost:8081/master/checklist/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          brandNm:`${$(".brandPlaceholder").text()}`,
+          chklstNm: `${$(".checklistPlaceholder").text()}`,
+          masterChklstNm: `${$(".masterChecklistPlaceholder").text()}`,
+          inspTypeNm: `${$(".inspectionTypePlaceholder").text()}`,
+        }),
+      })
+      .then((data) => {
+        // 서버 저장이 성공하면 완료 알림 표시
+        Swal.fire({
+          title: "완료!",
+          text: "완료되었습니다.",
+          icon: "success",
+          confirmButtonText: "OK",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            checkUnload = false;
+            location.href = "/master/checklist";
+          }
+        });
+      })
+      .catch((error) => {
+        // 저장에 실패하면 에러 알림 표시
+        Swal.fire("실패!", error.message, "error");
+      });
+    } else {
+      Swal.fire("취소!", "취소되었습니다.", "error");
+    }
+  });
+}
 
 $(function () {
   class Autocomplete {
@@ -294,9 +350,6 @@ $(function () {
    * @todo responseBody로 받아올것이라면 여기서 Ajax로 데이터를 요청하면 됨
    */
   const autocompleteData = {
-
-    // 가맹점
-    store: ["-전체", "혜화점", "종로점", "청량리점", "안산점", "부평점", "용산점", "답십리점",],
     // 점검자
     inspector: ["-전체-", "노승우", "이지훈", "유재원", "원승언", "노승수"],
     // 점검 유형
@@ -366,3 +419,61 @@ function toggleSearchBox() {
 document.addEventListener('DOMContentLoaded', () => {
   toggleSearchBox(); // 함수 호출
 });
+
+
+// MutationObserver를 이용해 span의 텍스트 변화를 감지
+function observeChanges(selector, callback) {
+  const targetNode = document.querySelector(selector);
+  if (!targetNode) return;
+
+  const observer = new MutationObserver(function(mutationsList) {
+    for (let mutation of mutationsList) {
+      if (mutation.type === 'childList' || mutation.type === 'characterData') {
+        callback(mutation.target.textContent);
+      }
+    }
+  });
+
+  observer.observe(targetNode, { childList: true, characterData: true, subtree: true });
+}
+
+
+// span 요소들의 변화 감지
+observeChanges(".brandPlaceholder", function(newText) {
+  checkUnload = true;
+  $('.save-btn').removeAttr("disabled");
+  rowData[selectedRowNo - 1].brandNm = newText;
+  gridApi.applyTransaction({
+    update: [rowData[selectedRowNo - 1]]
+  });
+});
+observeChanges(".checklistPlaceholder", function(newText) {
+  checkUnload = true;
+  $('.save-btn').removeAttr("disabled");
+  rowData[selectedRowNo - 1].chklstNm = newText;
+  gridApi.applyTransaction({
+    update: [rowData[selectedRowNo - 1]]
+  });
+});
+observeChanges(".masterChecklistPlaceholder", function(newText) {
+  checkUnload = true;
+  $('.save-btn').removeAttr("disabled");
+  rowData[selectedRowNo - 1].masterChklstNm = newText;
+  gridApi.applyTransaction({
+    update: [rowData[selectedRowNo - 1]]
+  });
+});
+observeChanges(".inspectionTypePlaceholder", function(newText) {
+  checkUnload = true;
+  $('.save-btn').removeAttr("disabled");
+  rowData[selectedRowNo - 1].inspTypeNm = newText;
+  gridApi.applyTransaction({
+    update: [rowData[selectedRowNo - 1]]
+  });
+});
+
+// 페이지를 벗어날 때 알림을 띄움
+$(window).on("beforeunload", function() {
+  if (checkUnload) return '이 페이지를 벗어나면 작성된 내용은 저장되지 않습니다.';
+});
+

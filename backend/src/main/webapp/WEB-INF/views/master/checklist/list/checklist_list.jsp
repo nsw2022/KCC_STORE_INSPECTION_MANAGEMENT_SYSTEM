@@ -44,10 +44,17 @@ pageEncoding="UTF-8" %>
       rel="stylesheet"
       href="/resources/css/master/checklist/list/checklist_list.css"
     />
+    <!-- SweetAlert2 CSS -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+            rel="stylesheet"
+    />
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </head>
   <body>
   <div class="sidebar">
@@ -259,7 +266,7 @@ pageEncoding="UTF-8" %>
                   <div class="button-box" style="display: flex; justify-content: space-between; align-items: center;">
                     <span class="m-0" style="font: 700 20px Noto Sans KR;">체크리스트 상세</span>
                     <div class="my-0">
-                      <button type="button" class="btn btn-primaty save-btn" onclick="onAddRow()">저장</button>
+                      <button type="button" class="btn btn-primaty save-btn" onclick="confirmationDialog()" disabled>저장</button>
                     </div>
                   </div>
                   <div class="container px-0">

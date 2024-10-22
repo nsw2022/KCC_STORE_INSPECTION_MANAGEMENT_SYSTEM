@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sims.master.checklist_manage.mapper.ChecklistMapper">
-    <select id="getChecklistAll" resultType="ChecklistVo">
+    <select id="selectChecklistAll" resultType="ChecklistResponse">
         SELECT /* ChecklistMapper.getChecklistAll 유재원 */
             CHKLST.CHKLST_ID,
             BRAND_NM.DTL_CD_NM AS BRAND_NM,

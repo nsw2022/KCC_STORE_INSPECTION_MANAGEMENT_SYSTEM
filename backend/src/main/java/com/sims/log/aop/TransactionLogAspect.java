@@ -58,7 +58,8 @@ public class TransactionLogAspect {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String mbrId = "anonymousUser".equals(auth.getName()) ? auth.getName() : Integer.toString(memberMapper.getMbrIdByMbrNo(auth.getName()));
+        String mbrId = "anonymousUser".equals(auth.getName()) ? auth.getName() : Integer.toString(memberMapper.selectMbrIdByMbrNo(auth.getName()));
+        log.info("auth = {}", auth);
 
         String agent = request.getHeader("USER-AGENT");
         String os = ClientInfo.getClientOS(agent);
