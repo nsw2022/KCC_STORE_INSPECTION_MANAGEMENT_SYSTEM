@@ -115,8 +115,10 @@
                         <label for="checklist-select">체크리스트 선택 :</label>
                         <select id="checklist-select">
                             <option value="all">전체</option>
-                            <option value="위생 점검">위생 점검</option>
-                            <option value="품질 점검">품질 점검</option>
+                            <option value="위생점검">위생 점검</option>
+                            <option value="품질점검">품질 점검</option>
+                            <option value="기획점검">기획 점검</option>
+                            <option value="정기점검">정기 점검</option>
                         </select>
                     </div>
                     <div class="schedule-table-wrapper">
@@ -207,6 +209,14 @@
         </div>
     </main>
 </div>
+
+
+<script type="text/javascript">
+    var currentUsername = '<c:out value="${username}" />';
+    var currentUserRole = '<c:out value="${userRole}" />';
+</script>
+
+
 </body>
 <script src="/resources/js/qsc/store_inspection/store_inspection.js"></script>
 </html>

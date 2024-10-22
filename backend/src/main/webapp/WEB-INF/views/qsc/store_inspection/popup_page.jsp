@@ -27,41 +27,13 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-<%--    <p>가맹점명: <%= inspectionData.getStoreName() %></p>--%>
-<%--    <p>점검 일자: <%= inspectionData.getInspectionDate() %></p>--%>
-<%--    <p>점검 분류: <%= inspectionData.getInspectionType() %></p>--%>
 <section class="inspection-detail">
     <div class="inspection-header">
         <h2>점검 가맹점 상세조회</h2>
     </div>
     <div class="inspection-info">
-        <table class="inspection-table">
-            <thead>
-            <tr>
-                <th colspan="2">
-                    <span class="inspection-status">KCC 크라상</span>
-                    <span class="inspection-subtitle">가맹점 (이름예시 아무거나 추가하기)</span>
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>
-                    <i class="fas fa-calendar-alt"></i> 점검일 : 2024 - 09 - 24
-                </td>
-                <td>
-                    <i class="fas fa-calendar-check"></i> 최근 점검일 : 2024 - 09 - 17
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <i class="fas fa-clock"></i> 개점시간 : 11:30
-                </td>
-                <td>
-                    <i class="fas fa-user"></i> 점검자 : 노승우
-                </td>
-            </tr>
-            </tbody>
+        <table class="inspection-table" id="inspection-detail-table">
+            <!-- JavaScript를 통해 테이블 헤더와 바디를 생성 -->
         </table>
     </div>
 </section>
@@ -77,43 +49,15 @@
             <th>이력</th>
         </tr>
         </thead>
-        <tbody>
-        <tr>
-            <td>위생점검</td>
-            <td>2024 - 09 - 10</td>
-            <td>노승우</td>
-            <td>75</td>
-            <td><button class="history-btn">이력조회</button></td>
-        </tr>
-        <tr>
-            <td>위생점검</td>
-            <td>2024 - 08 - 12</td>
-            <td>유재원</td>
-            <td>70</td>
-            <td><button class="history-btn">이력조회</button></td>
-        </tr>
-        <tr>
-            <td>위생점검</td>
-            <td>2024 - 07 - 25</td>
-            <td>원승언</td>
-            <td>55</td>
-            <td><button class="history-btn">이력조회</button></td>
-        </tr>
-        <tr>
-            <td>위생점검</td>
-            <td>2024 - 06 - 25</td>
-            <td>이지훈</td>
-            <td>65</td>
-            <td><button class="history-btn">이력조회</button></td>
-        </tr>
+        <tbody id="inspection-results-body">
+        <!-- JavaScript를 통해 동적으로 행을 추가합니다 -->
         </tbody>
     </table>
 </section>
 <div id="go-inspection-wrap">
-    <button id="go-inspection" onclick="startInspection()">점검시작</button>
+    <button id="go-inspection" onclick="startInspection(this)">점검시작</button>
 </div>
 
-
-</body>
 <script src="/resources/js/qsc/store_inspection/store_inspection_popup.js"></script>
+</body>
 </html>

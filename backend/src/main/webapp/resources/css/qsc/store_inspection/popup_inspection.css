@@ -360,7 +360,7 @@ body{
 }
 
 .answer-btn {
-    width: 45%;
+    width: calc(50% - 10px);
     height: 60px;
     border: 1px solid #d0d5dd;
     background-color: white;
@@ -373,11 +373,15 @@ body{
 
 .answer-btn:hover {
     background-color: #f4f7ff;
+    border: solid 1px #4318ff;
+    color: #4318FF;
+    transition: ease-out 0.3s;
 }
 
-.answer-btn:active {
-    border-color: #4318ff;
-    color: #4318ff;
+.answer-btn.active {
+    background-color: #4318ff;
+    border: none;
+    color: white;
 }
 
 .answer-section2 {
