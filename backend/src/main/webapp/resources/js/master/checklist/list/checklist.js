@@ -97,9 +97,6 @@ async function loadData() {
       pagination: true,
       paginationAutoPageSize: true,
       onCellClicked: (params) => {
-<<<<<<< Updated upstream
-        console.log("cell was clicked", params);
-=======
         console.log("cell was clicked", params.data);
         selectedRowNo = params.data.chklstId;
         console.log(selectedRowNo);
@@ -107,7 +104,6 @@ async function loadData() {
         $(".checklistPlaceholder").text(params.data.chklstNm);
         $(".masterChecklistPlaceholder").text(params.data.masterChklstNm);
         $(".inspectionTypePlaceholder").text(params.data.inspTypeNm);
->>>>>>> Stashed changes
       },
     };
 
