@@ -5,7 +5,7 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ChecklistVo {
+public class ChecklistResponse {
     private int chklstId;
     private String brandNm;
     private String masterChklstNm;

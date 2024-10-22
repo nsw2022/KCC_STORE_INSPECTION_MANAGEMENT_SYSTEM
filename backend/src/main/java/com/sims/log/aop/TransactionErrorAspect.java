@@ -52,7 +52,7 @@ public class TransactionErrorAspect {
             log.info("browser = {}", browser);
 
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            String mbrId = "anonymousUser".equals(auth.getName()) ? auth.getName() : Integer.toString(memberMapper.getMbrIdByMbrNo(auth.getName()));
+            String mbrId = "anonymousUser".equals(auth.getName()) ? auth.getName() : Integer.toString(memberMapper.selectMbrIdByMbrNo(auth.getName()));
 
             TransactionErrorLogVo transactionErrorLogVo = TransactionErrorLogVo.builder()
                     .url(request.getRequestURI())

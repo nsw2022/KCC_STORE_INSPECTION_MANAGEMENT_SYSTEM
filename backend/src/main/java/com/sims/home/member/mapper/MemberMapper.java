@@ -5,8 +5,8 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface MemberMapper {
-    public MemberDao getMbrByMbrId(String mbrNo);
-    public int getMbrIdByMbrNo(String mbrNo);
+    public MemberDao selectMbrByMbrId(String mbrNo);
+    public int selectMbrIdByMbrNo(String mbrNo);
 
     public int insertMbr(MemberDao member);
 

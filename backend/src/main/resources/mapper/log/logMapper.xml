@@ -46,19 +46,19 @@
             RES_OS
         )
         VALUES(
-               TRG_LOG_SEQ.NEXTVAL,
-               TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MISS'),
-               #{url},
-               #{requestType},
-               #{method},
-               #{pramCount},
-               #{pramContent},
-               #{regMbrId},
-               #{regMbrIp},
-               #{trgSttsCd},
-               #{resMs},
-               #{resBrowser},
-               #{resOs}
+            TRG_LOG_SEQ.NEXTVAL,
+            TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MISS'),
+            #{url},
+            #{requestType},
+            #{method},
+            #{pramCount},
+            #{pramContent},
+            #{regMbrId},
+            #{regMbrIp},
+            #{trgSttsCd},
+            #{resMs},
+            #{resBrowser},
+            #{resOs}
         )
     </insert>
 
@@ -78,20 +78,20 @@
             RES_BROWSER,
             RES_OS
         )
-        VALUES(
-                TRG_ERR_LOG_SEQ.NEXTVAL,
-                TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MISS'),
-                #{url},
-                #{requestType},
-                #{method},
-                #{pramCount},
-                #{pramContent},
-                #{regMbrId},
-                #{regMbrIp},
-                #{errCd},
-                #{errMsg},
-                #{resBrowser},
-                #{resOs}
+        VALUES (
+            TRG_ERR_LOG_SEQ.NEXTVAL,
+            TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MISS'),
+            #{url},
+            #{requestType},
+            #{method},
+            #{pramCount},
+            #{pramContent},
+            #{regMbrId},
+            #{regMbrIp},
+            #{errCd},
+            #{errMsg},
+            #{resBrowser},
+            #{resOs}
         )
     </insert>
 </mapper>

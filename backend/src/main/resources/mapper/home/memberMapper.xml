@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sims.home.member.mapper.MemberMapper">
-    <select id="getMbrByMbrId" resultType="MemberDao">
+    <select id="selectMbrByMbrId" resultType="MemberDao">
         SELECT /* MemberMapper.getMemberByMbrId 유재원 */
             MBR_ID,
             MBR_NO,
@@ -26,7 +26,7 @@
             MBR_NO = #{mbrNo}
     </select>
 
-    <select id="getMbrIdByMbrNo">
+    <select id="selectMbrIdByMbrNo">
         SELECT MBR_ID FROM MBR WHERE MBR_NO = #{mbrNo}
     </select>
 

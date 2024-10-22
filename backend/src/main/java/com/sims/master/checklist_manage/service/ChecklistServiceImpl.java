@@ -1,7 +1,7 @@
 package com.sims.master.checklist_manage.service;
 
 import com.sims.master.checklist_manage.mapper.ChecklistMapper;
-import com.sims.master.checklist_manage.vo.ChecklistVo;
+import com.sims.master.checklist_manage.vo.ChecklistResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,8 +17,16 @@ public class ChecklistServiceImpl implements ChecklistService{
 
 
     @Override
-    public List<ChecklistVo> getChecklistAll() {
-
-        return checklistMapper.getChecklistAll();
+    public List<ChecklistResponse> selectChecklistAll() {
+        return checklistMapper.selectChecklistAll();
     }
+<<<<<<< Updated upstream
+=======
+
+    @Override
+    public int deleteChecklistByChklstId(int chklstId) {
+        return checklistMapper.deleteChecklistByChklstId(chklstId);
+    }
+
+>>>>>>> Stashed changes
 }
