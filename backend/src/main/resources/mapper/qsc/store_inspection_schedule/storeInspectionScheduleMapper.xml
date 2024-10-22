@@ -4,8 +4,8 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sims.qsc.store_inspection_schedule.mapper.StoreInspectionScheduleMapper">
-    <select id="getStoreInspectionSchedule" resultType="com.sims.qsc.store_inspection_schedule.vo.StoreInspectionSchedule">
-        SELECT /* StoreInspectionScheduleMapper.getStoreInspectionSchedule 원승언 */
+    <select id="selectStoreInspectionSchedule" resultType="com.sims.qsc.store_inspection_schedule.vo.StoreInspectionScheduleResponse">
+        SELECT /* StoreInspectionScheduleMapper.selectStoreInspectionSchedule 원승언 */
         	DISTINCT
 			    MB.MBR_NO AS INSP_MBR_NO,
 			    MBR_NM,
@@ -46,8 +46,8 @@
 
     </select>
     
-    <select id="getStoreInspectionScheduleByFilter" resultType="com.sims.qsc.store_inspection_schedule.vo.StoreInspectionSchedule">
-        SELECT /* StoreInspectionScheduleMapper.getStoreInspectionScheduleByFilter 원승언 */
+    <select id="selectStoreInspectionScheduleByFilter" resultType="com.sims.qsc.store_inspection_schedule.vo.StoreInspectionScheduleRequest">
+        SELECT /* StoreInspectionScheduleMapper.selectStoreInspectionScheduleByFilter 원승언 */
         	DISTINCT
 			    MB.MBR_NO AS INSP_MBR_NO,
 			    MB2.MBR_NO AS SV_MBR_NO,
@@ -94,8 +94,8 @@
 
     </select>
     
-    <select id="getInspectorList" resultType="String">
-    	SELECT /* StoreInspectionScheduleMapper.getInspectorList 원승언 */
+    <select id="selectInspectorList" resultType="String">
+    	SELECT /* StoreInspectionScheduleMapper.selectInspectorList 원승언 */
 		    DISTINCT
 		        MB.MBR_NM || '(' || MB.MBR_NO || ')' AS INSP_MBR_NM     
 		FROM
@@ -137,8 +137,8 @@
     	</where>
     </select>
     
-    <select id="getInspectionType" resultType="String">
-	    SELECT /* StoreInspectionScheduleMapper.getInspectionType 원승언 */
+    <select id="selectInspectionType" resultType="String">
+	    SELECT /* StoreInspectionScheduleMapper.selectInspectionType 원승언 */
 	        DISTINCT 
 	            CASE 
 	            	WHEN INSP_TYPE_CD = 'IT001' THEN '제품점검'

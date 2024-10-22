@@ -96,8 +96,8 @@
 
             <div class="d-flex justify-content-between">
               <div class="my-3" style="margin: 0 !important;">
-                <button type="button" class="btn btn-light me-3 select-btn p-0" onclick="onAddRow()">조회</button>
-                <button type="button" class="btn btn-light init-btn p-0" onclick="onDeleteRow()">초기화</button>
+                <button type="button" class="btn btn-light me-3 select-btn p-0">조회</button>
+                <button type="button" id="reset-selection-top" class="btn btn-light init-btn p-0">초기화</button>
               </div>
             </div>
           </div>
