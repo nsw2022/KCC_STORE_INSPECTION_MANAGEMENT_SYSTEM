@@ -57,22 +57,8 @@
     </div>
 </div>
 
-<section class="inspection-detail">
-    <div class="inspection-info">
-        <table class="inspection-table">
-            <tr>
-                <td class="info-title">
-                    <p>KCC 크라상 점포 위생점검표_2024</p>
-                </td>
-                <td class="info-details">
-                    <span class="store-name">KCC 크라상</span>
-                    <span class="store-subtitle">가맹점 (이름예시 아무거나 추가하기)</span>
-                    <span class="inspection-date">점검일 : 2024.09.24</span>
-                    <span class="inspector-name">점검자 : 노승우</span>
-                </td>
-            </tr>
-        </table>
-    </div>
+<section class="inspection-detail" id="inspection-detail">
+    <!-- JavaScript를 통해 동적으로 내용이 채워집니다. -->
 </section>
 
 
@@ -102,6 +88,6 @@
 
 
 </body>
-<script src="/resources/js/qsc/store_inspection/store_inspection_popup.js"></script>
+<%--<script src="/resources/js/qsc/store_inspection/store_inspection_popup.js"></script>--%>
 <script src="/resources/js/qsc/store_inspection/popup_inspection.js"></script>
 </html>

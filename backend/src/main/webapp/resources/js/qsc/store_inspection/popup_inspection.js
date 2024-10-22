@@ -1,103 +1,248 @@
-// 예시 JSON 데이터
-const inspectionData = [
-  {
-    categoryName: "중대법규",
-    categoryId: "중대법규",
-    subcategories: [
-      {
-        subcategoryName: "영업취소",
-        questions: [
-          {
-            questionId: 1,
-            questionText: "1. 소비기한 변조 및 삭제",
-            questionType: "2-choice",
-          },
-        ],
-      },
-      {
-        subcategoryName: "영업정지 1개월 이상",
-        questions: [
-          {
-            questionId: 2,
-            questionText: "2. 표시사항 전부를 표시하지 않은 식품을 영업에 사용",
-            questionType: "5-choice",
-          },
-          {
-            questionId: 3,
-            questionText: "3. 식품안전법 위반에 괸한 법률",
-            questionType: "5-choice",
-          },
-        ],
-      },
-      {
-        subcategoryName: "영업정지 15일 이상",
-        questions: [
-          {
-            questionId: 4,
-            questionText: "4. 표시사항 전부를 표시하지 않은 식품을 영업에 사용",
-            questionType: "2-choice",
-          },
-        ],
-      },
-      // 추가적인 중분류와 문항들을 여기에 추가하세요...
-    ],
-  },
-  {
-    categoryName: "기타법규",
-    categoryId: "기타법규",
-    subcategories: [
-      {
-        subcategoryName: "영업취소",
-        questions: [
-          {
-            questionId: 1,
-            questionText: "1. 소비기한 변조 및 삭제",
-            questionType: "2-choice",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    categoryName: "위생관리",
-    categoryId: "위생관리",
-    subcategories: [
-      {
-        subcategoryName: "영업취소",
-        questions: [
-          {
-            questionId: 1,
-            questionText: "1. 소비기한 변조 및 삭제",
-            questionType: "2-choice",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    categoryName: "위생지도상황",
-    categoryId: "위생지도상황",
-    subcategories: [
-      {
-        subcategoryName: "과태료",
-        questions: [
-          {
-            questionId: 1,
-            questionText: "1. 소비기한 변조 및 삭제",
-            questionType: "2-choice",
-          },
-        ],
-      },
-    ],
-  },
-  // 대분류 추가하기!
-];
+// 날짜 형식 포맷 함수 (YYYY.MM.DD)
+function formatDate(dateStr) {
+  // dateStr이 'YYYYMMDD' 형식인지 확인
+  if (!dateStr || dateStr.length !== 8) return dateStr; // 형식이 올바르지 않으면 그대로 반환
+  const year = dateStr.substring(0, 4);
+  const month = dateStr.substring(4, 6);
+  const day = dateStr.substring(6, 8);
+  return `${year}.${month}.${day}`; // 템플릿 리터럴 사용하여 'YYYY.MM.DD' 형식으로 변경
+}
+
+// 개점시간 형식 변환 함수 (HHmm -> HH:MM)
+function formatOpenHm(timeStr) {
+  if (!timeStr || timeStr.length !== 4) return timeStr; // 형식이 올바르지 않으면 그대로 반환
+  const hours = timeStr.substring(0, 2);
+  const minutes = timeStr.substring(2, 4);
+  return `${hours}:${minutes}`;
+}
+
+// 페이지 로드 시 실행
+document.addEventListener("DOMContentLoaded", function () {
+  const urlParams = new URLSearchParams(window.location.search);
+  const chklstId = urlParams.get('chklstId');
+  const storeNm = urlParams.get('storeNm');
+  const inspPlanDt = urlParams.get('inspPlanDt');
+
+  if (chklstId && storeNm && inspPlanDt) {
+    fetchPopupData(chklstId, storeNm, inspPlanDt);
+  } else {
+    alert('필수 파라미터(chklstId, storeNm, inspPlanDt)가 지정되지 않았습니다.');
+  }
+
+  generateContent(inspectionData);
+
+  // 첫 번째 탭과 콘텐츠를 active 상태로 설정
+  const firstTab = document.querySelector(".inspection-tab");
+  const firstContent = document.querySelector(".inspection-list");
+
+  if (firstTab) {
+    firstTab.classList.add("active");
+  }
+
+  if (firstContent) {
+    firstContent.classList.add("active");
+  }
+});
+
+// REST API에서 inspection-detail 섹션 데이터를 가져오는 함수
+function fetchPopupData(chklstId, storeNm, inspPlanDt) {
+  const url = `/filter/store_inspection_popup?chklstId=${chklstId}&storeNm=${encodeURIComponent(storeNm)}&inspPlanDt=${inspPlanDt}`;
+
+  fetch(url)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`네트워크 응답이 올바르지 않습니다. 상태 코드: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('팝업 데이터:', data);
+        if (data.length > 0) {
+          // 첫 번째 데이터를 inspection-detail 섹션에 채움
+          populateInspectionDetail(data[0]);
+
+          // 데이터를 변환하여 generateContent 함수에 전달
+          const inspectionData = processFetchedData(data);
+          generateContent(inspectionData);
+
+          // 첫 번째 탭과 콘텐츠를 active 상태로 설정
+          const firstTab = document.querySelector(".inspection-tab");
+          const firstContent = document.querySelector(".inspection-list");
+
+          if (firstTab) {
+            firstTab.classList.add("active");
+          }
+
+          if (firstContent) {
+            firstContent.classList.add("active");
+          }
+        } else {
+          alert('점검 상세 데이터가 없습니다.');
+        }
+      })
+      .catch(error => {
+        console.error('데이터 가져오기 실패:', error);
+        alert('점검 데이터를 불러오는 데 실패했습니다.');
+      });
+}
+
+// 데이터를 그룹화하여 generateContent 함수가 기대하는 형식으로 변환하는 함수
+function processFetchedData(data) {
+  const categoryMap = {};
+
+  data.forEach(item => {
+    const ctgId = item.ctgId;
+    const masterCtgId = item.masterCtgId;
+
+    // 대분류 판단 (masterCtgId가 null 또는 0인 경우)
+    if (masterCtgId == null || masterCtgId === 0) {
+      // 대분류 생성 또는 가져오기
+      if (!categoryMap[ctgId]) {
+        categoryMap[ctgId] = {
+          categoryName: item.ctgNm,
+          categoryId: ctgId,
+          subcategories: []
+        };
+      }
+    } else {
+      // 중분류 처리
+      // 해당 대분류 찾기
+      let category = categoryMap[masterCtgId];
+      if (!category) {
+        // 대분류가 아직 없다면 생성
+        category = {
+          categoryName: '', // 이름은 나중에 채움
+          categoryId: masterCtgId,
+          subcategories: []
+        };
+        categoryMap[masterCtgId] = category;
+      }
+
+      // 중분류 찾기 또는 생성
+      let subcategory = category.subcategories.find(sub => sub.subcategoryId === ctgId);
+      if (!subcategory) {
+        subcategory = {
+          subcategoryName: item.ctgNm,
+          subcategoryId: ctgId,
+          questions: []
+        };
+        category.subcategories.push(subcategory);
+      }
+
+      // 문항 추가 또는 업데이트
+      if (item.evitContent) {
+        // 문항 찾기 또는 생성
+        let question = subcategory.questions.find(q => q.questionId === item.evitId);
+        if (!question) {
+          let questionType = '';
+          if (item.evitTypeCd === 'ET001') {
+            questionType = '2-choice';
+          } else if (item.evitTypeCd === 'ET004') {
+            questionType = '5-choice';
+          }
+
+          question = {
+            questionId: item.evitId,
+            questionText: item.evitContent,
+            questionType: questionType,
+            options: []
+          };
+          subcategory.questions.push(question);
+        }
+
+        // 옵션 추가
+        if (item.chclstContent) {
+          question.options.push(item.chclstContent);
+        }
+      }
+    }
+  });
+
+  // 대분류 이름 채우기
+  Object.values(categoryMap).forEach(category => {
+    if (!category.categoryName) {
+      const item = data.find(d => d.ctgId == category.categoryId && (d.masterCtgId == null || d.masterCtgId === 0));
+      category.categoryName = item ? item.ctgNm : 'Unknown Category';
+    }
+  });
+
+  // 객체를 배열로 변환하여 반환
+  return Object.values(categoryMap);
+}
+
+// inspection-detail 섹션을 동적으로 생성하는 함수
+function populateInspectionDetail(data) {
+  const inspectionDetailSection = document.getElementById('inspection-detail');
+  if (!inspectionDetailSection) {
+    console.error('inspection-detail 섹션을 찾을 수 없습니다.');
+    return;
+  }
+
+  // 기존 내용 초기화
+  inspectionDetailSection.innerHTML = '';
+
+  // inspection-info div 생성
+  const inspectionInfo = document.createElement('div');
+  inspectionInfo.classList.add('inspection-info');
+
+  // inspection-table 생성
+  const table = document.createElement('table');
+  table.classList.add('inspection-table');
+
+  // 테이블 헤더 행 생성
+  const headerRow = document.createElement('tr');
+
+  const titleCell = document.createElement('td');
+  titleCell.classList.add('info-title');
+  const titleP = document.createElement('p');
+  titleP.textContent = data.chklstNm || '점검표'; // chklstNm이 없을 경우 기본값
+  titleCell.appendChild(titleP);
+
+  const detailsCell = document.createElement('td');
+  detailsCell.classList.add('info-details');
+
+  const storeNameSpan = document.createElement('span');
+  storeNameSpan.classList.add('store-name');
+  storeNameSpan.textContent = data.brandNm || '브랜드명'; // brandNm이 없을 경우 기본값
+  detailsCell.appendChild(storeNameSpan);
+
+  const storeSubtitleSpan = document.createElement('span');
+  storeSubtitleSpan.classList.add('store-subtitle');
+  storeSubtitleSpan.textContent = `가맹점 (${data.storeNm || '가맹점명'})`; // storeNm이 없을 경우 기본값
+  detailsCell.appendChild(storeSubtitleSpan);
+
+  const inspectionDateSpan = document.createElement('span');
+  inspectionDateSpan.classList.add('inspection-date');
+  inspectionDateSpan.innerHTML = `<i class="fas fa-calendar-alt"></i> 점검일 : ${formatDate(data.inspPlanDt)}`;
+  detailsCell.appendChild(inspectionDateSpan);
+
+  const inspectorNameSpan = document.createElement('span');
+  inspectorNameSpan.classList.add('inspector-name');
+  inspectorNameSpan.innerHTML = `<i class="fas fa-user"></i> 점검자 : ${data.mbrNm || '점검자명'}`;
+  detailsCell.appendChild(inspectorNameSpan);
+
+  // 테이블에 행 추가
+  headerRow.appendChild(titleCell);
+  headerRow.appendChild(detailsCell);
+  table.appendChild(headerRow);
+
+
+  inspectionInfo.appendChild(table);
+  inspectionDetailSection.appendChild(inspectionInfo);
+}
+
+
+
+
 
 // 콘텐츠를 동적으로 생성하는 함수
 function generateContent(data) {
   // 탭 버튼들을 생성
   const tabContainer = document.querySelector(".inspection-tabs");
   const contentContainer = document.querySelector(".inspection-section");
+
+  // 총점 초기화
+  let totalScoreValue = 0;
 
   data.forEach((category, index) => {
     // 탭 버튼 생성
@@ -144,6 +289,7 @@ function generateContent(data) {
         const addBtn = document.createElement("button");
         addBtn.classList.add("add-btn");
         addBtn.textContent = "+";
+        addBtn.type = "button"; // 버튼의 기본 동작 방지
         inspectionContentDetail.appendChild(addBtn);
 
         inspectionContent.appendChild(inspectionContentDetail);
@@ -158,21 +304,75 @@ function generateContent(data) {
           answerSection = document.createElement("div");
           answerSection.classList.add("answer-section");
 
-          const yesBtn = document.createElement("button");
-          yesBtn.classList.add("answer-btn");
-          yesBtn.textContent = "예";
-          answerSection.appendChild(yesBtn);
+          question.options.forEach(option => {
+            const btn = document.createElement("button");
+            btn.classList.add("answer-btn");
+            btn.textContent = option;
+            btn.dataset.questionId = question.questionId;
+            btn.dataset.optionValue = option;
+            btn.type = "button"; // 버튼의 기본 동작 방지
 
-          const noBtn = document.createElement("button");
-          noBtn.classList.add("answer-btn");
-          noBtn.textContent = "아니오";
-          answerSection.appendChild(noBtn);
+            // 답변 버튼 클릭 시 선택 상태 토글 및 하위 입력 필드 활성화
+            btn.addEventListener('click', function() {
+              // 같은 문항의 다른 버튼들 비활성화
+              document.querySelectorAll(`.answer-btn[data-question-id="${question.questionId}"]`).forEach(b => {
+                b.classList.remove('active');
+              });
+              this.classList.add('active');
+
+              // 해당 질문의 하위 입력 필드 찾기
+              const detailContent = inspectionContentWrapper.querySelector(".detail-content");
+              const storeInfo = inspectionContentWrapper.querySelector(".store-info");
+              const locationInputs = storeInfo.querySelectorAll(`input[name^='location_${question.questionId}']`);
+
+              if (option === "부적합") {
+                // "부적합" 선택 시 하위 입력 필드 활성화 (etc-input과 caupvd 제외)
+                detailContent.querySelectorAll("input, textarea, select").forEach(input => {
+                  if (!input.classList.contains('caupvd') && !input.name.startsWith('etc_')) {
+                    input.disabled = false;
+                  }
+                });
+
+                // 위치정보 라디오 버튼 활성화
+                locationInputs.forEach(input => {
+                  input.disabled = false;
+                });
+              } else {
+                // "적합" 선택 시 하위 입력 필드 비활성화 및 초기화 (etc-input과 caupvd 제외)
+                detailContent.querySelectorAll("input, textarea, select").forEach(input => {
+                  if (!input.classList.contains('caupvd') && !input.name.startsWith('etc_')) {
+                    input.disabled = true;
+                    if (input.tagName.toLowerCase() === 'textarea') {
+                      input.value = "";
+                    } else if (input.tagName.toLowerCase() === 'input' && input.type === 'radio') {
+                      input.checked = false;
+                    }
+                  }
+                });
+
+                // 위치정보 라디오 버튼 비활성화 및 초기화
+                locationInputs.forEach(input => {
+                  input.disabled = true;
+                  if (input.type === 'radio') {
+                    input.checked = false;
+                  }
+                });
+
+                // 기타사항 입력 초기화
+                const etcInput = storeInfo.querySelector(`textarea[name='etc_${question.questionId}']`);
+                if (etcInput) {
+                  etcInput.disabled = true;
+                  etcInput.value = "";
+                }
+              }
+            });
+
+            answerSection.appendChild(btn);
+          });
         } else if (question.questionType === "5-choice") {
           answerSection = document.createElement("div");
           answerSection.classList.add("answer-section2");
-
-          const options = ["매우좋음", "좋음", "보통", "나쁨", "매우나쁨"];
-          options.forEach((option) => {
+          question.options.forEach(option => {
             const label = document.createElement("label");
             label.classList.add("radio-label2");
 
@@ -181,11 +381,72 @@ function generateContent(data) {
             input.name = `rating_${question.questionId}`;
             input.value = option;
 
+            // 라디오 버튼 변경 시 하위 입력 필드 활성화
+            input.addEventListener('change', function() {
+              const detailContent = inspectionContentWrapper.querySelector(".detail-content");
+              const storeInfo = inspectionContentWrapper.querySelector(".store-info");
+              const locationInputs = storeInfo.querySelectorAll(`input[name^='location_${question.questionId}']`);
+
+              if (option === "매우나쁨" || option === "나쁨") {
+                // "매우나쁨" 또는 "나쁨" 선택 시 하위 입력 필드 활성화 (etc-input과 caupvd 제외)
+                detailContent.querySelectorAll("input, textarea, select").forEach(input => {
+                  if (!input.classList.contains('caupvd') && !input.name.startsWith('etc_')) {
+                    input.disabled = false;
+                  }
+                });
+
+                // 위치정보 라디오 버튼 활성화
+                locationInputs.forEach(input => {
+                  input.disabled = false;
+                });
+              } else {
+                // 그 외 선택 시 하위 입력 필드 비활성화 및 초기화 (etc-input과 caupvd 제외)
+                detailContent.querySelectorAll("input, textarea, select").forEach(input => {
+                  if (!input.classList.contains('caupvd') && !input.name.startsWith('etc_')) {
+                    input.disabled = true;
+                    if (input.tagName.toLowerCase() === 'textarea') {
+                      input.value = "";
+                    } else if (input.tagName.toLowerCase() === 'input' && input.type === 'radio') {
+                      input.checked = false;
+                    }
+                  }
+                });
+
+                // 위치정보 라디오 버튼 비활성화 및 초기화
+                locationInputs.forEach(input => {
+                  input.disabled = true;
+                  if (input.type === 'radio') {
+                    input.checked = false;
+                  }
+                });
+
+                // 기타사항 입력 초기화
+                const etcInput = storeInfo.querySelector(`textarea[name='etc_${question.questionId}']`);
+                if (etcInput) {
+                  etcInput.disabled = true;
+                  etcInput.value = "";
+                }
+              }
+            });
+
             label.appendChild(input);
             label.appendChild(document.createTextNode(option));
 
+            // 비활성화된 상태에서 클릭 시 경고 메시지 표시 (현재 주석 처리됨)
+            /*
+            label.addEventListener('click', function(e) {
+              const inputElem = this.querySelector("input");
+              if (inputElem.disabled) {
+                e.preventDefault();
+                alert("입력할 수 없습니다.");
+              }
+            });
+            */
+
             answerSection.appendChild(label);
           });
+
+          // 비활성화된 상태에서 클릭 시 경고 메시지 표시는 제거하여 활성화 상태로 만듦
         }
 
         inspectionContentWrapper.appendChild(answerSection);
@@ -200,14 +461,16 @@ function generateContent(data) {
         const cameraBtn = document.createElement("button");
         cameraBtn.classList.add("photo-btn", "camera-btn");
         cameraBtn.innerHTML = '<i class="fa-solid fa-camera"></i>사진촬영';
+        cameraBtn.type = "button"; // 버튼의 기본 동작 방지
         photoButtons.appendChild(cameraBtn);
 
         const galleryBtn = document.createElement("button");
         galleryBtn.classList.add("photo-btn", "gallery-btn");
         galleryBtn.innerHTML = '<i class="fa-regular fa-image"></i>갤러리';
+        galleryBtn.type = "button"; // 버튼의 기본 동작 방지
         photoButtons.appendChild(galleryBtn);
 
-        // 먼저 photoBoxes를 정의하고 나서 setupPhotoUpload 호출
+        // photoBoxes 생성 및 설정
         const photoBoxes = document.createElement("div");
         photoBoxes.classList.add("photo-boxes");
 
@@ -239,18 +502,20 @@ function generateContent(data) {
         const tabBtn1 = document.createElement("button");
         tabBtn1.classList.add("tab-btn", "active");
         tabBtn1.textContent = "위치정보";
+        tabBtn1.type = "button"; // 버튼의 기본 동작 방지
         tabSection.appendChild(tabBtn1);
 
         const tabBtn2 = document.createElement("button");
         tabBtn2.classList.add("tab-btn");
         tabBtn2.textContent = "상세입력";
+        tabBtn2.type = "button"; // 버튼의 기본 동작 방지
         tabSection.appendChild(tabBtn2);
 
         storeInfo.appendChild(tabSection);
 
         // 위치정보 콘텐츠
-        const locationContent = document.createElement("div");
-        locationContent.classList.add("content2", "location-content");
+        const locationContentDiv = document.createElement("div");
+        locationContentDiv.classList.add("content2", "location-content");
 
         const locationContentList = document.createElement("div");
         locationContentList.classList.add("content2", "location-content-list");
@@ -263,30 +528,53 @@ function generateContent(data) {
           const input = document.createElement("input");
           input.type = "radio";
           input.name = `location_${question.questionId}`;
+          input.value = location;
+          input.disabled = true; // 초기에는 비활성화
+
+          // 라디오 버튼 변경 시 "기타" 입력 필드 활성화
+          input.addEventListener('change', function() {
+            const otherInfo = storeInfo.querySelector(".other-info");
+            if (location === "기타") {
+              otherInfo.querySelector("textarea").disabled = false;
+            } else {
+              otherInfo.querySelector("textarea").disabled = true;
+              otherInfo.querySelector("textarea").value = ""; // 내용 초기화
+            }
+          });
+
+          // 비활성화된 상태에서 클릭 시 경고 메시지 표시
+          label.addEventListener('click', function(e) {
+            if (input.disabled) {
+              e.preventDefault();
+              alert("입력할 수 없습니다.");
+            }
+          });
+
           label.appendChild(input);
 
           locationContentList.appendChild(label);
         });
 
-        locationContent.appendChild(locationContentList);
+        locationContentDiv.appendChild(locationContentList);
 
         // 기타사항 입력
-        const otherInfo = document.createElement("div");
-        otherInfo.classList.add("other-info");
+        const otherInfoDiv = document.createElement("div");
+        otherInfoDiv.classList.add("other-info");
 
         const otherLabel = document.createElement("label");
         otherLabel.textContent = "기타사항";
-        otherInfo.appendChild(otherLabel);
+        otherInfoDiv.appendChild(otherLabel);
 
         const etcInput = document.createElement("textarea");
         etcInput.classList.add("etc-input");
         etcInput.name = `etc_${question.questionId}`;
         etcInput.placeholder = "기타사항을 입력해주세요";
-        otherInfo.appendChild(etcInput);
+        etcInput.disabled = true; // 초기에는 비활성화
+        otherInfoDiv.appendChild(etcInput);
 
-        locationContent.appendChild(otherInfo);
+        locationContentDiv.appendChild(otherInfoDiv);
 
-        storeInfo.appendChild(locationContent);
+        storeInfo.appendChild(locationContentDiv);
 
         // 상세입력 콘텐츠
         const detailContent = document.createElement("div");
@@ -307,6 +595,7 @@ function generateContent(data) {
         productName.type = "text";
         productName.classList.add("product-name");
         productName.placeholder = "제품명 입력";
+        productName.disabled = true; // 초기에는 비활성화
         inputGroup1.appendChild(productName);
 
         inputGroupCover.appendChild(inputGroup1);
@@ -322,12 +611,14 @@ function generateContent(data) {
         violationQuantity.type = "text";
         violationQuantity.classList.add("violation-quantity");
         violationQuantity.placeholder = "위반수량 입력";
+        violationQuantity.disabled = true; // 초기에는 비활성화
         inputGroup2.appendChild(violationQuantity);
 
         inputGroupCover.appendChild(inputGroup2);
 
         detailContent.appendChild(inputGroupCover);
 
+        // 원인
         const inputGroup3 = document.createElement("div");
         inputGroup3.classList.add("input-group");
 
@@ -338,10 +629,12 @@ function generateContent(data) {
         const reason = document.createElement("textarea");
         reason.classList.add("reason");
         reason.placeholder = "원인을 작성해주세요";
+        reason.disabled = true; // 초기에는 비활성화
         inputGroup3.appendChild(reason);
 
         detailContent.appendChild(inputGroup3);
 
+        // 개선조치사항
         const inputGroup4 = document.createElement("div");
         inputGroup4.classList.add("input-group");
 
@@ -352,10 +645,12 @@ function generateContent(data) {
         const action = document.createElement("textarea");
         action.classList.add("action");
         action.placeholder = "개선조치사항을 입력해주세요";
+        action.disabled = true; // 초기에는 비활성화
         inputGroup4.appendChild(action);
 
         detailContent.appendChild(inputGroup4);
 
+        // 위반사항
         const inputGroup5 = document.createElement("div");
         inputGroup5.classList.add("input-group");
 
@@ -366,10 +661,12 @@ function generateContent(data) {
         const violation = document.createElement("textarea");
         violation.classList.add("violation");
         violation.placeholder = "위반사항을 입력해주세요";
+        violation.disabled = true; // 초기에는 비활성화
         inputGroup5.appendChild(violation);
 
         detailContent.appendChild(inputGroup5);
 
+        // 귀책사유
         const inputGroup6 = document.createElement("div");
         inputGroup6.classList.add("input-group");
 
@@ -381,16 +678,37 @@ function generateContent(data) {
         radioGroup.classList.add("radio-group");
 
         ["SV", "점주", "직원", "기타"].forEach((responsibility) => {
-          const label = document.createElement("label");
-          label.textContent = responsibility;
+          const respLabel = document.createElement("label");
+          respLabel.textContent = responsibility;
 
-          const input = document.createElement("input");
-          input.type = "radio";
-          input.name = `responsibility_${question.questionId}`;
-          input.value = responsibility;
-          label.appendChild(input);
+          const respInput = document.createElement("input");
+          respInput.type = "radio";
+          respInput.name = `responsibility_${question.questionId}`;
+          respInput.value = responsibility;
+          respInput.disabled = true; // 초기에는 비활성화
 
-          radioGroup.appendChild(label);
+          // 라디오 버튼 변경 시 "기타" 입력 필드 활성화
+          respInput.addEventListener('change', function() {
+            const caupvd = inputGroup6.querySelector(".caupvd");
+            if (responsibility === "기타") {
+              caupvd.disabled = false;
+            } else {
+              caupvd.disabled = true;
+              caupvd.value = ""; // 내용 초기화
+            }
+          });
+
+          // 비활성화된 상태에서 클릭 시 경고 메시지 표시
+          respLabel.addEventListener('click', function(e) {
+            if (respInput.disabled) {
+              e.preventDefault();
+              alert("입력할 수 없습니다.");
+            }
+          });
+
+          respLabel.appendChild(respInput);
+
+          radioGroup.appendChild(respLabel);
         });
 
         inputGroup6.appendChild(radioGroup);
@@ -398,6 +716,7 @@ function generateContent(data) {
         const caupvd = document.createElement("textarea");
         caupvd.classList.add("caupvd");
         caupvd.placeholder = "귀책사유를 입력해주세요";
+        caupvd.disabled = true; // 초기에는 비활성화
         inputGroup6.appendChild(caupvd);
 
         detailContent.appendChild(inputGroup6);
@@ -408,6 +727,11 @@ function generateContent(data) {
 
         inspectionContent.appendChild(inspectionContentWrapper);
       });
+
+      // 중분류의 scoreChklstEvit 값을 합산
+      if (subcategory.scoreChklstEvit) {
+        totalScoreValue += parseInt(subcategory.scoreChklstEvit, 10) || 0;
+      }
 
       inspectionBox.appendChild(inspectionHeader);
       inspectionBox.appendChild(inspectionContent);
@@ -420,7 +744,7 @@ function generateContent(data) {
   // 점수 영역을 동적으로 생성하여 삽입
   const totalScore = document.createElement("div");
   totalScore.classList.add("inspection-total-score");
-  totalScore.innerHTML = "<p>총 <span>100</span> 점</p>";
+  totalScore.innerHTML = `<p>총 <span>${totalScoreValue}</span> 점</p>`;
 
   contentContainer.appendChild(totalScore); // section 내부에 추가
 
@@ -428,7 +752,9 @@ function generateContent(data) {
   addEventListeners();
 }
 
-// -----------------사진 업로드 및 촬영 기능 설정--------------
+
+
+
 // -----------------사진 업로드 및 촬영 기능 설정--------------
 function setupPhotoUpload(photoBoxes, cameraBtn, galleryBtn) {
   let photoCount = 0;
@@ -668,22 +994,7 @@ function addEventListeners() {
   // 추가적인 이벤트 리스너를 여기서 추가하세요...
 }
 
-// 페이지 로드 시 실행
-document.addEventListener("DOMContentLoaded", function () {
-  generateContent(inspectionData);
 
-  // 첫 번째 탭과 콘텐츠를 active 상태로 설정
-  const firstTab = document.querySelector(".inspection-tab");
-  const firstContent = document.querySelector(".inspection-list");
-
-  if (firstTab) {
-    firstTab.classList.add("active");
-  }
-
-  if (firstContent) {
-    firstContent.classList.add("active");
-  }
-});
 // 높이 재조정 함수 (리사이즈 시 호출)
 function adjustWrapperHeight(element) {
   if (element.style.display === "block") {

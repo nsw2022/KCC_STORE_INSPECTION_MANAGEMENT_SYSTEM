@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sims.qsc.store_inspection.mapper.StoreInspectionPopupMapper">
+    <select id="selectInspectionDetails" resultType="com.sims.qsc.store_inspection.vo.StoreInspectionPopupRequest">
+        SELECT
+            s.STORE_NM,
+            CASE
+                WHEN s.BRAND_CD = 'B001' THEN 'KCC 크라상'
+                WHEN s.BRAND_CD = 'B002' THEN 'KCC 도넛'
+                WHEN s.BRAND_CD = 'B003' THEN 'KCC 브레드'
+                WHEN s.BRAND_CD = 'B004' THEN 'KCC 카페'
+            END AS BRAND_NM,
+            isch.INSP_PLAN_DT,
+            isch.INSP_STTS_CD,
+            s.OPEN_HM,
+            m.MBR_NM,
+            m.MBR_NO,
+            c.CHKLST_NM,
+            ir.TOTAL_SCORE,
+            cc.CTG_ID,
+            cc.CTG_NM,
+            c.CHKLST_ID,
+            cc.MASTER_CTG_ID,
+            cc.STND_SCORE,
+            ce.EVIT_CONTENT,
+            ce.EVIT_TYPE_CD,
+            ce.SCORE AS scoreChklstEvit,  -- CHKLST_EVIT 테이블의 SCORE
+            e.CHCLST_CONTENT,
+            e.EVIT_ID,
+            e.NPRFS_CD,
+            e.PENALTY,
+            e.SCORE AS scoreEvitChclst  -- EVIT_CHCLST 테이블의 SCORE
+        FROM
+            INSP_SCHD isch
+                JOIN STORE s ON isch.STORE_ID = s.STORE_ID
+                JOIN MBR m ON s.INSP_MBR_ID = m.MBR_ID
+                JOIN INSP_PLAN ip ON isch.INSP_PLAN_ID = ip.INSP_PLAN_ID
+                JOIN CHKLST c ON ip.CHKLST_ID = c.CHKLST_ID
+                JOIN CHKLST_CTG cc ON c.CHKLST_ID = cc.CHKLST_ID
+                LEFT JOIN CHKLST_EVIT ce ON cc.CTG_ID = ce.CTG_ID
+                LEFT JOIN EVIT_CHCLST e ON ce.EVIT_ID = e.EVIT_ID
+                LEFT JOIN INSP_RESULT ir ON isch.INSP_SCHD_ID = ir.INSP_SCHD_ID
+        WHERE
+            c.CHKLST_ID = #{chklstId}
+          AND s.STORE_NM = #{storeNm}
+          AND isch.INSP_PLAN_DT = #{inspPlanDt}
+    </select>
+
+    <select id="selectRecentInspectionHistory" resultType="com.sims.qsc.store_inspection.vo.RecentInspectionHistoryResponse">
+        SELECT
+            c.CHKLST_NM AS chklstNm,
+            isch.INSP_PLAN_DT AS inspPlanDt,
+            m.MBR_NM AS mbrNm,
+            ir.TOTAL_SCORE AS totalScore
+        FROM
+            INSP_SCHD isch
+                JOIN STORE s ON isch.STORE_ID = s.STORE_ID
+                JOIN MBR m ON s.INSP_MBR_ID = m.MBR_ID
+                JOIN INSP_PLAN ip ON isch.INSP_PLAN_ID = ip.INSP_PLAN_ID
+                JOIN CHKLST c ON ip.CHKLST_ID = c.CHKLST_ID
+                LEFT JOIN INSP_RESULT ir ON isch.INSP_SCHD_ID = ir.INSP_SCHD_ID
+        WHERE
+            s.STORE_NM = #{storeNm}
+          AND isch.INSP_STTS_CD = #{inspSttsCd}
+    </select>
+
+
+
+</mapper>
