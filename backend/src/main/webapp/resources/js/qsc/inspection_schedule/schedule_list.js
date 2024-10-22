@@ -127,53 +127,74 @@ $(function () {
   };
 
   // 각 자동완성 필드에 대한 데이터 목록 정의
-  /**
-   * @todo responseBody로 받아올것이라면 여기서 Ajax로 데이터를 요청하면 됨
-   */
   const autocompleteData = {
-    // 가맹점
-    store: [
-      "혜화점",
-      "종로점",
-      "청량리점",
-      "안산점",
-      "부평점",
-      "용산점",
-      "답십리점",
-    ],
-
-    // 점검자
-    inspector: ["노승우", "이지훈", "유재원", "원승언", "노승수"],
-
-    // 점검 유형
-    INSP: ["정기 점검", "제품 점검"],
-
-    // 체크리스트
-    CHKLST: ["KCC 크라상 위생 점검표", "KCC 카페 제품 점검표"],
-
-    // 브랜드
-    BRAND: ["KCC 크라상", "KCC 카페", "KCC 디저트"],
+    store: () =>
+      $.ajax({
+        url: "/qsc/inspection-schedule/stores",
+        method: "GET",
+      }).then((data) => {
+        // "전체" 옵션 추가
+        return ["전체", ...data];
+      }),
+    inspector: () =>
+      $.ajax({
+        url: "/qsc/inspection-schedule/inspectors",
+        method: "GET",
+      }).then((data) => {
+        return ["전체", ...data];
+      }),
+    INSP: () => Promise.resolve(["전체", "정기 점검", "제품 점검"]),
+    CHKLST: () =>
+      $.ajax({
+        url: "/qsc/inspection-schedule/checklists",
+        method: "GET",
+      }).then((data) => {
+        return ["전체", ...data];
+      }),
+    BRAND: () =>
+      $.ajax({
+        url: "/qsc/inspection-schedule/brands",
+        method: "GET",
+      }).then((data) => {
+        return ["전체", ...data];
+      }),
   };
 
-  // 자동완성 인스턴스를 초기화하고 wrapper 요소에 저장
+  // Autocomplete 인스턴스를 초기화할 때 데이터 로드 후 생성
   $(".wrapper").each(function () {
     const $wrapper = $(this);
     const type = $wrapper.data("autocomplete");
     if (type && autocompleteData[type]) {
-      const autocomplete = new Autocomplete($wrapper, autocompleteData[type]);
-      $wrapper.data("autocompleteInstance", autocomplete);
+      // dataList 가져오기 (함수 호출)
+      autocompleteData[type]()
+        .then((response) => {
+          let dataList;
+          if (type === "INSP") {
+            dataList = response;
+          } else {
+            // AJAX 응답 구조에 따라 적절히 수정
+            // 예를 들어, 응답이 { data: [...] } 형태라면:
+            dataList = response.data || response; // 실제 응답 구조에 맞게 수정 필요
+          }
+          // Autocomplete 인스턴스 생성
+          const autocomplete = new Autocomplete($wrapper, dataList);
+          $wrapper.data("autocompleteInstance", autocomplete);
+        })
+        .catch((error) => {
+          console.error(
+            `Error fetching autocomplete data for type ${type}:`,
+            error,
+          );
+        });
     }
   });
 
-  // 빈도 관련 데이터 및 함수
   /**
-   *
-   * @type {{daily: Array, weekly: Array, monthly: Array,  none: string[]}}
-   * @description daily 매일마다  weekly 매주마다 monthly 매월마다 none은 값 안고름
+   * 빈도 관련 데이터 및 함수
    */
   const frequencyOptions = {
-    daily: generateOptions("매일마다", 50, "일마다"),
-    weekly: generateOptions("매주마다", 50, "주마다"),
+    daily: generateOptions("매일마다", 31, "일마다"),
+    weekly: generateOptions("매주마다", 5, "주마다"),
     monthly: generateOptions("매달마다", 12, "개월마다"),
     none: ["없음"],
   };
@@ -198,20 +219,12 @@ $(function () {
   }
 
   /**
-   * 초기화 시 횟수 select 박스 설정
-   */
-  function initializeCountSelect() {
-    const selectedFrequency = $("#frequency").val();
-    updateCountOptions(selectedFrequency);
-  }
-
-  /**
    * 횟수 옵션을 업데이트하는 함수
    * @param {string} frequency - 선택된 빈도 유형
    */
   function updateCountOptions(frequency) {
     const countSelect = $("#count");
-    countSelect.empty(); //  기존 옵션 제거
+    countSelect.empty(); // 기존 옵션 제거
     $("#bottomScheduleDate").val("none");
     if (frequencyOptions[frequency]) {
       frequencyOptions[frequency].forEach((option) => {
@@ -285,7 +298,7 @@ $(function () {
         // 일수에 맞게 버튼 생성
         buttonsHTML += `
               <div class="col-2 col-sm-3 col-md-2 col-lg-1 mb-2">
-                <button class="btn btn-outline-primary w-100 d-flex justify-content-center" type="button" value="${i}" aria-pressed="${i === 1 ? "false" : "false"}">
+                <button class="btn btn-outline-primary w-100 d-flex justify-content-center" type="button" value="${i}" aria-pressed="false">
                   ${i}
                 </button>
               </div>
@@ -323,6 +336,7 @@ $(function () {
 
   // 커스텀 달력 관련 변수
   let selectedCalendarDates = [];
+
   // 버튼 클릭 시 active 클래스 및 aria-pressed 속성 토글 부트스트랩 색깔 변경
   $(document).on("click", "#dynamic-buttons button", function () {
     // 현재 빈도에 따라 동작
@@ -417,11 +431,11 @@ $(function () {
       // 정렬된 날짜들로 카드 재생성
       selectedCalendarDates.forEach(function (sortedDate) {
         const cardHTML = `
-      <div class="date-card">
-        <span>${sortedDate}</span>
-        <span class="remove-date">&times;</span>
-      </div>
-    `;
+          <div class="date-card">
+            <span>${sortedDate}</span>
+            <span class="remove-date">&times;</span>
+          </div>
+        `;
         $selectedDatesContainer.append(cardHTML);
       });
     }
@@ -580,15 +594,15 @@ $(function () {
 
       // 연도 선택 시 현재 연도 이전을 비활성화하려면 아래 주석 해제
       /*
-                                                $("#year-select-calendar option").each(function () {
-                                                  const optionYear = parseInt($(this).val());
-                                                  if (optionYear < todayYear) {
-                                                    $(this).attr("disabled", true);
-                                                  } else {
-                                                    $(this).removeAttr("disabled");
-                                                  }
-                                                });
-                                                */
+        $("#year-select-calendar option").each(function () {
+          const optionYear = parseInt($(this).val());
+          if (optionYear < todayYear) {
+            $(this).attr("disabled", true);
+          } else {
+            $(this).removeAttr("disabled");
+          }
+        });
+      */
     }
 
     // 초기 달력 생성 (현재 월과 연도)
@@ -600,23 +614,37 @@ $(function () {
   // 달력 함수 호출
   calender();
 
-  /**
-   * 초기화 버튼 클릭 시 모든 선택 초기화
-   */
+  // 상단 초기화
   $("#reset-selection-top").on("click", function () {
     // 점검 예정일
     $("#topScheduleDate").val("none");
 
-    // 자동완성 필드 초기화
+    // 빈도 회수
+    $("#top-frequency").val("all").trigger("change");
+
+    // #top-count의 instance 가져오기
+    const countInstance = $("#top-count").data("autocompleteInstance");
+    if (countInstance) {
+      countInstance.updateSelected("전체");
+    } else {
+      // instance가 없으면 기본 방법으로 설정
+      $("#top-count").val("전체"); // 또는 적절한 기본값
+    }
+
+    // 상단 Autocomplete 필드 초기화
     $(".top-box-content .wrapper").each(function () {
       const $wrapper = $(this);
       const instance = $wrapper.data("autocompleteInstance");
       if (instance) {
-        instance.updateSelected("선택 해 주세요.");
+        instance.updateSelected("전체");
       }
     });
+
+    // 초기 데이터 다시 로드 (필터 없이 전체 데이터 로드)
+    loadInitialData();
   });
 
+  // 하단 초기화
   $("#reset-selection-bottom").on("click", function () {
     // 빈도 초기화
     $("#frequency").val("none");
@@ -624,14 +652,14 @@ $(function () {
     initializeUI();
 
     // 점검 예정일
-    $("#bottomScheduleDate").val("none");
+    $("#bottomScheduleDate").val("all");
 
-    // 자동완성 필드 초기화
-    $(".bottom-box-content .wrapper").each(function () {
+    // 하단 Autocomplete 필드 초기화
+    $(".bottom-box-filter .wrapper").each(function () {
       const $wrapper = $(this);
       const instance = $wrapper.data("autocompleteInstance");
       if (instance) {
-        instance.updateSelected("선택 해 주세요.");
+        instance.updateSelected("전체");
       }
     });
 
@@ -690,6 +718,25 @@ $(function () {
     }
   });
 
+  let topFrequencyOptions = {
+    all: ["전체"],
+    daily: generateOptions("매일마다", 31, "일마다"),
+    weekly: generateOptions("매주마다", 5, "주마다"),
+    monthly: generateOptions("매달마다", 12, "개월마다"),
+    none: ["없음"],
+  };
+  $("#top-frequency").change(function () {
+    const selectedFrequency = $(this).val();
+    const countSelect = $("#top-count");
+    countSelect.empty(); // 먼저 select 요소를 비웁니다.
+    //countSelect.append('<option value="none">전체</option>');
+    if (topFrequencyOptions[selectedFrequency]) {
+      topFrequencyOptions[selectedFrequency].forEach((option) => {
+        countSelect.append(`<option value="${option}">${option}</option>`); // 옵션 태그를 정확하게 닫습니다.
+      });
+    }
+  });
+
   // '전체 선택' 체크박스 클릭 시
   $("#checkAll").click(function () {
     // 모든 'checkItem' 체크박스에 대해 체크 상태를 'checkAll'과 동일하게 설정
@@ -725,11 +772,14 @@ $(function () {
 
   // 모달 영역 끝
 
+  /**
+   * 검색 박스 토글 함수 정의
+   */
   function toggleSearchBox() {
     const toggleButton = document.querySelector(".top-drop-down button"); // 버튼 선택
     const icon = toggleButton.querySelector("i"); // 아이콘 선택
     const searchSection = document.querySelector(
-      ".top-box .bottom-box-content  ",
+      ".top-box .bottom-box-content",
     ); // 검색 섹션 선택 --> 해당 부분은 접을 부분(custom)할 것
 
     // 초기 상태: 검색 섹션 닫힘
@@ -740,16 +790,14 @@ $(function () {
     searchSection.style.overflow = "hidden"; // 내용 숨김
 
     // CSS 트랜지션을 추가하여 부드러운 애니메이션 효과
-    searchSection.style.transition =
-      "max-height 0.3s ease, transform 0.3s ease";
+    searchSection.style.transition = "0.3s ease, transform 0.3s ease";
 
     // 버튼 클릭 이벤트 리스너
     toggleButton.addEventListener("click", () => {
       isOpen = !isOpen; // 상태 토글
 
       if (isOpen) {
-        searchSection.style.maxHeight = `${searchSection.scrollHeight}px`; // 자연스럽게 열기
-        searchSection.style.maxHeight = `${searchSection.scrollHeight}px`; // 자연스럽게 열기
+        searchSection.style.maxHeight = `${searchSection.scrollHeight + 5}px`; // 자연스럽게 열기
         icon.style.transform = "rotate(-90deg)"; // 아이콘 180도 회전
       } else {
         searchSection.style.maxHeight = "0"; // 높이를 0으로 줄여서 닫기
@@ -770,78 +818,16 @@ $(function () {
   // 함수 호출
   toggleSearchBox();
 
-  // ROW 데이타 정의
-  // ROW 데이터 정의
-  const rowData = [
-    {
-      no: 1,
-      store: "혜화점",
-      brand: "KCC 크라상",
-      checklist_name: "KCC 크라상 인상점검표",
-      schedule_date: "2024.10.09",
-      inspector: "노승우",
-    },
-    {
-      no: 2,
-      store: "동대문점",
-      brand: "KCC 크라상",
-      checklist_name: "KCC 크라상 인상점검표",
-      schedule_date: "2024.10.07",
-      inspector: "노승우",
-    },
-    {
-      no: 3,
-      store: "천호점",
-      brand: "KCC 크라상",
-      checklist_name: "KCC 크라상 위생점검표",
-      schedule_date: "2024.10.07",
-      inspector: "이지훈",
-    },
-    {
-      no: 4,
-      store: "건대입구점",
-      brand: "KCC 카페",
-      checklist_name: "KCC 카페 제품점검표",
-      schedule_date: "2024.10.05",
-      inspector: "이지훈",
-    },
-    {
-      no: 5,
-      store: "명동점",
-      brand: "KCC 카페",
-      checklist_name: "KCC 카페 제품점검표",
-      schedule_date: "2024.10.05",
-      inspector: "유재원",
-    },
-    {
-      no: 6,
-      store: "수유점",
-      brand: "KCC 카페",
-      checklist_name: "KCC 카페 제품점검표",
-      schedule_date: "2024.10.03",
-      inspector: "유재원",
-    },
-    {
-      no: 7,
-      store: "청량리점",
-      brand: "KCC 가티",
-      checklist_name: "KCC 카페 인상점검표",
-      schedule_date: "2024.10.03",
-      inspector: "원승언",
-    },
-    {
-      no: 8,
-      store: "왕십리점",
-      brand: "KCC 디저트",
-      checklist_name: "KCC 디저트 인상점검표",
-      schedule_date: "2024.10.01",
-      inspector: "원승언",
-    },
-  ];
+  /**
+   * AG Grid 초기화 및 데이터 로드
+   */
+
+  // 초기 rowData를 빈 배열로 설정
+  const rowData = [];
 
   // 통합 설정 객체
   const gridOptions = {
-    rowData: rowData,
+    rowData: rowData, // 초기에는 빈 배열
     columnDefs: [
       {
         headerName: "",
@@ -852,22 +838,24 @@ $(function () {
         resizable: true,
         cellStyle: { backgroundColor: "#ffffff" },
       },
-      { field: "no", headerName: "No", width: 80, minWidth: 50 },
-      { field: "store", headerName: "가맹점", width: 150, minWidth: 50 },
-      { field: "brand", headerName: "브랜드", width: 150, minWidth: 110 },
+      { field: "no", headerName: "순서", width: 60, minWidth: 50 },
+      { field: "storeNm", headerName: "가맹점", width: 150, minWidth: 50 },
+      { field: "brandNm", headerName: "브랜드", width: 150, minWidth: 110 },
       {
-        field: "checklist_name",
+        field: "chklstNm",
         headerName: "체크리스트명",
-        width: 150,
+        width: 180,
         minWidth: 110,
       },
+      { field: "mbrNm", headerName: "점검자", width: 150, minWidth: 110 },
       {
-        field: "schedule_date",
+        field: "inspPlanDt",
         headerName: "점검예정일",
-        width: 150,
+        width: 160,
         minWidth: 110,
       },
-      { field: "inspector", headerName: "점검자", width: 150, minWidth: 110 },
+      { field: "frqCd", headerName: "빈도", width: 130, minWidth: 70 },
+      { field: "cntCd", headerName: "횟수", width: 130, minWidth: 70 },
       {
         headerName: "관리",
         field: "more",
@@ -879,18 +867,19 @@ $(function () {
             class: "edit-container",
             css: { position: "relative", cursor: "pointer" },
           });
-
+          // console.log(params);
           // SVG 요소 생성
           const $svg = $(`
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 15 15">
-                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
-                        </svg>
-                    `);
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 15 15">
+              <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+            </svg>
+          `);
 
           // '자세히보기' 옵션 div 생성
           const $editDiv = $('<div class="edit-options">자세히보기</div>');
+          $editDiv.attr("data-store-id", params.data.storeId);
 
-          // SVG 클릭 시 '수정' 옵션 표시
+          // SVG 클릭 시 '자세히보기' 옵션 표시
           $svg.on("click", function (e) {
             e.stopPropagation(); // 이벤트 버블링 방지
 
@@ -905,22 +894,36 @@ $(function () {
             $editDiv.css({
               top: offset.top + svgHeight + 2, // SVG 바로 아래에 2px 간격
               left: offset.left + $svg.outerWidth() / 2 - 43, // SVG의 중앙에 왼쪽으로 이동
-              transform: "translateX(-50%)", // 가로 중앙 정3
+              transform: "translateX(-50%)", // 가로 중앙 정렬
             });
 
             // 'show' 클래스 토글
             $editDiv.toggleClass("show");
           });
 
-          // '수정' 옵션 클릭 시 모달 열기
+          // '자세히보기' 옵션 클릭 시 모달 열기
           $editDiv.on("click", function (e) {
             e.stopPropagation(); // 이벤트 버블링 방지
 
-            // 모달 열기
-            $("#masterChecklistModal").modal("show");
-
             // 'edit-options' 숨기기
             $editDiv.removeClass("show");
+
+            // 클래스가 'row bottom-box mb-3'인 요소로 스크롤 이동
+            const targetElement = $(".row.bottom-box.mb-3");
+
+            if (targetElement.length > 0) {
+              // 스크롤 이동 (부드럽게)
+              targetElement[0].scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+              });
+
+              // 요소에 포커스 설정 (필요한 경우)
+              // 포커스를 받기 위해 tabindex="-1" 속성을 추가합니다.
+              targetElement.attr("tabindex", "-1").focus();
+            } else {
+              console.warn("Target element not found.");
+            }
           });
 
           // 컨테이너에 SVG 추가
@@ -942,53 +945,296 @@ $(function () {
     rowSelection: "multiple",
     pagination: true,
     paginationAutoPageSize: true,
+    rowDragManaged: true,
+    rowDragEntireRow: true,
+    rowDragMultiRow: true,
     onCellClicked: (params) => {},
+
+    // 드래그 종료 후 seq 업데이트
+
+    // 그리드가 준비되었을 때 이벤트 핸들러 추가
+    onGridReady: function (params) {
+      // 그리드 API 저장
+      gridOptions.api = params.api;
+      gridOptions.columnApi = params.columnApi;
+
+      //console.log("Grid API 초기화 완료:", gridOptions.api); // 디버깅용 로그
+
+      // 초기 데이터 로드
+      loadInitialData();
+
+      // 체크리스트 개수 업데이트
+      //updateChecklistCount();
+
+      // 그리드 모델 업데이트 시 총 개수도 업데이트
+      //gridOptions.api.addEventListener("modelUpdated", updateTotalCount);
+    },
   };
 
-  const gridDiv = document.querySelector("#myGrid");
-  const gridApi = agGrid.createGrid(gridDiv, gridOptions);
+  $("#masterChecklistModal").on("show.bs.modal", function (e) {
+    const storeId = $(this).attr("data-store-id");
+    //console.log("모달에 전달된 storeId:", storeId);
 
-  // 체크리스트 개수를 업데이트하는 함수
+    if (storeId) {
+      $.ajax({
+        url: "/qsc/inspection-schedule/schedule-list/master-chklst/" + storeId,
+        method: "GET",
+        // GET 요청의 경우, storeId가 URL에 포함되어 있으므로 data 파라미터는 필요 없습니다.
+        success: function (response) {
+          //console.log("상세 데이터:", response);
+          // 모달의 내용 업데이트
+          const modalBody = $("#masterChecklistModal .modal-body");
+
+          // 검색 박스 아래의 리스트 그룹을 선택
+          const checklistList = modalBody.find(".list-group");
+          checklistList.empty(); // 기존 리스트 항목 제거
+
+          if (response && response.length > 0) {
+            response.forEach(function (item, index) {
+              const listItem = `
+                            <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+                                <div class="item-info d-flex align-items-center">
+                                    <span class="me-3">${index + 1}</span>
+                                    <p class="mb-0">${item.chklstNm}</p>
+                                </div>
+                                <button class="btn btn-primary btn-sm preview-btn" type="button" data-store-id="${item.storeId}" data-chklst-id="${item.chklstId}">
+                                    미리보기
+                                    <i class="fa-regular fa-eye"></i>
+                                </button>
+                            </li>
+                        `;
+              checklistList.append(listItem);
+            });
+          } else {
+            const noDataItem = `
+                        <li class="list-group-item">
+                            찾으시는 체크리스트가 없습니다.
+                        </li>
+                    `;
+            checklistList.append(noDataItem);
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error("상세 데이터 요청 중 오류 발생:", error);
+          Swal.fire({
+            title: "오류!",
+            text: "상세 데이터를 불러오는 중 오류가 발생했습니다.",
+            icon: "error",
+            confirmButtonText: "확인",
+          });
+        },
+      });
+    } else {
+      console.warn("모달에 전달된 storeId가 없습니다.");
+    }
+  });
+
+  // 문서 전체에 클릭 이벤트 바인딩하여 Popover 숨기기
+  $(document).on("click", function () {
+    $(".edit-options").removeClass("show");
+  });
+  // 그리드 컨테이너 선택
+  const gridDiv = document.querySelector("#myGrid");
+
+  // AG Grid 초기화 방식: new agGrid.Grid 사용
+  new agGrid.Grid(gridDiv, gridOptions);
+
+  /**
+   * 체크리스트 개수를 업데이트하는 함수
+   */
   function updateChecklistCount() {
-    const checklistCount = document.querySelector(".checklist_count");
-    if (checklistCount) {
-      checklistCount.textContent = rowData.length; // 현재 rowData 길이를 업데이트
+    const checklistCount = document.getElementById("checklist_count");
+    if (checklistCount && gridOptions.api) {
+      // AG Grid API를 사용하여 현재 표시된 row 수 가져오기
+      checklistCount.innerText = gridOptions.api.getDisplayedRowCount();
+    } else {
+      console.warn(
+        "checklist_count 요소가 없거나 gridOptions.api가 초기화되지 않았습니다.",
+      );
     }
   }
 
-  // 처음 페이지 로드 시 checklist_count 값 설정
-  updateChecklistCount();
-
-  function createNewRowData() {
-    var newData = {
-      no: rowData.length + 1,
-      store: "",
-      brand: "",
-      checklist_name: "",
-      schedule_date: "",
-      inspector: "",
-    };
-    return newData;
+  /**
+   * 총 개수 업데이트 함수
+   */
+  function updateTotalCount() {
+    $("#totalCount").text(gridOptions.api.getDisplayedRowCount());
   }
 
+  /**
+   * 데이터 로드 함수
+   */
+  const FRQ_CD_MAP = {
+    ED: "일별",
+    EW: "주별",
+    EM: "월별",
+    NF: "빈도없음",
+  };
+
+  const FRQ_MAP = {
+    ED: "daily",
+    EW: "weekly",
+    EM: "monthly",
+    NF: "none",
+  };
+
+  const CNT_CD_MAP = {
+    MO: "월",
+    TU: "화",
+    WE: "수",
+    TH: "목",
+    FR: "금",
+    SA: "토",
+    SU: "일",
+    LD: "매월말일",
+    D1: "매일마다",
+    W1: "매주마다",
+    M1: "매달마다",
+    ...Object.fromEntries(
+      Array.from({ length: 4 }, (_, i) => [`W${i + 2}`, `${i + 2}주마다`]),
+    ),
+    ...Object.fromEntries(
+      Array.from({ length: 11 }, (_, i) => [`M${i + 2}`, `${i + 2}개월마다`]),
+    ),
+    ...Object.fromEntries(
+      Array.from({ length: 30 }, (_, i) => [`D${i + 2}`, `${i + 2}일마다`]),
+    ),
+  };
+  function createReverseMap(map) {
+    return Object.fromEntries(
+      Object.entries(map).map(([key, value]) => [value, key]),
+    );
+  }
+
+  const FRQ_CD_REVERSE_MAP = createReverseMap(FRQ_MAP);
+  const CNT_CD_REVERSE_MAP = createReverseMap(CNT_CD_MAP);
+
+  function loadInitialData(filters = {}) {
+    $.ajax({
+      url: "/qsc/inspection-schedule/schedule-list/filter", // 필터 엔드포인트 사용
+      method: "GET",
+      data: filters, // 필터 파라미터 전달
+      success: function (response) {
+        if (response) {
+          console.log("서버 응답 데이터:", response); // 데이터 정상 수신 확인
+        }
+        // 서버 응답을 grid에 맞게 변환
+        const dataArray = Array.isArray(response) ? response : response.data;
+        const formattedData = dataArray.map((item, index) => ({
+          no: index + 1,
+          storeNm: item.storeNm || "",
+          brandNm: item.brandNm || "",
+          chklstNm: item.chklstNm || "",
+          inspPlanDt: item.inspPlanDt || "",
+          mbrNm: item.mbrNm || "",
+          storeId: item.storeId || "",
+          cntCd: CNT_CD_MAP[item.cntCd?.toUpperCase()] || item.cntCd || "",
+          frqCd: FRQ_CD_MAP[item.frqCd] || item.frqCd || "",
+        }));
+
+        if (gridOptions.api) {
+          gridOptions.api.setGridOption("rowData", formattedData);
+          updateChecklistCount();
+        } else {
+          console.error("AG Grid API가 초기화되지 않았습니다.");
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error("Error fetching data:", error);
+        Swal.fire({
+          title: "오류!",
+          text: "데이터를 불러오는 중 오류가 발생했습니다.",
+          icon: "error",
+          confirmButtonText: "확인",
+        });
+      },
+    });
+  }
+
+  /**
+   * 조회 버튼 클릭 시 필터링된 데이터 로드
+   */
+  $(".select-btn").on("click", function () {
+    //console.log("오긴함"); // 클릭 이벤트 확인
+
+    // 필터링할 파라미터 수집
+    let storeNm = $("#storeNm").text().trim() || null;
+    let brandNm = $("#brandNm").text().trim() || null;
+    let scheduleDate = $("#topScheduleDate").val() || null;
+    let chklstNm = $("#chklstNm").text().trim() || null;
+    let inspector = $("#inspector").text().trim() || null;
+    let frequencyLabel = $("#top-frequency").val() || null;
+    let cntLabel = $("#top-count").val() || null;
+
+    // 각 필터의 초기화 텍스트 정의, 검색에 제외하고 싶은 목록 넣음
+    const placeholders = {
+      storeNm: ["전체", "가맹점 검색", ""],
+      brandNm: ["전체", "브랜드 검색", ""],
+      chklstNm: ["전체", "체크리스트 검색", ""],
+      inspector: ["전체", "점검자 검색", ""],
+      frequency: ["전체", "all", ""],
+      count: ["전체", "none", "없음", ""],
+    };
+
+    //console.log(frequencyLabel);
+    // console.log(cntLabel);
+
+    // placeholders에 포함된 값일 경우 null로 설정
+    storeNm = placeholders.storeNm.includes(storeNm) ? null : storeNm;
+    brandNm = placeholders.brandNm.includes(brandNm) ? null : brandNm;
+    chklstNm = placeholders.chklstNm.includes(chklstNm) ? null : chklstNm;
+    inspector = placeholders.inspector.includes(inspector) ? null : inspector;
+    frequencyLabel = placeholders.frequency.includes(frequencyLabel)
+      ? null
+      : frequencyLabel;
+    cntLabel = placeholders.count.includes(cntLabel) ? null : cntLabel;
+
+    // 레이블을 코드로 변환
+    const frequencyCode = frequencyLabel
+      ? FRQ_CD_REVERSE_MAP[frequencyLabel] || frequencyLabel
+      : null;
+    const cntCode = cntLabel ? CNT_CD_REVERSE_MAP[cntLabel] || cntLabel : null;
+    // console.log("변환된 fre  " + frequencyCode);
+    // console.log("변환된 cntCode  " + cntCode);
+    const filters = {};
+    scheduleDate =
+      scheduleDate != null ? scheduleDate.replaceAll("-", "") : null;
+    if (storeNm) filters.storeNm = storeNm;
+    if (brandNm) filters.brandNm = brandNm; // 필요 시 brandCode로 변경 가능
+    if (scheduleDate) filters.scheduleDate = scheduleDate;
+    if (chklstNm) filters.chklstNm = chklstNm;
+    if (inspector) filters.inspector = inspector;
+    if (frequencyCode) filters.frqCd = frequencyCode;
+    if (cntCode) filters.cntCd = cntCode;
+
+    // console.log(filters);
+    // AJAX 요청을 통해 필터링된 데이터 로드
+    loadInitialData(filters);
+  });
+
+  /**
+   * 행 추가 함수
+   */
   function onAddRow() {
-    var newItem = createNewRowData();
-    rowData.push(newItem);
-    gridApi.applyTransaction({ add: [newItem] });
+    const newItem = {
+      no: gridOptions.api.getDisplayedRowCount() + 1,
+      storeNm: "",
+      brandNm: "",
+      inspPlanDt: "",
+      creTm: "",
+      mbrNm: "",
+    };
+    gridOptions.api.applyTransaction({ add: [newItem], addIndex: 0 });
     updateChecklistCount();
   }
 
+  /**
+   * 행 삭제 함수
+   */
   function onDeleteRow() {
-    var selectedRows = gridApi.getSelectedRows();
+    const selectedRows = gridOptions.api.getSelectedRows();
     if (selectedRows.length > 0) {
-      gridApi.applyTransaction({ remove: selectedRows });
-
-      selectedRows.forEach((row) => {
-        const index = rowData.findIndex((data) => data.no === row.no);
-        if (index > -1) {
-          rowData.splice(index, 1);
-        }
-      });
+      gridOptions.api.applyTransaction({ remove: selectedRows });
       updateChecklistCount();
     } else {
       Swal.fire({
@@ -1000,6 +1246,7 @@ $(function () {
     }
   }
 
+  // 행 추가 및 삭제 버튼 이벤트 바인딩
   $("#addRowButton").on("click", function () {
     onAddRow();
   });
@@ -1007,14 +1254,4 @@ $(function () {
   $("#deleteRowButton").on("click", function () {
     onDeleteRow();
   });
-
-  // 총 몇건
-  $("#totalCount").text(rowData.length);
-
-  // 문서 전체에 클릭 이벤트 바인딩하여 Popover 숨기기
-  $(document).on("click", function () {
-    $(".edit-options").removeClass("show");
-  });
-
-  //  중간 테이블 영역 끝
 });

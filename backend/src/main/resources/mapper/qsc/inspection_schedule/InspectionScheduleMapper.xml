@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sims.qsc.inspection_schedule.mapper.InspectionScheduleMapper">
+
+    <select id="getFilteredInspectionScheduleList" resultType="com.sims.qsc.inspection_schedule.vo.InspectionScheduleBuilder">
+        SELECT  /* InspectionScheduleMapper.getInspectionScheduleList 노승우 */
+            sto.store_nm,
+            sto.store_id,
+        CASE
+            WHEN sto.brand_cd = 'B001' THEN 'KCC 크라상'
+            WHEN sto.brand_cd = 'B002' THEN 'KCC 도넛'
+            WHEN sto.brand_cd = 'B003' THEN 'KCC 브레드'
+            WHEN sto.brand_cd = 'B004' THEN 'KCC 카페'
+        END AS BRAND_NM,
+            chk.chklst_nm,
+            isc.insp_plan_dt,
+            mbr.mbr_nm,
+            inp.cnt_cd,
+            inp.frq_cd
+        FROM insp_schd isc
+            INNER JOIN STORE sto
+                ON sto.store_id = isc.store_id
+            INNER JOIN insp_plan inp
+                ON inp.insp_plan_id = isc.insp_plan_id
+            INNER JOIN chklst chk
+                ON chk.chklst_id = inp.chklst_id
+            INNER JOIN mbr
+                ON mbr.mbr_id = sto.insp_mbr_id
+            WHERE inp.insp_plan_use_w = 'Y'
+        <if test="storeNm != null and storeNm != ''">
+            AND sto.store_nm LIKE '%' || #{storeNm} || '%'
+        </if>
+        <if test="brandNm != null and brandNm != ''">
+        <choose>
+            <when test="brandNm == 'KCC 크라상'">
+                AND sto.brand_cd = 'B001'
+            </when>
+            <when test="brandNm == 'KCC 도넛'">
+                AND sto.brand_cd = 'B002'
+            </when>
+            <when test="brandNm == 'KCC 브레드'">
+                AND sto.brand_cd = 'B003'
+            </when>
+            <when test="brandNm == 'KCC 카페'">
+                AND sto.brand_cd = 'B004'
+            </when>
+            <otherwise>
+                AND sto.brand_cd IS NOT NULL
+            </otherwise>
+        </choose>
+        </if>
+        <if test="scheduleDate != null and scheduleDate != ''">
+            AND isc.insp_plan_dt LIKE '%' || #{scheduleDate} || '%'
+        </if>
+        <if test="chklstNm != null and chklstNm != ''">
+            AND chk.chklst_nm LIKE '%' || #{chklstNm} || '%'
+        </if>
+        <if test="inspector != null and inspector != ''">
+            AND mbr.mbr_nm LIKE '%' || #{inspector} || '%'
+        </if>
+        <if test="cntCd != null and cntCd !=''" >
+            AND inp.cnt_cd LIKE '%' || #{cntCd} || '%'
+        </if>
+        <if test="frqCd != null and frqCd !=''" >
+            AND inp.frq_cd LIKE '%' || #{frqCd} || '%'
+        </if>
+        ORDER BY isc.insp_plan_dt DESC
+    </select>
+
+
+
+    <select id="selectAllStores" resultType="String">
+        SELECT DISTINCT sto.store_nm /* InspectionScheduleMapper.selectAllStores 노승우 */
+        FROM store sto
+                 INNER JOIN insp_schd isc
+                            ON sto.store_id = isc.store_id
+        ORDER BY store_nm
+    </select>
+
+
+    <select id="selectAllBrands" resultType="String">
+        SELECT DISTINCT /* InspectionScheduleMapper.selectAllBrands 노승우 */
+            CASE
+                WHEN sto.brand_cd = 'B001' THEN 'KCC 크라상'
+                WHEN sto.brand_cd = 'B002' THEN 'KCC 도넛'
+                WHEN sto.brand_cd = 'B003' THEN 'KCC 브레드'
+                WHEN sto.brand_cd = 'B004' THEN 'KCC 카페'
+                END AS brand_nm
+        FROM store sto
+        WHERE sto.brand_cd IN ('B001', 'B002', 'B003', 'B004')
+        ORDER BY brand_nm
+    </select>
+
+
+    <select id="selectAllChecklists" resultType="String">
+        SELECT DISTINCT chk.chklst_nm /* InspectionScheduleMapper.selectAllChecklists 노승우 */
+        FROM insp_schd isc
+                 INNER JOIN insp_plan inp ON inp.insp_plan_id = isc.insp_plan_id
+                 INNER JOIN chklst chk ON chk.chklst_id = inp.chklst_id
+        WHERE inp.insp_plan_use_w = 'Y'
+        ORDER BY chk.chklst_nm
+    </select>
+
+
+    <select id="selectAllInspectors" resultType="String">
+        SELECT DISTINCT mbr.mbr_nm /* InspectionScheduleMapper.selectAllInspectors 노승우 */
+        FROM insp_schd isc
+                 INNER JOIN store sto ON sto.store_id = isc.store_id
+                 INNER JOIN mbr ON mbr.mbr_id = sto.insp_mbr_id
+        ORDER BY mbr.mbr_nm
+    </select>
+
+
+    <select id="getInspectionDetails"
+            resultType="com.sims.qsc.inspection_schedule.vo.InspectionDetailsBuilder">
+        SELECT S.STORE_ID, /* InspectionScheduleMapper.getInspectionDetails 노승우 */
+               S.STORE_NM,
+               IP.INSP_PLAN_ID,
+               IP.FRQ_CD,
+               C.CHKLST_ID,
+               C.CHKLST_NM,
+               CC.CTG_ID,
+               CC.CTG_NM,
+               CE.EVIT_ID,
+               CE.EVIT_CONTENT,
+               CE.SCORE
+        FROM STORE S
+                 JOIN INSP_SCHD ISCH
+                        ON S.STORE_ID = ISCH.STORE_ID
+                 JOIN INSP_PLAN IP
+                        ON ISCH.INSP_PLAN_ID = IP.INSP_PLAN_ID
+                 JOIN CHKLST C
+                        ON IP.CHKLST_ID = C.CHKLST_ID
+                 JOIN CHKLST_CTG CC
+                        ON C.CHKLST_ID = CC.CHKLST_ID
+                 JOIN CHKLST_EVIT CE
+                        ON CC.CTG_ID = CE.CTG_ID
+        WHERE S.STORE_ID = #{storeId}
+            AND  inp.insp_plan_use_w = 'Y'
+        ORDER BY CC.SEQ, CE.EVIT_SEQ
+
+    </select>
+
+
+</mapper>
