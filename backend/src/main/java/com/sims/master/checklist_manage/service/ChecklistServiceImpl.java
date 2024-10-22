@@ -15,18 +15,14 @@ public class ChecklistServiceImpl implements ChecklistService{
 
     private final ChecklistMapper checklistMapper;
 
-
     @Override
     public List<ChecklistResponse> selectChecklistAll() {
         return checklistMapper.selectChecklistAll();
     }
-<<<<<<< Updated upstream
-=======
 
     @Override
     public int deleteChecklistByChklstId(int chklstId) {
         return checklistMapper.deleteChecklistByChklstId(chklstId);
     }
 
->>>>>>> Stashed changes
 }
