@@ -1,7 +1,7 @@
 package com.sims.qsc.inspection_schedule.service;
 
-import com.sims.qsc.inspection_schedule.vo.InspectionDetailsBuilder;
-import com.sims.qsc.inspection_schedule.vo.InspectionScheduleBuilder;
+import com.sims.qsc.inspection_schedule.vo.InspectionDetailsResponse;
+import com.sims.qsc.inspection_schedule.vo.InspectionScheduleRequest;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ public interface InspectionScheduleService {
      * @param inspector 점검자
      * @return 필터 요소가 적용된 점검일정 목록
      */
-    List<InspectionScheduleBuilder> getFilteredInspectionScheduleList(
+    List<InspectionScheduleRequest> getFilteredInspectionScheduleList(
             @Param("storeNm") String storeNm,
             @Param("brandNm") String brandNm,
             @Param("scheduleDate") String scheduleDate,
@@ -43,5 +43,5 @@ public interface InspectionScheduleService {
      * @param storeId 가맹점 번호 - 시퀀스
      * @return 가맹점별 체크 리스트, 체크리스트 문항과 점수
      */
-    List<InspectionDetailsBuilder> getInspectionDetails(@Param("storeId") Integer storeId);
+    List<InspectionDetailsResponse> getInspectionDetails(@Param("storeId") Integer storeId);
 }

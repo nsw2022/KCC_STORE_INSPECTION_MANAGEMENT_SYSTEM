@@ -1,14 +1,13 @@
 package com.sims.qsc.inspection_schedule.service;
 
 import com.sims.qsc.inspection_schedule.mapper.InspectionScheduleMapper;
-import com.sims.qsc.inspection_schedule.vo.InspectionDetailsBuilder;
-import com.sims.qsc.inspection_schedule.vo.InspectionScheduleBuilder;
+import com.sims.qsc.inspection_schedule.vo.InspectionDetailsResponse;
+import com.sims.qsc.inspection_schedule.vo.InspectionScheduleRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +29,7 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
      * @param cntCd 횟수
      * @return 필터 요소가 적용된 점검일정 목록
      */
-    public List<InspectionScheduleBuilder> getFilteredInspectionScheduleList(
+    public List<InspectionScheduleRequest> getFilteredInspectionScheduleList(
             String storeNm, String brandNm, String scheduleDate, String chklstNm, String inspector, String frqCd,  String cntCd) {
         log.info("storeNm {}", storeNm);
         log.info("brandNm {}", brandNm);
@@ -40,11 +39,7 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
         log.info("cntCd {}", cntCd);
         log.info("frqCd {}", frqCd);
 
-
-
-
-        log.info("@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        return scheduleMapper.getFilteredInspectionScheduleList(
+        return scheduleMapper.selectFilteredInspectionScheduleList(
                 storeNm, brandNm, scheduleDate, chklstNm, inspector, frqCd, cntCd
         );
     }
@@ -76,8 +71,8 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
      * @return 가맹점별 체크 리스트, 체크리스트 문항과 점수
      */
     @Override
-    public List<InspectionDetailsBuilder> getInspectionDetails(Integer storeId) {
-        return scheduleMapper.getInspectionDetails(storeId);
+    public List<InspectionDetailsResponse> getInspectionDetails(Integer storeId) {
+        return scheduleMapper.selectInspectionDetails(storeId);
     }
 
 }

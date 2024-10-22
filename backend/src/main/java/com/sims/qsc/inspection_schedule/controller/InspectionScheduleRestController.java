@@ -1,8 +1,8 @@
 package com.sims.qsc.inspection_schedule.controller;
 
 import com.sims.qsc.inspection_schedule.service.InspectionScheduleService;
-import com.sims.qsc.inspection_schedule.vo.InspectionDetailsBuilder;
-import com.sims.qsc.inspection_schedule.vo.InspectionScheduleBuilder;
+import com.sims.qsc.inspection_schedule.vo.InspectionDetailsResponse;
+import com.sims.qsc.inspection_schedule.vo.InspectionScheduleRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -38,7 +38,7 @@ public class InspectionScheduleRestController {
             @RequestParam(value = "frqCd" , required = false) String frqCd
     ) {
         try {
-            List<InspectionScheduleBuilder> filteredSchedules = inspectionScheduleService.getFilteredInspectionScheduleList(
+            List<InspectionScheduleRequest> filteredSchedules = inspectionScheduleService.getFilteredInspectionScheduleList(
                     storeNm,  brandNm, scheduleDate, chklstNm, inspector, cntCd, frqCd
             );
             return ResponseEntity.ok(filteredSchedules);
@@ -101,7 +101,7 @@ public class InspectionScheduleRestController {
     @GetMapping("/schedule-list/master-chklst/{storeId}")
     public ResponseEntity<?> getInspectionDetail(@PathVariable Integer storeId) {
         try {
-            List<InspectionDetailsBuilder> inspectionDetails = inspectionScheduleService.getInspectionDetails(storeId);
+            List<InspectionDetailsResponse> inspectionDetails = inspectionScheduleService.getInspectionDetails(storeId);
             return ResponseEntity.ok(inspectionDetails);
         } catch (Exception e) {
             log.error("storeId에 대한 검사 세부 정보 가져오기 오류 {}: {}", storeId, e.getMessage(), e);
