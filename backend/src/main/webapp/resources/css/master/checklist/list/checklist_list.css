@@ -276,6 +276,13 @@ body {
   border: none !important;
 }
 
+.wrapper.disabled>.search-btn {
+  pointer-events: none; /* 모든 클릭 이벤트를 비활성화 */
+  /*opacity: 0.7;*/
+  background-color: #E9ECEF !important;
+}
+
+
 /******************   first modal   ********************/
 .list-group {
   max-height: 500px; /* 모바일에서는 최대 높이를 조금 줄임 */
@@ -344,6 +351,13 @@ body {
 .list-group-item button {
   font: 400 13px "Noto Sans KR";
 }
+.item-info:focus {
+  border-color: #3274fa !important;
+  outline: none; /* 기본 outline 제거 */
+}
+
+
+
 
 /*  second modal         ***************************************************/
 .accordion-button {

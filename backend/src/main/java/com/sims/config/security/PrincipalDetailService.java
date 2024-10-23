@@ -1,7 +1,7 @@
 package com.sims.config.security;
 
 
-import com.sims.home.member.vo.MemberDao;
+import com.sims.home.member.vo.Member;
 
 
 import com.sims.home.member.mapper.MemberMapper;
@@ -21,7 +21,7 @@ public class PrincipalDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        MemberDao member = memberMapper.selectMbrByMbrId(username);
+        Member member = memberMapper.selectMbrByMbrNo(username);
         if(member == null){
             throw new UsernameNotFoundException("User Not Found");
         }

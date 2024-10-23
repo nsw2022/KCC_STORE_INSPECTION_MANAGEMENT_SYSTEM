@@ -4,22 +4,22 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sims.home.member.mapper.MemberMapper">
-    <select id="selectMbrByMbrId" resultType="MemberDao">
+    <select id="selectMbrByMbrNo" resultType="Member">
         SELECT /* MemberMapper.getMemberByMbrId 유재원 */
-            MBR_ID,
-            MBR_NO,
-            MBR_PW,
-            MBR_NM,
-            MBR_ROLE_CD,
-            MBR_STTS_CD,
-            TEL,
-            HIRE_DT,
-            QUIT_DT,
-            CRE_MBR_ID,
-            UPD_MBR_ID,
-            CRE_TM,
-            UPD_TM,
-            LAST_LOGIN_TM
+            MBR_ID
+             , MBR_NO
+             , MBR_PW
+             , MBR_NM
+             , MBR_ROLE_CD
+             , MBR_STTS_CD
+             , TEL
+             , HIRE_DT
+             , QUIT_DT
+             , CRE_MBR_ID
+             , UPD_MBR_ID
+             , CRE_TM
+             , UPD_TM
+             , LAST_LOGIN_TM
         FROM
             MBR
         WHERE
@@ -27,48 +27,49 @@
     </select>
 
     <select id="selectMbrIdByMbrNo">
-        SELECT MBR_ID FROM MBR WHERE MBR_NO = #{mbrNo}
+        SELECT
+            MBR_ID
+        FROM
+            MBR
+        WHERE
+            MBR_NO = #{mbrNo}
     </select>
 
-    <insert id="insertMbr" parameterType="MemberDao">
-        INSERT
-        INTO
-            MBR ( /* MemberMapper.insertMember 유재원 */
-            MBR_ID,
-            MBR_NO,
-            MBR_PW,
-            MBR_NM,
-            MBR_ROLE_CD,
-            MBR_STTS_CD,
-            TEL,
-            HIRE_DT,
-            QUIT_DT,
-            CRE_MBR_ID,
-            UPD_MBR_ID,
-            CRE_TM,
-            UPD_TM,
-            LAST_LOGIN_TM
+    <insert id="insertMbr" parameterType="Member">
+        INSERT INTO ( /* MemberMapper.insertMember 유재원 */
+            MBR
+            , MBR_ID
+            , MBR_NO
+            , MBR_PW
+            , MBR_NM
+            , MBR_ROLE_CD
+            , MBR_STTS_CD
+            , TEL
+            , HIRE_DT
+            , QUIT_DT
+            , CRE_MBR_ID
+            , UPD_MBR_ID
+            , CRE_TM
+            , UPD_TM
+            , LAST_LOGIN_TM
         )
         VALUES (
-            MEMBER_SEQ.NEXTVAL,
-            #{mbrNo},
-            #{mbrPw},
-            #{mbrNm},
-            <foreach collection="mbrRoleCd" item="role" separator=",">
-                #{role}
-            </foreach>,
-            1,
-            '010-1234-5678',
-            '20241010',
-            NULL,
-            #{creMbrId},
-            NULL,
-            TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI'),
-            NULL,
-            NULL
+            MEMBER_SEQ.NEXTVAL
+            , #{mbrNo}
+            , #{mbrPw}
+            , #{mbrNm}
+            , #{mbrRoleCd}
+            , 1
+            , '010-1234-5678'
+            , '20241010'
+            , NULL
+            , #{creMbrId}
+            , NULL
+            , TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+            , NULL
+            , NULL
         )
     </insert>
-
 
     <update id="updateLastLoginDate">
         UPDATE /* MemberMapper.updateLastLoginDate 유재원 */
@@ -78,5 +79,4 @@
         WHERE
             MBR_NO = #{mbrNo}
     </update>
-
 </mapper>

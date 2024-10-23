@@ -20,11 +20,9 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 /**
- * 로깅 관련 AOP 구성
- *
- * @author : 유재원
- * @fileName : TransactionLogAspect
- * @since : 2024/10/18
+ * @Description 트랜잭션 로그를 기록하는 AOP 클래스
+ * @Author 유재원
+ * @Date 2024.10.18
  */
 @Aspect
 @Component
@@ -40,6 +38,13 @@ public class TransactionLogAspect {
     @Pointcut("execution(* com.sims..service.*Impl.*(..))")
     public void serviceMethods() {}
 
+    /**
+     * @Description 메서드 실행 전 후 로그 기록
+     *
+     * @param joinPoint 메서드 실행 전 후 로그 기록
+     * @return
+     * @throws Throwable
+     */
     @Around("serviceMethods()")
     public Object TransactionLog(ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis(); // 요청 시간
