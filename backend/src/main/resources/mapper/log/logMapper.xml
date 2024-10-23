@@ -6,92 +6,92 @@
 <mapper namespace="com.sims.log.mapper.LogMapper">
     <insert id="insertLoginLog" parameterType="LoginLogVo">
         INSERT INTO LOGINLOG ( /* LogMapper.insertLoginLog 유재원 */
-            LOGIN_LOG_ID,
-            CONNECTION_ID,
-            CONNECTION_IP,
-            CONNECTION_OS,
-            CONNECTION_BROWSER,
-            ERROR_OCCURRENCE_CD,
-            ERROR_CODE,
-            LOGIN_OCCURRENCE_DATE
+            LOGIN_LOG_ID
+            , CONNECTION_ID
+            , CONNECTION_IP
+            , CONNECTION_OS
+            , CONNECTION_BROWSER
+            , ERROR_OCCURRENCE_CD
+            , ERROR_CODE
+            , LOGIN_OCCURRENCE_DATE
         )
         VALUES (
-            LOGINLOG_SEQ.NEXTVAL,
-            #{connectionId},
-            #{connectionIp},
-            #{connectionOs},
-            #{connectionBrowser},
-            CASE
+            LOGINLOG_SEQ.NEXTVAL
+            , #{connectionId}
+            , #{connectionIp}
+            , #{connectionOs}
+            , #{connectionBrowser}
+            , CASE
                 WHEN #{errorOccurrenceCd} = 1 THEN '1' ELSE '0'
-            END,
-            NULL,
-            TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+              END
+            , NULL
+            , TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
         )
     </insert>
 
     <insert id="insertTransactionLog" parameterType="TransactionLogVo">
         INSERT INTO TRG_LOG( /* LogMapper.insertTransactionLog 유재원 */
-            TRG_ID,
-            EXEC_DT,
-            URL,
-            REQUEST_TYPE,
-            METHOD,
-            PRAM_COUNT,
-            PRAM_CONTENT,
-            REG_MBR_ID,
-            REG_MBR_IP,
-            TRG_STTS_CD,
-            RES_MS,
-            RES_BROWSER,
-            RES_OS
+            TRG_ID
+            , EXEC_DT
+            , URL
+            , REQUEST_TYPE
+            , METHOD
+            , PRAM_COUNT
+            , PRAM_CONTENT
+            , REG_MBR_ID
+            , REG_MBR_IP
+            , TRG_STTS_CD
+            , RES_MS
+            , RES_BROWSER
+            , RES_OS
         )
         VALUES(
-            TRG_LOG_SEQ.NEXTVAL,
-            TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MISS'),
-            #{url},
-            #{requestType},
-            #{method},
-            #{pramCount},
-            #{pramContent},
-            #{regMbrId},
-            #{regMbrIp},
-            #{trgSttsCd},
-            #{resMs},
-            #{resBrowser},
-            #{resOs}
+            TRG_LOG_SEQ.NEXTVAL
+            , TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MISS')
+            , #{url}
+            , #{requestType}
+            , #{method}
+            , #{pramCount}
+            , #{pramContent}
+            , #{regMbrId}
+            , #{regMbrIp}
+            , #{trgSttsCd}
+            , #{resMs}
+            , #{resBrowser}
+            , #{resOs}
         )
     </insert>
 
     <insert id="insertTransactionErrorLog" parameterType="TransactionErrorLogVo">
         INSERT INTO TRG_ERR_LOG( /* LogMapper.insertTransactionErrorLog 유재원 */
-            TRG_ERR_ID,
-            EXEC_DT,
-            URL,
-            REQUEST_TYPE,
-            METHOD,
-            PRAM_COUNT,
-            PRAM_CONTENT,
-            REG_MBR_ID,
-            REG_MBR_IP,
-            ERR_CD,
-            ERR_MSG,
-            RES_BROWSER,
-            RES_OS
+            TRG_ERR_ID
+            , EXEC_DT
+            , URL
+            , REQUEST_TYPE
+            , METHOD
+            , PRAM_COUNT
+            , PRAM_CONTENT
+            , REG_MBR_ID
+            , REG_MBR_IP
+            , ERR_CD
+            , ERR_MSG
+            , RES_BROWSER
+            , RES_OS
         )
         VALUES (
-            TRG_ERR_LOG_SEQ.NEXTVAL,
-            TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MISS'),
-            #{url},
-            #{requestType},
-            #{method},
-            #{pramCount},
-            #{pramContent},
-            #{regMbrId},
-            #{regMbrIp},
-            #{errCd},
-            #{errMsg},
-            #{resBrowser},
-            #{resOs}
+            TRG_ERR_LOG_SEQ.NEXTVAL
+            , TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MISS')
+            , #{url}
+            , #{requestType}
+            , #{method}
+            , #{pramCount}
+            , #{pramContent}
+            , #{regMbrId}
+            , #{regMbrIp}
+            , #{errCd}
+            , #{errMsg}
+            , #{resBrowser}
+            , #{resOs}
         )
     </insert>
 </mapper>

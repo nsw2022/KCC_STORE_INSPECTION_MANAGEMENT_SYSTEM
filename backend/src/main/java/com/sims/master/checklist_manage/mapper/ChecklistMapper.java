@@ -7,9 +7,9 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 /**
- * @Classname ChecklistMapper
  * @Description 체크리스트 관리 매퍼
  * @Author 유재원
+ * @Date 2024.10.23
  */
 @Mapper
 public interface ChecklistMapper {
@@ -43,4 +43,6 @@ public interface ChecklistMapper {
      * @return 체크리스트 이름 전체 리스트
      */
     public List<String> selectChecklistOptions();
+
+    public List<Integer> selectChklstIdByChklstIdAndChklstUseW(List<ChecklistDeleteRequest> checklistDeleteRequest);
 }

@@ -6,20 +6,20 @@
 <mapper namespace="com.sims.master.checklist_manage.mapper.ChecklistMapper">
     <select id="selectChecklistAll" resultType="ChecklistResponse">
         SELECT /* ChecklistMapper.selectChecklistAll 유재원 */
-            CHKLST.CHKLST_ID,
-            BRAND_NM.DTL_CD_NM AS BRAND_NM,
-            MASTER_CHKLST.CHKLST_NM AS MASTER_CHKLST_NM,
-            CHKLST.CHKLST_NM,
-            CHKLST.CHKLST_USE_W,
-            INSP_TYPE_NM.DTL_CD_NM AS INSP_TYPE_NM,
-            TO_CHAR(TO_DATE(CHKLST.CRE_TM, 'YYYYMMDDHH24MI'), 'YYYY.MM.DD') AS CRE_TM
+            CHKLST.CHKLST_ID
+            , BRAND_NM.DTL_CD_NM AS brandNm
+            , MASTER_CHKLST.CHKLST_NM AS masterChklstNm
+            , CHKLST.CHKLST_NM
+            , CHKLST.CHKLST_USE_W
+            , INSP_TYPE_NM.DTL_CD_NM AS inspTypeNm
+            , TO_CHAR(TO_DATE(CHKLST.CRE_TM, 'YYYYMMDDHH24MI'), 'YYYY.MM.DD') AS creTm
         FROM CHKLST
-                LEFT JOIN COMM_CD_DTL BRAND_NM
-                    ON CHKLST.BRAND_CD = BRAND_NM.DTL_CD
-                LEFT JOIN COMM_CD_DTL INSP_TYPE_NM
-                    ON CHKLST.INSP_TYPE_CD = INSP_TYPE_NM.DTL_CD
-                LEFT JOIN CHKLST MASTER_CHKLST
-                    ON CHKLST.MASTER_CHKLST_ID = MASTER_CHKLST.CHKLST_ID
+            LEFT JOIN COMM_CD_DTL BRAND_NM
+                ON CHKLST.BRAND_CD = BRAND_NM.DTL_CD
+            LEFT JOIN COMM_CD_DTL INSP_TYPE_NM
+                ON CHKLST.INSP_TYPE_CD = INSP_TYPE_NM.DTL_CD
+            LEFT JOIN CHKLST MASTER_CHKLST
+                ON CHKLST.MASTER_CHKLST_ID = MASTER_CHKLST.CHKLST_ID
         WHERE
             CHKLST.CHKLST_STTS_W != '0'
         ORDER BY
@@ -66,5 +66,19 @@
             CHKLST_NM
         FROM
             CHKLST
+    </select>
+
+    <select id="selectChklstIdByChklstIdAndChklstUseW">
+        SELECT
+            CHKLST_ID
+        FROM
+            CHKLST
+        WHERE
+            CHKLST_ID IN
+        <foreach item="item" index="index" collection="checklistDeleteRequest" open="(" separator="," close=")">
+            #{item.chklstId}
+        </foreach>
+        AND
+            CHKLST_USE_W = 'Y'
     </select>
 </mapper>

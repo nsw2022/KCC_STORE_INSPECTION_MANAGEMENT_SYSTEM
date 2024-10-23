@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 /**
- * @Classname ChecklistController
  * @Description 체크리스트 관리 컨트롤러 클래스
  * @Author 유재원
+ * @Date 2024.10.23
  */
 @Controller
 @RequestMapping("/master")
@@ -49,18 +49,16 @@ public class ChecklistController {
     }
     /**
      * 체크리스트 삭제
-     * @param
-     * @return
-     * @Todo : 체크리스트 사용중이면 삭제 불가
-     * @Todo : 권한 확인. 관리자 or 품질관리자만 삭제 가능
+     * @param checklistDeleteRequest 체크리스트 삭제 요청 리스트
+     * @return 상태코드
      */
     @DeleteMapping("/checklist/delete")
     @ResponseBody
     public ResponseEntity deleteChecklistByChklstId(@RequestBody List<ChecklistDeleteRequest> checklistDeleteRequest) {
-        if(checklistService.deleteChecklistByChklstId(checklistDeleteRequest) > 0)
+        if (checklistService.deleteChecklistByChklstId(checklistDeleteRequest) > 0)
             return new ResponseEntity(HttpStatus.OK);
         else
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
     }
     /**
      * 체크리스트 옵션 목록 조회

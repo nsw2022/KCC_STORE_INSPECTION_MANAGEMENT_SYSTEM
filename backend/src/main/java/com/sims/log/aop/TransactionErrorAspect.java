@@ -20,7 +20,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.Arrays;
-
+/**
+ * @Description 트랜잭션 에러 로그를 기록하는 AOP 클래스
+ * @Author 유재원
+ * @Date 2024.10.18
+ */
 @Aspect
 @Component
 @Slf4j
@@ -30,6 +34,11 @@ public class TransactionErrorAspect {
     private final MemberMapper memberMapper;
     private final LogMapper logMapper;
 
+    /**
+     * @Description 트랜잭션 에러가 발생했을 때 실행되는 메서드
+     * @param joinPoint 실행 중인 메서드 정보
+     * @param ex 발생한 에러
+     */
     @AfterThrowing(pointcut = "execution(* com.sims..service.*Impl.*(..))", throwing = "ex")
     public void TransactionErrorLog(JoinPoint joinPoint, Exception ex) {
         if (ex.getCause() instanceof SQLException) {

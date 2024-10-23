@@ -164,40 +164,61 @@ function onChecklistAddRow() {
   });
   updateChecklistCount();
 }
+function warningMessage() {
+  return Swal.fire({
+    title: "경고!",
+    text: "이 작업은 되돌릴 수 없습니다.",
+    icon: "warning",
+    showCancelButton: true, // 취소 버튼 표시
+    cancelButtonText: "취소",
+    confirmButtonText: "삭제",
+  });
+}
 
 // Row 삭제 함수
 function onChecklistDeleteRow() {
   const selectedRows = gridApi.getSelectedRows();
-  if (selectedRows.length > 0) {
-    fetch(`https://localhost:8081/master/checklist/delete`, {
-      method: 'DELETE',
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(selectedRows.map(row => ({ chklstId: row.chklstId })))
-    })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          // 그리드에서도 해당 행 삭제
-          gridApi.applyTransaction({ remove: selectedRows });
 
-          selectedRows.forEach((row) => {
-            const index = rowData.findIndex((data) => data.chklstId === row.chklstId);
-            if (index > -1) {
-              rowData.splice(index, 1);
+  if (selectedRows.length > 0) {
+    // 경고 메시지 표시
+    warningMessage().then((result) => {
+      if (result.isConfirmed) { // 사용자가 삭제를 확인한 경우
+        fetch(`https://localhost:8081/master/checklist/delete`, {
+          method: 'DELETE',
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(selectedRows.map(row => ({ chklstId: row.chklstId })))
+        }).then(response => {
+          // 응답 상태 코드 확인
+          if (!response.ok) {
+            if (response.status === 403) {
+              Swal.fire("실패!", "권한이 없습니다.", "error");
+            }else if(response.status === 409){
+              Swal.fire("실패!", "사용중인 점검계획이 있습니다.", "error");
             }
-          });
-          updateChecklistCount();
+          } else {
+            // 그리드에서도 해당 행 삭제
+            gridApi.applyTransaction({ remove: selectedRows });
+
+            selectedRows.forEach((row) => {
+              const index = rowData.findIndex((data) => data.chklstId === row.chklstId);
+              if (index > -1) {
+                rowData.splice(index, 1);
+              }
+            });
+            updateChecklistCount();
+          }
         })
-        .catch(error => {
-          console.error('There has been a problem with your fetch operation:', error);
-        });
+      }
+    });
   } else {
     alert("삭제할 항목을 선택하세요.");
   }
 }
+
+
+
 
 function confirmationDialog() {
   Swal.fire({

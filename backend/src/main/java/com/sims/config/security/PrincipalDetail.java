@@ -1,7 +1,6 @@
 package com.sims.config.security;
 
-
-import com.sims.home.member.vo.MemberDao;
+import com.sims.home.member.vo.Member;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,23 +14,16 @@ import java.util.Collection;
 public class PrincipalDetail implements UserDetails {
 
     private static final Logger log = LoggerFactory.getLogger(PrincipalDetail.class);
-    private final MemberDao member;
+    private final Member member;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
 
-        if (member.getMbrRoleCd() != null) {
-            member.getMbrRoleCd().forEach(r -> {
-                log.info("role = {}", r);
-                authorities.add(() -> r);
-            });
-        } else {
-            log.warn("Member roles are null");
-        }
+        authorities.add(()->{return member.getMbrRoleCd();});
+
         return authorities;
     }
-
 
     @Override
     public String getPassword() {
@@ -60,7 +52,6 @@ public class PrincipalDetail implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-//        return member.isMbrSttsCd();
-        return true;
+        return Integer.parseInt(member.getMbrSttsCd()) == 1;
     }
 }
