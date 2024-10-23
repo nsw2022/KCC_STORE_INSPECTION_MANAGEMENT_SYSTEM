@@ -1,8 +1,10 @@
 // 전역 변수로 rowData와 gridApi 선언
 let rowData = [];
+let defaultRowData = [];
 let gridApi = null;
 let gridOptions = null;
 let selectedRowNo = 0;
+let firstRowLength = 0;
 
 async function loadData() {
   try {
@@ -10,7 +12,9 @@ async function loadData() {
     const data = await response.json();
     console.log(data);
     // rowData에 데이터를 할당
+    defaultRowData = data;
     rowData = data.map((item) => {
+      firstRowLength++;
       if (item.masterChklstNm === null) {
         item.is_master_checklist = 'N';
       } else {
@@ -130,43 +134,71 @@ function updateChecklistCount() {
 
 // 새로운 Row 생성 함수
 function createNewRowData() {
+  let today = new Date();
+  let formattedDate = today
+      .toLocaleDateString()
+      .replace(/\s+/g, "")
+      .replace(/\./g, ".");
+
   return {
     chklstId: rowData.length + 1,
     brandNm: "",
     chklstNm: "",
     masterChklstNm: "",
     inspTypeNm: "",
-    creTm: "",
-    is_master_checklist: "",
-    chklstUseW: "",
+    creTm: formattedDate.substring(0, 10),
+    is_master_checklist: "N",
+    chklstUseW: "N",
   };
 }
 
+
 // Row 추가 함수
-function onAddRow() {
+function onChecklistAddRow() {
+  checkUnload = true;
   const newItem = createNewRowData();
   rowData.push(newItem);
-  gridApi.applyTransaction({ add: [newItem] });
+  gridApi.applyTransaction({
+    add: [newItem],
+    addIndex: 0
+  });
   updateChecklistCount();
 }
 
 // Row 삭제 함수
-function onDeleteRow() {
+function onChecklistDeleteRow() {
   const selectedRows = gridApi.getSelectedRows();
   if (selectedRows.length > 0) {
-    gridApi.applyTransaction({ remove: selectedRows });
+    fetch(`https://localhost:8081/master/checklist/delete`, {
+      method: 'DELETE',
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(selectedRows.map(row => ({ chklstId: row.chklstId })))
+    })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          // 그리드에서도 해당 행 삭제
+          gridApi.applyTransaction({ remove: selectedRows });
 
-    selectedRows.forEach((row) => {
-      const index = rowData.findIndex((data) => data.chklstId === row.chklstId);
-      if (index > -1) {
-        rowData.splice(index, 1);
-      }
-    });
-    updateChecklistCount();
+          selectedRows.forEach((row) => {
+            const index = rowData.findIndex((data) => data.chklstId === row.chklstId);
+            if (index > -1) {
+              rowData.splice(index, 1);
+            }
+          });
+          updateChecklistCount();
+        })
+        .catch(error => {
+          console.error('There has been a problem with your fetch operation:', error);
+        });
   } else {
     alert("삭제할 항목을 선택하세요.");
   }
 }
+
 function confirmationDialog() {
   Swal.fire({
     title: "확인",
@@ -346,29 +378,49 @@ $(function () {
    * @todo responseBody로 받아올것이라면 여기서 Ajax로 데이터를 요청하면 됨
    */
   const autocompleteData = {
-    // 점검자
-    inspector: ["-전체-", "노승우", "이지훈", "유재원", "원승언", "노승수"],
     // 점검 유형
-    INSP: ["-전체-", "정기 점검", "제품 점검"],
+    INSP: ["-전체-"],
     // 체크리스트
-    CHKLST: ["-전체-", "KCC 크라상 위생 점검표", "KCC 카페 제품 점검표"],
+    CHKLST: ["-전체-"],
     // 브랜드
-    BRAND: ["-전체-", "KCC 크라상", "KCC 카페", "KCC 디저트"],
+    BRAND: ["-전체-"],
     // 마스터 체크리스트
-    MASTER_CHKLST: ["-전체-", "품질점검체크리스트", "기획점검체크리스트"],
-
+    MASTER_CHKLST: ["-전체-"],
+    // 상태
     STATUS: ["-전체-", "Y", "N"],
+    // 택1 브랜드
+    BRAND1: [],
+    // 택1 체크리스트
+    CHKLST1: [],
+    // 택1 점검유형
+    INSP1: [],
   };
 
-  // 자동완성 인스턴스를 초기화하고 wrapper 요소에 저장
-  $(".wrapper").each(function () {
-    const $wrapper = $(this);
-    const type = $wrapper.data("autocomplete");
-    if (type && autocompleteData[type]) {
-      const autocomplete = new Autocomplete($wrapper, autocompleteData[type]);
-      $wrapper.data("autocompleteInstance", autocomplete);
-    }
-  });
+  fetch("https://localhost:8081/master/checklist/options")
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        // 받아온 데이터로 autocompleteData 업데이트
+        autocompleteData.BRAND.push(...data.brandOptions);
+        autocompleteData.BRAND1.push(...data.brandOptions);
+        autocompleteData.INSP.push(...data.inspTypeOptions);
+        autocompleteData.INSP1.push(...data.inspTypeOptions);
+        autocompleteData.CHKLST.push(...data.checklistOptions);
+        autocompleteData.CHKLST1.push(...data.checklistOptions);
+        autocompleteData.MASTER_CHKLST.push(...data.checklistOptions);
+
+        // 자동완성 인스턴스를 초기화하고 wrapper 요소에 저장
+        $(".wrapper").each(function () {
+          const $wrapper = $(this);
+          const type = $wrapper.data("autocomplete");
+          if (type && autocompleteData[type]) {
+            const autocomplete = new Autocomplete($wrapper, autocompleteData[type]);
+            $wrapper.data("autocompleteInstance", autocomplete);
+          }
+        });
+      });
 });
 // 문서 전체에 클릭 이벤트 바인딩하여 Popover 숨기기
 $(document).on("click", function () {
@@ -473,3 +525,24 @@ $(window).on("beforeunload", function() {
   if (checkUnload) return '이 페이지를 벗어나면 작성된 내용은 저장되지 않습니다.';
 });
 
+$('.masterChklstSearchBtn .search-btn').click(function(e) {
+  let listItems = '';  // 리스트 아이템을 담을 문자열 변수 초기화
+
+  // defaultRowData 배열을 순회하면서 리스트 아이템을 생성
+  for (let i = 0; i < defaultRowData.length; i++) {
+    listItems += `
+      <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
+        <div class="item-info d-flex align-items-center">
+          <span class="me-3">${(i + 1).toString().padStart(2, '0')}</span>
+          <p class="mb-0">${defaultRowData[i].chklstNm}</p>
+        </div>
+        <button class="btn btn-primary btn-sm rounded-20" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
+          미리보기
+          <i class="fa-regular fa-eye"></i>
+        </button>
+      </li>`;
+  }
+
+  // 생성된 리스트 아이템들을 .list-group에 삽입
+  $('.list-group').html(listItems);
+});

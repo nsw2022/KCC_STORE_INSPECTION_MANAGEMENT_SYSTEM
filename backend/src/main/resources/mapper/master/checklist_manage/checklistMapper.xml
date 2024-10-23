@@ -5,7 +5,7 @@
 
 <mapper namespace="com.sims.master.checklist_manage.mapper.ChecklistMapper">
     <select id="selectChecklistAll" resultType="ChecklistResponse">
-        SELECT /* ChecklistMapper.getChecklistAll 유재원 */
+        SELECT /* ChecklistMapper.selectChecklistAll 유재원 */
             CHKLST.CHKLST_ID,
             BRAND_NM.DTL_CD_NM AS BRAND_NM,
             MASTER_CHKLST.CHKLST_NM AS MASTER_CHKLST_NM,
@@ -20,6 +20,51 @@
                     ON CHKLST.INSP_TYPE_CD = INSP_TYPE_NM.DTL_CD
                 LEFT JOIN CHKLST MASTER_CHKLST
                     ON CHKLST.MASTER_CHKLST_ID = MASTER_CHKLST.CHKLST_ID
-        ORDER BY CHKLST.CHKLST_ID
+        WHERE
+            CHKLST.CHKLST_STTS_W != '0'
+        ORDER BY
+            CHKLST.CHKLST_ID DESC
+    </select>
+
+    <update id="deleteChecklistByChklstId" parameterType="List">
+        UPDATE
+            CHKLST
+        SET
+            CHKLST_STTS_W = '0'
+        WHERE
+            CHKLST_ID
+                IN
+                    <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+                        #{item.chklstId}
+                    </foreach>
+    </update>
+
+    <select id="selectBrandOptions">
+        SELECT
+            DTL_CD_NM
+        FROM
+            COMM_CD_DTL
+        WHERE
+            DTL_CD
+                LIKE
+                    'B%'
+    </select>
+
+    <select id="selectInspTypeOptions">
+        SELECT
+            DTL_CD_NM
+        FROM
+            COMM_CD_DTL
+        WHERE
+            DTL_CD
+                LIKE
+                    'IT%'
+    </select>
+
+    <select id="selectChecklistOptions">
+        SELECT
+            CHKLST_NM
+        FROM
+            CHKLST
     </select>
 </mapper>

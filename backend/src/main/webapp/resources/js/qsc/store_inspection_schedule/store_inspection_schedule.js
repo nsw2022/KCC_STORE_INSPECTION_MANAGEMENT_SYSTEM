@@ -135,10 +135,6 @@ instance.updateSelected(selectedText);
 };
 
 // 각 자동완성 필드에 대한 데이터 목록 정의
-/**
-* @todo responseBody로 받아올것이라면 여기서 Ajax로 데이터를 요청하면 됨
-*
-*/
 const autocompleteData = {
 	
 inspector: [],

@@ -2,7 +2,7 @@ server:
   port: ${PORT_NUMBER}
   tomcat:
     additional-tld-skip-patterns: osdt_cert.jar, osdt_core.jar
- ssl:
+  ssl:
    key-store: classpath:ssl/keystore.p12
    key-store-type: PKCS12
    key-store-password: ${SSL_PASSWORD}

@@ -344,6 +344,13 @@ body {
 .list-group-item button {
   font: 400 13px "Noto Sans KR";
 }
+.item-info:focus {
+  border-color: #3274fa !important;
+  outline: none; /* 기본 outline 제거 */
+}
+
+
+
 
 /*  second modal         ***************************************************/
 .accordion-button {

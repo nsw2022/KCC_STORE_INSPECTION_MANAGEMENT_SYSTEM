@@ -248,8 +248,8 @@ pageEncoding="UTF-8" %>
                 <div class="button-box" style="display: flex; justify-content: space-between; align-items: center;">
                   <span class="ms-3" style="font: 350 20px Noto Sans KR;">총 <span class="checklist_count" style="color: #0035BE"></span>개</span>
                   <div class="my-0">
-                    <button type="button" class="btn btn-light me-3" onclick="onAddRow()">추가</button>
-                    <button type="button" class="btn btn-light" onclick="onDeleteRow()">삭제</button>
+                    <button type="button" class="btn btn-light me-3" onclick="onChecklistAddRow()">추가</button>
+                    <button type="button" class="btn btn-light" onclick="onChecklistDeleteRow()">삭제</button>
                   </div>
                 </div>
                 <div>
@@ -274,9 +274,9 @@ pageEncoding="UTF-8" %>
                       <!-- 점검유형 -->
                       <div class="col-lg-3 col-md-6 col-12">
                         <label for="inspectionType" class="form-label">브랜드</label>
-                        <div class="wrapper" data-autocomplete="BRAND">
+                        <div class="wrapper" data-autocomplete="BRAND1">
                           <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                            <span>브랜드</span>
+                            <span class="brandPlaceholder">브랜드</span>
                             <i class="uil uil-angle-down"></i>
                           </div>
                           <div class="hide-list">
@@ -295,9 +295,9 @@ pageEncoding="UTF-8" %>
                       <!-- 체크리스트명 -->
                       <div class="col-lg-3 col-md-6 col-12">
                         <label for="checklistName" class="form-label">체크리스트</label>
-                        <div class="wrapper" data-autocomplete="CHKLST">
+                        <div class="wrapper" data-autocomplete="CHKLST1">
                           <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                            <span>체크리스트</span>
+                            <span class="checklistPlaceholder">체크리스트</span>
                             <i class="uil uil-angle-down"></i>
                           </div>
                           <div class="hide-list">
@@ -316,21 +316,9 @@ pageEncoding="UTF-8" %>
                       <!-- 마스터 체크리스트 -->
                       <div class="col-lg-3 col-md-6 col-12">
                         <label for="storeSearch" class="form-label">마스터 체크리스트</label>
-                        <div class="wrapper" data-autocomplete="MASTER_CHKLST">
-                          <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                            <span>마스터 체크리스트</span>
-                            <i class="uil uil-angle-down"></i>
-                          </div>
-                          <div class="hide-list">
-                            <div class="search">
-                              <input
-                                      type="text"
-                                      class="form-control top-search"
-                                      id="masterChecklist2"
-                                      placeholder="마스터 체크리스트명을 입력해주세요"
-                              />
-                              <ul class="options"></ul>
-                            </div>
+                        <div class="wrapper masterChklstSearchBtn" data-autocomplete="MASTER_CHKLST">
+                          <div class="search-btn top-search form-control d-flex align-items-center justify-content-between" style="height: 34px !important" data-bs-toggle="modal" data-bs-target="#masterChecklistModal">
+                            <span class="masterChecklistPlaceholder">마스터 체크리스트</span>
                           </div>
                         </div>
                       </div>
@@ -338,9 +326,9 @@ pageEncoding="UTF-8" %>
                       <!-- 점검유형 -->
                       <div class="col-lg-3 col-md-6 col-12">
                         <label for="brandSearch" class="form-label">점검유형</label>
-                        <div class="wrapper" data-autocomplete="INSP">
+                        <div class="wrapper" data-autocomplete="INSP1">
                           <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                            <span>점검유형</span>
+                            <span class="inspectionTypePlaceholder">점검유형</span>
                             <i class="uil uil-angle-down"></i>
                           </div>
                           <div class="hide-list">
@@ -410,68 +398,15 @@ pageEncoding="UTF-8" %>
                   <i class="fa-regular fa-eye"></i>
                 </button>
               </li>
-              <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
-                <div class="item-info d-flex align-items-center">
-                  <span class="me-3">01</span>
-                  <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
-                </div>
-                <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
-                  미리보기
-                  <i class="fa-regular fa-eye"></i>
-                </button>
-              </li>
-              <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
-                <div class="item-info d-flex align-items-center">
-                  <span class="me-3">01</span>
-                  <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
-                </div>
-                <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
-                  미리보기
-                  <i class="fa-regular fa-eye"></i>
-                </button>
-              </li>
-              <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
-                <div class="item-info d-flex align-items-center">
-                  <span class="me-3">01</span>
-                  <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
-                </div>
-                <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
-                  미리보기
-                  <i class="fa-regular fa-eye"></i>
-                </button>
-              </li>
-              <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
-                <div class="item-info d-flex align-items-center">
-                  <span class="me-3">01</span>
-                  <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
-                </div>
-                <button class="btn btn-primary btn-sm " type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
-                  미리보기
-                  <i class="fa-regular fa-eye"></i>
-                </button>
-              </li>
-              <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
-                <div class="item-info d-flex align-items-center">
-                  <span class="me-3">01</span>
-                  <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
-                </div>
-                <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
-                  미리보기
-                  <i class="fa-regular fa-eye"></i>
-                </button>
-              </li>
-
-
-
             </ol>
           </div>
-          <%-------------- body --------------%>
+          <%-------------- modal body --------------%>
 
-          <%-------------- footer --------------%>
+          <%-------------- modal footer --------------%>
           <div class="modal-footer">
             <button class="btn btn-primary" data-bs-dismiss="modal">선택</button>
           </div>
-          <%-------------- footer --------------%>
+          <%-------------- modal footer --------------%>
         </div>
       </div>
     </div>
@@ -481,7 +416,7 @@ pageEncoding="UTF-8" %>
     <div class="modal fade" id="exampleModalToggle2" aria-hidden="false" aria-labelledby="details" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
       <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
         <div class="modal-content">
-          <%--------------          header       ----------------------%>
+          <%--------------         second modal header       ----------------------%>
           <div class="modal-header">
             <div class="large-category-group">
               <button type="button" class="btn btn-primary">중대법규</button>
@@ -493,8 +428,8 @@ pageEncoding="UTF-8" %>
               </svg>
             </button>
           </div>
-          <%--------------           header       ----------------------%>
-          <%--------------           body       ----------------------%>
+          <%--------------          second modal header       ----------------------%>
+          <%--------------          second modal body       ----------------------%>
           <div class="modal-body">
             <div class="row d-flex justify-content-between">
               <div class="col-lg mb-3">
@@ -603,13 +538,13 @@ pageEncoding="UTF-8" %>
 
 
           </div>
-          <%--------------           body       ----------------------%>
+          <%--------------         second modal  body       ----------------------%>
 
         </div>
       </div>
     </div>
 
-    <%-----------  modal end ---------------%>
+    <%----------- second modal end ---------------%>
     <script
       type="application/javascript"
       src="../../../../../resources/js/master/checklist/list/checklist.js"
