@@ -271,7 +271,7 @@ pageEncoding="UTF-8" %>
                   </div>
                   <div class="container px-0">
                     <div class="row first-input-box mb-3">
-                      <!-- 점검유형 -->
+                      <!-- 브랜드 -->
                       <div class="col-lg-3 col-md-6 col-12">
                         <label for="inspectionType" class="form-label">브랜드</label>
                         <div class="wrapper" data-autocomplete="BRAND1">
@@ -404,7 +404,7 @@ pageEncoding="UTF-8" %>
 
           <%-------------- modal footer --------------%>
           <div class="modal-footer">
-            <button class="btn btn-primary" data-bs-dismiss="modal">선택</button>
+            <button class="btn btn-primary chklstSelectBtn" data-bs-dismiss="modal">선택</button>
           </div>
           <%-------------- modal footer --------------%>
         </div>
@@ -549,5 +549,9 @@ pageEncoding="UTF-8" %>
       type="application/javascript"
       src="../../../../../resources/js/master/checklist/list/checklist.js"
     ></script>
+  <script
+          type="application/javascript"
+          src="../../../../../resources/js/master/checklist/list/checklist_modal.js"
+  ></script>
   </body>
 </html>

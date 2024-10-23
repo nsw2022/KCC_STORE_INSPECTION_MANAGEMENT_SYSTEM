@@ -3,6 +3,7 @@ package com.sims.master.checklist_manage.controller;
 import com.sims.master.checklist_manage.service.ChecklistService;
 import com.sims.master.checklist_manage.vo.ChecklistDeleteRequest;
 import com.sims.master.checklist_manage.vo.ChecklistOptionsResponse;
+import com.sims.master.checklist_manage.vo.ChecklistRequest;
 import com.sims.master.checklist_manage.vo.ChecklistResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -68,5 +69,13 @@ public class ChecklistController {
     @ResponseBody
     public ResponseEntity<ChecklistOptionsResponse> selectChecklistOptions(){
         return new ResponseEntity<ChecklistOptionsResponse>(checklistService.selectChecklistOptions(), HttpStatus.OK);
+    }
+
+    /**
+     * 체크리스트 저장 / 수정
+     */
+    @GetMapping("/checklist/save")
+    public ResponseEntity<?> insertAndUpdateChecklist(List<ChecklistRequest> checklistRequests){
+        return null;
     }
 }

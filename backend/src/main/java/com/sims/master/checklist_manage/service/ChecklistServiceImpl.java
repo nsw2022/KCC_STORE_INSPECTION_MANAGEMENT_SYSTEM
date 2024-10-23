@@ -2,6 +2,7 @@ package com.sims.master.checklist_manage.service;
 
 import com.sims.config.Exception.CustomException;
 import com.sims.config.Exception.ErrorCode;
+import com.sims.config.common.aop.PRoleCheck;
 import com.sims.master.checklist_manage.mapper.ChecklistMapper;
 import com.sims.master.checklist_manage.vo.ChecklistDeleteRequest;
 import com.sims.master.checklist_manage.vo.ChecklistOptionsResponse;
@@ -32,18 +33,12 @@ public class ChecklistServiceImpl implements ChecklistService{
     }
 
     @Override
+    @PRoleCheck
     public int deleteChecklistByChklstId(List<ChecklistDeleteRequest> checklistDeleteRequest) {
         /**
          * @Todo role체크 aop 구현 후 삭제 예정
          */
-        GrantedAuthority role = (GrantedAuthority) SecurityContextHolder.getContext().getAuthentication().getAuthorities().iterator().next();
-        String roleName = role.getAuthority();
-
-        log.info("role : {}", roleName);
-        log.info("사이즈 = {}", checklistMapper.selectChklstIdByChklstIdAndChklstUseW(checklistDeleteRequest).size());
-        if (!"MR002".equals(roleName) && !"MR001".equals(roleName)) {
-            throw new CustomException(ErrorCode.HANDLE_ACCESS_DENIED);
-        } else if (checklistMapper.selectChklstIdByChklstIdAndChklstUseW(checklistDeleteRequest).size() > 0) {
+        if (checklistMapper.selectChklstIdByChklstIdAndChklstUseW(checklistDeleteRequest).size() > 0) {
             throw new CustomException(ErrorCode.CHECKLIST_IN_USE);
         }
         return checklistMapper.deleteChecklistByChklstId(checklistDeleteRequest);

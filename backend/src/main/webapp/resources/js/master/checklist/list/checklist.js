@@ -8,18 +8,15 @@ let firstRowLength = 0;
 
 async function loadData() {
   try {
-    const response = await fetch("https://localhost:8081/master/checklist/list")
+    const response = await fetch("https://localhost:8081/master/checklist/list");
     const data = await response.json();
     console.log(data);
+
     // rowData에 데이터를 할당
     defaultRowData = data;
     rowData = data.map((item) => {
       firstRowLength++;
-      if (item.masterChklstNm === null) {
-        item.is_master_checklist = 'N';
-      } else {
-        item.is_master_checklist = 'Y';
-      }
+      item.is_master_checklist = item.masterChklstNm === null ? 'N' : 'Y';
       return item;
     });
 
@@ -100,14 +97,19 @@ async function loadData() {
       rowSelection: "multiple",
       pagination: true,
       paginationAutoPageSize: true,
-      onCellClicked: (params) => {
-        console.log("cell was clicked", params.data);
-        selectedRowNo = params.data.chklstId;
-        console.log(selectedRowNo);
-        $(".brandPlaceholder").text(params.data.brandNm);
-        $(".checklistPlaceholder").text(params.data.chklstNm);
-        $(".masterChecklistPlaceholder").text(params.data.masterChklstNm);
-        $(".inspectionTypePlaceholder").text(params.data.inspTypeNm);
+      onRowSelected: (event) => {
+        // 체크박스가 선택되거나 해제될 때
+        const selectedRows = gridApi.getSelectedRows();
+        if (selectedRows.length > 0) {
+          selectedRowNo = selectedRows[0].chklstId; // 선택된 첫 번째 행의 ID
+          $(".brandPlaceholder").text(selectedRows[0].brandNm);
+          $(".checklistPlaceholder").text(selectedRows[0].chklstNm);
+          $(".masterChecklistPlaceholder").text(selectedRows[0].masterChklstNm);
+          $(".inspectionTypePlaceholder").text(selectedRows[0].inspTypeNm);
+          enableElementSearchBtn(); // 선택된 행이 있으면 검색 버튼 활성화
+        } else {
+          disableSearchBtn(); // 선택된 행이 없으면 검색 버튼 비활성화
+        }
       },
     };
 
@@ -123,8 +125,27 @@ async function loadData() {
   }
 }
 
-// 데이터 로딩 함수 호출
+// disableSearchBtn 함수 정의
+function disableSearchBtn() {
+  // 검색 버튼 비활성화 로직
+  $(".search-btn").prop("disabled", true); // 또는 원하는 비활성화 로직
+}
+
 loadData();
+
+// 비활성화 함수
+function disableSearchBtn() {
+  $('.wrapper').addClass('disabled');
+}
+
+// 활성화 함수
+function enableElementSearchBtn() {
+  $('.wrapper').removeClass('disabled');
+}
+
+// 비활성화 함수 호출
+disableSearchBtn();
+
 
 // 체크리스트 카운트 업데이트 함수
 function updateChecklistCount() {
@@ -217,9 +238,7 @@ function onChecklistDeleteRow() {
   }
 }
 
-
-
-
+// 체크리스트 저장 / 수정 기능
 function confirmationDialog() {
   Swal.fire({
     title: "확인",
@@ -232,18 +251,14 @@ function confirmationDialog() {
     cancelButtonText: "취소",
   }).then((result) => {
     if (result.isConfirmed) {
+      const selectedRows = gridApi.getSelectedRows();
       // 체크리스트를 서버에 저장하는 fetch 요청
-      fetch("https://localhost:8081/master/checklist/submit", {
+      fetch("https://localhost:8081/master/checklist/save", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          brandNm:`${$(".brandPlaceholder").text()}`,
-          chklstNm: `${$(".checklistPlaceholder").text()}`,
-          masterChklstNm: `${$(".masterChecklistPlaceholder").text()}`,
-          inspTypeNm: `${$(".inspectionTypePlaceholder").text()}`,
-        }),
+        body: JSON.stringify(selectedRows.map(row =>{ chklstId: row.chklstId })),
       })
       .then((data) => {
         // 서버 저장이 성공하면 완료 알림 표시
@@ -546,24 +561,4 @@ $(window).on("beforeunload", function() {
   if (checkUnload) return '이 페이지를 벗어나면 작성된 내용은 저장되지 않습니다.';
 });
 
-$('.masterChklstSearchBtn .search-btn').click(function(e) {
-  let listItems = '';  // 리스트 아이템을 담을 문자열 변수 초기화
 
-  // defaultRowData 배열을 순회하면서 리스트 아이템을 생성
-  for (let i = 0; i < defaultRowData.length; i++) {
-    listItems += `
-      <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
-        <div class="item-info d-flex align-items-center">
-          <span class="me-3">${(i + 1).toString().padStart(2, '0')}</span>
-          <p class="mb-0">${defaultRowData[i].chklstNm}</p>
-        </div>
-        <button class="btn btn-primary btn-sm rounded-20" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
-          미리보기
-          <i class="fa-regular fa-eye"></i>
-        </button>
-      </li>`;
-  }
-
-  // 생성된 리스트 아이템들을 .list-group에 삽입
-  $('.list-group').html(listItems);
-});
