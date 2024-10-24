@@ -357,7 +357,7 @@ document.addEventListener("DOMContentLoaded", function () {
     initRouteCalculation();
   });
 
-  // 마커 추가 함수 정의 (수정됨)
+  // 마커 추가 함수 정의 - infoWindow 커스터마이징
   function addMarkers() {
     // 마커와 정보창을 저장할 배열 초기화
     var markers = [],
@@ -383,15 +383,31 @@ document.addEventListener("DOMContentLoaded", function () {
           zIndex: 100,
         });
 
+        // InfoWindow 콘텐츠에 CSS 클래스를 추가
+        var contentString =
+          "<div class='custom_infowindow'>" +
+          `<strong>${store.storeNm}</strong><br>` +
+          `브랜드: ${store.brandNm}<br>` +
+          `점검자: ${store.inspectorName ? store.inspectorName : "미정"}<br>` +
+          `SV : ${store.supervisorName ? store.supervisorName : "미정"}<br>` +
+          "<div class='custom_tail'></div>" + //  말꼬리 커마 css 확일할 것
+          "</div>";
+
         // 마커에 연결된 정보창 생성
         var infoWindow = new naver.maps.InfoWindow({
-          content:
-            '<div style="width:150px;text-align:center;padding:10px;">' +
-            `<strong>${store.storeNm}</strong><br>` +
-            `매장 ID: ${store.storeId}<br>` +
-            `브랜드: ${store.brandNm}<br>` +
-            `점검자: ${store.mbrNm ? store.mbrNm : "미정"}` +
-            "</div>",
+          content: contentString,
+
+          // 말꼬리 크기 조정
+          //anchorSize: new naver.maps.Size(10, 10), // 기존보다 작은 크기로 설정
+          // 말꼬리 비활성화가 아닌 크기 조정으로 조절
+          // 필요 시 disableAnchor: true 로 설정하여 말꼬리 제거 가능
+          disableAnchor: true, // 말꼬리 사용
+          // 픽셀 오프셋 조정 (필요에 따라 변경)
+          pixelOffset: new naver.maps.Point(0, -10),
+
+          // InfoWindow의 배경 및 테두리 스타일 제거 (CSS로 대체)
+          backgroundColor: "transparent",
+          borderWidth: 0,
         });
 
         // 마커 클릭 시 정보창 토글

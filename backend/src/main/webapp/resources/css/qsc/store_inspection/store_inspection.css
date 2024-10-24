@@ -618,6 +618,37 @@ table.calendar td .incomplete {
   transition: ease-out 0.3s;
   background-color: rgb(238, 238, 238);
 }
+
+/* InfoWindow 콘텐츠 스타일 */
+.custom_infowindow {
+  position: relative; /* 사용자 정의 말꼬리를 위한 위치 설정 */
+  background-color: #fff; /* 배경색 설정 */
+  padding: 15px; /* 내부 여백 */
+  border-radius: 8px; /* 모서리 둥글게 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 박스 그림자 추가 */
+  font-size: 14px; /* 글꼴 크기 조정 */
+  color: #333; /* 글꼴 색상 */
+  max-width: 200px; /* 최대 너비 설정 */
+}
+
+/* 사용자 정의 말꼬리 스타일 */
+.custom_infowindow .custom_tail {
+  position: absolute;
+  bottom: -10px; /* InfoWindow 콘텐츠 하단에 위치 */
+  left: 50%; /* 가로 중앙 정렬 */
+  transform: translateX(-50%); /* 중앙 정렬 조정 */
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent; /* 왼쪽 삼각형 */
+  border-right: 8px solid transparent; /* 오른쪽 삼각형 */
+  border-top: 12px solid #fff; /* 말꼬리 색상 (InfoWindow 배경색과 일치시킴) */
+}
+
+/* 말꼬리에 그림자 추가 (선택 사항) */
+.custom_infowindow .custom_tail {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 /*----------------------------지도에 따른 체크리스트-----------------------------*/
 /* 테이블 컨테이너 스타일 */
 .store-info-table {
