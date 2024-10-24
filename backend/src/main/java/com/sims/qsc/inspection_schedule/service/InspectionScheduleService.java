@@ -17,7 +17,7 @@ public interface InspectionScheduleService {
      * @param inspector 점검자
      * @return 필터 요소가 적용된 점검일정 목록
      */
-    List<InspectionScheduleRequest> getFilteredInspectionScheduleList(
+    List<InspectionScheduleRequest> selectFilteredInspectionScheduleList(
             @Param("storeNm") String storeNm,
             @Param("brandNm") String brandNm,
             @Param("scheduleDate") String scheduleDate,
@@ -43,5 +43,5 @@ public interface InspectionScheduleService {
      * @param storeId 가맹점 번호 - 시퀀스
      * @return 가맹점별 체크 리스트, 체크리스트 문항과 점수
      */
-    List<InspectionDetailsResponse> getInspectionDetails(@Param("storeId") Integer storeId);
+    List<InspectionDetailsResponse> selectInspectionDetails(@Param("storeId") Integer storeId);
 }

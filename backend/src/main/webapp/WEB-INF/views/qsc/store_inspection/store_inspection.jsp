@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -37,8 +38,7 @@
             drawing: 지도 위에 도형(마커, 선, 다각형 등)을 그리는 기능을 제공합니다.
             visualization: 데이터 시각화(히트맵 등) 기능을 제공합니다.
      -->
-    <!-- map.js 스크립트 추가 -->
-    <script src="/resources/js/qsc/store_inspection/maps.js"></script>
+
 
 
 </head>
@@ -144,35 +144,73 @@
                 <section class="map-section">
 
                     <div id="map-input-container">
-                        <h3>가맹점 위치</h3>
-                        <div class="search">
-                            <input type="text" placeholder="검색할 주소" id="address">
-                            <input  id="submit" type="button" value="주소검색" >
-                        </div>
 
-                        <div class="input-group">
-                            <label for="start">출발지:</label>
-                            <input type="text" id="start" placeholder="출발지 주소를 입력하세요">
-                        </div>
-                        <div class="input-group">
-                            <label for="destination1">목적지 1:</label>
-                            <input type="text" id="destination1" placeholder="목적지 1 주소를 입력하세요">
-                        </div>
-                        <div class="input-group">
-                            <label for="destination2">목적지 2:</label>
-                            <input type="text" id="destination2" placeholder="목적지 2 주소를 입력하세요">
-                        </div>
-                        <div class="input-group">
-                            <label for="destination3">목적지 3:</label>
-                            <input type="text" id="destination3" placeholder="목적지 3 주소를 입력하세요">
-                        </div>
-                        <button id="calculateRoutes">최단 거리 계산 및 경로 표시</button>
+                        <c:if test="${userRole == 'ADMIN'}">
+                            <h1>관리자다</h1>
+                        </c:if>
 
+                        <c:if test="${userRole == 'QUALITY_MANAGER'}">
+                            <h1>품질관리자다</h1>
+                        </c:if>
+
+                        <c:if test="${userRole == 'SV'}">
+                            <h1>SV</h1>
+                        </c:if>
+
+                        <c:if test="${userRole == 'INSPECTOR'}">
+                            <h4 style="font-size: 25px">오늘의 점검 지도</h4>
+                            <div id="left-container">
+                                <div class="map-summary my-3">
+                                    <div class="map-summary-time">
+                                        총 소요시간 : <strong>1</strong>시간 <strong>16</strong>분
+                                    </div>
+                                    <div class="map-summary-distance">도합 거리 : <strong>3.6</strong>km</div>
+                                </div>
+                                <div class="route-container">
+                                    <div class="map-route">
+                                        <div class="map-route-detail">
+                                            <span>내위치<i class="fa-solid fa-angles-right"></i> 청량리역사점</span>
+                                            <span>
+                                                <strong>19</strong>분
+                                                <span class="divider"></span>
+                                                <span>1.2km</span>
+                                                <span class="congestionWant text-end" id="congestion1">원활</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="map-route ">
+                                        <div class="map-route-detail">
+                                            <span>청량리역사점<i class="fa-solid fa-angles-right"></i>동대문점</span>
+                                            <span>
+                                                <strong>20</strong>분
+                                                <span class="divider"></span>
+                                                <span>0.7km</span>
+                                                <span id="congestion2" class="congestionNormal">보통</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="map-route">
+                                        <div class="map-route-detail">
+                                            <span>동대문점 <i class="fa-solid fa-angles-right"></i> 홍대입구점</span>
+                                            <span>
+                                                <strong>37</strong>분
+                                                <span class="divider"></span>
+                                                <span>1.7km</span>
+                                                <span id="congestion3" class="congestionConfusion">혼잡</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </c:if>
                     </div>
-                    <div id="map" style="height: 400px; background-color: #f0f0f0;">
-                        <!-- 여기에 지도 라이브러리 추가 -->
-
-
+                    <div id="map" style=" background-color: #f0f0f0;">
+                        <div class="map-box-container">
+                            <div id="map-all">전체보기</div>
+                            <div id="map-tsp">오늘의 점검</div>
+                        </div>
                     </div>
                 </section>
 
@@ -214,9 +252,14 @@
 <script type="text/javascript">
     var currentUsername = '<c:out value="${username}" />';
     var currentUserRole = '<c:out value="${userRole}" />';
+    if (currentUserRole === 'UNKNOWN'){
+         location.href = "/login";
+    }
 </script>
 
 
-</body>
 <script src="/resources/js/qsc/store_inspection/store_inspection.js"></script>
+<!-- map.js 스크립트 추가 -->
+<script src="/resources/js/qsc/store_inspection/maps.js"></script>
+</body>
 </html>

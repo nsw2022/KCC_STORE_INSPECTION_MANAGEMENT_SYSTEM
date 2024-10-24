@@ -19,14 +19,14 @@ function formatOpenHm(timeStr) {
 // 페이지 로드 시 실행
 document.addEventListener("DOMContentLoaded", function () {
   const urlParams = new URLSearchParams(window.location.search);
-  const chklstId = urlParams.get('chklstId');
-  const storeNm = urlParams.get('storeNm');
-  const inspPlanDt = urlParams.get('inspPlanDt');
+  const chklstId = urlParams.get("chklstId");
+  const storeNm = urlParams.get("storeNm");
+  const inspPlanDt = urlParams.get("inspPlanDt");
 
   if (chklstId && storeNm && inspPlanDt) {
     fetchPopupData(chklstId, storeNm, inspPlanDt);
   } else {
-    alert('필수 파라미터(chklstId, storeNm, inspPlanDt)가 지정되지 않았습니다.');
+    //alert('필수 파라미터(chklstId, storeNm, inspPlanDt)가 지정되지 않았습니다.');
   }
 
   generateContent(inspectionData);
@@ -49,48 +49,50 @@ function fetchPopupData(chklstId, storeNm, inspPlanDt) {
   const url = `/filter/store_inspection_popup?chklstId=${chklstId}&storeNm=${encodeURIComponent(storeNm)}&inspPlanDt=${inspPlanDt}`;
 
   fetch(url)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`네트워크 응답이 올바르지 않습니다. 상태 코드: ${response.status}`);
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(
+          `네트워크 응답이 올바르지 않습니다. 상태 코드: ${response.status}`,
+        );
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log("팝업 데이터:", data);
+      if (data.length > 0) {
+        // 첫 번째 데이터를 inspection-detail 섹션에 채움
+        populateInspectionDetail(data[0]);
+
+        // 데이터를 변환하여 generateContent 함수에 전달
+        const inspectionData = processFetchedData(data);
+        generateContent(inspectionData);
+
+        // 첫 번째 탭과 콘텐츠를 active 상태로 설정
+        const firstTab = document.querySelector(".inspection-tab");
+        const firstContent = document.querySelector(".inspection-list");
+
+        if (firstTab) {
+          firstTab.classList.add("active");
         }
-        return response.json();
-      })
-      .then(data => {
-        console.log('팝업 데이터:', data);
-        if (data.length > 0) {
-          // 첫 번째 데이터를 inspection-detail 섹션에 채움
-          populateInspectionDetail(data[0]);
 
-          // 데이터를 변환하여 generateContent 함수에 전달
-          const inspectionData = processFetchedData(data);
-          generateContent(inspectionData);
-
-          // 첫 번째 탭과 콘텐츠를 active 상태로 설정
-          const firstTab = document.querySelector(".inspection-tab");
-          const firstContent = document.querySelector(".inspection-list");
-
-          if (firstTab) {
-            firstTab.classList.add("active");
-          }
-
-          if (firstContent) {
-            firstContent.classList.add("active");
-          }
-        } else {
-          alert('점검 상세 데이터가 없습니다.');
+        if (firstContent) {
+          firstContent.classList.add("active");
         }
-      })
-      .catch(error => {
-        console.error('데이터 가져오기 실패:', error);
-        alert('점검 데이터를 불러오는 데 실패했습니다.');
-      });
+      } else {
+        alert("점검 상세 데이터가 없습니다.");
+      }
+    })
+    .catch((error) => {
+      console.error("데이터 가져오기 실패:", error);
+      alert("점검 데이터를 불러오는 데 실패했습니다.");
+    });
 }
 
 // 데이터를 그룹화하여 generateContent 함수가 기대하는 형식으로 변환하는 함수
 function processFetchedData(data) {
   const categoryMap = {};
 
-  data.forEach(item => {
+  data.forEach((item) => {
     const ctgId = item.ctgId;
     const masterCtgId = item.masterCtgId;
 
@@ -101,7 +103,7 @@ function processFetchedData(data) {
         categoryMap[ctgId] = {
           categoryName: item.ctgNm,
           categoryId: ctgId,
-          subcategories: []
+          subcategories: [],
         };
       }
     } else {
@@ -111,20 +113,22 @@ function processFetchedData(data) {
       if (!category) {
         // 대분류가 아직 없다면 생성
         category = {
-          categoryName: '', // 이름은 나중에 채움
+          categoryName: "", // 이름은 나중에 채움
           categoryId: masterCtgId,
-          subcategories: []
+          subcategories: [],
         };
         categoryMap[masterCtgId] = category;
       }
 
       // 중분류 찾기 또는 생성
-      let subcategory = category.subcategories.find(sub => sub.subcategoryId === ctgId);
+      let subcategory = category.subcategories.find(
+        (sub) => sub.subcategoryId === ctgId,
+      );
       if (!subcategory) {
         subcategory = {
           subcategoryName: item.ctgNm,
           subcategoryId: ctgId,
-          questions: []
+          questions: [],
         };
         category.subcategories.push(subcategory);
       }
@@ -132,20 +136,22 @@ function processFetchedData(data) {
       // 문항 추가 또는 업데이트
       if (item.evitContent) {
         // 문항 찾기 또는 생성
-        let question = subcategory.questions.find(q => q.questionId === item.evitId);
+        let question = subcategory.questions.find(
+          (q) => q.questionId === item.evitId,
+        );
         if (!question) {
-          let questionType = '';
-          if (item.evitTypeCd === 'ET001') {
-            questionType = '2-choice';
-          } else if (item.evitTypeCd === 'ET004') {
-            questionType = '5-choice';
+          let questionType = "";
+          if (item.evitTypeCd === "ET001") {
+            questionType = "2-choice";
+          } else if (item.evitTypeCd === "ET004") {
+            questionType = "5-choice";
           }
 
           question = {
             questionId: item.evitId,
             questionText: item.evitContent,
             questionType: questionType,
-            options: []
+            options: [],
           };
           subcategory.questions.push(question);
         }
@@ -159,10 +165,14 @@ function processFetchedData(data) {
   });
 
   // 대분류 이름 채우기
-  Object.values(categoryMap).forEach(category => {
+  Object.values(categoryMap).forEach((category) => {
     if (!category.categoryName) {
-      const item = data.find(d => d.ctgId == category.categoryId && (d.masterCtgId == null || d.masterCtgId === 0));
-      category.categoryName = item ? item.ctgNm : 'Unknown Category';
+      const item = data.find(
+        (d) =>
+          d.ctgId == category.categoryId &&
+          (d.masterCtgId == null || d.masterCtgId === 0),
+      );
+      category.categoryName = item ? item.ctgNm : "Unknown Category";
     }
   });
 
@@ -172,53 +182,53 @@ function processFetchedData(data) {
 
 // inspection-detail 섹션을 동적으로 생성하는 함수
 function populateInspectionDetail(data) {
-  const inspectionDetailSection = document.getElementById('inspection-detail');
+  const inspectionDetailSection = document.getElementById("inspection-detail");
   if (!inspectionDetailSection) {
-    console.error('inspection-detail 섹션을 찾을 수 없습니다.');
+    console.error("inspection-detail 섹션을 찾을 수 없습니다.");
     return;
   }
 
   // 기존 내용 초기화
-  inspectionDetailSection.innerHTML = '';
+  inspectionDetailSection.innerHTML = "";
 
   // inspection-info div 생성
-  const inspectionInfo = document.createElement('div');
-  inspectionInfo.classList.add('inspection-info');
+  const inspectionInfo = document.createElement("div");
+  inspectionInfo.classList.add("inspection-info");
 
   // inspection-table 생성
-  const table = document.createElement('table');
-  table.classList.add('inspection-table');
+  const table = document.createElement("table");
+  table.classList.add("inspection-table");
 
   // 테이블 헤더 행 생성
-  const headerRow = document.createElement('tr');
+  const headerRow = document.createElement("tr");
 
-  const titleCell = document.createElement('td');
-  titleCell.classList.add('info-title');
-  const titleP = document.createElement('p');
-  titleP.textContent = data.chklstNm || '점검표'; // chklstNm이 없을 경우 기본값
+  const titleCell = document.createElement("td");
+  titleCell.classList.add("info-title");
+  const titleP = document.createElement("p");
+  titleP.textContent = data.chklstNm || "점검표"; // chklstNm이 없을 경우 기본값
   titleCell.appendChild(titleP);
 
-  const detailsCell = document.createElement('td');
-  detailsCell.classList.add('info-details');
+  const detailsCell = document.createElement("td");
+  detailsCell.classList.add("info-details");
 
-  const storeNameSpan = document.createElement('span');
-  storeNameSpan.classList.add('store-name');
-  storeNameSpan.textContent = data.brandNm || '브랜드명'; // brandNm이 없을 경우 기본값
+  const storeNameSpan = document.createElement("span");
+  storeNameSpan.classList.add("store-name");
+  storeNameSpan.textContent = data.brandNm || "브랜드명"; // brandNm이 없을 경우 기본값
   detailsCell.appendChild(storeNameSpan);
 
-  const storeSubtitleSpan = document.createElement('span');
-  storeSubtitleSpan.classList.add('store-subtitle');
-  storeSubtitleSpan.textContent = `가맹점 (${data.storeNm || '가맹점명'})`; // storeNm이 없을 경우 기본값
+  const storeSubtitleSpan = document.createElement("span");
+  storeSubtitleSpan.classList.add("store-subtitle");
+  storeSubtitleSpan.textContent = `가맹점 (${data.storeNm || "가맹점명"})`; // storeNm이 없을 경우 기본값
   detailsCell.appendChild(storeSubtitleSpan);
 
-  const inspectionDateSpan = document.createElement('span');
-  inspectionDateSpan.classList.add('inspection-date');
+  const inspectionDateSpan = document.createElement("span");
+  inspectionDateSpan.classList.add("inspection-date");
   inspectionDateSpan.innerHTML = `<i class="fas fa-calendar-alt"></i> 점검일 : ${formatDate(data.inspPlanDt)}`;
   detailsCell.appendChild(inspectionDateSpan);
 
-  const inspectorNameSpan = document.createElement('span');
-  inspectorNameSpan.classList.add('inspector-name');
-  inspectorNameSpan.innerHTML = `<i class="fas fa-user"></i> 점검자 : ${data.mbrNm || '점검자명'}`;
+  const inspectorNameSpan = document.createElement("span");
+  inspectorNameSpan.classList.add("inspector-name");
+  inspectorNameSpan.innerHTML = `<i class="fas fa-user"></i> 점검자 : ${data.mbrNm || "점검자명"}`;
   detailsCell.appendChild(inspectorNameSpan);
 
   // 테이블에 행 추가
@@ -226,14 +236,9 @@ function populateInspectionDetail(data) {
   headerRow.appendChild(detailsCell);
   table.appendChild(headerRow);
 
-
   inspectionInfo.appendChild(table);
   inspectionDetailSection.appendChild(inspectionInfo);
 }
-
-
-
-
 
 // 콘텐츠를 동적으로 생성하는 함수
 function generateContent(data) {
@@ -304,7 +309,7 @@ function generateContent(data) {
           answerSection = document.createElement("div");
           answerSection.classList.add("answer-section");
 
-          question.options.forEach(option => {
+          question.options.forEach((option) => {
             const btn = document.createElement("button");
             btn.classList.add("answer-btn");
             btn.textContent = option;
@@ -313,53 +318,76 @@ function generateContent(data) {
             btn.type = "button"; // 버튼의 기본 동작 방지
 
             // 답변 버튼 클릭 시 선택 상태 토글 및 하위 입력 필드 활성화
-            btn.addEventListener('click', function() {
+            btn.addEventListener("click", function () {
               // 같은 문항의 다른 버튼들 비활성화
-              document.querySelectorAll(`.answer-btn[data-question-id="${question.questionId}"]`).forEach(b => {
-                b.classList.remove('active');
-              });
-              this.classList.add('active');
+              document
+                .querySelectorAll(
+                  `.answer-btn[data-question-id="${question.questionId}"]`,
+                )
+                .forEach((b) => {
+                  b.classList.remove("active");
+                });
+              this.classList.add("active");
 
               // 해당 질문의 하위 입력 필드 찾기
-              const detailContent = inspectionContentWrapper.querySelector(".detail-content");
-              const storeInfo = inspectionContentWrapper.querySelector(".store-info");
-              const locationInputs = storeInfo.querySelectorAll(`input[name^='location_${question.questionId}']`);
+              const detailContent =
+                inspectionContentWrapper.querySelector(".detail-content");
+              const storeInfo =
+                inspectionContentWrapper.querySelector(".store-info");
+              const locationInputs = storeInfo.querySelectorAll(
+                `input[name^='location_${question.questionId}']`,
+              );
 
               if (option === "부적합") {
                 // "부적합" 선택 시 하위 입력 필드 활성화 (etc-input과 caupvd 제외)
-                detailContent.querySelectorAll("input, textarea, select").forEach(input => {
-                  if (!input.classList.contains('caupvd') && !input.name.startsWith('etc_')) {
-                    input.disabled = false;
-                  }
-                });
+                detailContent
+                  .querySelectorAll("input, textarea, select")
+                  .forEach((input) => {
+                    if (
+                      !input.classList.contains("caupvd") &&
+                      !input.name.startsWith("etc_")
+                    ) {
+                      input.disabled = false;
+                    }
+                  });
 
                 // 위치정보 라디오 버튼 활성화
-                locationInputs.forEach(input => {
+                locationInputs.forEach((input) => {
                   input.disabled = false;
                 });
               } else {
                 // "적합" 선택 시 하위 입력 필드 비활성화 및 초기화 (etc-input과 caupvd 제외)
-                detailContent.querySelectorAll("input, textarea, select").forEach(input => {
-                  if (!input.classList.contains('caupvd') && !input.name.startsWith('etc_')) {
-                    input.disabled = true;
-                    if (input.tagName.toLowerCase() === 'textarea') {
-                      input.value = "";
-                    } else if (input.tagName.toLowerCase() === 'input' && input.type === 'radio') {
-                      input.checked = false;
+                detailContent
+                  .querySelectorAll("input, textarea, select")
+                  .forEach((input) => {
+                    if (
+                      !input.classList.contains("caupvd") &&
+                      !input.name.startsWith("etc_")
+                    ) {
+                      input.disabled = true;
+                      if (input.tagName.toLowerCase() === "textarea") {
+                        input.value = "";
+                      } else if (
+                        input.tagName.toLowerCase() === "input" &&
+                        input.type === "radio"
+                      ) {
+                        input.checked = false;
+                      }
                     }
-                  }
-                });
+                  });
 
                 // 위치정보 라디오 버튼 비활성화 및 초기화
-                locationInputs.forEach(input => {
+                locationInputs.forEach((input) => {
                   input.disabled = true;
-                  if (input.type === 'radio') {
+                  if (input.type === "radio") {
                     input.checked = false;
                   }
                 });
 
                 // 기타사항 입력 초기화
-                const etcInput = storeInfo.querySelector(`textarea[name='etc_${question.questionId}']`);
+                const etcInput = storeInfo.querySelector(
+                  `textarea[name='etc_${question.questionId}']`,
+                );
                 if (etcInput) {
                   etcInput.disabled = true;
                   etcInput.value = "";
@@ -372,7 +400,7 @@ function generateContent(data) {
         } else if (question.questionType === "5-choice") {
           answerSection = document.createElement("div");
           answerSection.classList.add("answer-section2");
-          question.options.forEach(option => {
+          question.options.forEach((option) => {
             const label = document.createElement("label");
             label.classList.add("radio-label2");
 
@@ -382,46 +410,65 @@ function generateContent(data) {
             input.value = option;
 
             // 라디오 버튼 변경 시 하위 입력 필드 활성화
-            input.addEventListener('change', function() {
-              const detailContent = inspectionContentWrapper.querySelector(".detail-content");
-              const storeInfo = inspectionContentWrapper.querySelector(".store-info");
-              const locationInputs = storeInfo.querySelectorAll(`input[name^='location_${question.questionId}']`);
+            input.addEventListener("change", function () {
+              const detailContent =
+                inspectionContentWrapper.querySelector(".detail-content");
+              const storeInfo =
+                inspectionContentWrapper.querySelector(".store-info");
+              const locationInputs = storeInfo.querySelectorAll(
+                `input[name^='location_${question.questionId}']`,
+              );
 
               if (option === "매우나쁨" || option === "나쁨") {
                 // "매우나쁨" 또는 "나쁨" 선택 시 하위 입력 필드 활성화 (etc-input과 caupvd 제외)
-                detailContent.querySelectorAll("input, textarea, select").forEach(input => {
-                  if (!input.classList.contains('caupvd') && !input.name.startsWith('etc_')) {
-                    input.disabled = false;
-                  }
-                });
+                detailContent
+                  .querySelectorAll("input, textarea, select")
+                  .forEach((input) => {
+                    if (
+                      !input.classList.contains("caupvd") &&
+                      !input.name.startsWith("etc_")
+                    ) {
+                      input.disabled = false;
+                    }
+                  });
 
                 // 위치정보 라디오 버튼 활성화
-                locationInputs.forEach(input => {
+                locationInputs.forEach((input) => {
                   input.disabled = false;
                 });
               } else {
                 // 그 외 선택 시 하위 입력 필드 비활성화 및 초기화 (etc-input과 caupvd 제외)
-                detailContent.querySelectorAll("input, textarea, select").forEach(input => {
-                  if (!input.classList.contains('caupvd') && !input.name.startsWith('etc_')) {
-                    input.disabled = true;
-                    if (input.tagName.toLowerCase() === 'textarea') {
-                      input.value = "";
-                    } else if (input.tagName.toLowerCase() === 'input' && input.type === 'radio') {
-                      input.checked = false;
+                detailContent
+                  .querySelectorAll("input, textarea, select")
+                  .forEach((input) => {
+                    if (
+                      !input.classList.contains("caupvd") &&
+                      !input.name.startsWith("etc_")
+                    ) {
+                      input.disabled = true;
+                      if (input.tagName.toLowerCase() === "textarea") {
+                        input.value = "";
+                      } else if (
+                        input.tagName.toLowerCase() === "input" &&
+                        input.type === "radio"
+                      ) {
+                        input.checked = false;
+                      }
                     }
-                  }
-                });
+                  });
 
                 // 위치정보 라디오 버튼 비활성화 및 초기화
-                locationInputs.forEach(input => {
+                locationInputs.forEach((input) => {
                   input.disabled = true;
-                  if (input.type === 'radio') {
+                  if (input.type === "radio") {
                     input.checked = false;
                   }
                 });
 
                 // 기타사항 입력 초기화
-                const etcInput = storeInfo.querySelector(`textarea[name='etc_${question.questionId}']`);
+                const etcInput = storeInfo.querySelector(
+                  `textarea[name='etc_${question.questionId}']`,
+                );
                 if (etcInput) {
                   etcInput.disabled = true;
                   etcInput.value = "";
@@ -532,7 +579,7 @@ function generateContent(data) {
           input.disabled = true; // 초기에는 비활성화
 
           // 라디오 버튼 변경 시 "기타" 입력 필드 활성화
-          input.addEventListener('change', function() {
+          input.addEventListener("change", function () {
             const otherInfo = storeInfo.querySelector(".other-info");
             if (location === "기타") {
               otherInfo.querySelector("textarea").disabled = false;
@@ -543,7 +590,7 @@ function generateContent(data) {
           });
 
           // 비활성화된 상태에서 클릭 시 경고 메시지 표시
-          label.addEventListener('click', function(e) {
+          label.addEventListener("click", function (e) {
             if (input.disabled) {
               e.preventDefault();
               alert("입력할 수 없습니다.");
@@ -688,7 +735,7 @@ function generateContent(data) {
           respInput.disabled = true; // 초기에는 비활성화
 
           // 라디오 버튼 변경 시 "기타" 입력 필드 활성화
-          respInput.addEventListener('change', function() {
+          respInput.addEventListener("change", function () {
             const caupvd = inputGroup6.querySelector(".caupvd");
             if (responsibility === "기타") {
               caupvd.disabled = false;
@@ -699,7 +746,7 @@ function generateContent(data) {
           });
 
           // 비활성화된 상태에서 클릭 시 경고 메시지 표시
-          respLabel.addEventListener('click', function(e) {
+          respLabel.addEventListener("click", function (e) {
             if (respInput.disabled) {
               e.preventDefault();
               alert("입력할 수 없습니다.");
@@ -751,9 +798,6 @@ function generateContent(data) {
   // 이벤트 리스너 재등록
   addEventListeners();
 }
-
-
-
 
 // -----------------사진 업로드 및 촬영 기능 설정--------------
 function setupPhotoUpload(photoBoxes, cameraBtn, galleryBtn) {
@@ -994,7 +1038,6 @@ function addEventListeners() {
   // 추가적인 이벤트 리스너를 여기서 추가하세요...
 }
 
-
 // 높이 재조정 함수 (리사이즈 시 호출)
 function adjustWrapperHeight(element) {
   if (element.style.display === "block") {
@@ -1006,13 +1049,12 @@ function adjustWrapperHeight(element) {
 
 // 높이 재조정 함수 (리사이즈 시 호출)
 function adjustWrapperHeight(element) {
-    if (element.style.display === "block") {
-        element.style.height = "auto"; // 높이 자동 조정
-        const newHeight = element.scrollHeight + "px"; // 새로운 높이 계산
-        element.style.height = newHeight; // 새 높이 설정
-    }
+  if (element.style.display === "block") {
+    element.style.height = "auto"; // 높이 자동 조정
+    const newHeight = element.scrollHeight + "px"; // 새로운 높이 계산
+    element.style.height = newHeight; // 새 높이 설정
+  }
 }
-
 
 // -------------------------데이터 전달 함수-------------------------
 function checkInspection() {

@@ -16,20 +16,7 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
 
     private final InspectionScheduleMapper scheduleMapper;
 
-
-
-    /**
-     *
-     * @param storeNm 가맹점
-     * @param brandNm 브랜드
-     * @param scheduleDate 점검예정일
-     * @param chklstNm 체크리스트명
-     * @param inspector 점검자
-     * @param frqCd 빈도
-     * @param cntCd 횟수
-     * @return 필터 요소가 적용된 점검일정 목록
-     */
-    public List<InspectionScheduleRequest> getFilteredInspectionScheduleList(
+    public List<InspectionScheduleRequest> selectFilteredInspectionScheduleList(
             String storeNm, String brandNm, String scheduleDate, String chklstNm, String inspector, String frqCd,  String cntCd) {
         log.info("storeNm {}", storeNm);
         log.info("brandNm {}", brandNm);
@@ -43,7 +30,6 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
                 storeNm, brandNm, scheduleDate, chklstNm, inspector, frqCd, cntCd
         );
     }
-
 
     @Override
     public List<String> selectAllStores() {
@@ -65,13 +51,8 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
         return scheduleMapper.selectAllInspectors();
     }
 
-    /**
-     *
-     * @param storeId 가맹점 번호 - 시퀀스
-     * @return 가맹점별 체크 리스트, 체크리스트 문항과 점수
-     */
     @Override
-    public List<InspectionDetailsResponse> getInspectionDetails(Integer storeId) {
+    public List<InspectionDetailsResponse> selectInspectionDetails(Integer storeId) {
         return scheduleMapper.selectInspectionDetails(storeId);
     }
 

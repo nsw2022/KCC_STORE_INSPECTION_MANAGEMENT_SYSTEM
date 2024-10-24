@@ -349,11 +349,11 @@ public class MapTestService {
     public RouteResponse testDrivingRoute() {
         Coordinates start = new Coordinates(127.0464837, 37.5840213); // 예시 시작 좌표
         List<Coordinates> goals = Arrays.asList(
-                new Coordinates(127.0792776, 37.6025393),
-                new Coordinates(127.0275579, 37.4980678),
-//                new Coordinates(126.9134889, 37.5492583),
+        new Coordinates(126.9770667, 37.5701624),
+                new Coordinates(126.9111487, 37.5468925),
+                new Coordinates(127.0270202, 37.4978795),
+                new Coordinates(127.0370489, 37.5678142)
 
-                new Coordinates(127.0598799, 37.655456)
 
 
         );
