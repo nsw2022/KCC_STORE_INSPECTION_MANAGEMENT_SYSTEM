@@ -20,5 +20,6 @@ public class StoreAllLocationResponse {
     private Double longitude;
     private String mbrNo;
     private String brandNm;
-    private String mbrNm;
+    private String inspectorName;
+    private String supervisorName;
 }

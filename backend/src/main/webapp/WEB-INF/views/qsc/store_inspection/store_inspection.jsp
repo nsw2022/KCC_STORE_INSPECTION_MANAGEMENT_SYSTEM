@@ -158,7 +158,7 @@
                         </c:if>
 
                         <c:if test="${userRole == 'INSPECTOR'}">
-                            <h4 style="font-size: 25px">오늘의 점검 지도</h4>
+                            <h4 style="font-size: 20px">오늘의 점검 지도</h4>
                             <div id="left-container">
                                 <div class="map-summary my-3">
                                     <div class="map-summary-time">
