@@ -3,7 +3,7 @@ package com.sims.qsc.inspection_schedule.vo;
 import lombok.*;
 
 /**
- * /qsc/inspection-schedule/schedule-list 경로의 중간 가맹점별 체크리스트 조회
+ * /qsc/inspection-schedule/schedule-list 경로의 중간 가맹점별 체크리스트 조회 - 삭제가능성 농후 일단 보류
  */
 @Getter
 @ToString

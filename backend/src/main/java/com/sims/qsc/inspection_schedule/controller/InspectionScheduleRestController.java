@@ -28,7 +28,7 @@ public class InspectionScheduleRestController {
      * @return 필터요소가 적용된 점검일정
      */
     @GetMapping("/schedule-list/filter")
-    public ResponseEntity<?> getFilteredInspectionScheduleList(
+    public ResponseEntity<?> selectFilteredInspectionScheduleList(
             @RequestParam(value = "storeNm", required = false) String storeNm,
             @RequestParam(value = "brandNm", required = false) String brandNm,
             @RequestParam(value = "scheduleDate", required = false) String scheduleDate,
@@ -38,7 +38,7 @@ public class InspectionScheduleRestController {
             @RequestParam(value = "frqCd" , required = false) String frqCd
     ) {
         try {
-            List<InspectionScheduleRequest> filteredSchedules = inspectionScheduleService.getFilteredInspectionScheduleList(
+            List<InspectionScheduleRequest> filteredSchedules = inspectionScheduleService.selectFilteredInspectionScheduleList(
                     storeNm,  brandNm, scheduleDate, chklstNm, inspector, cntCd, frqCd
             );
             return ResponseEntity.ok(filteredSchedules);
@@ -49,59 +49,59 @@ public class InspectionScheduleRestController {
     }
 
     /**
-     * 모든 가맹점 목록을 조회합니다.
+     * 모든 가맹점 목록을 조회
      *
      * @return 가맹점 목록
      */
     @GetMapping("/stores")
-    public ResponseEntity<List<String>> getAllStores() {
+    public ResponseEntity<List<String>> selectAllStores() {
         List<String> stores = inspectionScheduleService.selectAllStores();
         return ResponseEntity.ok(stores);
     }
 
     /**
-     * 모든 브랜드 목록을 조회합니다.
+     * 모든 브랜드 목록을 조회
      *
      * @return 브랜드 목록
      */
     @GetMapping("/brands")
-    public ResponseEntity<List<String>> getAllBrands() {
+    public ResponseEntity<List<String>> selectAllBrands() {
         List<String> brands = inspectionScheduleService.selectAllBrands();
         return ResponseEntity.ok(brands);
     }
 
     /**
-     * 모든 체크리스트 목록을 조회합니다.
+     * 모든 체크리스트 목록을 조회
      *
      * @return 체크리스트 목록
      */
     @GetMapping("/checklists")
-    public ResponseEntity<List<String>> getAllChecklists() {
+    public ResponseEntity<List<String>> selectAllChecklists() {
         List<String> checklists = inspectionScheduleService.selectAllChecklists();
         return ResponseEntity.ok(checklists);
     }
 
     /**
-     * 모든 점검자 목록을 조회합니다.
+     * 모든 점검자 목록을 조회
      *
      * @return 점검자 목록
      */
     @GetMapping("/inspectors")
-    public ResponseEntity<List<String>> getAllInspectors() {
+    public ResponseEntity<List<String>> selectAllInspectors() {
         List<String> inspectors = inspectionScheduleService.selectAllInspectors();
         return ResponseEntity.ok(inspectors);
     }
 
     /**
-     * 특정 스토어의 검사 상세 정보를 조회합니다.
+     * 특정 스토어의 검사 상세 정보를 조회
      *
      * @param storeId 조회할 가맹점의 ID
      * @return 가맹점별 체크리스트 조회
      */
     @GetMapping("/schedule-list/master-chklst/{storeId}")
-    public ResponseEntity<?> getInspectionDetail(@PathVariable Integer storeId) {
+    public ResponseEntity<?> selectInspectionDetail(@PathVariable Integer storeId) {
         try {
-            List<InspectionDetailsResponse> inspectionDetails = inspectionScheduleService.getInspectionDetails(storeId);
+            List<InspectionDetailsResponse> inspectionDetails = inspectionScheduleService.selectInspectionDetails(storeId);
             return ResponseEntity.ok(inspectionDetails);
         } catch (Exception e) {
             log.error("storeId에 대한 검사 세부 정보 가져오기 오류 {}: {}", storeId, e.getMessage(), e);

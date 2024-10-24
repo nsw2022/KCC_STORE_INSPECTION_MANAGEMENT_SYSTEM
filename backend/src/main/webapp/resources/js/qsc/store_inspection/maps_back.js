@@ -1,55 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // 전역에서 관리할 점검자 매장 리스트
-  let todayInspection = [];
-
-  // 글로벌 변수 선언
-  var map = null;
-  var polylines = [];
-  // 혼잡도 색상 매핑 제거 또는 사용하지 않도록 설정
-  // var congestionColorMap = { ... };
-
-  // 마커 관리 변수
-  var searchMarkers = []; // 목적지 검색 마커
-  var initialMarkers = []; // 초기 마커
-  var startMarker = null;
-  var endMarker = null;
-  var waypointMarkers = [];
-
-  // 마커 아이콘 설정 변수
-  var startIcon, endIcon, waypointIcon;
-
-  // 트래픽 레이어 및 관련 변수
-  var trafficLayer = null;
-  var trafficInterval = 300000; // 5분 (300,000 밀리초)
-
-  // 경로 표시 상태
-  var routesVisible = true;
-
-  // Naver Maps API 로드 완료 시 실행되는 함수
-  naver.maps.onJSContentLoaded = function () {
-    // 마커 아이콘 설정 (기본 아이콘 사용)
-    startIcon = {
-      url: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png", // 출발지용 아이콘 URL
-      size: new naver.maps.Size(24, 37),
-      origin: new naver.maps.Point(0, 0),
-      anchor: new naver.maps.Point(12, 37),
-    };
-
-    endIcon = {
-      url: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerRed.png", // 도착지용 아이콘 URL
-      size: new naver.maps.Size(24, 37),
-      origin: new naver.maps.Point(0, 0),
-      anchor: new naver.maps.Point(12, 37),
-    };
-
-    waypointIcon = {
-      url: "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/waypoint.png", // 경유지용 아이콘 URL
-      size: new naver.maps.Size(24, 37),
-      origin: new naver.maps.Point(0, 0),
-      anchor: new naver.maps.Point(12, 37),
-    };
-  };
-
   // 홈 경로 설정: window.HOME_PATH가 있으면 사용하고, 없으면 현재 디렉토리('.')
   var HOME_PATH = window.HOME_PATH || ".",
     // GeoJSON 파일의 경로 설정
@@ -148,6 +97,9 @@ document.addEventListener("DOMContentLoaded", function () {
       tooltip.hide().empty();
       map.data.revertStyle();
     });
+
+    // 마커 추가 함수 호출
+    addMarkers();
 
     // 경로 계산 기능 초기화
     initRouteCalculation();
@@ -357,75 +309,80 @@ document.addEventListener("DOMContentLoaded", function () {
     initRouteCalculation();
   });
 
-  // 마커 추가 함수 정의 (수정됨)
+  // 마커 추가 함수
   function addMarkers() {
+    // 마커에 사용할 위치 데이터 배열 (5개의 좌표)
+    var positions = [
+      {
+        title: "마커 1",
+        latlng: new naver.maps.LatLng(37.5665, 126.978), // 서울특별시청
+      },
+      {
+        title: "마커 2",
+        latlng: new naver.maps.LatLng(37.57, 126.9768), // 광화문광장
+      },
+      {
+        title: "마커 3",
+        latlng: new naver.maps.LatLng(37.5512, 126.9882), // 남산서울타워
+      },
+      {
+        title: "마커 4",
+        latlng: new naver.maps.LatLng(37.5796, 126.977), // 경복궁
+      },
+      {
+        title: "마커 5",
+        latlng: new naver.maps.LatLng(37.5113, 127.0592), // 강남역
+      },
+    ];
+
     // 마커와 정보창을 저장할 배열 초기화
     var markers = [],
       infoWindows = [];
 
-    // todayInspection 배열을 반복하여 마커 생성
-    todayInspection.forEach(function (store, index) {
-      // 유효한 위도와 경도인지 확인
-      if (store.latitude && store.longitude) {
-        var position = new naver.maps.LatLng(store.latitude, store.longitude);
+    // positions 배열을 반복하여 마커 생성
+    for (var i = 0; i < positions.length; i++) {
+      var position = positions[i];
 
-        // 마커 생성
-        var marker = new naver.maps.Marker({
-          map: map,
-          position: position,
-          title: store.storeNm,
-          icon: {
-            url: HOME_PATH + "/img/example/sp_pins_spot_v3.png",
-            size: new naver.maps.Size(24, 37),
-            anchor: new naver.maps.Point(12, 37),
-            origin: new naver.maps.Point(0, 0),
-          },
-          zIndex: 100,
-        });
+      // 마커 생성
+      var marker = new naver.maps.Marker({
+        map: map,
+        position: position.latlng,
+        title: position.title,
+        icon: {
+          url: HOME_PATH + "/img/example/sp_pins_spot_v3.png",
+          size: new naver.maps.Size(24, 37),
+          anchor: new naver.maps.Point(12, 37),
+          origin: new naver.maps.Point(0, 0),
+        },
+        zIndex: 100,
+      });
 
-        // 마커에 연결된 정보창 생성
-        var infoWindow = new naver.maps.InfoWindow({
-          content:
-            '<div style="width:150px;text-align:center;padding:10px;">' +
-            `<strong>${store.storeNm}</strong><br>` +
-            `매장 ID: ${store.storeId}<br>` +
-            `브랜드: ${store.brandNm}<br>` +
-            `점검자: ${store.mbrNm ? store.mbrNm : "미정"}` +
-            "</div>",
-        });
+      // 마커에 연결된 정보창 생성
+      var infoWindow = new naver.maps.InfoWindow({
+        content:
+          '<div style="width:150px;text-align:center;padding:10px;">' +
+          position.title +
+          "</div>",
+      });
 
-        // 마커 클릭 시 정보창 토글
-        naver.maps.Event.addListener(marker, "click", function (e) {
-          if (infoWindow.getMap()) {
-            infoWindow.close();
-          } else {
-            infoWindow.open(map, marker);
-          }
-        });
-
-        // 생성된 마커와 정보창을 배열에 추가
-        markers.push(marker);
-        infoWindows.push(infoWindow);
-      }
-    });
-
-    // 기존 마커 제거 (초기 마커와 검색 마커는 제외)
-    initialMarkers.forEach(function (marker) {
-      marker.setMap(null);
-    });
-    initialMarkers = markers;
+      // 생성된 마커와 정보창을 배열에 추가
+      markers.push(marker);
+      infoWindows.push(infoWindow);
+    }
 
     // 지도 이동 및 확대/축소 시 마커 표시 여부 업데이트
     naver.maps.Event.addListener(map, "idle", function () {
-      updateMarkers();
+      updateMarkers(map, markers);
     });
 
-    // 마커 업데이트 함수 정의
-    function updateMarkers() {
+    // 지도 범위 내에 있는 마커들만 표시하도록 업데이트하는 함수
+    function updateMarkers(map, markers) {
       var mapBounds = map.getBounds(); // 지도 범위 가져오기
+      var marker, position;
 
-      initialMarkers.forEach(function (marker) {
-        var position = marker.getPosition();
+      for (var i = 0; i < markers.length; i++) {
+        marker = markers[i];
+        position = marker.getPosition();
 
         // 마커의 위치가 지도 범위 내에 있으면 표시, 아니면 숨김
         if (mapBounds.hasLatLng(position)) {
@@ -433,7 +390,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
           hideMarker(marker);
         }
-      });
+      }
     }
 
     // 마커를 지도에 표시하는 함수
@@ -447,23 +404,27 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!marker.getMap()) return; // 이미 숨겨진 경우 종료
       marker.setMap(null); // 마커를 지도에서 제거
     }
+
+    // 마커 클릭 시 정보창을 열거나 닫는 이벤트 핸들러를 반환하는 함수
+    function getClickHandler(seq) {
+      return function (e) {
+        var marker = markers[seq],
+          infoWindow = infoWindows[seq];
+
+        // 정보창이 열려 있으면 닫고, 닫혀 있으면 엽니다.
+        if (infoWindow.getMap()) {
+          infoWindow.close();
+        } else {
+          infoWindow.open(map, marker);
+        }
+      };
+    }
+
+    // 각 마커에 클릭 이벤트 리스너 추가
+    for (var i = 0; i < markers.length; i++) {
+      naver.maps.Event.addListener(markers[i], "click", getClickHandler(i));
+    }
   }
-
-  // AJAX 요청을 통해 데이터 가져오기 및 마커 추가
-  $.ajax({
-    url: `/qsc/store-inspection/map/all-store`,
-    type: "GET",
-    success: function (data) {
-      todayInspection = data;
-      console.log(todayInspection);
-
-      // 마커 추가 함수 호출
-      addMarkers();
-    },
-    error: function (xhr, status, error) {
-      console.error("AJAX 요청 실패:", status, error);
-    },
-  });
 
   // 경로 계산 및 직선 표시 함수
   function initRouteCalculation() {

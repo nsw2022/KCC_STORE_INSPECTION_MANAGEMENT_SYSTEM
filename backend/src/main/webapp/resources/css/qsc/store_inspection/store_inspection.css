@@ -1,142 +1,137 @@
 body {
-    font-family: "Noto Sans KR";
+  font-family: "Noto Sans KR";
 }
 
 /* 기본 레이아웃 */
 #today_inspection {
-    width: 100%;
-    min-height: 350px;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 40px;
-    gap: 30px;
+  width: 100%;
+  min-height: 350px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 40px;
+  gap: 30px;
 }
 
-
-
 #today_inspection_list_wrap {
-    flex: 1 1 auto; /* 남는 공간을 차지하면서 줄어들 수 있게 설정 */
-    /*width: 72%;*/
-    min-width: 0;
-    height: 370px;
-    background-image: url('/resources/img/main_background.jpg'); /* 백그라운드 이미지 */
-    background-size: cover;
-    background-position: center;
-    padding: 3rem 3rem 2rem 3rem;
-    box-sizing: border-box;
-    border-radius: 10px;
-    color: #fff;
-    /*margin-right: 3rem;*/
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  flex: 1 1 auto; /* 남는 공간을 차지하면서 줄어들 수 있게 설정 */
+  /*width: 72%;*/
+  min-width: 0;
+  height: 370px;
+  background-image: url("/resources/img/main_background.jpg"); /* 백그라운드 이미지 */
+  background-size: cover;
+  background-position: center;
+  padding: 3rem 3rem 2rem 3rem;
+  box-sizing: border-box;
+  border-radius: 10px;
+  color: #fff;
+  /*margin-right: 3rem;*/
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
 #today_inspection_list_wrap h2 {
-    font: 600 1.5em "Noto Sans KR";
-    color: black;
-    margin-bottom: 1em;
+  font: 600 1.5em "Noto Sans KR";
+  color: black;
+  margin-bottom: 1em;
 }
 
-#today_inspection_list_wrap>p{
-    font: 600 1.1rem "Noto Sans KR";
-    color:#7E7E7E;
-    margin-bottom: 10px;
+#today_inspection_list_wrap > p {
+  font: 600 1.1rem "Noto Sans KR";
+  color: #7e7e7e;
+  margin-bottom: 10px;
 }
 
-#today_inspection_list{
-    width: 100%;
-    height: 67%;
-    display: inline-flex;
-    flex-direction: row;
-    justify-content: left;
-    list-style: none;
-    padding: 0;
-    margin-top: 20px;
-    overflow-x: auto; /* 가로 스크롤 활성화 */
-    white-space: nowrap; /* 줄바꿈 방지 */
-    flex-wrap: nowrap; /* 여러 줄로 내려가지 않도록 설정 */
+#today_inspection_list {
+  width: 100%;
+  height: 67%;
+  display: inline-flex;
+  flex-direction: row;
+  justify-content: left;
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
+  overflow-x: auto; /* 가로 스크롤 활성화 */
+  white-space: nowrap; /* 줄바꿈 방지 */
+  flex-wrap: nowrap; /* 여러 줄로 내려가지 않도록 설정 */
 }
-
 
 #today_inspection_list::-webkit-scrollbar {
-    height: 8px; /* 가로 스크롤바 두께 */
-    border-radius: 5px;
+  height: 8px; /* 가로 스크롤바 두께 */
+  border-radius: 5px;
 }
 
 #today_inspection_list::-webkit-scrollbar-thumb {
-    background-color: #828282;
-    border-radius: 4px;
+  background-color: #828282;
+  border-radius: 4px;
 }
 
 #today_inspection_list::-webkit-scrollbar-track {
-    background-color: #ededed;
-    border-radius: 5px;
+  background-color: #ededed;
+  border-radius: 5px;
 }
 
-#today_inspection_list li{
-    width: 260px;
-    height: 170px;
-    background-color: rgba(255, 255, 255, 0.6);
-    padding: 15px 0 15px 20px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    margin-right: 35px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    flex-shrink: 0; /* 크기가 줄어들지 않게 설정 */
+#today_inspection_list li {
+  width: 260px;
+  height: 170px;
+  background-color: rgba(255, 255, 255, 0.6);
+  padding: 15px 0 15px 20px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  margin-right: 35px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  flex-shrink: 0; /* 크기가 줄어들지 않게 설정 */
 }
-#today_inspection_list li:last-child{
-    margin-right: 0;
+#today_inspection_list li:last-child {
+  margin-right: 0;
 }
-#today_inspection_list h4{
-    font: 500 1em "Noto Sans KR";
-    color: #757575;
-    margin-bottom: 0;
+#today_inspection_list h4 {
+  font: 500 1em "Noto Sans KR";
+  color: #757575;
+  margin-bottom: 0;
 }
 
 .today_inspection_list_title {
-    font: 600 1.4rem "Noto Sans KR";
-    color: #202224;
-    margin-bottom: 0;
+  font: 600 1.4rem "Noto Sans KR";
+  color: #202224;
+  margin-bottom: 0;
 }
 
 .today_inspection_list_date {
-    font: 500 1rem "Noto Sans KR";
-    color: #00B69B;
-    margin-bottom: 0;
+  font: 500 1rem "Noto Sans KR";
+  color: #00b69b;
+  margin-bottom: 0;
 }
 
 .no-inspection-message {
-    font-size: 1.4rem;
-    text-align: center;
-    color: black;
-    font-weight: 600;
+  font-size: 1.4rem;
+  text-align: center;
+  color: black;
+  font-weight: 600;
 }
-
-
 
 /*---------------------------달력---------------------------*/
 .calendar-container {
-    /*width: 320px;*/
-    flex: 0 0 320px; /* 고정된 너비로 설정 */
-    height: 370px;
-    padding: 20px;
-    box-sizing: border-box;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  /*width: 320px;*/
+  flex: 0 0 320px; /* 고정된 너비로 설정 */
+  height: 370px;
+  padding: 20px;
+  box-sizing: border-box;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
-.calendar-header select{
-    float: left;
-    margin-right: 20px;
-    margin-bottom: 20px;
-    padding: 5px;
-    border: solid 1px #cccccc !important;
-    border-radius: 8px;
-    font-size: 16px;
-    color: #6b6b6b;
+.calendar-header select {
+  float: left;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  padding: 5px;
+  border: solid 1px #cccccc !important;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #6b6b6b;
 }
 
 /*#month-select {*/
@@ -148,545 +143,658 @@ body {
 /*}*/
 
 #year {
-    font-size: 18px;
-    font-weight: bold;
-    color: #4a4a4a;
+  font-size: 18px;
+  font-weight: bold;
+  color: #4a4a4a;
 }
 
 table.calendar {
-    width: 100%;
-    text-align: center;
-    border-collapse: collapse;
+  width: 100%;
+  text-align: center;
+  border-collapse: collapse;
 }
 
 table.calendar th {
-    color: #6b6b6b;
-    font-weight: normal;
-    padding: 10px 0;
+  color: #6b6b6b;
+  font-weight: normal;
+  padding: 10px 0;
 }
 
 table.calendar td {
-    color: #4a4a4a;
-    cursor: pointer;
-    transition: 0.3s ease-out;
-    overflow: hidden;
+  color: #4a4a4a;
+  cursor: pointer;
+  transition: 0.3s ease-out;
+  overflow: hidden;
 }
-
 
 .day-content {
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    transition: background-color 0.3s ease-out;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: background-color 0.3s ease-out;
 }
-.day-content:hover{
-    background-color: #cccccc;
-    color: white;
-    border-radius: 50%;
-}
-
-table.calendar td .selected{
-    background-color: #6e00fa;
-    color: white;
+.day-content:hover {
+  background-color: #cccccc;
+  color: white;
+  border-radius: 50%;
 }
 
-table.calendar td .incomplete{
-    background-color: #EC3B57;
-    color: white;
+table.calendar td .selected {
+  background-color: #6e00fa;
+  color: white;
 }
 
+table.calendar td .incomplete {
+  background-color: #ec3b57;
+  color: white;
+}
 
-#year-select{
-    border: solid 1px #cccccc;
-    border-radius: 5px;
-    padding: 5px;
-    box-sizing: border-box;
+#year-select {
+  border: solid 1px #cccccc;
+  border-radius: 5px;
+  padding: 5px;
+  box-sizing: border-box;
 }
-#year-select>option{
-    color: black;
+#year-select > option {
+  color: black;
 }
-#month-select{
-    border: solid 1px #cccccc;
-    border-radius: 5px;
-    padding: 5px;
-    box-sizing: border-box;
+#month-select {
+  border: solid 1px #cccccc;
+  border-radius: 5px;
+  padding: 5px;
+  box-sizing: border-box;
 }
-#month-select>option{
-    color: black;
+#month-select > option {
+  color: black;
 }
 
 /*---------------------------스케줄 표시달력---------------------------*/
 .schedule-container {
-    width: 100%;
-    height: 360px;
-    background: white;
-    border-radius: 10px;
-    margin-top: 20px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    padding: 40px;
-    box-sizing: border-box;
+  width: 100%;
+  height: 360px;
+  background: white;
+  border-radius: 10px;
+  margin-top: 20px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  box-sizing: border-box;
 }
-
 
 .schedule-header {
-    width: 300px;
-    margin-bottom: 20px;
+  width: 300px;
+  margin-bottom: 20px;
 }
 .schedule-header label {
-    font: 500 18px "Noto Sans KR";
-    color: #5A5A5A;
+  font: 500 18px "Noto Sans KR";
+  color: #5a5a5a;
 }
 
-#checklist-select{
-    border: solid 1px #cccccc;
-    border-radius: 5px;
-    margin-left: 10px;
-    padding: 5px;
-    box-sizing: border-box;
+#checklist-select {
+  border: solid 1px #cccccc;
+  border-radius: 5px;
+  margin-left: 10px;
+  padding: 5px;
+  box-sizing: border-box;
 }
-#checklist-select option{
-    font: 500 18px "Noto Sans KR";
+#checklist-select option {
+  font: 500 18px "Noto Sans KR";
 }
-
-
 
 .schedule-table-wrapper {
-    width: 100%;
-    overflow-x: auto;
+  width: 100%;
+  overflow-x: auto;
 }
 
 .schedule-table {
-    min-width: 1200px;
-    border-collapse: separate;
-    border-spacing: 0;
-    width: 100%;
-    height: 235px;
-    table-layout: fixed;
-    border-radius: 10px;
-    overflow: hidden;
+  min-width: 1200px;
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  height: 235px;
+  table-layout: fixed;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 .schedule-table thead th:first-child {
-    border-top-left-radius: 10px;
+  border-top-left-radius: 10px;
 }
 .schedule-table thead th:last-child {
-    border-top-right-radius: 10px;
+  border-top-right-radius: 10px;
 }
 .schedule-table tbody td:first-child {
-    border-bottom-left-radius: 10px;
+  border-bottom-left-radius: 10px;
 }
 .schedule-table tbody td:last-child {
-    border-bottom-right-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 
 .schedule-table thead th {
-    background-color: #f4f4f4;
-    padding: 10px;
-    text-align: center;
-    border: 1px solid #ddd;
-    width: 150px;
-    font: 500 16px "Noto Sans KR";
-    color: #5A5A5A;
+  background-color: #f4f4f4;
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #ddd;
+  width: 150px;
+  font: 500 16px "Noto Sans KR";
+  color: #5a5a5a;
 }
 
 .schedule-table tbody td {
-    position: relative;
-    padding: 10px;
-    box-sizing: border-box;
-    border: 1px solid #ddd;
-    width: 150px;
-    height: 80px;
-    vertical-align: top;
-    overflow: hidden;
-    text-align: right;
+  position: relative;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  width: 150px;
+  height: 80px;
+  vertical-align: top;
+  overflow: hidden;
+  text-align: right;
 }
 
 .schedule-table tbody td span {
-    font: 400 16px "Noto Sans KR";
-    color: #5A5A5A;
+  font: 400 16px "Noto Sans KR";
+  color: #5a5a5a;
 }
 .schedule-table tbody td button {
-    font: 400 14px "Noto Sans KR";
-    color: #5A5A5A;
-    margin-top: 10px;
+  font: 400 14px "Noto Sans KR";
+  color: #5a5a5a;
+  margin-top: 10px;
 }
-.schedule-table tbody td button:hover{
-    font-weight: 500;
-    background: #4A00E0 !important;
-    color: white;
-    transition: ease-out 0.3s;
+.schedule-table tbody td button:hover {
+  font-weight: 500;
+  background: #4a00e0 !important;
+  color: white;
+  transition: ease-out 0.3s;
 }
 
 .scrollable-content {
-    max-height: 150px; /* 고정된 높이 */
-    overflow-y: auto; /* 스크롤을 활성화 */
-    padding-right: 10px; /* 스크롤바와 내용 간의 여백 */
+  max-height: 150px; /* 고정된 높이 */
+  overflow-y: auto; /* 스크롤을 활성화 */
+  padding-right: 10px; /* 스크롤바와 내용 간의 여백 */
 }
 
 .inspection-btn {
-    display: block;
-    width: 100%;
-    padding: 8px;
-    border: none;
-    background: white;
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);
-    border-radius: 5px;
-    cursor: pointer;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  display: block;
+  width: 100%;
+  padding: 8px;
+  border: none;
+  background: white;
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .empty-cell {
-    background-color: #eeeeee;
-    border: none;
+  background-color: #eeeeee;
+  border: none;
 }
 
 /* 스크롤이 필요한 요소에 스크롤바 스타일 적용 */
 
 .scrollable-content::-webkit-scrollbar {
-    width: 8px;
-    border-radius: 5px;
+  width: 8px;
+  border-radius: 5px;
 }
 
 .scrollable-content::-webkit-scrollbar-thumb {
-    background-color: #828282;
-    border-radius: 4px;
+  background-color: #828282;
+  border-radius: 4px;
 }
 
 .scrollable-content::-webkit-scrollbar-track {
-    background-color: #ededed;
-    border-radius: 5px;
+  background-color: #ededed;
+  border-radius: 5px;
 }
 
 /* 가로 스크롤바 스타일 */
 .schedule-table-wrapper {
-    width: 100%;
-
+  width: 100%;
 }
 
-
 .schedule-table-wrapper::-webkit-scrollbar {
-    height: 8px; /* 가로 스크롤바 두께 */
-    border-radius: 5px;
+  height: 8px; /* 가로 스크롤바 두께 */
+  border-radius: 5px;
 }
 
 .schedule-table-wrapper::-webkit-scrollbar-thumb {
-    background-color: #828282;
-    border-radius: 4px;
+  background-color: #828282;
+  border-radius: 4px;
 }
 
 .schedule-table-wrapper::-webkit-scrollbar-track {
-    background-color: #ededed;
-    border-radius: 5px;
+  background-color: #ededed;
+  border-radius: 5px;
 }
 
 /*----------모달 스타일---------*/
 .modal-background {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    justify-content: center;
-    align-items: center;
-    z-index: 1200;
-    transition: opacity 0.3s ease;
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  justify-content: center;
+  align-items: center;
+  z-index: 1200;
+  transition: opacity 0.3s ease;
 }
 
 /* 모달 내용 스타일 */
 .modal-content {
-    width: 30% !important;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    max-height: 80%;
-    overflow-y: auto;
-    transition: transform 0.3s ease, opacity 0.3s ease;
+  width: 30% !important;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  max-height: 80%;
+  overflow-y: auto;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
 }
-.modal-content>h2{
-    margin-bottom: 20px;
+.modal-content > h2 {
+  margin-bottom: 20px;
 }
-.modal-content>.inspection-btn{
-    margin-bottom: 15px;
+.modal-content > .inspection-btn {
+  margin-bottom: 15px;
 }
 
-.modal-content>.inspection-btn:hover{
-    background: #4A00E0;
-    color: white;
-    transition: ease-out 0.3s;
+.modal-content > .inspection-btn:hover {
+  background: #4a00e0;
+  color: white;
+  transition: ease-out 0.3s;
 }
 
 /* '+n 더보기' 버튼 스타일 */
 .more-btn {
-    position: absolute;
-    left: 10px;
-    top: -2px;
-    background-color: #eee;
-    border: none;
-    padding: 5px;
-    font-size: 12px !important;
-    cursor: pointer;
-    border-radius: 5px;
-    color: #5A5A5A;
+  position: absolute;
+  left: 10px;
+  top: -2px;
+  background-color: #eee;
+  border: none;
+  padding: 5px;
+  font-size: 12px !important;
+  cursor: pointer;
+  border-radius: 5px;
+  color: #5a5a5a;
 }
-
-
-
 
 /* 모달 닫기 버튼 스타일 */
 .modal-close-btn {
-    margin-top: 10px;
-    padding: 10px;
-    cursor: pointer;
-    border-radius: 10px;
-    border: none;
-    color: #5A5A5A;
+  margin-top: 10px;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 10px;
+  border: none;
+  color: #5a5a5a;
 }
-.modal-close-btn:hover{
-    background: #4A00E0;
-    color: white;
-    transition: ease-out 0.3s;
+.modal-close-btn:hover {
+  background: #4a00e0;
+  color: white;
+  transition: ease-out 0.3s;
 }
 
 /* 모달 표시 시 스타일 */
 .modal-background.show {
-    background-color: rgba(0, 0, 0, 0.5);
-    opacity: 1;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 1;
 }
 
 .modal-content.show {
-    transform: translateY(0);
-    opacity: 1;
+  transform: translateY(0);
+  opacity: 1;
 }
-
 
 /*----------------------------지도-----------------------------*/
 
-.map-section{
-    width: 100%;
-    background-color: white;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    box-sizing: border-box;
-    margin-top: 40px;
-    margin-bottom: 40px;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+.map-section {
+  width: 100%;
+  background-color: white;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  box-sizing: border-box;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
-#map-input-container{
-    width: 20%;
-    padding-right: 20px;
-    box-sizing: border-box;
+#map-input-container {
+  width: 20%;
+  padding-right: 20px;
+  box-sizing: border-box;
+  font: 400 14px "Noto Sans KR";
+  color: black;
 }
-#map{
-    width: 80%;
-    border-radius: 10px;
+#map {
+  width: 80%;
+  border-radius: 10px;
 }
 
+.map-summary {
+  padding: 15px;
+  border: 1px solid #cccccc;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+}
 
+.map-route {
+  padding: 15px;
+  border: 1.5px solid #7774ff;
+  border-radius: 8px;
+  display: flex;
+  background-color: #f4f7ff;
+  margin: 10px 0;
+}
+
+.map-route:last-child {
+  margin-bottom: 0;
+}
+
+.map-title {
+  font-size: 25px;
+  margin-bottom: 20px;
+}
+
+.map-summary {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.map-route-detail {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.map-route-detail span i {
+  padding: 0px 10px;
+}
+
+.map-route-detail > span:last-child {
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px 10px;
+}
+.map-route-detail span:last-child strong {
+  font-size: 16px;
+}
+
+.divider {
+  display: inline-block;
+  height: 12px;
+  border-left: 1px solid #cccccc;
+}
+
+.congestionWant {
+  float: right;
+  width: 50px;
+  background: #3cbc58;
+  text-align: center;
+  border-radius: 8px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 25px;
+}
+
+.congestionNormal {
+  float: right;
+  width: 50px;
+  background: #fbd126;
+  text-align: center;
+  border-radius: 8px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 25px;
+}
+
+.congestionConfusion {
+  float: right;
+  width: 50px;
+  background: #d71212;
+  text-align: center;
+  border-radius: 8px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 25px;
+}
+
+.map-box-container {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  align-items: stretch;
+  right: 0;
+  margin-right: 20px;
+  padding: 15px;
+  font: 400 14px "Noto Sans KR";
+}
+
+#map-all {
+  background: white;
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);
+  padding: 8px;
+  border-radius: 27px;
+  margin-right: 17px;
+  width: 105px;
+  text-align: center;
+}
+
+#map-all:hover {
+  transition: ease-out 0.3s;
+  background-color: rgb(238, 238, 238);
+}
+
+#map-tsp {
+  background: white;
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);
+  padding: 8px;
+  border-radius: 27px;
+  width: 105px;
+  text-align: center;
+}
+
+#map-tsp:hover {
+  transition: ease-out 0.3s;
+  background-color: rgb(238, 238, 238);
+}
 /*----------------------------지도에 따른 체크리스트-----------------------------*/
 /* 테이블 컨테이너 스타일 */
 .store-info-table {
-    width: 100%;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
-    padding: 20px;
-    background-color: white;
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+  padding: 20px;
+  background-color: white;
 }
 
 /* 테이블 스타일 */
 .custom-table {
-    width: 100%;
-    /*border-collapse: collapse;*/
-    background-color: white;
-    font-family: 'Noto Sans KR', sans-serif;
-    text-align: left;
-    border: solid 1px #CCCCCC;
+  width: 100%;
+  /*border-collapse: collapse;*/
+  background-color: white;
+  font-family: "Noto Sans KR", sans-serif;
+  text-align: left;
+  border: solid 1px #cccccc;
 }
 
 .custom-table thead th {
-    background-color: #F4F4F4;
-    padding: 12px 10px;
-    border-bottom: 2px solid #ddd;
-    font-weight: 600;
-    font-size: 16px;
-    color: #5A5A5A;
-    white-space: nowrap;
-    text-align: center;
+  background-color: #f4f4f4;
+  padding: 12px 10px;
+  border-bottom: 2px solid #ddd;
+  font-weight: 600;
+  font-size: 16px;
+  color: #5a5a5a;
+  white-space: nowrap;
+  text-align: center;
 }
 
 .custom-table tbody td {
-    padding: 12px 10px;
-    font-size: 14px;
-    color: #333;
-    border-bottom: 1px solid #ddd;
-    background-color: #FFF8DC;
-    white-space: nowrap;
-    text-align: center;
+  padding: 12px 10px;
+  font-size: 14px;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  background-color: #fff8dc;
+  white-space: nowrap;
+  text-align: center;
 }
 
 /* 짝수 행의 배경색 변경 (스트라이프 효과) */
 .custom-table tbody tr:nth-child(even) td {
-    background-color: #FDF6E4;
+  background-color: #fdf6e4;
 }
 
 /* 테이블 각 행의 마지막 셀에 대한 스타일 */
 .custom-table tbody td:last-child {
-    border-right: none;
+  border-right: none;
 }
 
 /* 테이블 각 행의 첫 번째 셀에 대한 스타일 */
 .custom-table tbody td:first-child {
-    border-left: none;
+  border-left: none;
 }
 
 /* 테이블 내용의 여백 설정 */
 .custom-table td {
-    padding: 10px;
-    vertical-align: middle;
+  padding: 10px;
+  vertical-align: middle;
 }
 
 @media (max-width: 1300px) {
-    .modal-content{
-        width: 50% !important;
-    }
+  .modal-content {
+    width: 50% !important;
+  }
 }
 
 @media (max-width: 1000px) {
-    .modal-content{
-        width: 80% !important;
-    }
+  .modal-content {
+    width: 80% !important;
+  }
 }
 
 /* 반응형 테이블을 위한 스타일 (작은 화면에서 테이블 스크롤) */
 @media (max-width: 768px) {
-    .store-info-table {
-        overflow-x: auto;
-    }
-
+  .store-info-table {
+    overflow-x: auto;
+  }
 }
-
-
-
 
 /* 반응형 설정 */
 @media (max-width: 768px) {
-    .schedule-container {
-        padding: 15px;
-    }
+  .schedule-container {
+    padding: 15px;
+  }
 
-    .schedule-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+  .schedule-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 
-    .schedule-table th,
-    .schedule-table td {
-        padding: 8px;
-    }
+  .schedule-table th,
+  .schedule-table td {
+    padding: 8px;
+  }
 }
-
-
 
 /* 반응형 설정 */
 @media (max-width: 1600px) {
-    .today_inspection_list_title {
-        font: 600 1rem "Noto Sans KR";
-    }
-
+  .today_inspection_list_title {
+    font: 600 1rem "Noto Sans KR";
+  }
 }
 @media (max-width: 1200px) {
-    #today_inspection_list li {
-        margin-right: 20px;
-    }
+  #today_inspection_list li {
+    margin-right: 20px;
+  }
 }
 @media (max-width: 1024px) {
+  #today_inspection {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
+  #today_inspection_list_wrap,
+  #today_inspection_calender {
+    width: 100%;
+    margin-bottom: 20px;
+  }
 
-    #today_inspection {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    #today_inspection_list_wrap,
-    #today_inspection_calender {
-        width: 100%;
-        margin-bottom: 20px;
-    }
-
-    #today_inspection_list_wrap {
-        background-position: center;
-    }
-    #today_inspection_list_wrap {
-        margin-right: 0;
-    }
-    /*----------달력-----------*/
-    .calendar-container {
-        width: 100%;
-    }
+  #today_inspection_list_wrap {
+    background-position: center;
+  }
+  #today_inspection_list_wrap {
+    margin-right: 0;
+  }
+  /*----------달력-----------*/
+  .calendar-container {
+    width: 100%;
+  }
 }
 
-
 @media (max-width: 900px) {
+  #today_inspection {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
+  #today_inspection_list_wrap,
+  #today_inspection_calender {
+    width: 100%;
+    margin-bottom: 20px;
+  }
 
-    #today_inspection {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    #today_inspection_list_wrap,
-    #today_inspection_calender {
-        width: 100%;
-        margin-bottom: 20px;
-    }
-
-    #today_inspection_list_wrap {
-        background-position: center;
-    }
+  #today_inspection_list_wrap {
+    background-position: center;
+  }
 }
 
 @media (max-width: 600px) {
-    #today_inspection_list_wrap{
-        padding: 1.5rem;
-    }
+  #today_inspection_list_wrap {
+    padding: 1.5rem;
+  }
 
+  #today_inspection_list li {
+    flex-shrink: 0; /* 크기가 줄어들지 않게 설정 */
+    margin-right: 10px; /* 각 항목 간 간격 */
+  }
 
-    #today_inspection_list li {
-        flex-shrink: 0; /* 크기가 줄어들지 않게 설정 */
-        margin-right: 10px; /* 각 항목 간 간격 */
-    }
-
-    #today_inspection_list li:last-child {
-        margin-right: 0;
-    }
+  #today_inspection_list li:last-child {
+    margin-right: 0;
+  }
 }
-
 
 @media (max-width: 480px) {
-    #today_inspection_list_wrap h2 {
-        /*font-size: 1.5rem;*/
-    }
+  #today_inspection_list_wrap h2 {
+    /*font-size: 1.5rem;*/
+  }
 
-    .today_inspection_list_title {
-        font-size: 1rem;
-    }
+  .today_inspection_list_title {
+    font-size: 1rem;
+  }
 
-    .today_inspection_list_date {
-        font-size: 0.9rem;
-    }
+  .today_inspection_list_date {
+    font-size: 0.9rem;
+  }
 }
-
-
-

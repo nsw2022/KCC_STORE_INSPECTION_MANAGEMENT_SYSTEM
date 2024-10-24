@@ -1,7 +1,9 @@
 package com.sims.qsc.store_inspection.service;
 
 import com.sims.qsc.store_inspection.mapper.StoreInspectionMapper;
+import com.sims.qsc.store_inspection.vo.StoreAllLocationResponse;
 import com.sims.qsc.store_inspection.vo.StoreInspectionResponse;
+import com.sims.qsc.store_inspection.vo.StoreLocationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,4 +27,14 @@ public class StoreInspectionServiceImpl implements StoreInspectionService {
     public StoreInspectionResponse selectInspectionByChklstId(String chklstId, String storeNm, String inspPlanDt) {
         return storeInspectionMapper.selectInspectionByChklstId(chklstId, storeNm, inspPlanDt);
     }
+
+    @Override
+    public List<StoreLocationResponse> selectInspectionsByInspector(String mbrNo) {
+        return storeInspectionMapper.selectInspectionsByInspector(mbrNo);
+    }
+
+    @Override
+    public List<StoreAllLocationResponse> selectAllInspectionMap() { return storeInspectionMapper.selectAllInspectionMap(); }
+
+
 }

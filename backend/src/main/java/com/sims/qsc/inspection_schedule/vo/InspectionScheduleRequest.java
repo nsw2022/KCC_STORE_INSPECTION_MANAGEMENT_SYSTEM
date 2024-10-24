@@ -3,7 +3,9 @@ package com.sims.qsc.inspection_schedule.vo;
 import lombok.*;
 
 /**
- * /qsc/inspection-schedule/schedule-list 경로의 상단 검색을 받는 객체
+ * @Description 가맹점 점검 계획 관리
+ * @Author 노승우
+ * @Date 2024.10.21
  */
 @Getter
 @ToString

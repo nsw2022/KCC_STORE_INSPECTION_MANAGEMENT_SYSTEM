@@ -153,15 +153,6 @@
 <!-- 에러 메시지 -->
 <div id="errorMessage"></div>
 
-<!-- 교통 레이어 컨트롤 -->
-<div id="trafficControlContainer">
-    <button id="traffic">교통 정보 토글</button>
-    <label>
-        <input type="checkbox" id="autorefresh">
-        자동 새로고침
-    </label>
-</div>
-
 <!-- 경로 토글 컨트롤 -->
 <div id="routeControlContainer">
     <button id="toggleRouteBtn">경로 숨기기</button>
@@ -194,6 +185,7 @@
         <th>목적지</th>
         <th>거리 (m)</th>
         <th>소요 시간 (분)</th>
+        <th>혼잡도</th>
     </tr>
     </thead>
     <tbody id="routeTableBody">
@@ -211,8 +203,6 @@
         // var congestionColorMap = { ... };
 
         // 마커 관리 변수
-        var searchMarkers = []; // 목적지 검색 마커
-        var initialMarkers = []; // 초기 마커
         var startMarker = null;
         var endMarker = null;
         var waypointMarkers = [];
@@ -221,7 +211,6 @@
         var startIcon, endIcon, waypointIcon;
 
         // 트래픽 레이어 및 관련 변수
-        var trafficLayer = null;
         var trafficInterval = 300000; // 5분 (300,000 밀리초)
 
         // 경로 표시 상태
@@ -262,19 +251,12 @@
                 mapTypeId: naver.maps.MapTypeId.NORMAL,
                 scaleControl: true,
                 zoomControl: true,
+                interval: trafficInterval,
                 zoomControlOptions: {
                     position: naver.maps.Position.TOP_RIGHT
                 }
             };
             map = new naver.maps.Map('map', mapOptions);
-
-            // 트래픽 레이어 초기화
-            trafficLayer = new naver.maps.TrafficLayer({
-                interval: trafficInterval // 5분마다 새로고침
-            });
-
-            // 초기 트래픽 레이어 설정 (지도를 로드할 때 트래픽 레이어를 추가)
-            trafficLayer.setMap(map);
 
             // 지도 클릭 이벤트
             naver.maps.Event.addListener(map, 'click', function (e) {
@@ -305,33 +287,11 @@
          * jQuery 이벤트 리스너 설정
          */
         function setupEventListeners() {
-            $('#saveStartBtn').click(function () {
-                var startAddress = $('#addressStart').val();
-                if (startAddress.trim() === "") {
-                    alert("시작 주소를 입력해주세요.");
-                    return;
-                }
-                // 시작 주소 저장 로직 (필요시)
-                alert("시작 주소가 저장되었습니다.");
-            });
 
-            $('#searchDestBtn').click(function () {
-                var addressList = $('#addressList').val();
-                if (addressList.trim() === "") {
-                    alert("목적지 주소 목록을 입력해주세요.");
-                    return;
-                }
-                // 주소 목록 검색 및 지도에 마커 표시
-                searchAddresses(addressList);
-            });
 
-            $('#searchRouteBtn').click(function () {
-                searchRoute();
-            });
-
-            $('#testBtn').click(function () {
-                testDrivingRoute();
-            });
+            // $('#testBtn').click(function () {
+            //     testDrivingRoute();
+            // });
 
             // 트래픽 레이어 토글 버튼 이벤트
             $('#traffic').on("click", function (e) {
@@ -355,190 +315,6 @@
             $('#toggleRouteBtn').on("click", function (e) {
                 e.preventDefault();
                 toggleRoutesVisibility();
-            });
-        }
-
-        /**
-         * 주소 목록을 지오코딩하여 마커 표시
-         */
-        function searchAddresses(addressList) {
-            var addresses = addressList.split(':').map(function (addr) { // ':'로 분리
-                return addr.trim();
-            }).filter(function (addr) {
-                return addr !== "";
-            });
-            if (addresses.length === 0) {
-                alert("유효한 목적지 주소가 없습니다.");
-                return;
-            }
-            addresses.forEach(function (address, index) {
-                callNaverAddressService(address, index + 1);
-            });
-        }
-
-        /**
-         * 주소를 좌표로 변환하고 마커 추가
-         */
-        function callNaverAddressService(address, index) {
-            $.ajax({
-                url: '/api/map/GetCoordinates', // 경로 수정: '/Map/GetCoordinates' -> '/api/map/GetCoordinates'
-                method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ address: address }),
-                success: function (response) {
-                    if (response.status === 200) {
-                        var data = response.data;
-                        var lat = parseFloat(data.y);
-                        var lng = parseFloat(data.x);
-                        var marker = new naver.maps.Marker({
-                            position: new naver.maps.LatLng(lat, lng),
-                            map: map,
-                            title: '목적지 ' + index // '목적지' + index
-                            // icon: 기본 아이콘 사용
-                        });
-                        searchMarkers.push(marker); // 목적지 마커 배열에 추가
-                        map.setCenter(new naver.maps.LatLng(lat, lng));
-                    } else {
-                        alert('주소 검색에 실패했습니다: ' + response.message);
-                    }
-                },
-                error: function () {
-                    alert('서버 오류가 발생했습니다.');
-                }
-            });
-        }
-
-        /**
-         * 서버로부터 경로 정보를 받아 지도에 표시
-         */
-        function callSearchRoute(startX, startY, goals, viaPoints) {
-            $.ajax({
-                url: '/api/map/SearchRoute', // 경로 수정: '/Map/SearchRoute' -> '/api/map/SearchRoute'
-                method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    start: { x: startX, y: startY },
-                    addressList: getGoalList(goals),
-                    viaPoints: viaPoints.map(function (point) {
-                        return { x: point.x, y: point.y };
-                    }) // 서버에서 받은 경유지 목록을 전달
-                }),
-                success: function (response) {
-                    console.log("SearchRoute Response:", response); // 디버깅용 로그
-                    if (response.code === 0 && response.route && response.route.trafast) {
-                        var routes = response.route.trafast; // 'trafast' 배열을 routes로 설정
-                        displayRouteResults(routes);
-                        // drawRouteOnMap(routes); // 이제 displayRouteResults에서 경로를 그리므로 주석 처리
-                    } else {
-                        alert('경로 검색에 실패했습니다: ' + (response.message || 'Unknown Error'));
-                        console.error("SearchRoute Error:", response);
-                    }
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    alert('서버 오류가 발생했습니다.');
-                    console.error("SearchRoute AJAX Error:", textStatus, errorThrown);
-                }
-            });
-        }
-
-        /**
-         * 목적지 목록을 ':'로 구분된 문자열로 변환
-         */
-        function getGoalList(goals) {
-            return goals.map(function (goal) {
-                return goal.x + "," + goal.y;
-            }).join(":");
-        }
-
-        /**
-         * 경유지 목록을 JSON 배열로 변환 (필요 시)
-         * 현재 예시에서는 별도의 경유지 목록을 유지하고 있지 않으므로, 빈 배열 반환
-         */
-        function getViaPointsList() {
-            // 필요 시 경유지 목록을 반환하도록 수정
-            return [];
-        }
-
-        /**
-         * 경로 검색 및 지도에 경로 표시
-         */
-        function searchRoute() {
-            var startAddress = $('#addressStart').val().trim();
-            var addressList = $('#addressList').val().trim();
-
-            if (startAddress === "" || addressList === "") {
-                alert("시작 주소와 목적지 주소 목록을 모두 입력해주세요.");
-                return;
-            }
-
-            // 시작 주소를 먼저 지오코딩하여 좌표를 가져옵니다.
-            $.ajax({
-                url: '/api/map/GetCoordinates', // 경로 수정: '/Map/GetCoordinates' -> '/api/map/GetCoordinates'
-                method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ address: startAddress }),
-                success: function (startResponse) {
-                    console.log("GetCoordinates (Start) Response:", startResponse); // 디버깅용 로그
-                    if (startResponse.status === 200) {
-                        var startData = startResponse.data;
-                        var startX = parseFloat(startData.x);
-                        var startY = parseFloat(startData.y);
-
-                        // 목적지 주소 목록을 ':'로 구분하여 좌표 수집
-                        var addresses = addressList.split(':').map(function (addr) {
-                            return addr.trim();
-                        }).filter(function (addr) {
-                            return addr !== "";
-                        });
-                        if (addresses.length === 0) {
-                            alert("유효한 목적지 주소가 없습니다.");
-                            return;
-                        }
-
-                        var goals = [];
-                        var processed = 0;
-                        var failed = false;
-
-                        addresses.forEach(function (address, index) {
-                            $.ajax({
-                                url: '/api/map/GetCoordinates', // 경로 수정: '/Map/GetCoordinates' -> '/api/map/GetCoordinates'
-                                method: 'POST',
-                                contentType: 'application/json',
-                                data: JSON.stringify({ address: address }),
-                                success: function (destResponse) {
-                                    console.log("GetCoordinates (Destination) Response:", destResponse); // 디버깅용 로그
-                                    if (destResponse.status === 200) {
-                                        var destData = destResponse.data;
-                                        goals.push({ x: destData.x, y: destData.y });
-                                    } else {
-                                        alert('주소 검색에 실패했습니다: ' + destResponse.message);
-                                        failed = true;
-                                    }
-                                    processed++;
-                                    if (processed === addresses.length && !failed) {
-                                        // 모든 목적지 주소가 처리된 후 경로 검색
-                                        callSearchRoute(startX, startY, goals, getViaPointsList()); // 필요 시 viaPoints를 추가
-                                    }
-                                },
-                                error: function () {
-                                    alert('서버 오류가 발생했습니다.');
-                                    processed++;
-                                    if (processed === addresses.length && !failed) {
-                                        // 모든 목적지 주소가 처리된 후 경로 검색
-                                        callSearchRoute(startX, startY, goals, getViaPointsList()); // 필요 시 viaPoints를 추가
-                                    }
-                                }
-                            });
-                        });
-                    } else {
-                        alert('시작 주소 검색에 실패했습니다: ' + startResponse.message);
-                        console.error("GetCoordinates (Start) Error:", startResponse);
-                    }
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    alert('서버 오류가 발생했습니다.');
-                    console.error("GetCoordinates (Start) AJAX Error:", textStatus, errorThrown);
-                }
             });
         }
 
@@ -673,41 +449,6 @@
             });
         }
 
-        /**
-         * 좌표로부터 주소를 가져오는 함수
-         * @param {Object} coordinates - {x, y} 형식의 좌표 객체
-         * @returns {Promise<string>} - 주소 문자열
-         */
-        function getAddressFromCoordinates(coordinates) {
-            // 주석 처리: 지오코드 관련 기능 비활성화
-            /*
-            return new Promise(function(resolve, reject) {
-                $.ajax({
-                    url: '/api/map/reverse-geocode',
-                    method: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        x: coordinates.x,
-                        y: coordinates.y
-                    }),
-                    dataType: 'json',
-                    success: function (response) {
-                        if (response.address) {
-                            resolve(response.address);
-                        } else {
-                            resolve("Unknown Address");
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error("역지오코딩 오류:", error);
-                        resolve("Unknown Address"); // 실패 시에도 테이블 표시를 위해 Unknown Address 반환
-                    }
-                });
-            });
-            */
-            // 대신, 임의의 주소 반환 (필요에 따라 수정 가능)
-            return Promise.resolve("목적지");
-        }
 
         /**
          * 경로 결과를 테이블에 표시하고 마커 및 구간별 폴리라인 추가
@@ -740,8 +481,8 @@
 
             // 색상 매핑: 혼잡도에 따른 색상 지정
             const congestionColors = {
-                0: "#00FF00", // 원활 (녹색)
-                1: "#FFA500", // 보통 (주황색)
+                0: "#1cdf1c", // 원활 (녹색)
+                1: "#FBD126", // 보통 (주황색)
                 2: "#FF0000"  // 혼잡 (빨간색)
             };
 
@@ -774,62 +515,75 @@
 
                 // 테이블에 각 구간 추가
                 if (waypoints.length > 0) {
-                    var firstWaypoint = waypoints[0];
-                    var row1 = '<tr>' +
-                        '<td>출발지</td>' +
-                        '<td>목적지 1</td>' +
-                        '<td>' + firstWaypoint.distance.toLocaleString() + ' m</td>' +
-                        '<td>' + Math.round(firstWaypoint.duration / 60000) + ' 분</td>' +
-                        '</tr>';
-                    $('#routeTableBody').append(row1);
+                    // 구간 데이터를 waypoints에 맞춰 매핑
+                    // 출발지 → 목적지1, 목적지1 → 목적지2, ..., 목적지N → 도착지
+                    var segments = [];
 
-                    // 총계 업데이트
-                    totalDistance += firstWaypoint.distance;
-                    totalDuration += Math.round(firstWaypoint.duration / 60000);
+                    // 출발지 → 목적지1
+                    segments.push({
+                        from: '출발지',
+                        to: '목적지 1',
+                        distance: waypoints[0].distance,
+                        duration: waypoints[0].duration,
+                        congestion: sections[0] ? sections[0].congestion : 0
+                    });
 
                     // 목적지1 → 목적지2, ..., 목적지N-1 → 목적지N
                     for (var i = 1; i < waypoints.length; i++) {
-                        var currentWaypoint = waypoints[i];
-                        var previousWaypoint = waypoints[i - 1];
+                        segments.push({
+                            from: '목적지 ' + i,
+                            to: '목적지 ' + (i + 1),
+                            distance: waypoints[i].distance,
+                            duration: waypoints[i].duration,
+                            congestion: sections[i] ? sections[i].congestion : 0
+                        });
+                    }
+
+                    // 목적지N → 도착지
+                    segments.push({
+                        from: '목적지 ' + waypoints.length,
+                        to: '도착지',
+                        distance: summary.goal.distance,
+                        duration: summary.goal.duration,
+                        congestion: sections[waypoints.length] ? sections[waypoints.length].congestion : 0
+                    });
+
+                    // 테이블에 추가
+                    segments.forEach(function(segment) {
                         var row = '<tr>' +
-                            '<td>목적지 ' + i + '</td>' +
-                            '<td>목적지 ' + (i + 1) + '</td>' +
-                            '<td>' + currentWaypoint.distance.toLocaleString() + ' m</td>' +
-                            '<td>' + Math.round(currentWaypoint.duration / 60000) + ' 분</td>' +
+                            '<td>' + segment.from + '</td>' +
+                            '<td>' + segment.to + '</td>' +
+                            '<td>' + segment.distance.toLocaleString() + ' m</td>' +
+                            '<td>' + Math.round(segment.duration / 60000) + ' 분</td>' +
+                            '<td>' + getCongestionLabel(segment.congestion) + '</td>' + // 혼잡도 추가
                             '</tr>';
                         $('#routeTableBody').append(row);
 
                         // 총계 업데이트
-                        totalDistance += currentWaypoint.distance;
-                        totalDuration += Math.round(currentWaypoint.duration / 60000);
-                    }
-
-                    // 마지막 목적지 → 도착지
-                    var lastWaypoint = waypoints[waypoints.length - 1];
-                    var rowLast = '<tr>' +
-                        '<td>목적지 ' + waypoints.length + '</td>' +
-                        '<td>도착지</td>' +
-                        '<td>' + summary.goal.distance.toLocaleString() + ' m</td>' +
-                        '<td>' + Math.round(summary.goal.duration / 60000) + ' 분</td>' +
-                        '</tr>';
-                    $('#routeTableBody').append(rowLast);
-
-                    // 총계 업데이트
-                    totalDistance += summary.goal.distance;
-                    totalDuration += Math.round(summary.goal.duration / 60000);
+                        totalDistance += segment.distance;
+                        totalDuration += Math.round(segment.duration / 60000);
+                    });
                 } else {
                     // 경유지가 없을 경우 출발지 → 도착지
+                    var segment = {
+                        from: '출발지',
+                        to: '도착지',
+                        distance: summary.goal.distance,
+                        duration: summary.goal.duration,
+                        congestion: sections[0] ? sections[0].congestion : 0
+                    };
                     var row = '<tr>' +
-                        '<td>출발지</td>' +
-                        '<td>도착지</td>' +
-                        '<td>' + summary.goal.distance.toLocaleString() + ' m</td>' +
-                        '<td>' + Math.round(summary.goal.duration / 60000) + ' 분</td>' +
+                        '<td>' + segment.from + '</td>' +
+                        '<td>' + segment.to + '</td>' +
+                        '<td>' + segment.distance.toLocaleString() + ' m</td>' +
+                        '<td>' + Math.round(segment.duration / 60000) + ' 분</td>' +
+                        '<td>' + getCongestionLabel(segment.congestion) + '</td>' + // 혼잡도 추가
                         '</tr>';
                     $('#routeTableBody').append(row);
 
                     // 총계 업데이트
-                    totalDistance += summary.goal.distance;
-                    totalDuration += Math.round(summary.goal.duration / 60000);
+                    totalDistance += segment.distance;
+                    totalDuration += Math.round(segment.duration / 60000);
                 }
 
                 // 구간별 폴리라인 그리기
@@ -844,6 +598,12 @@
                         var sectionStart = section.pointIndex;
                         var sectionEnd = sectionStart + section.pointCount;
 
+                        // 좌표가 유효한지 확인
+                        if (sectionStart < 0 || sectionEnd >= path.length) {
+                            console.warn(`Section ${sectionIndex + 1}: Invalid pointIndex (${sectionStart}) or pointCount (${section.pointCount}).`);
+                            return;
+                        }
+
                         // 비혼잡 구간: 현재 인덱스와 섹션 시작 사이
                         if (currentIdx < sectionStart) {
                             var nonCongestedPathCoords = path.slice(currentIdx, sectionStart);
@@ -852,33 +612,40 @@
                                     return new naver.maps.LatLng(coords[1], coords[0]); // y, x
                                 });
 
-                                var nonCongestedPolyline = new naver.maps.Polyline({
+                                // 외곽 검정선 폴리라인 (두께를 4로 설정)
+                                var outlinePolyline = new naver.maps.Polyline({
                                     map: routesVisible ? map : null,
                                     path: nonCongestedPath,
-                                    strokeColor: "#00FF00", // 기본 색상: 파란색
-                                    strokeOpacity: 0.7,
-                                    strokeWeight: 5
+                                    strokeColor: "#000000", // 검정색
+                                    strokeOpacity: 1,
+                                    strokeWeight: 6 // 외곽선 두께 조정
                                 });
 
-                                polylines.push(nonCongestedPolyline);
-                                console.log(`Non-Congested Segment ${currentIdx} to ${sectionStart}:`, nonCongestedPolyline);
+                                polylines.push(outlinePolyline);
+                                console.log(`Non-Congested Outline Segment ${currentIdx} to ${sectionStart}:`, outlinePolyline);
+
+                                // 내부 폴리라인 (원래 색상 유지, 약간 얇게)
+                                var mainNonCongestedPolyline = new naver.maps.Polyline({
+                                    map: routesVisible ? map : null,
+                                    path: nonCongestedPath,
+                                    strokeColor: "#1cdf1c", // 원래 색상 유지 (예: 녹색)
+                                    strokeOpacity: 1,
+                                    strokeWeight: 6 // 내부 선 두께 조정
+                                });
+
+                                polylines.push(mainNonCongestedPolyline);
+                                console.log(`Non-Congested Main Segment ${currentIdx} to ${sectionStart}:`, mainNonCongestedPolyline);
                             }
                         }
 
                         // 혼잡 구간: 섹션 시작과 끝 사이
                         var pathCoordinates = path.slice(sectionStart, sectionEnd + 1); // endIdx 포함
 
-                        // 좌표가 유효한지 확인
-                        if (sectionStart < 0 || sectionEnd >= path.length) {
-                            console.warn(`Section ${sectionIndex + 1}: Invalid pointIndex (${sectionStart}) or pointCount (${section.pointCount}).`);
-                            return;
-                        }
-
                         // 섹션 객체 전체를 콘솔에 출력하여 congestion 값 확인
                         console.log(`Section ${sectionIndex + 1} Details:`, section);
 
                         var congestion = Number(section.congestion); // 문자열일 경우 숫자로 변환
-                        var color = congestionColors[congestion] || "#00FF00"; // 기본 색상: 파란색
+                        var color = congestionColors[congestion] || "#FF0000"; // 기본 색상: 녹색
 
                         // 콘솔에 색상 출력 (디버깅용)
                         console.log(`Section ${sectionIndex + 1}: 색상 - ${color}, 혼잡도 - ${congestion}`);
@@ -888,16 +655,29 @@
                             return new naver.maps.LatLng(coords[1], coords[0]); // y, x
                         });
 
-                        var polyline = new naver.maps.Polyline({
+                        // 외곽 검정선 폴리라인 (두께를 4로 설정)
+                        var outlinePolyline = new naver.maps.Polyline({
                             map: routesVisible ? map : null,
                             path: polylinePath,
-                            strokeColor: color,
-                            strokeOpacity: 0.7,
-                            strokeWeight: 5 // 두께 조정 (필요시 변경)
+                            strokeColor: "#000000", // 검정색
+                            strokeOpacity: 1,
+                            strokeWeight: 6 // 외곽선 두께 조정
                         });
 
-                        polylines.push(polyline);
-                        console.log(`Section ${sectionIndex + 1} Polyline:`, polyline);
+                        polylines.push(outlinePolyline);
+                        console.log(`Section ${sectionIndex + 1} Outline Polyline:`, outlinePolyline);
+
+                        // 내부 폴리라인 (혼잡도에 따른 색상, 약간 얇게)
+                        var mainPolyline = new naver.maps.Polyline({
+                            map: routesVisible ? map : null,
+                            path: polylinePath,
+                            strokeColor: color, // 혼잡도에 따른 색상
+                            strokeOpacity: 1,
+                            strokeWeight: 6 // 내부 선 두께 조정
+                        });
+
+                        polylines.push(mainPolyline);
+                        console.log(`Section ${sectionIndex + 1} Main Polyline:`, mainPolyline);
 
                         // 현재 인덱스를 섹션 끝으로 이동
                         currentIdx = sectionEnd + 1;
@@ -911,16 +691,29 @@
                                 return new naver.maps.LatLng(coords[1], coords[0]); // y, x
                             });
 
-                            var remainingPolyline = new naver.maps.Polyline({
+                            // 외곽 검정선 폴리라인 (두께를 4로 설정)
+                            var remainingOutlinePolyline = new naver.maps.Polyline({
                                 map: routesVisible ? map : null,
                                 path: remainingPath,
-                                strokeColor: "#00FF00", // 기본 색상: 파란색
-                                strokeOpacity: 0.7,
-                                strokeWeight: 5
+                                strokeColor: "#000000", // 검정색
+                                strokeOpacity: 1,
+                                strokeWeight: 6 // 외곽선 두께 조정
                             });
 
-                            polylines.push(remainingPolyline);
-                            console.log(`Remaining Non-Congested Segment ${currentIdx} to ${path.length}:`, remainingPolyline);
+                            polylines.push(remainingOutlinePolyline);
+                            console.log(`Remaining Non-Congested Outline Segment ${currentIdx} to ${path.length}:`, remainingOutlinePolyline);
+
+                            // 내부 폴리라인 (원래 색상 유지, 약간 얇게)
+                            var remainingMainPolyline = new naver.maps.Polyline({
+                                map: routesVisible ? map : null,
+                                path: remainingPath,
+                                strokeColor: "#FF0000", // 원래 색상 유지 (예: 빨강)
+                                strokeOpacity: 1,
+                                strokeWeight: 6 // 내부 선 두께 조정
+                            });
+
+                            polylines.push(remainingMainPolyline);
+                            console.log(`Remaining Non-Congested Main Segment ${currentIdx} to ${path.length}:`, remainingMainPolyline);
                         }
                     }
                 } else {
@@ -929,16 +722,29 @@
                         return new naver.maps.LatLng(coords[1], coords[0]); // y, x
                     });
 
-                    var polyline = new naver.maps.Polyline({
+                    // 외곽 검정선 폴리라인 (두께를 4로 설정)
+                    var fullOutlinePolyline = new naver.maps.Polyline({
                         map: routesVisible ? map : null,
                         path: fullPath,
-                        strokeColor: "#00FF00", // 기본 색상: 파란색
-                        strokeOpacity: 0.7,
-                        strokeWeight: 5
+                        strokeColor: "#000000", // 검정색
+                        strokeOpacity: 1,
+                        strokeWeight: 6 // 외곽선 두께 조정
                     });
 
-                    polylines.push(polyline);
-                    console.log(`Full Path Polyline:`, polyline);
+                    polylines.push(fullOutlinePolyline);
+                    console.log(`Full Path Outline Polyline:`, fullOutlinePolyline);
+
+                    // 내부 폴리라인 (기존 색상 유지, 약간 얇게)
+                    var fullMainPolyline = new naver.maps.Polyline({
+                        map: routesVisible ? map : null,
+                        path: fullPath,
+                        strokeColor: "#1cdf1c", // 원래 색상 유지 (예: 녹색)
+                        strokeOpacity: 1,
+                        strokeWeight: 6 // 내부 선 두께 조정
+                    });
+
+                    polylines.push(fullMainPolyline);
+                    console.log(`Full Path Main Polyline:`, fullMainPolyline);
                 }
             }); // routes.forEach 끝
 
@@ -947,6 +753,7 @@
                 '<td colspan="2">총계</td>' +
                 '<td>' + totalDistance.toLocaleString() + ' m</td>' +
                 '<td>' + totalDuration.toLocaleString() + ' 분</td>' +
+                '<td></td>' + // 총계 행에는 혼잡도 없음
                 '</tr>';
             $('#routeTableBody').append(totalRow);
 
@@ -956,77 +763,22 @@
             hideLoading();
         }
 
-        /**
-         * 테스트용 메서드: 고정된 좌표로 최적화된 경로 계산
-         */
-        function testDrivingRoute() {
-            $.ajax({
-                url: '/api/map/test-driving-route', // 경로 수정: '/Map/TestDrivingRoute' -> '/api/map/test-driving-route'
-                method: 'GET',
-                success: function (response) {
-                    console.log("TestDrivingRoute Response:", response); // 디버깅용 로그
-                    if (response.code === 0 && response.route && response.route.trafast) {
-                        var routes = response.route.trafast;
-                        console.log("trafast routes:", routes);
-                        displayRouteResults(routes);
-                        // drawRouteOnMap(routes); // 이제 displayRouteResults에서 경로를 그리므로 주석 처리
+// 혼잡도 값을 레이블로 변환하는 함수
+        function getCongestionLabel(congestion) {
+            switch (congestion) {
+                case 0:
+                    return '<span class="congestion-low">원활</span>';
+                case 1:
+                    return '<span class="congestion-medium">보통</span>';
+                case 2:
+                    return '<span class="congestion-medium">혼잡</span>';
 
-                        // 지도 중심을 첫 번째 경로의 출발지로 이동
-                        if (routes.length > 0) {
-                            var firstRoute = routes[0];
-                            var startCoordinates = firstRoute.summary.start.location;
-                            map.setCenter(new naver.maps.LatLng(startCoordinates[1], startCoordinates[0]));
-                        }
-
-                        alert("테스트 경로가 정상적으로 조회되었습니다.");
-                    } else {
-                        alert('테스트 경로 검색에 실패했습니다: ' + (response.message || 'Unknown Error'));
-                        console.error("TestDrivingRoute Error:", response);
-                    }
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    alert('서버 오류가 발생했습니다.');
-                    console.error("TestDrivingRoute AJAX Error:", textStatus, errorThrown);
-                }
-            });
+                default:
+                    return '혼잡';
+            }
         }
 
 
-
-        /**
-         * 테스트용 메서드: 고정된 좌표로 최적화된 경로 계산
-         */
-        function testDrivingRoute() {
-            $.ajax({
-                url: '/api/map/test-driving-route', // 경로 수정: '/Map/TestDrivingRoute' -> '/api/map/test-driving-route'
-                method: 'GET',
-                success: function (response) {
-                    console.log("TestDrivingRoute Response:", response); // 디버깅용 로그
-                    if (response.code === 0 && response.route && response.route.trafast) {
-                        var routes = response.route.trafast;
-                        console.log("trafast routes:", routes);
-                        displayRouteResults(routes);
-                        // drawRouteOnMap(routes); // 이제 displayRouteResults에서 경로를 그리므로 주석 처리
-
-                        // 지도 중심을 첫 번째 경로의 출발지로 이동
-                        if (routes.length > 0) {
-                            var firstRoute = routes[0];
-                            var startCoordinates = firstRoute.summary.start.location;
-                            map.setCenter(new naver.maps.LatLng(startCoordinates[1], startCoordinates[0]));
-                        }
-
-                        alert("테스트 경로가 정상적으로 조회되었습니다.");
-                    } else {
-                        alert('테스트 경로 검색에 실패했습니다: ' + (response.message || 'Unknown Error'));
-                        console.error("TestDrivingRoute Error:", response);
-                    }
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    alert('서버 오류가 발생했습니다.');
-                    console.error("TestDrivingRoute AJAX Error:", textStatus, errorThrown);
-                }
-            });
-        }
 
 
 
@@ -1051,7 +803,7 @@
                 var polyline = new naver.maps.Polyline({
                     path: path,
                     strokeColor: "#0000FF", // 단일 색상 적용 (파란색)
-                    strokeOpacity: 0.8,
+                    strokeOpacity: 1,
                     strokeWeight: 3,
                     map: routesVisible ? map : null // 현재 경로 표시 상태에 따라 지도에 추가 또는 제거
                 });
@@ -1102,20 +854,6 @@
 
         }
 
-        /**
-         * 트래픽 레이어 토글 함수
-         */
-        function toggleTrafficLayer() {
-            if (trafficLayer.getMap()) {
-                trafficLayer.setMap(null);
-                $('#traffic').removeClass('control-on');
-                $("#autorefresh").parent().hide();
-            } else {
-                trafficLayer.setMap(map);
-                $('#traffic').addClass('control-on');
-                $("#autorefresh").parent().show();
-            }
-        }
 
         /**
          * 경로(polylines)의 가시성을 토글하는 함수

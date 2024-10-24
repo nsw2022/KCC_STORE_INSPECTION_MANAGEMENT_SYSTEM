@@ -11,7 +11,7 @@ import java.util.List;
 public interface InspectionScheduleMapper {
 
 
-    /**
+    /** 점검일정 목록조회
      * @param storeNm 가맹점
      * @param brandNm 브랜드
      * @param scheduleDate 점검예정일
