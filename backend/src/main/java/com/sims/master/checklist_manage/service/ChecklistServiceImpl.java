@@ -6,10 +6,10 @@ import com.sims.config.common.aop.PRoleCheck;
 import com.sims.master.checklist_manage.mapper.ChecklistMapper;
 import com.sims.master.checklist_manage.vo.ChecklistDeleteRequest;
 import com.sims.master.checklist_manage.vo.ChecklistOptionsResponse;
+import com.sims.master.checklist_manage.vo.ChecklistRequest;
 import com.sims.master.checklist_manage.vo.ChecklistResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -35,9 +35,6 @@ public class ChecklistServiceImpl implements ChecklistService{
     @Override
     @PRoleCheck
     public int deleteChecklistByChklstId(List<ChecklistDeleteRequest> checklistDeleteRequest) {
-        /**
-         * @Todo role체크 aop 구현 후 삭제 예정
-         */
         if (checklistMapper.selectChklstIdByChklstIdAndChklstUseW(checklistDeleteRequest).size() > 0) {
             throw new CustomException(ErrorCode.CHECKLIST_IN_USE);
         }
@@ -55,5 +52,27 @@ public class ChecklistServiceImpl implements ChecklistService{
                 .inspTypeOptions(inspTypeOptions)
                 .checklistOptions(checklistOptions)
                 .build();
+    }
+
+    @Override
+    @PRoleCheck
+    public int insertOrUpdateChecklist(List<ChecklistRequest> checklistRequests) {
+        String mbrNo = SecurityContextHolder.getContext().getAuthentication().getName();
+        int requestDataLength = checklistRequests.size();
+
+        for(int i = 0; i < checklistRequests.size(); i++) {
+            checklistRequests.get(i).setMbrNo(mbrNo);
+            log.info(mbrNo);
+        }
+
+        int resultDataLength = checklistMapper.insertOrUpdateChecklist(checklistRequests);
+
+        log.info("requestDatsLength = {}", requestDataLength);
+        log.info("resultDataLength = {}", resultDataLength);
+
+        if (requestDataLength == resultDataLength)
+            return resultDataLength;
+        else
+            throw new CustomException(ErrorCode.SAVE_FAIL);
     }
 }

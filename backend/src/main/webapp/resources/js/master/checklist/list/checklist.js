@@ -8,7 +8,7 @@ let firstRowLength = 0;
 
 async function loadData() {
   try {
-    const response = await fetch("https://localhost:8081/master/checklist/list");
+    const response = await fetch("/master/checklist/list");
     const data = await response.json();
     console.log(data);
 
@@ -98,17 +98,25 @@ async function loadData() {
       pagination: true,
       paginationAutoPageSize: true,
       onRowSelected: (event) => {
-        // 체크박스가 선택되거나 해제될 때
         const selectedRows = gridApi.getSelectedRows();
-        if (selectedRows.length > 0) {
-          selectedRowNo = selectedRows[0].chklstId; // 선택된 첫 번째 행의 ID
+
+        if (selectedRows.length === 1 && event.node.isSelected()) {
+          // 선택된 행만 업데이트를 진행합니다.
+          const selectedNode = event.node; // 선택된 노드를 가져옴
+          selectedRowNo = selectedNode.rowIndex; // 선택된 행의 인덱스를 저장
+          console.log("선택된 행 번호: ", selectedRowNo);
+
           $(".brandPlaceholder").text(selectedRows[0].brandNm);
           $(".checklistPlaceholder").text(selectedRows[0].chklstNm);
           $(".masterChecklistPlaceholder").text(selectedRows[0].masterChklstNm);
           $(".inspectionTypePlaceholder").text(selectedRows[0].inspTypeNm);
-          enableElementSearchBtn(); // 선택된 행이 있으면 검색 버튼 활성화
-        } else {
-          disableSearchBtn(); // 선택된 행이 없으면 검색 버튼 비활성화
+
+          enableElementSearchBtn(); // 검색 버튼 활성화
+        } else if (!event.node.isSelected() && event.node.rowIndex === selectedRowNo) {
+          // 행이 선택 해제될 때 선택된 행 번호를 초기화합니다.
+          selectedRowNo = null;
+          console.log("선택된 행이 해제되었습니다.");
+          disableSearchBtn(); // 검색 버튼 비활성화
         }
       },
     };
@@ -125,22 +133,18 @@ async function loadData() {
   }
 }
 
-// disableSearchBtn 함수 정의
-function disableSearchBtn() {
-  // 검색 버튼 비활성화 로직
-  $(".search-btn").prop("disabled", true); // 또는 원하는 비활성화 로직
-}
+
 
 loadData();
 
 // 비활성화 함수
 function disableSearchBtn() {
-  $('.wrapper').addClass('disabled');
+  $('.bottom-wrapper').addClass('disabled');
 }
 
 // 활성화 함수
 function enableElementSearchBtn() {
-  $('.wrapper').removeClass('disabled');
+  $('.bottom-wrapper').removeClass('disabled');
 }
 
 // 비활성화 함수 호출
@@ -161,8 +165,11 @@ function createNewRowData() {
       .replace(/\s+/g, "")
       .replace(/\./g, ".");
 
+  // rowData에 데이터가 있는지 확인하고 마지막 항목의 chklstId를 사용
+  let lastChklstId = rowData.length > 0 ? rowData[rowData.length - 1].chklstId : 0;
+
   return {
-    chklstId: rowData.length + 1,
+    chklstId: lastChklstId + 1,
     brandNm: "",
     chklstNm: "",
     masterChklstNm: "",
@@ -178,7 +185,7 @@ function createNewRowData() {
 function onChecklistAddRow() {
   checkUnload = true;
   const newItem = createNewRowData();
-  rowData.push(newItem);
+  rowData.unshift(newItem);
   gridApi.applyTransaction({
     add: [newItem],
     addIndex: 0
@@ -204,7 +211,7 @@ function onChecklistDeleteRow() {
     // 경고 메시지 표시
     warningMessage().then((result) => {
       if (result.isConfirmed) { // 사용자가 삭제를 확인한 경우
-        fetch(`https://localhost:8081/master/checklist/delete`, {
+        fetch(`/master/checklist/delete`, {
           method: 'DELETE',
           headers: {
             "Content-Type": "application/json",
@@ -242,7 +249,7 @@ function onChecklistDeleteRow() {
 function confirmationDialog() {
   Swal.fire({
     title: "확인",
-    text: "체크리스트를 저장하시겠습니까?",
+    html: "선택된 체크리스트를 저장하시겠습니까?<br><b>선택하지 않은 체크리스트는 저장되지 않습니다.</b>",
     icon: "question",
     showCancelButton: true,
     confirmButtonColor: "#3085d6",
@@ -252,37 +259,57 @@ function confirmationDialog() {
   }).then((result) => {
     if (result.isConfirmed) {
       const selectedRows = gridApi.getSelectedRows();
+      if (selectedRows.length === 0) {
+        Swal.fire("실패!", "체크리스트를 선택해주세요.", "error");
+        return;
+      }
+
       // 체크리스트를 서버에 저장하는 fetch 요청
-      fetch("https://localhost:8081/master/checklist/save", {
+      fetch("/master/checklist/save", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(selectedRows.map(row =>{ chklstId: row.chklstId })),
+        body: JSON.stringify(selectedRows.map((row) => ({
+          chklstId: row.chklstId,
+          brandNm: row.brandNm,
+          chklstNm: row.chklstNm,
+          masterChklstNm: row.masterChklstNm,
+          chklstUseW: row.chklstUseW,
+          inspTypeNm: row.inspTypeNm,
+        }))),
       })
-      .then((data) => {
-        // 서버 저장이 성공하면 완료 알림 표시
-        Swal.fire({
-          title: "완료!",
-          text: "완료되었습니다.",
-          icon: "success",
-          confirmButtonText: "OK",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            checkUnload = false;
-            location.href = "/master/checklist";
-          }
-        });
-      })
-      .catch((error) => {
-        // 저장에 실패하면 에러 알림 표시
-        Swal.fire("실패!", error.message, "error");
-      });
-    } else {
-      Swal.fire("취소!", "취소되었습니다.", "error");
+          .then((response) => {
+            if (!response.ok) {
+              // 응답 상태 코드에 따른 에러 처리
+              if (response.status === 403) {
+                throw new Error("권한이 없습니다.");
+              } else if (response.status === 500) {
+                throw new Error("저장에 실패했습니다. 관리자에게 문의하세요.");
+              } else {
+                throw new Error("저장에 실패했습니다.");
+              }
+            }
+            return response.json(); // 성공적으로 응답을 받았으면 데이터를 JSON으로 변환
+          })
+          .then((data) => {
+            // 서버 저장이 성공하면 완료 알림 표시
+            Swal.fire({
+              title: "완료!",
+              text: "완료되었습니다.",
+              icon: "success",
+              confirmButtonText: "OK",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                checkUnload = false;
+                location.href = "/master/checklist";
+              }
+            });
+          })
     }
   });
 }
+
 
 $(function () {
   class Autocomplete {
@@ -432,12 +459,11 @@ $(function () {
     INSP1: [],
   };
 
-  fetch("https://localhost:8081/master/checklist/options")
+  fetch("/master/checklist/options")
       .then((response) => {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
         // 받아온 데이터로 autocompleteData 업데이트
         autocompleteData.BRAND.push(...data.brandOptions);
         autocompleteData.BRAND1.push(...data.brandOptions);
@@ -521,39 +547,46 @@ function observeChanges(selector, callback) {
   observer.observe(targetNode, { childList: true, characterData: true, subtree: true });
 }
 
-
 // span 요소들의 변화 감지
 observeChanges(".brandPlaceholder", function(newText) {
-  checkUnload = true;
-  $('.save-btn').removeAttr("disabled");
-  rowData[selectedRowNo - 1].brandNm = newText;
-  gridApi.applyTransaction({
-    update: [rowData[selectedRowNo - 1]]
-  });
+  if (selectedRowNo !== null) {
+    checkUnload = true;
+    $('.save-btn').removeAttr("disabled");
+    rowData[selectedRowNo].brandNm = newText;
+    gridApi.applyTransaction({
+      update: [rowData[selectedRowNo]]
+    });
+  }
 });
 observeChanges(".checklistPlaceholder", function(newText) {
-  checkUnload = true;
-  $('.save-btn').removeAttr("disabled");
-  rowData[selectedRowNo - 1].chklstNm = newText;
-  gridApi.applyTransaction({
-    update: [rowData[selectedRowNo - 1]]
-  });
+  if (selectedRowNo !== null) {
+    checkUnload = true;
+    $('.save-btn').removeAttr("disabled");
+    rowData[selectedRowNo].chklstNm = newText;
+    gridApi.applyTransaction({
+      update: [rowData[selectedRowNo]]
+    });
+  }
 });
 observeChanges(".masterChecklistPlaceholder", function(newText) {
-  checkUnload = true;
-  $('.save-btn').removeAttr("disabled");
-  rowData[selectedRowNo - 1].masterChklstNm = newText;
-  gridApi.applyTransaction({
-    update: [rowData[selectedRowNo - 1]]
-  });
+  if (selectedRowNo !== null) {
+    checkUnload = true;
+    $('.save-btn').removeAttr("disabled");
+    rowData[selectedRowNo].masterChklstNm = newText;
+    gridApi.applyTransaction({
+      update: [rowData[selectedRowNo]]
+    });
+  }
 });
 observeChanges(".inspectionTypePlaceholder", function(newText) {
-  checkUnload = true;
-  $('.save-btn').removeAttr("disabled");
-  rowData[selectedRowNo - 1].inspTypeNm = newText;
-  gridApi.applyTransaction({
-    update: [rowData[selectedRowNo - 1]]
-  });
+  if (selectedRowNo !== null) {
+    checkUnload = true;
+    $('.save-btn').removeAttr("disabled");
+    rowData[selectedRowNo].inspTypeNm = newText;
+    gridApi.applyTransaction({
+      update: [rowData[selectedRowNo]]
+    });
+  }
 });
 
 // 페이지를 벗어날 때 알림을 띄움

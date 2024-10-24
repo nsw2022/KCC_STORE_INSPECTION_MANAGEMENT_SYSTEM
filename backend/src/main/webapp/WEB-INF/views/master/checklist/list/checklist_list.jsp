@@ -274,7 +274,7 @@ pageEncoding="UTF-8" %>
                       <!-- 브랜드 -->
                       <div class="col-lg-3 col-md-6 col-12">
                         <label for="inspectionType" class="form-label">브랜드</label>
-                        <div class="wrapper" data-autocomplete="BRAND1">
+                        <div class="wrapper bottom-wrapper" data-autocomplete="BRAND1">
                           <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
                             <span class="brandPlaceholder">브랜드</span>
                             <i class="uil uil-angle-down"></i>
@@ -295,7 +295,7 @@ pageEncoding="UTF-8" %>
                       <!-- 체크리스트명 -->
                       <div class="col-lg-3 col-md-6 col-12">
                         <label for="checklistName" class="form-label">체크리스트</label>
-                        <div class="wrapper" data-autocomplete="CHKLST1">
+                        <div class="wrapper bottom-wrapper" data-autocomplete="CHKLST1">
                           <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
                             <span class="checklistPlaceholder">체크리스트</span>
                             <i class="uil uil-angle-down"></i>
@@ -316,7 +316,7 @@ pageEncoding="UTF-8" %>
                       <!-- 마스터 체크리스트 -->
                       <div class="col-lg-3 col-md-6 col-12">
                         <label for="storeSearch" class="form-label">마스터 체크리스트</label>
-                        <div class="wrapper masterChklstSearchBtn" data-autocomplete="MASTER_CHKLST">
+                        <div class="wrapper masterChklstSearchBtn bottom-wrapper" data-autocomplete="MASTER_CHKLST">
                           <div class="search-btn top-search form-control d-flex align-items-center justify-content-between" style="height: 34px !important" data-bs-toggle="modal" data-bs-target="#masterChecklistModal">
                             <span class="masterChecklistPlaceholder">마스터 체크리스트</span>
                           </div>
@@ -326,7 +326,7 @@ pageEncoding="UTF-8" %>
                       <!-- 점검유형 -->
                       <div class="col-lg-3 col-md-6 col-12">
                         <label for="brandSearch" class="form-label">점검유형</label>
-                        <div class="wrapper" data-autocomplete="INSP1">
+                        <div class="wrapper bottom-wrapper" data-autocomplete="INSP1">
                           <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
                             <span class="inspectionTypePlaceholder">점검유형</span>
                             <i class="uil uil-angle-down"></i>

@@ -2,6 +2,7 @@ package com.sims.master.checklist_manage.service;
 
 import com.sims.master.checklist_manage.vo.ChecklistDeleteRequest;
 import com.sims.master.checklist_manage.vo.ChecklistOptionsResponse;
+import com.sims.master.checklist_manage.vo.ChecklistRequest;
 import com.sims.master.checklist_manage.vo.ChecklistResponse;
 
 import java.util.List;
@@ -29,4 +30,11 @@ public interface ChecklistService {
      * @return 브랜드, 체크리스트, 점검유형
      */
     public ChecklistOptionsResponse selectChecklistOptions();
+
+    /**
+     * 체크리스트 등록/수정
+     * @param checklistRequests
+     * @return 등록/수정된 데이터 갯수
+     */
+    public int insertOrUpdateChecklist(List<ChecklistRequest> checklistRequests);
 }

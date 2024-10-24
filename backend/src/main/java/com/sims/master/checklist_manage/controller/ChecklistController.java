@@ -74,8 +74,10 @@ public class ChecklistController {
     /**
      * 체크리스트 저장 / 수정
      */
-    @GetMapping("/checklist/save")
-    public ResponseEntity<?> insertAndUpdateChecklist(List<ChecklistRequest> checklistRequests){
-        return null;
+    @PostMapping("/checklist/save")
+    public ResponseEntity<?> insertOrUpdateChecklist(@RequestBody List<ChecklistRequest> checklistRequests){
+
+        checklistService.insertOrUpdateChecklist(checklistRequests);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

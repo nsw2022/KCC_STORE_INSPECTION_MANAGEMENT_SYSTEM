@@ -1,6 +1,7 @@
 package com.sims.master.checklist_manage.mapper;
 
 import com.sims.master.checklist_manage.vo.ChecklistDeleteRequest;
+import com.sims.master.checklist_manage.vo.ChecklistRequest;
 import com.sims.master.checklist_manage.vo.ChecklistResponse;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -44,5 +45,17 @@ public interface ChecklistMapper {
      */
     public List<String> selectChecklistOptions();
 
+    /**
+     * 체크리스트 사용 여부 조회
+     * @param checklistDeleteRequest
+     * @return
+     */
     public List<Integer> selectChklstIdByChklstIdAndChklstUseW(List<ChecklistDeleteRequest> checklistDeleteRequest);
+
+    /**
+     * 체크리스트 저장 / 수정
+     * @param checklistRequests
+     * @return 저장 / 수정된 데이터 갯수
+     */
+    public int insertOrUpdateChecklist(List<ChecklistRequest> checklistRequests);
 }
