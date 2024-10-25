@@ -96,7 +96,7 @@
 
             <div class="d-flex justify-content-between">
               <div class="my-3" style="margin: 0 !important;">
-                <button type="button" class="btn btn-light me-3 select-btn p-0">조회</button>
+                <button type="button" id="search-btn-top" class="btn btn-light me-3 select-btn p-0">조회</button>
                 <button type="button" id="reset-selection-top" class="btn btn-light init-btn p-0">초기화</button>
               </div>
             </div>
@@ -105,7 +105,7 @@
           <div class="container-fluid px-0">
             <div class="row g-3 align-items-center pt-4 top-search-box d-flex">
               <!-- 가맹점 라벨과 검색 필드 -->
-              <div class="col-lg-2 col-md-4 col-12">
+              <div class="col-xxl-2 col-lg-4 col-md-4 col-12">
                 <label for="storeSearch" class="form-label">매장명</label>
                 <div class="wrapper" data-autocomplete="store">
                   <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
@@ -127,7 +127,7 @@
               </div>
 
               <!-- 브랜드 라벨과 검색 필드 -->
-              <div class="col-lg-2 col-md-4 col-12">
+              <div class="col-xxl-2 col-lg-4 col-md-4 col-12">
                 <label for="inspectorSearch" class="form-label">브랜드</label>
                 <div class="wrapper" data-autocomplete="BRAND">
                   <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
@@ -154,23 +154,20 @@
                 }
               %>
               <!-- 점검 예정일 라벨과 필드 -->
-              <div class="col-lg-2 col-md-4 col-12">
-                <label for="topScheduleDate" class="form-label">점검 예정일</label>
+              <div class="col-xxl-2 col-lg-4 col-md-4 col-12">
+                <label for="topScheduleDate" class="form-label">점검 완료일</label>
                 <div class="wrapper" data-autocomplete="sv">
                   <div class="search">
                     <input
                             type="date"
                             class="form-control top-search"
-                            id="topScheduleDate"
-                            placeholder="예정일을 입력해주세요"
-                            min="<%= getTodayString() %>"
-                    />
+                            id="topScheduleDate">
                   </div>
                 </div>
               </div>
 
               <!-- 체크리스트명 라벨과 검색 필드 -->
-              <div class="col-lg-3 col-md-6 col-12">
+              <div class="col-xxl-2 col-lg-4 col-md-6 col-12">
                 <label for="svSearchInput" class="form-label">체크리스트</label>
                 <div class="wrapper" data-autocomplete="CHKLST">
                   <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
@@ -190,9 +187,31 @@
                   </div>
                 </div>
               </div>
+              
+              <!-- 점검유형 라벨과 검색 필드 -->
+              <div class="col-xxl-2 col-lg-4 col-md-6 col-12">
+                <label for="svSearchInput" class="form-label">점검유형</label>
+                <div class="wrapper" data-autocomplete="INSPTYPENM">
+                  <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
+                    <span>점검유형 검색</span>
+                    <i class="uil uil-angle-down"></i>
+                  </div>
+                  <div class="hide-list">
+                    <div class="search">
+                      <input
+                              type="text"
+                              class="form-control top-search"
+                              id="svSearchInput"
+                              placeholder="점검유형을 입력해주세요"
+                      />
+                      <ul class="options"></ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               <!-- 점검자 라벨과 검색 필드 -->
-              <div class="col-lg-3 col-md-4 col-12">
+              <div class="col-xxl-2 col-lg-4 col-md-4 col-12">
                 <label for="inspector" class="form-label">점검자</label>
                 <div class="wrapper" data-autocomplete="inspector">
                   <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">

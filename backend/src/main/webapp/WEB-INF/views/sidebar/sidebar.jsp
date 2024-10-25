@@ -104,7 +104,7 @@
                                     <a href="#" onclick="document.getElementById('inspection').submit()">가맹점 점검</a>
                                 </li>
                                 <li>
-                                    <form id="inspection_result" action="/qsc/result_list" method="get"></form>
+                                    <form id="inspection_result" action="/qsc/inspection/result" method="get"></form>
                                     <a href="#" onclick="document.getElementById('inspection_result').submit()">가맹점 점검 결과</a>
                                 </li>
                             </ul>

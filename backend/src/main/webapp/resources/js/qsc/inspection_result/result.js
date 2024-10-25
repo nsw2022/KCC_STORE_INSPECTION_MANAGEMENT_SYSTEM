@@ -128,26 +128,60 @@ $(function () {
 
   // 각 자동완성 필드에 대한 데이터 목록 정의
   const autocompleteData = {
+
     // 가맹점
-    store: [
-      "혜화점",
-      "종로점",
-      "청량리점",
-      "안산점",
-      "부평점",
-      "용산점",
-      "답십리점",
-    ],
+    store: ['전체'],
 
     // 점검자
-    inspector: ["노승우", "이지훈", "유재원", "원승언", "노승수"],
+    inspector: ['전체'],
 
     // 체크리스트
-    CHKLST: ["KCC 크라상 위생 점검표", "KCC 카페 제품 점검표"],
+    CHKLST: ['전체'],
+    
+    // 체크리스트 점검유형
+    INSPTYPENM : ['전체'],
 
     // 브랜드
-    BRAND: ["KCC 크라상", "KCC 카페", "KCC 디저트"],
+    BRAND: ['전체']
   };
+  
+  // ROW 데이터 정의
+  const rowData = [];
+  
+  
+	/**
+	 * @return 가맹점 / 점검자 / 체크리스트 / 브랜드 검색 목록
+	 */
+	$.ajax({
+    url: "/qsc/inspection/result/list",
+    method: 'GET',
+    async: false,
+    dataType: 'json',
+    success: function (data) {
+		console.log(data);
+        data.forEach((x, index) => {
+            x.inspComplTm = x.inspComplTm.substr(0, 8).replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3'); 
+            
+            // 인덱스를 rowData에 추가
+            rowData.push({ index: index+1, data: x });
+
+            // 중복된 단어 배열에서 넣지 않게 해주기
+            function deleteDuplication(arr, unit) {
+                if (!arr.includes(unit)) {
+                    arr.push(unit);
+                }
+            }
+            
+            deleteDuplication(autocompleteData.store, x.storeNm);
+            deleteDuplication(autocompleteData.inspector, x.mbrNm);
+            deleteDuplication(autocompleteData.CHKLST, x.chklstNm);
+            deleteDuplication(autocompleteData.INSPTYPENM, x.inspTypeCd);
+            deleteDuplication(autocompleteData.BRAND, x.brandCd);
+        });
+    }
+});
+
+	
 
   // 자동완성 인스턴스를 초기화하고 wrapper 요소에 저장
   $(".wrapper").each(function () {
@@ -178,50 +212,11 @@ $(function () {
     });
   });
 
-  // ROW 데이터 정의
-  const rowData = [
-    {
-      no: 1,
-      store: "혜화점",
-      brand: "KCC 크라상",
-      checklist_name: "KCC 크라상 인상점검표",
-      schedule_date: "2024.10.09",
-      inspector: "노승우",
-    },
-    {
-      no: 2,
-      store: "동대문점",
-      brand: "KCC 크라상",
-      checklist_name: "KCC 크라상 인상점검표",
-      schedule_date: "2024.10.09",
-      inspector: "이지훈",
-    },
-    {
-      no: 3,
-      store: "서울역점",
-      brand: "KCC 크라상",
-      checklist_name: "KCC 크라상 인상점검표",
-      schedule_date: "2024.10.09",
-      inspector: "유재원",
-    },
-    {
-      no: 4,
-      store: "성수역점",
-      brand: "KCC 크라상",
-      checklist_name: "KCC 크라상 인상점검표",
-      schedule_date: "2024.10.09",
-      inspector: "원승언",
-    },
-    {
-      no: 5,
-      store: "수유점",
-      brand: "KCC 크라상",
-      checklist_name: "KCC 크라상 인상점검표",
-      schedule_date: "2024.10.09",
-      inspector: "노승수",
-    },
-  ];
-
+  
+  
+  
+ 
+	
   // 그리드 옵션 설정
   const gridOptions = {
     rowData: rowData,
@@ -235,34 +230,41 @@ $(function () {
         resizable: true,
         cellStyle: { backgroundColor: "#ffffff" },
       },
-      { field: "no", headerName: "No", width: 80, minWidth: 50 },
-      { field: "store", headerName: "가맹점", width: 150, minWidth: 50 },
-      { field: "brand", headerName: "브랜드", width: 150, minWidth: 110 },
+      { field: "index", headerName: "순서", width: 80, minWidth: 60 },
+      { field: `data.storeNm`, headerName: "가맹점", width: 150, minWidth: 160 },
+      { field: "data.brandNm", headerName: "브랜드", width: 150, minWidth: 120 },
       {
-        field: "checklist_name",
+        field: "data.chklstNm",
         headerName: "체크리스트명",
         width: 150,
-        minWidth: 110,
+        minWidth: 130,
       },
       {
-        field: "schedule_date",
-        headerName: "점검예정일",
+        field: "data.inspTypeNm",
+        headerName: "점검유형",
         width: 150,
         minWidth: 110,
       },
-      { field: "inspector", headerName: "점검자", width: 150, minWidth: 110 },
+      {
+        field: "data.inspComplTm",
+        headerName: "점검완료일",
+        width: 150,
+        minWidth: 110,
+      },
+      
+      { field: "data.mbrNm", headerName: "점검자", width: 150, minWidth: 110 },
       {
         headerName: "자세히보기",
         field: "more",
         width: 150,
-        minWidth: 120,
+        minWidth: 80,
         cellRenderer: function (params) {
           // jQuery를 사용하여 컨테이너 div 생성
           const $container = $("<div>", {
             class: "edit-container",
             css: { position: "relative", cursor: "pointer" },
           });
-
+				
           // SVG 요소 생성
           const $svg = $(`
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 15 15">
@@ -271,8 +273,8 @@ $(function () {
                     `);
 
           // '자세히보기' 옵션 div 생성
-          const $editDiv = $('<div class="edit-options">자세히보기</div>');
-
+          let insp_result_id = params.data.data.inspResultId;
+          const $editDiv = $(`<div class="edit-options" data-no="${insp_result_id}">자세히보기</div>`);
           // SVG 클릭 시 '수정' 옵션 표시
           $svg.on("click", function (e) {
             e.stopPropagation(); // 이벤트 버블링 방지
@@ -300,7 +302,7 @@ $(function () {
             e.stopPropagation(); // 이벤트 버블링 방지
 
             // 모달 열기
-            openPopup(params.data.checklist_name); // 팝업으로 데이터 전송 - 다른페이지에서는  $("#masterChecklistModal").modal("show");
+            openPopup(params.data.data.inspResultId); // 팝업으로 데이터 전송 - 다른페이지에서는  $("#masterChecklistModal").modal("show");
 
             // 'edit-options' 숨기기
             $editDiv.removeClass("show");
@@ -422,8 +424,8 @@ function toggleSearchBox() {
 
     if (isOpen) {
       searchSection.style.overflow = 'hidden'; // 열리는 동안 내용이 넘치지 않도록 설정
-      searchSection.style.maxHeight = `${searchSection.scrollHeight}px`; // 자연스럽게 열기
-      icon.style.transform = 'rotate(-90deg)'; // 아이콘 180도 회전
+      searchSection.style.maxHeight = '1000px'; // 자연스럽게 열기
+      icon.style.transform = 'rotate(-90deg)'; // 아이콘 180도 회전	
     } else {
       searchSection.style.maxHeight = '0'; // 높이를 0으로 줄여서 닫기
       icon.style.transform = 'rotate(0deg)'; // 아이콘 원래 상태로
@@ -443,3 +445,29 @@ function toggleSearchBox() {
 document.addEventListener('DOMContentLoaded', () => {
   toggleSearchBox(); // 함수 호출
 });
+
+
+$(function () {
+	$('#search-btn-top').click(function (){
+		function selectOptionsChild(arr, wrapper) {
+			let storeNm = wrapper.eq(0).find('.selected').text();
+			let brandNm = wrapper.eq(1).find('.selected').text();
+			let inspComplDt = wrapper.eq(2).find('input').val();
+			let chklstNm = wrapper.eq(3).find('.selected').text();
+			let inspTypeNm = wrapper.eq(4).find('.selected').text();
+			let inspectorNm = wrapper.eq(5).find('.selected').text();
+			
+			arr = [storeNm, brandNm, inspComplDt, chklstNm, inspTypeNm, inspectorNm];
+			console.log(arr);
+			return arr;
+			
+		}
+		
+		let wrapper = $('.wrapper');
+		let arr = [];
+		
+		selectOptionsChild(arr, wrapper);
+		
+	})	
+
+})

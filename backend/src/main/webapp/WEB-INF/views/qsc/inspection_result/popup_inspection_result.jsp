@@ -59,10 +59,10 @@
             <table class="score-table">
                 <thead>
                 <tr>
-                    <th>배점</th>
-                    <th>적합</th>
-                    <th>부적합</th>
-                    <th>해당없음</th>
+                    <th>총점</th>
+                    <th>적합 수</th>
+                    <th>부적합 수</th>
+                    <th>문항 수</th>
                 </tr>
                 </thead>
                 <tbody>
