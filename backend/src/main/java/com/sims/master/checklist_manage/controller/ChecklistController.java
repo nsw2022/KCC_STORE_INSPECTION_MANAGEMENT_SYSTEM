@@ -40,13 +40,11 @@ public class ChecklistController {
      * 체크리스트 전체 목록 조회
      * @return 체크리스트 전체 목록 리스트
      */
-    @GetMapping("/checklist/list")
+    @PostMapping("/checklist/list")
     @ResponseBody
-    public ResponseEntity<List<ChecklistResponse>> selectChecklistList(){
-        if(checklistService.selectChecklistAll().size() > 0)
-            return new ResponseEntity<List<ChecklistResponse>>(checklistService.selectChecklistAll(), HttpStatus.OK);
-        else
-            return new ResponseEntity<List<ChecklistResponse>>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<List<ChecklistResponse>> selectChecklistList(@RequestBody ChecklistRequest checklistRequest){
+        log.info("checklistRequest : {}", checklistRequest);
+        return new ResponseEntity<List<ChecklistResponse>>(checklistService.selectChecklistAll(checklistRequest), HttpStatus.OK);
     }
     /**
      * 체크리스트 삭제
@@ -73,6 +71,7 @@ public class ChecklistController {
 
     /**
      * 체크리스트 저장 / 수정
+     * @return 상태코드
      */
     @PostMapping("/checklist/save")
     public ResponseEntity<?> insertOrUpdateChecklist(@RequestBody List<ChecklistRequest> checklistRequests){

@@ -16,7 +16,7 @@ public interface ChecklistService {
      * 체크리스트 전체 조회
      * @return 체크리스트 전체 목록
      */
-    public List<ChecklistResponse> selectChecklistAll();
+    public List<ChecklistResponse> selectChecklistAll(ChecklistRequest checklistRequest);
 
     /**
      * 체크리스트 삭제

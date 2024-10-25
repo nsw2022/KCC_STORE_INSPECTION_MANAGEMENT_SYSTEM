@@ -18,7 +18,7 @@ public interface ChecklistMapper {
      * DB에서 체크리스트 전체 목록 조회
      * @return ChecklistResponse 체크리스트 전체 목록 리스트
      */
-    public List<ChecklistResponse> selectChecklistAll();
+    public List<ChecklistResponse> selectChecklistAll(ChecklistRequest checklistRequest);
 
     /**
      * DB에서 체크리스트 삭제

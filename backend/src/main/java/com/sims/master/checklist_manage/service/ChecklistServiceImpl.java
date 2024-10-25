@@ -28,8 +28,10 @@ public class ChecklistServiceImpl implements ChecklistService{
     private final ChecklistMapper checklistMapper;
 
     @Override
-    public List<ChecklistResponse> selectChecklistAll() {
-        return checklistMapper.selectChecklistAll();
+    public List<ChecklistResponse> selectChecklistAll(ChecklistRequest checklistRequest) {
+        log.info("called ChecklsitServiceImpl checklistRequest = {}", checklistRequest);
+        log.info("service 결과 = {}", checklistMapper.selectChecklistAll(checklistRequest));
+        return checklistMapper.selectChecklistAll(checklistRequest);
     }
 
     @Override
