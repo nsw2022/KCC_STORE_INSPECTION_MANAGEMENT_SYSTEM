@@ -7,19 +7,19 @@
 
     <select id="selectFilteredInspectionScheduleList" resultType="com.sims.qsc.inspection_schedule.vo.InspectionScheduleRequest">
         SELECT  /* InspectionScheduleMapper.getInspectionScheduleList 노승우 */
-            STO.STORE_NM,
-            STO.STORE_ID,
-        CASE
-            WHEN STO.BRAND_CD = 'B001' THEN 'KCC 크라상'
-            WHEN STO.BRAND_CD = 'B002' THEN 'KCC 도넛'
-            WHEN STO.BRAND_CD = 'B003' THEN 'KCC 브레드'
-            WHEN STO.BRAND_CD = 'B004' THEN 'KCC 카페'
-        END AS BRAND_NM,
-            CHK.CHKLST_NM,
-            ISC.INSP_PLAN_DT,
-            MBR.MBR_NM,
-            INP.CNT_CD,
-            INP.FRQ_CD
+            STO.STORE_NM
+            , STO.STORE_ID
+            , CASE
+                WHEN STO.BRAND_CD = 'B001' THEN 'KCC 크라상'
+                WHEN STO.BRAND_CD = 'B002' THEN 'KCC 도넛'
+                WHEN STO.BRAND_CD = 'B003' THEN 'KCC 브레드'
+                WHEN STO.BRAND_CD = 'B004' THEN 'KCC 카페'
+            END AS BRAND_NM
+            , CHK.CHKLST_NM
+            , ISC.INSP_PLAN_DT
+            , MBR.MBR_NM
+            , INP.CNT_CD
+            , INP.FRQ_CD
         FROM INSP_SCHD ISC
             INNER JOIN STORE STO
                 ON STO.STORE_ID = ISC.STORE_ID

@@ -34,7 +34,9 @@ public class StoreInspectionServiceImpl implements StoreInspectionService {
     }
 
     @Override
-    public List<StoreAllLocationResponse> selectAllInspectionMap() { return storeInspectionMapper.selectAllInspectionMap(); }
+    public List<StoreAllLocationResponse> selectAllInspectionMap(String currentMbrNo) {
+        return storeInspectionMapper.selectAllInspectionMap(currentMbrNo);
+    }
 
 
 }

@@ -42,31 +42,40 @@
         AND s.INSP_PLAN_DT = #{inspPlanDt}
     </select>
 
-    <select id="selectInspectionsByInspector" resultType="com.sims.qsc.store_inspection.vo.StoreLocationResponse">
-        SELECT /* StoreInspectionMapper.selectInspectionsByInspector  노승우 */
-           m.MBR_ID
-           , m.MBR_NM
-           , m.MBR_NO
-           , c.CHKLST_NM
-           , c.CHKLST_ID
-           , st.STORE_NM
-           , s.INSP_PLAN_DT
-           , s.INSP_STTS_CD
-           , st.LATITUDE
-           , st.LONGITUDE
+    <select id="selectInspectionsByInspector" resultType="com.sims.qsc.store_inspection.vo.StoreAllLocationResponse">
+        SELECT /* StoreInspectionMapper.selectInspectionsByInspector 노승우 */
+            st.STORE_NM AS storeNm,
+            st.STORE_ID AS storeId,
+            st.LATITUDE AS latitude,
+            st.LONGITUDE AS longitude,
+            m.MBR_NO AS mbrNo,
+            CASE
+                WHEN st.BRAND_CD = 'B001' THEN 'KCC 크라상'
+                WHEN st.BRAND_CD = 'B002' THEN 'KCC 도넛'
+                WHEN st.BRAND_CD = 'B003' THEN 'KCC 브레드'
+                WHEN st.BRAND_CD = 'B004' THEN 'KCC 카페'
+                END AS brandNm,
+            m.MBR_NM AS inspectorName,
+            sv.MBR_NM AS supervisorName,
+            s.INSP_PLAN_DT,
+            s.INSP_STTS_CD,
+            c.CHKLST_NM,
+            c.CHKLST_ID
         FROM
             INSP_SCHD s
-        JOIN STORE st
-            ON s.STORE_ID = st.STORE_ID
-        JOIN MBR m
-            ON st.INSP_MBR_ID = m.MBR_ID
-        JOIN INSP_PLAN p
-            ON s.INSP_PLAN_ID = p.INSP_PLAN_ID
-        JOIN CHKLST c
-            ON p.CHKLST_ID = c.CHKLST_ID
+                JOIN STORE st
+                     ON s.STORE_ID = st.STORE_ID
+                JOIN MBR m
+                     ON st.INSP_MBR_ID = m.MBR_ID
+                JOIN INSP_PLAN p
+                     ON s.INSP_PLAN_ID = p.INSP_PLAN_ID
+                JOIN CHKLST c
+                     ON p.CHKLST_ID = c.CHKLST_ID
+                LEFT JOIN MBR sv
+                          ON st.SV_MBR_ID = sv.MBR_ID
         WHERE
             s.INSP_PLAN_DT = TO_CHAR(CURRENT_DATE, 'YYYYMMDD')
-        AND
+          AND
             m.MBR_NO = #{mbrNo}
     </select>
 
@@ -87,15 +96,30 @@
                 , INS.MBR_NM AS INSPECTOR_NAME
                 , SV.MBR_NM AS SUPERVISOR_NAME
         FROM INSP_SCHD ISC
-                 INNER JOIN STORE STO
+                  INNER JOIN STORE STO
                             ON STO.STORE_ID = ISC.STORE_ID
-                 INNER JOIN INSP_PLAN INP
+                  INNER JOIN INSP_PLAN INP
                             ON INP.INSP_PLAN_ID = ISC.INSP_PLAN_ID
-                 INNER JOIN MBR INS
-                            ON INS.MBR_ID = STO.INSP_MBR_ID
-                 INNER JOIN MBR SV
-                            ON SV.MBR_ID = STO.SV_MBR_ID
+                  INNER JOIN MBR INS
+                             ON INS.MBR_ID = STO.INSP_MBR_ID
+                  INNER JOIN MBR SV
+                             ON SV.MBR_ID = STO.SV_MBR_ID
+        <where>
+            <choose>
+                <!-- SV로 로그인한 경우 -->
+                <when test="currentMbrNo != null and currentMbrNo.startsWith('S')">
+                    AND STO.SV_MBR_ID = (SELECT MBR_ID FROM MBR WHERE MBR_NO = #{currentMbrNo})
+                </when>
+                <!-- 점검자로 로그인한 경우 -->
+                <when test="currentMbrNo != null and currentMbrNo.startsWith('C')">
+                    AND STO.INSP_MBR_ID = (SELECT MBR_ID FROM MBR WHERE MBR_NO = #{currentMbrNo})
+                </when>
+                <!-- 품질관리자 및 관리자인 경우: 조건 없음 -->
+                <otherwise>
 
+                </otherwise>
+            </choose>
+        </where>
 
     </select>
 

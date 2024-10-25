@@ -289,9 +289,9 @@
         function setupEventListeners() {
 
 
-            // $('#testBtn').click(function () {
-            //     testDrivingRoute();
-            // });
+            $('#testBtn').click(function () {
+                testDrivingRoute();
+            });
 
             // 트래픽 레이어 토글 버튼 이벤트
             $('#traffic').on("click", function (e) {
