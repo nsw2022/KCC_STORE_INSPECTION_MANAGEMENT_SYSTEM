@@ -4,15 +4,15 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sims.master.checklist_manage.mapper.ChecklistMapper">
-    <select id="selectChecklistAll" resultType="ChecklistResponse">
-        SELECT /* ChecklistMapper.selectChecklistAll 유재원 */
-            CHKLST.CHKLST_ID
-            , BRAND_NM.DTL_CD_NM AS brandNm
-            , MASTER_CHKLST.CHKLST_NM AS masterChklstNm
-            , CHKLST.CHKLST_NM
-            , CHKLST.CHKLST_USE_W
-            , INSP_TYPE_NM.DTL_CD_NM AS inspTypeNm
-            , TO_CHAR(TO_DATE(CHKLST.CRE_TM, 'YYYYMMDDHH24MI'), 'YYYY.MM.DD') AS creTm
+    <select id="selectChecklistAll">
+        SELECT
+            CHKLST.CHKLST_ID,
+            BRAND_NM.DTL_CD_NM AS brandNm,
+            MASTER_CHKLST.CHKLST_NM AS masterChklstNm,
+            CHKLST.CHKLST_NM,
+            CHKLST.CHKLST_USE_W,
+            INSP_TYPE_NM.DTL_CD_NM AS inspTypeNm,
+            TO_CHAR(TO_DATE(CHKLST.CRE_TM, 'YYYYMMDDHH24MI'), 'YYYY.MM.DD') AS creTm
         FROM CHKLST
             LEFT JOIN COMM_CD_DTL BRAND_NM
                 ON CHKLST.BRAND_CD = BRAND_NM.DTL_CD
@@ -22,9 +22,28 @@
                 ON CHKLST.MASTER_CHKLST_ID = MASTER_CHKLST.CHKLST_ID
         WHERE
             CHKLST.CHKLST_STTS_W != '0'
+        <if test="brandNm != null">
+            AND BRAND_NM.DTL_CD_NM = #{brandNm}
+        </if>
+        <if test="chklstNm != null">
+            AND CHKLST.CHKLST_NM = #{chklstNm}
+        </if>
+        <if test="masterChklstNm != null">
+            AND CHKLST.MASTER_CHKLST_ID = (SELECT CHKLST_ID FROM CHKLST WHERE CHKLST_NM = #{masterChklstNm})
+        </if>
+        <if test="inspTypeNm != null">
+            AND INSP_TYPE_NM.DTL_CD_NM = #{inspTypeNm}
+        </if>
+         <if test="creTm != null">
+            AND TO_CHAR(TO_DATE(CHKLST.CRE_TM, 'YYYYMMDDHH24MI'), 'YYYY-MM-DD') = #{creTm}
+        </if>
+        <if test="chklstUseW != null">
+            AND CHKLST.CHKLST_USE_W = #{chklstUseW}
+        </if>
         ORDER BY
             CHKLST.CHKLST_ID DESC
     </select>
+
 
     <update id="deleteChecklistByChklstId" parameterType="List">
         UPDATE
@@ -81,4 +100,93 @@
         AND
             CHKLST_USE_W = 'Y'
     </select>
+
+    <insert id="insertOrUpdateChecklist">
+        <foreach collection="list" item="item" open="" close="" index="index">
+            MERGE INTO CHKLST /* ChecklistMapper.insertOrUpdateChecklist 유재원 */
+            USING DUAL
+            ON (CHKLST_ID = #{item.chklstId})
+            WHEN MATCHED THEN
+            UPDATE
+                SET BRAND_CD = (SELECT
+                                    DTL_CD
+                                FROM
+                                    COMM_CD
+                                    , COMM_CD_DTL
+                                WHERE
+                                    COMM_CD.COMM_CD_ID = COMM_CD_DTL.COMM_CD_ID
+                                AND
+                                    DTL_CD_NM = #{item.brandNm})
+                    , MASTER_CHKLST_ID = (SELECT
+                                              CHKLST_ID
+                                          FROM
+                                              CHKLST
+                                          WHERE
+                                              CHKLST_NM = #{item.masterChklstNm})
+                    , CHKLST_NM = #{item.chklstNm}
+                    , CHKLST_USE_W = #{item.chklstUseW}
+                    , INSP_TYPE_CD = (SELECT
+                                          DTL_CD
+                                      FROM COMM_CD
+                                         , COMM_CD_DTL
+                                      WHERE
+                                          COMM_CD.COMM_CD_ID = COMM_CD_DTL.COMM_CD_ID
+                                      AND
+                                          DTL_CD_NM = #{item.inspTypeNm})
+                    , UPD_MBR_ID = (SELECT
+                                        MBR_ID
+                                    FROM
+                                        MBR
+                                    WHERE
+                                        MBR_NO = #{item.MbrNo})
+                    , UPD_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+            WHEN NOT MATCHED THEN
+            INSERT (CHKLST_ID
+                    , BRAND_CD
+                    , MASTER_CHKLST_ID
+                    , CHKLST_NM
+                    , CHKLST_USE_W
+                    , INSP_TYPE_CD
+                    , CRE_MBR_ID
+                    , CRE_TM
+                    , CHKLST_STTS_W
+            )
+            VALUES (CHKLST_SEQ.NEXTVAL
+                    , (SELECT
+                           DTL_CD
+                       FROM
+                           COMM_CD
+                          , COMM_CD_DTL
+                       WHERE
+                           COMM_CD.COMM_CD_ID = COMM_CD_DTL.COMM_CD_ID
+                       AND
+                           DTL_CD_NM = #{item.brandNm})
+                    , (SELECT
+                           CHKLST_ID
+                       FROM
+                           CHKLST
+                       WHERE
+                           CHKLST_NM = #{item.masterChklstNm})
+                    , #{item.chklstNm}
+                    , 'N'
+                    , (SELECT
+                           DTL_CD
+                       FROM
+                           COMM_CD
+                          , COMM_CD_DTL
+                       WHERE
+                           COMM_CD.COMM_CD_ID = COMM_CD_DTL.COMM_CD_ID
+                       AND
+                           DTL_CD_NM = #{item.inspTypeNm})
+                    , (SELECT
+                           MBR_ID
+                       FROM
+                           MBR
+                       WHERE
+                           MBR_NO = #{item.MbrNo})
+                    , TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+                    , '1'
+            )
+        </foreach>
+    </insert>
 </mapper>

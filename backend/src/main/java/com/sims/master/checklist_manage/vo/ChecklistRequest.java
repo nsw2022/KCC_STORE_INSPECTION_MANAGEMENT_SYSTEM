@@ -10,6 +10,9 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
+@ToString
 public class ChecklistRequest {
     private int chklstId; // 체크리스트 ID
     private String brandNm; // 브랜드 이름
@@ -18,4 +21,5 @@ public class ChecklistRequest {
     private String chklstUseW; // 체크리스트 사용 여부
     private String inspTypeNm; // 점검 유형 이름
     private String creTm; // 생성일자
+    private String MbrNo; // 생성자 No
 }

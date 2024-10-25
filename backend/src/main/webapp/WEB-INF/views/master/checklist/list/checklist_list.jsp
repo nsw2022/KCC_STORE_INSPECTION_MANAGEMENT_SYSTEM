@@ -78,8 +78,8 @@ pageEncoding="UTF-8" %>
                     </div>
                   </div>
                   <div class="my-3" style="margin: 0 !important;">
-                    <button type="button" class="btn btn-light me-3 select-btn p-0" onclick="onAddRow()">조회</button>
-                    <button type="button" class="btn btn-light init-btn p-0" onclick="onDeleteRow()">초기화</button>
+                    <button type="button" class="btn btn-light me-3 select-btn p-0" onclick="onSearchRow()">조회</button>
+                    <button type="button" class="btn btn-light init-btn p-0" onclick="onSearchInit()">초기화</button>
                   </div>
                 </div>
 
@@ -93,7 +93,7 @@ pageEncoding="UTF-8" %>
                         <label for="inspectionType" class="form-label">브랜드</label>
                         <div class="wrapper" data-autocomplete="BRAND">
                           <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                            <span>브랜드 검색</span>
+                            <span class="searchBrandPlaceholder">브랜드 검색</span>
                             <i class="uil uil-angle-down"></i>
                           </div>
                           <div class="hide-list">
@@ -114,7 +114,7 @@ pageEncoding="UTF-8" %>
                         <label for="checklistName" class="form-label">체크리스트</label>
                         <div class="wrapper" data-autocomplete="CHKLST">
                           <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                            <span>체크리스트 검색</span>
+                            <span class="searchChklstPlaceholder">체크리스트 검색</span>
                             <i class="uil uil-angle-down"></i>
                           </div>
                           <div class="hide-list">
@@ -136,7 +136,7 @@ pageEncoding="UTF-8" %>
                         <label for="storeSearch" class="form-label">마스터 체크리스트</label>
                         <div class="wrapper" data-autocomplete="MASTER_CHKLST">
                           <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                            <span>마스터 체크리스트</span>
+                            <span class="searchMasterChklstPlaceholder">마스터 체크리스트</span>
                             <i class="uil uil-angle-down"></i>
                           </div>
                           <div class="hide-list">
@@ -158,7 +158,7 @@ pageEncoding="UTF-8" %>
                         <label for="brandSearch" class="form-label">점검유형</label>
                         <div class="wrapper" data-autocomplete="INSP">
                           <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                            <span>점검유형</span>
+                            <span class="searchInspTypePlaceholder">점검유형</span>
                             <i class="uil uil-angle-down"></i>
                           </div>
                           <div class="hide-list">
@@ -181,7 +181,7 @@ pageEncoding="UTF-8" %>
                           <div class="search">
                             <input
                                     type="date"
-                                    class="form-control top-search"
+                                    class="form-control top-search searchDatePlaceholder"
                                     id="topScheduleDate"
                             />
                           </div>
@@ -193,7 +193,7 @@ pageEncoding="UTF-8" %>
                         <label class="form-label">마스터여부</label>
                         <div class="wrapper" data-autocomplete="STATUS">
                           <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                            <span>마스터여부</span>
+                            <span class="searchMasterSttsPlaceholder">마스터여부</span>
                             <i class="uil uil-angle-down"></i>
                           </div>
                           <div class="hide-list">
@@ -216,7 +216,7 @@ pageEncoding="UTF-8" %>
                         <!-- 빈도에 따라 동적으로 옵션이 추가될 예정 -->
                         <div class="wrapper" data-autocomplete="STATUS">
                           <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                            <span>사용여부</span>
+                            <span class="searchUseWPlaceholder">사용여부</span>
                             <i class="uil uil-angle-down"></i>
                           </div>
                           <div class="hide-list">
@@ -274,7 +274,7 @@ pageEncoding="UTF-8" %>
                       <!-- 브랜드 -->
                       <div class="col-lg-3 col-md-6 col-12">
                         <label for="inspectionType" class="form-label">브랜드</label>
-                        <div class="wrapper" data-autocomplete="BRAND1">
+                        <div class="wrapper bottom-wrapper" data-autocomplete="BRAND1">
                           <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
                             <span class="brandPlaceholder">브랜드</span>
                             <i class="uil uil-angle-down"></i>
@@ -295,7 +295,7 @@ pageEncoding="UTF-8" %>
                       <!-- 체크리스트명 -->
                       <div class="col-lg-3 col-md-6 col-12">
                         <label for="checklistName" class="form-label">체크리스트</label>
-                        <div class="wrapper" data-autocomplete="CHKLST1">
+                        <div class="wrapper bottom-wrapper" data-autocomplete="CHKLST1">
                           <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
                             <span class="checklistPlaceholder">체크리스트</span>
                             <i class="uil uil-angle-down"></i>
@@ -316,7 +316,7 @@ pageEncoding="UTF-8" %>
                       <!-- 마스터 체크리스트 -->
                       <div class="col-lg-3 col-md-6 col-12">
                         <label for="storeSearch" class="form-label">마스터 체크리스트</label>
-                        <div class="wrapper masterChklstSearchBtn" data-autocomplete="MASTER_CHKLST">
+                        <div class="wrapper masterChklstSearchBtn bottom-wrapper" data-autocomplete="MASTER_CHKLST">
                           <div class="search-btn top-search form-control d-flex align-items-center justify-content-between" style="height: 34px !important" data-bs-toggle="modal" data-bs-target="#masterChecklistModal">
                             <span class="masterChecklistPlaceholder">마스터 체크리스트</span>
                           </div>
@@ -326,7 +326,7 @@ pageEncoding="UTF-8" %>
                       <!-- 점검유형 -->
                       <div class="col-lg-3 col-md-6 col-12">
                         <label for="brandSearch" class="form-label">점검유형</label>
-                        <div class="wrapper" data-autocomplete="INSP1">
+                        <div class="wrapper bottom-wrapper" data-autocomplete="INSP1">
                           <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
                             <span class="inspectionTypePlaceholder">점검유형</span>
                             <i class="uil uil-angle-down"></i>
@@ -374,8 +374,8 @@ pageEncoding="UTF-8" %>
           <%-------------- body --------------%>
           <div class="modal-body">
             <div class="input-group mb-3 modal-search-box" style="    padding: .5rem 1rem;">
-              <input type="text" class="form-control me-2" placeholder="체크리스트 검색" aria-label="Recipient's username" aria-describedby="button-addon2">
-              <button class="btn btn-outline-secondary" type="button" id="button-addon2">검색</button>
+              <input type="text" class="form-control me-2 chklst-search-box" placeholder="체크리스트 검색" aria-label="Recipient's username" aria-describedby="button-addon2">
+              <button class="btn btn-outline-secondary chklst-search-btn" type="button" id="button-addon2">검색</button>
             </div>
             <ol class="list-group">
               <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
@@ -552,6 +552,10 @@ pageEncoding="UTF-8" %>
   <script
           type="application/javascript"
           src="../../../../../resources/js/master/checklist/list/checklist_modal.js"
+  ></script>
+  <script
+          type="application/javascript"
+          src="../../../../../resources/js/master/checklist/list/checklist_filter.js"
   ></script>
   </body>
 </html>

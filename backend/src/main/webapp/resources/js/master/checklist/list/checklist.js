@@ -5,10 +5,17 @@ let gridApi = null;
 let gridOptions = null;
 let selectedRowNo = 0;
 let firstRowLength = 0;
-
-async function loadData() {
+// 체크리스트 데이터를 서버에서 받아오는 함수
+async function getChecklistAll(searchCriteria = {}) {
   try {
-    const response = await fetch("https://localhost:8081/master/checklist/list");
+    const response = await fetch("/master/checklist/list", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(searchCriteria)
+    });
+
     const data = await response.json();
     console.log(data);
 
@@ -20,127 +27,137 @@ async function loadData() {
       return item;
     });
 
-    // 그리드 설정 객체
-    gridOptions = {
-      rowData: rowData,
-      columnDefs: [
-        {
-          minWidth: 45,
-          width: 70,
-          headerCheckboxSelection: true,
-          checkboxSelection: true,
-          resizable: true,
-          cellStyle: { backgroundColor: "#ffffff" },
-        },
-        { field: "chklstId", headerName: "No", width: 80, minWidth: 50 },
-        { field: "brandNm", headerName: "브랜드", minWidth: 110 },
-        { field: "chklstNm", headerName: "체크리스트명", minWidth: 110 },
-        { field: "masterChklstNm", headerName: "마스터 체크리스트", minWidth: 110 },
-        { field: "inspTypeNm", headerName: "점검유형", minWidth: 110 },
-        { field: "creTm", headerName: "등록일", minWidth: 110 },
-        { field: "is_master_checklist", headerName: "마스터 체크리스 여부", minWidth: 70 },
-        { field: "chklstUseW", headerName: "사용여부", minWidth: 70 },
-        {
-          field: "action",
-          headerName: "관리",
-          width: 100,
-          minWidth: 53,
-          pinned: "right",
-          cellRenderer: function (params) {
-            const $container = $("<div>", {
-              class: "edit-container",
-              css: { position: "relative", cursor: "pointer" },
-            });
-
-            const $svg = $(`
-              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 15 15">
-                <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
-              </svg>
-            `);
-
-            const $editDiv = $('<div class="edit-options">점검 항목 관리</div>');
-
-            $svg.on("click", function (e) {
-              e.stopPropagation();
-              $(".edit-options").not($editDiv).removeClass("show");
-
-              const offset = $svg.offset();
-              const svgHeight = $svg.outerHeight();
-              $editDiv.css({
-                top: offset.top + svgHeight + 2,
-                left: offset.left + $svg.outerWidth() / 2 - 43,
-                transform: "translateX(-50%)",
-              });
-
-              $editDiv.toggleClass("show");
-            });
-
-            $editDiv.on("click", function (e) {
-              e.stopPropagation();
-              location.href = "/master/inspection/list/manage";
-              $editDiv.removeClass("show");
-            });
-
-            $container.append($svg);
-            $("body").append($editDiv);
-
-            return $container[0];
-          },
-          autoHeight: true,
-        },
-      ],
-      autoSizeStrategy: {
-        type: "fitGridWidth",
-        defaultMinWidth: 10,
-      },
-      rowHeight: 45,
-      rowSelection: "multiple",
-      pagination: true,
-      paginationAutoPageSize: true,
-      onRowSelected: (event) => {
-        // 체크박스가 선택되거나 해제될 때
-        const selectedRows = gridApi.getSelectedRows();
-        if (selectedRows.length > 0) {
-          selectedRowNo = selectedRows[0].chklstId; // 선택된 첫 번째 행의 ID
-          $(".brandPlaceholder").text(selectedRows[0].brandNm);
-          $(".checklistPlaceholder").text(selectedRows[0].chklstNm);
-          $(".masterChecklistPlaceholder").text(selectedRows[0].masterChklstNm);
-          $(".inspectionTypePlaceholder").text(selectedRows[0].inspTypeNm);
-          enableElementSearchBtn(); // 선택된 행이 있으면 검색 버튼 활성화
-        } else {
-          disableSearchBtn(); // 선택된 행이 없으면 검색 버튼 비활성화
-        }
-      },
-    };
-
-    // 그리드 API 생성 및 설정
-    const gridDiv = document.querySelector("#myGrid");
-    gridApi = agGrid.createGrid(gridDiv, gridOptions);
-
-    // 체크리스트 카운트 업데이트 함수 호출
-    updateChecklistCount();
+    // gridApi가 존재할 경우 데이터 설정
+    if (gridApi) {
+      gridApi.setGridOption("rowData", rowData); // 데이터 설정
+      updateChecklistCount();
+    } else {
+      console.error("gridApi is not initialized.");
+    }
 
   } catch (error) {
     console.error("Error fetching data:", error);
   }
 }
+function initializeGrid() {
+  gridOptions = {
+    rowData: rowData,
+    columnDefs: [
+      {
+        minWidth: 45,
+        width: 70,
+        headerCheckboxSelection: true,
+        checkboxSelection: true,
+        resizable: true,
+        cellStyle: { backgroundColor: "#ffffff" },
+      },
+      { field: "chklstId", headerName: "No", width: 80, minWidth: 50 },
+      { field: "brandNm", headerName: "브랜드", minWidth: 110 },
+      { field: "chklstNm", headerName: "체크리스트명", minWidth: 110 },
+      { field: "masterChklstNm", headerName: "마스터 체크리스트", minWidth: 110 },
+      { field: "inspTypeNm", headerName: "점검유형", minWidth: 110 },
+      { field: "creTm", headerName: "등록일", minWidth: 110 },
+      { field: "is_master_checklist", headerName: "마스터 체크리스트 여부", minWidth: 70 },
+      { field: "chklstUseW", headerName: "사용여부", minWidth: 70 },
+      {
+        field: "action",
+        headerName: "관리",
+        width: 100,
+        minWidth: 53,
+        pinned: "right",
+        cellRenderer: function (params) {
+          const $container = $("<div>", {
+            class: "edit-container",
+            css: { position: "relative", cursor: "pointer" },
+          });
 
-// disableSearchBtn 함수 정의
-function disableSearchBtn() {
-  // 검색 버튼 비활성화 로직
-  $(".search-btn").prop("disabled", true); // 또는 원하는 비활성화 로직
+          const $svg = $(`
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 15 15">
+                <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+              </svg>
+            `);
+
+          const $editDiv = $('<div class="edit-options">점검 항목 관리</div>');
+
+          $svg.on("click", function (e) {
+            e.stopPropagation();
+            $(".edit-options").not($editDiv).removeClass("show");
+
+            const offset = $svg.offset();
+            const svgHeight = $svg.outerHeight();
+            $editDiv.css({
+              top: offset.top + svgHeight + 2,
+              left: offset.left + $svg.outerWidth() / 2 - 43,
+              transform: "translateX(-50%)",
+            });
+
+            $editDiv.toggleClass("show");
+          });
+
+          $editDiv.on("click", function (e) {
+            e.stopPropagation();
+            location.href = "/master/inspection/list/manage";
+            $editDiv.removeClass("show");
+          });
+
+          $container.append($svg);
+          $("body").append($editDiv);
+
+          return $container[0];
+        },
+        autoHeight: true,
+      },
+    ],
+    autoSizeStrategy: {
+      type: "fitGridWidth",
+      defaultMinWidth: 10,
+    },
+    rowHeight: 45,
+    rowSelection: "multiple",
+    pagination: true,
+    paginationAutoPageSize: true,
+    onRowSelected: (event) => {
+      const selectedRows = gridApi.getSelectedRows();
+
+      if (selectedRows.length === 1 && event.node.isSelected()) {
+        // 선택된 행만 업데이트를 진행합니다.
+        const selectedNode = event.node; // 선택된 노드를 가져옴
+        selectedRowNo = selectedNode.rowIndex; // 선택된 행의 인덱스를 저장
+        console.log("선택된 행 번호: ", selectedRowNo);
+
+        $(".brandPlaceholder").text(selectedRows[0].brandNm);
+        $(".checklistPlaceholder").text(selectedRows[0].chklstNm);
+        $(".masterChecklistPlaceholder").text(selectedRows[0].masterChklstNm);
+        $(".inspectionTypePlaceholder").text(selectedRows[0].inspTypeNm);
+
+        enableElementSearchBtn(); // 검색 버튼 활성화
+      } else if (!event.node.isSelected() && event.node.rowIndex === selectedRowNo) {
+        // 행이 선택 해제될 때 선택된 행 번호를 초기화합니다.
+        selectedRowNo = null;
+        console.log("선택된 행이 해제되었습니다.");
+        disableSearchBtn(); // 검색 버튼 비활성화
+      }
+    },
+  };
+  // 그리드 API 생성 및 설정
+  const gridDiv = document.querySelector("#myGrid");
+  gridApi = agGrid.createGrid(gridDiv, gridOptions);
+
+  // 초기 데이터 로드
+  getChecklistAll();
+  updateChecklistCount();
+
+
 }
-
-loadData();
-
+document.addEventListener("DOMContentLoaded", initializeGrid);
 // 비활성화 함수
 function disableSearchBtn() {
-  $('.wrapper').addClass('disabled');
+  $('.bottom-wrapper').addClass('disabled');
 }
 
 // 활성화 함수
 function enableElementSearchBtn() {
-  $('.wrapper').removeClass('disabled');
+  $('.bottom-wrapper').removeClass('disabled');
 }
 
 // 비활성화 함수 호출
@@ -162,7 +179,7 @@ function createNewRowData() {
       .replace(/\./g, ".");
 
   return {
-    chklstId: rowData.length + 1,
+    chklstId: null,
     brandNm: "",
     chklstNm: "",
     masterChklstNm: "",
@@ -178,7 +195,7 @@ function createNewRowData() {
 function onChecklistAddRow() {
   checkUnload = true;
   const newItem = createNewRowData();
-  rowData.push(newItem);
+  rowData.unshift(newItem);
   gridApi.applyTransaction({
     add: [newItem],
     addIndex: 0
@@ -204,7 +221,7 @@ function onChecklistDeleteRow() {
     // 경고 메시지 표시
     warningMessage().then((result) => {
       if (result.isConfirmed) { // 사용자가 삭제를 확인한 경우
-        fetch(`https://localhost:8081/master/checklist/delete`, {
+        fetch(`/master/checklist/delete`, {
           method: 'DELETE',
           headers: {
             "Content-Type": "application/json",
@@ -242,7 +259,7 @@ function onChecklistDeleteRow() {
 function confirmationDialog() {
   Swal.fire({
     title: "확인",
-    text: "체크리스트를 저장하시겠습니까?",
+    html: "선택된 체크리스트를 저장하시겠습니까?<br><b>선택하지 않은 체크리스트는 저장되지 않습니다.</b>",
     icon: "question",
     showCancelButton: true,
     confirmButtonColor: "#3085d6",
@@ -252,37 +269,57 @@ function confirmationDialog() {
   }).then((result) => {
     if (result.isConfirmed) {
       const selectedRows = gridApi.getSelectedRows();
+      if (selectedRows.length === 0) {
+        Swal.fire("실패!", "체크리스트를 선택해주세요.", "error");
+        return;
+      }
+
       // 체크리스트를 서버에 저장하는 fetch 요청
-      fetch("https://localhost:8081/master/checklist/save", {
+      fetch("/master/checklist/save", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(selectedRows.map(row =>{ chklstId: row.chklstId })),
+        body: JSON.stringify(selectedRows.map((row) => ({
+          chklstId: row.chklstId,
+          brandNm: row.brandNm,
+          chklstNm: row.chklstNm,
+          masterChklstNm: row.masterChklstNm,
+          chklstUseW: row.chklstUseW,
+          inspTypeNm: row.inspTypeNm,
+        }))),
       })
-      .then((data) => {
-        // 서버 저장이 성공하면 완료 알림 표시
-        Swal.fire({
-          title: "완료!",
-          text: "완료되었습니다.",
-          icon: "success",
-          confirmButtonText: "OK",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            checkUnload = false;
-            location.href = "/master/checklist";
-          }
-        });
-      })
-      .catch((error) => {
-        // 저장에 실패하면 에러 알림 표시
-        Swal.fire("실패!", error.message, "error");
-      });
-    } else {
-      Swal.fire("취소!", "취소되었습니다.", "error");
+          .then((response) => {
+            if (!response.ok) {
+              // 응답 상태 코드에 따른 에러 처리
+              if (response.status === 403) {
+                Swal.fire("실패!", "권한이 없습니다.", "error");
+              } else if (response.status === 500) {
+                Swal.fire("실패!", "저장에 실패했습니다. 관리자에게 문의하세요.", "error");
+              }
+              return Promise.reject();
+            }
+            return response.json(); // 성공적으로 응답을 받았으면 데이터를 JSON으로 변환
+          })
+          .then((data) => {
+            // 서버 저장이 성공하면 완료 알림 표시
+            Swal.fire({
+              title: "완료!",
+              text: "완료되었습니다.",
+              icon: "success",
+              confirmButtonText: "OK",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                checkUnload = false;
+                location.href = "/master/checklist";
+              }
+            });
+          })
     }
   });
 }
+
+
 
 $(function () {
   class Autocomplete {
@@ -432,12 +469,11 @@ $(function () {
     INSP1: [],
   };
 
-  fetch("https://localhost:8081/master/checklist/options")
+  fetch("/master/checklist/options")
       .then((response) => {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
         // 받아온 데이터로 autocompleteData 업데이트
         autocompleteData.BRAND.push(...data.brandOptions);
         autocompleteData.BRAND1.push(...data.brandOptions);
@@ -521,39 +557,46 @@ function observeChanges(selector, callback) {
   observer.observe(targetNode, { childList: true, characterData: true, subtree: true });
 }
 
-
 // span 요소들의 변화 감지
 observeChanges(".brandPlaceholder", function(newText) {
-  checkUnload = true;
-  $('.save-btn').removeAttr("disabled");
-  rowData[selectedRowNo - 1].brandNm = newText;
-  gridApi.applyTransaction({
-    update: [rowData[selectedRowNo - 1]]
-  });
+  if (selectedRowNo !== null) {
+    checkUnload = true;
+    $('.save-btn').removeAttr("disabled");
+    rowData[selectedRowNo].brandNm = newText;
+    gridApi.applyTransaction({
+      update: [rowData[selectedRowNo]]
+    });
+  }
 });
 observeChanges(".checklistPlaceholder", function(newText) {
-  checkUnload = true;
-  $('.save-btn').removeAttr("disabled");
-  rowData[selectedRowNo - 1].chklstNm = newText;
-  gridApi.applyTransaction({
-    update: [rowData[selectedRowNo - 1]]
-  });
+  if (selectedRowNo !== null) {
+    checkUnload = true;
+    $('.save-btn').removeAttr("disabled");
+    rowData[selectedRowNo].chklstNm = newText;
+    gridApi.applyTransaction({
+      update: [rowData[selectedRowNo]]
+    });
+  }
 });
 observeChanges(".masterChecklistPlaceholder", function(newText) {
-  checkUnload = true;
-  $('.save-btn').removeAttr("disabled");
-  rowData[selectedRowNo - 1].masterChklstNm = newText;
-  gridApi.applyTransaction({
-    update: [rowData[selectedRowNo - 1]]
-  });
+  if (selectedRowNo !== null) {
+    checkUnload = true;
+    $('.save-btn').removeAttr("disabled");
+    rowData[selectedRowNo].masterChklstNm = newText;
+    gridApi.applyTransaction({
+      update: [rowData[selectedRowNo]]
+    });
+  }
 });
 observeChanges(".inspectionTypePlaceholder", function(newText) {
-  checkUnload = true;
-  $('.save-btn').removeAttr("disabled");
-  rowData[selectedRowNo - 1].inspTypeNm = newText;
-  gridApi.applyTransaction({
-    update: [rowData[selectedRowNo - 1]]
-  });
+  if (selectedRowNo !== null) {
+    checkUnload = true;
+    $('.save-btn').removeAttr("disabled");
+    rowData[selectedRowNo].inspTypeNm = newText;
+    gridApi.applyTransaction({
+      update: [rowData[selectedRowNo]]
+    });
+  }
 });
 
 // 페이지를 벗어날 때 알림을 띄움
