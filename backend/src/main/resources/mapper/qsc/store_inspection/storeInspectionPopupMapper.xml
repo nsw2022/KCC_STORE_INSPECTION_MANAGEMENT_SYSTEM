@@ -4,35 +4,36 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.sims.qsc.store_inspection.mapper.StoreInspectionPopupMapper">
-    <select id="selectInspectionDetails" resultType="com.sims.qsc.store_inspection.vo.StoreInspectionPopupRequest">
+    <select id="selectInspectionDetails" resultType="com.sims.qsc.store_inspection.vo.StoreInspectionPopupResponse">
         SELECT
-            s.STORE_NM,
-            CASE
+            s.STORE_NM
+            , CASE
                 WHEN s.BRAND_CD = 'B001' THEN 'KCC 크라상'
                 WHEN s.BRAND_CD = 'B002' THEN 'KCC 도넛'
                 WHEN s.BRAND_CD = 'B003' THEN 'KCC 브레드'
                 WHEN s.BRAND_CD = 'B004' THEN 'KCC 카페'
-            END AS BRAND_NM,
-            isch.INSP_PLAN_DT,
-            isch.INSP_STTS_CD,
-            s.OPEN_HM,
-            m.MBR_NM,
-            m.MBR_NO,
-            c.CHKLST_NM,
-            ir.TOTAL_SCORE,
-            cc.CTG_ID,
-            cc.CTG_NM,
-            c.CHKLST_ID,
-            cc.MASTER_CTG_ID,
-            cc.STND_SCORE,
-            ce.EVIT_CONTENT,
-            ce.EVIT_TYPE_CD,
-            ce.SCORE AS scoreChklstEvit,  -- CHKLST_EVIT 테이블의 SCORE
-            e.CHCLST_CONTENT,
-            e.EVIT_ID,
-            e.NPRFS_CD,
-            e.PENALTY,
-            e.SCORE AS scoreEvitChclst  -- EVIT_CHCLST 테이블의 SCORE
+            END AS BRAND_NM
+            , isch.INSP_SCHD_ID AS inspSchdId
+            , isch.INSP_PLAN_DT AS inspPlanDt
+            , isch.INSP_STTS_CD AS inspSttsCd
+            , s.OPEN_HM AS openHm
+            , m.MBR_NM AS mbrNm
+            , m.MBR_NO AS mbrNo
+            , c.CHKLST_NM AS chklstNm
+            , ir.TOTAL_SCORE AS totalScore
+            , cc.CTG_ID AS ctgId
+            , cc.CTG_NM AS ctgNm
+            , c.CHKLST_ID AS chklstId
+            , cc.MASTER_CTG_ID AS masterCtgId
+            , cc.STND_SCORE AS stndScore
+            , ce.EVIT_CONTENT AS evitContent
+            , ce.EVIT_TYPE_CD AS evitTypeCd
+            , ce.SCORE AS scoreChklstEvit  -- CHKLST_EVIT 테이블의 SCORE
+            , e.CHCLST_CONTENT AS chclstContent
+            , e.EVIT_ID AS evitId
+            , e.NPRFS_CD AS nprfsCd
+            , e.PENALTY AS penalty
+            , e.SCORE AS scoreEvitChclst  -- EVIT_CHCLST 테이블의 SCORE
         FROM
             INSP_SCHD isch
                 JOIN STORE s ON isch.STORE_ID = s.STORE_ID
@@ -51,10 +52,10 @@
 
     <select id="selectRecentInspectionHistory" resultType="com.sims.qsc.store_inspection.vo.RecentInspectionHistoryResponse">
         SELECT
-            c.CHKLST_NM AS chklstNm,
-            isch.INSP_PLAN_DT AS inspPlanDt,
-            m.MBR_NM AS mbrNm,
-            ir.TOTAL_SCORE AS totalScore
+            c.CHKLST_NM AS chklstNm
+            , isch.INSP_PLAN_DT AS inspPlanDt
+            , m.MBR_NM AS mbrNm
+            , ir.TOTAL_SCORE AS totalScore
         FROM
             INSP_SCHD isch
                 JOIN STORE s ON isch.STORE_ID = s.STORE_ID
@@ -66,6 +67,113 @@
             s.STORE_NM = #{storeNm}
           AND isch.INSP_STTS_CD = #{inspSttsCd}
     </select>
+
+
+    <!-- 임시저장 INSERT 쿼리 -->
+    <select id="selectExistingInspResultId" resultType="long">
+        SELECT ir.INSP_RESULT_ID
+        FROM INSP_RESULT ir
+                 JOIN INSP_SCHD isch ON ir.INSP_SCHD_ID = isch.INSP_SCHD_ID
+                 JOIN STORE s ON isch.STORE_ID = s.STORE_ID
+                 JOIN MBR m ON s.INSP_MBR_ID = m.MBR_ID
+                 JOIN INSP_PLAN ip ON isch.INSP_PLAN_ID = ip.INSP_PLAN_ID
+                 JOIN CHKLST c ON ip.CHKLST_ID = c.CHKLST_ID
+        WHERE c.CHKLST_ID = #{chklstId}
+          AND s.STORE_NM = #{storeNm}
+          AND isch.INSP_PLAN_DT = #{inspPlanDt}
+    </select>
+
+
+    <!-- INSP_RESULT 삽입: 생성된 INSP_RESULT_ID 반환 -->
+    <insert id="insertINSP_RESULT" parameterType="com.sims.qsc.store_inspection.vo.StoreInspectionPopupRequest" useGeneratedKeys="false">
+        <selectKey keyProperty="inspResultId" resultType="long" order="BEFORE">
+            SELECT INSP_RESULT_SEQ.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO INSP_RESULT (
+            INSP_RESULT_ID,
+            INSP_SCHD_ID,
+            INSP_START_TM,
+            CRE_MBR_ID,
+            CRE_TM
+        ) VALUES (
+                     #{inspResultId},
+                     #{inspSchdId},
+                     TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI'),
+                     #{creMbrId},
+                     TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+                 )
+    </insert>
+
+    <!-- EVIT_ANSW 삽입 -->
+    <insert id="insertEVIT_ANSW" parameterType="com.sims.qsc.store_inspection.vo.StoreInspectionPopupRequest$SubcategoryInspection">
+        INSERT INTO EVIT_ANSW (
+            ANSW_ID,
+            EVIT_ID,
+            INSP_RESULT_ID,
+            EVIT_ANSW_CONTENT,
+            CRE_MBR_ID,
+            CRE_TM
+        ) VALUES (
+                     EVIT_ANSW_SEQ.NEXTVAL,
+                     #{evitId},
+                     #{inspResultId},
+                     #{answerContent},
+                     #{creMbrId},
+                     CURRENT_DATE
+                 )
+    </insert>
+
+    <!-- EVIT_VLT 삽입 -->
+    <insert id="insertEVIT_VLT" parameterType="com.sims.qsc.store_inspection.vo.StoreInspectionPopupRequest$SubcategoryInspection">
+        INSERT INTO EVIT_VLT (
+            VLT_ID,
+            EVIT_ID,
+            INSP_RESULT_ID,
+            PDT_NM_DTPLC,
+            VLT_CONTENT,
+            VLT_CNT,
+            CAUPVD_CD,
+            VLT_CAUSE,
+            INSTRUCTION,
+            VLT_PLC_CD,
+            CRE_MBR_ID,
+            CRE_TM
+        ) VALUES (
+                     EVIT_VLT_SEQ.NEXTVAL,
+                     #{evitId},
+                     #{inspResultId},
+                     #{pdtNmDtplc},
+                     #{vltContent},
+                     #{vltCnt},
+                     #{caupvdCd},
+                     #{vltCause},
+                     #{instruction},
+                     #{vltPlcCd},
+                     #{creMbrId},
+                     CURRENT_DATE
+                 )
+    </insert>
+
+    <!-- EVIT_ANSW_IMG 삽입 -->
+    <insert id="insertEVIT_ANSW_IMG" parameterType="map">
+        INSERT INTO EVIT_ANSW_IMG (
+            ANSW_IMG_ID,
+            EVIT_ID,
+            INSP_RESULT_ID,
+            EVIT_ANSW_IMG_PATH,
+            SEQ,
+            CRE_MBR_ID,
+            CRE_TM
+        ) VALUES (
+                     EVIT_ANSW_IMG_SEQ.NEXTVAL,
+                     #{evitId},
+                     #{inspResultId},
+                     #{photoPath},
+                     #{seq},
+                     #{creMbrId},
+                     CURRENT_DATE
+                 )
+    </insert>
 
 
 

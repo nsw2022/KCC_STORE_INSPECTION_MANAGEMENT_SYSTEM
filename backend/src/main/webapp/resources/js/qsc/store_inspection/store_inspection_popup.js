@@ -224,6 +224,50 @@ function viewHistory(item) {
 }
 
 // 점검 시작 버튼 클릭 시 호출되는 함수
+// function startInspection() {
+//     // 현재 페이지의 URL에서 파라미터 추출
+//     const urlParams = new URLSearchParams(window.location.search);
+//     const chklstId = urlParams.get('chklstId');
+//     const storeNm = urlParams.get('storeNm');
+//     const inspPlanDt = urlParams.get('inspPlanDt');
+//
+//     if (!chklstId || !storeNm || !inspPlanDt) {
+//         alert('필수 파라미터(chklstId, storeNm, inspPlanDt)가 지정되지 않았습니다.');
+//         return;
+//     }
+//
+//     // inspPlanDt의 '/' 문자 제거 (예: '2024/10/18' -> '20241018')
+//     const formattedInspPlanDt = inspPlanDt.replace(/\//g, '');
+//
+//     // 폼 생성
+//     var form = document.createElement("form");
+//     form.method = "GET"; // @GetMapping에 맞춰 GET 방식 사용
+//     form.action = "/qsc/popup_page_inspection";
+//
+//     // 숨겨진 입력 필드 생성 및 추가
+//     var input1 = document.createElement("input");
+//     input1.type = "hidden";
+//     input1.name = "chklstId";
+//     input1.value = chklstId;
+//     form.appendChild(input1);
+//
+//     var input2 = document.createElement("input");
+//     input2.type = "hidden";
+//     input2.name = "storeNm";
+//     input2.value = storeNm;
+//     form.appendChild(input2);
+//
+//     var input3 = document.createElement("input");
+//     input3.type = "hidden";
+//     input3.name = "inspPlanDt";
+//     input3.value = formattedInspPlanDt;
+//     form.appendChild(input3);
+//
+//     // 폼을 문서에 추가하고 제출
+//     document.body.appendChild(form);
+//     form.submit();
+// }
+
 function startInspection() {
     // 현재 페이지의 URL에서 파라미터 추출
     const urlParams = new URLSearchParams(window.location.search);
@@ -239,31 +283,80 @@ function startInspection() {
     // inspPlanDt의 '/' 문자 제거 (예: '2024/10/18' -> '20241018')
     const formattedInspPlanDt = inspPlanDt.replace(/\//g, '');
 
-    // 폼 생성
-    var form = document.createElement("form");
-    form.method = "GET"; // @GetMapping에 맞춰 GET 방식 사용
-    form.action = "/qsc/popup_page_inspection";
+    // 요청 데이터 (StoreInspectionPopupRequest의 INSP_RESULT 삽입에 필요한 필드만)
+    // const requestData = {
+    //     inspSchdId: parseInt(chklstId, 10),
+    //     inspComplW: 'N', // 점검 완료 여부 초기화
+    //     creMbrId: null, // 서버에서 설정
+    //     inspections: [] // 초기에는 비어있음
+    // };
 
-    // 숨겨진 입력 필드 생성 및 추가
-    var input1 = document.createElement("input");
-    input1.type = "hidden";
-    input1.name = "chklstId";
-    input1.value = chklstId;
-    form.appendChild(input1);
+    const requestData = {
+        chklstId: parseInt(chklstId, 10),
+        storeNm: storeNm,
+        inspPlanDt: inspPlanDt,
+        inspSchdId: parseInt(chklstId, 10), // 필요 시 조정
+        inspComplW: 'N', // 점검 완료 여부 초기화
+        creMbrId: null, // 서버에서 설정
+        inspections: [] // 초기에는 비어있음
+    };
 
-    var input2 = document.createElement("input");
-    input2.type = "hidden";
-    input2.name = "storeNm";
-    input2.value = storeNm;
-    form.appendChild(input2);
+    // AJAX POST 요청 to insert INSP_RESULT
+    fetch('/filter/insert_insp_result', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+        credentials: 'include' // 쿠키를 포함시켜 세션 유지
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`서버 응답이 올바르지 않습니다. 상태 코드: ${response.status}`);
+            }
+            return response.json(); // inspResultId 반환 예상
+        })
+        .then(inspResultId => {
+            // 팝업 페이지로 이동하면서 inspResultId를 전달
+            var form = document.createElement("form");
+            form.method = "GET"; // @GetMapping에 맞춰 GET 방식 사용
+            form.action = "/qsc/popup_page_inspection";
 
-    var input3 = document.createElement("input");
-    input3.type = "hidden";
-    input3.name = "inspPlanDt";
-    input3.value = formattedInspPlanDt;
-    form.appendChild(input3);
+            // 숨겨진 입력 필드 생성 및 추가
+            var input1 = document.createElement("input");
+            input1.type = "hidden";
+            input1.name = "chklstId";
+            input1.value = chklstId;
+            form.appendChild(input1);
 
-    // 폼을 문서에 추가하고 제출
-    document.body.appendChild(form);
-    form.submit();
+            var input2 = document.createElement("input");
+            input2.type = "hidden";
+            input2.name = "storeNm";
+            input2.value = storeNm;
+            form.appendChild(input2);
+
+            var input3 = document.createElement("input");
+            input3.type = "hidden";
+            input3.name = "inspPlanDt";
+            input3.value = formattedInspPlanDt;
+            form.appendChild(input3);
+
+            var input4 = document.createElement("input");
+            input4.type = "hidden";
+            input4.name = "inspResultId";
+            input4.value = inspResultId;
+            form.appendChild(input4);
+
+            // 폼을 문서에 추가하고 제출
+            document.body.appendChild(form);
+            form.submit();
+        })
+        .catch(error => {
+            console.error('점검 시작 실패:', error);
+            alert('점검을 시작하는 데 실패했습니다.');
+        });
 }
+
+
+
+

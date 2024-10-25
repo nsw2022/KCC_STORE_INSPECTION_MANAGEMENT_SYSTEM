@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (chklstId && storeNm && inspPlanDt) {
     fetchPopupData(chklstId, storeNm, inspPlanDt);
   } else {
-    //alert('필수 파라미터(chklstId, storeNm, inspPlanDt)가 지정되지 않았습니다.');
+    // alert('필수 파라미터(chklstId, storeNm, inspPlanDt)가 지정되지 않았습니다.');
   }
 
   generateContent(inspectionData);
@@ -724,7 +724,7 @@ function generateContent(data) {
         const radioGroup = document.createElement("div");
         radioGroup.classList.add("radio-group");
 
-        ["SV", "점주", "직원", "기타"].forEach((responsibility) => {
+        ["점주", "SV", "직원", "기타"].forEach((responsibility) => {
           const respLabel = document.createElement("label");
           respLabel.textContent = responsibility;
 
@@ -1047,14 +1047,389 @@ function adjustWrapperHeight(element) {
   }
 }
 
-// 높이 재조정 함수 (리사이즈 시 호출)
-function adjustWrapperHeight(element) {
-  if (element.style.display === "block") {
-    element.style.height = "auto"; // 높이 자동 조정
-    const newHeight = element.scrollHeight + "px"; // 새로운 높이 계산
-    element.style.height = newHeight; // 새 높이 설정
+
+//-------------------------임시저장 함수------------------------
+// function tenpoirySave() {
+//   const requestData = {
+//     chklstId: parseInt(getParameterByName('chklstId'), 10),
+//     storeNm: getParameterByName('storeNm'),
+//     inspPlanDt: getParameterByName('inspPlanDt'),
+//     inspComplW: 'N', // 임시저장
+//     answers: []
+//   };
+//
+//   // 각 질문에 대한 데이터 수집
+//   document.querySelectorAll(".inspection-content-detail").forEach(detail => {
+//     const evitId = parseInt(detail.dataset.evitId, 10);
+//     const questionType = detail.closest(".inspection-content").dataset.type;
+//     let answerContent = "";
+//
+//     if (questionType === "2-choice") {
+//       const activeBtn = detail.querySelector(`.answer-btn[data-question-id="${evitId}"].active`);
+//       answerContent = activeBtn ? activeBtn.dataset.optionValue : null;
+//     } else if (questionType === "5-choice") {
+//       const selectedRadio = detail.querySelector(`input[name="rating_${evitId}"]:checked`);
+//       answerContent = selectedRadio ? selectedRadio.value : null;
+//     }
+//
+//     if (answerContent) {
+//       const answer = {
+//         evitId: evitId,
+//         answerContent: answerContent,
+//         pdtNmDtplc: null,
+//         vltCnt: null,
+//         vltContent: null,
+//         vltCause: null,
+//         instruction: null,
+//         caupvdCd: null,
+//         caupvdInput: null,
+//         vltPlcCd: null,
+//         etcInput: null,
+//         photoPaths: []
+//       };
+//
+//       // 추가 데이터 수집 (부적합, 나쁨, 매우나쁨인 경우)
+//       if (["부적합", "나쁨", "매우나쁨"].includes(answerContent)) {
+//         const productName = detail.querySelector(".product-name") ? detail.querySelector(".product-name").value : null;
+//         const violationQuantity = detail.querySelector(".violation-quantity") ? parseInt(detail.querySelector(".violation-quantity").value, 10) : null;
+//         const reason = detail.querySelector(".reason") ? detail.querySelector(".reason").value : null;
+//         const action = detail.querySelector(".action") ? detail.querySelector(".action").value : null;
+//         const responsibilitySelected = detail.querySelector(`input[name="responsibility_${evitId}"]:checked`);
+//         const locationSelected = detail.querySelector(`input[name^="location_${evitId}"]:checked`);
+//         const etcInput = detail.querySelector(`textarea[name='etc_${evitId}']`) ? detail.querySelector(`textarea[name='etc_${evitId}']`).value : null;
+//
+//         answer.pdtNmDtplc = productName;
+//         answer.vltCnt = violationQuantity;
+//         answer.vltCause = reason;
+//         answer.instruction = action;
+//
+//         if (responsibilitySelected) {
+//           const caupvdValueMap = {
+//             "점주": "C001",
+//             "SV": "C002",
+//             "직원": "C003",
+//             "기타": "C004"
+//           };
+//           answer.caupvdCd = caupvdValueMap[responsibilitySelected.value] || null;
+//           if (responsibilitySelected.value === "기타") {
+//             answer.caupvdInput = etcInput;
+//           }
+//         }
+//
+//         if (locationSelected) {
+//           const plcValueMap = {
+//             "매장": "VP001",
+//             "카페": "VP002",
+//             "주방": "VP003",
+//             "기타": "VP004"
+//           };
+//           answer.vltPlcCd = plcValueMap[locationSelected.value] || null;
+//           if (locationSelected.value === "기타") {
+//             answer.etcInput = etcInput;
+//           }
+//         }
+//       }
+//
+//       // 사진 경로 수집
+//       const photoBoxes = detail.nextElementSibling.querySelectorAll(".photo-box");
+//       photoBoxes.forEach(box => {
+//         const bgImage = box.style.backgroundImage;
+//         if (bgImage && bgImage !== 'none') {
+//           const url = bgImage.slice(5, -2); // url("...")에서 URL 추출
+//           answer.photoPaths.push(url);
+//         }
+//       });
+//
+//       requestData.answers.push(answer);
+//     }
+//   });
+//
+//   // POST 요청 전송
+//   fetch('/filter/store_inspection_save', {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//     body: JSON.stringify(requestData),
+//   })
+//       .then(response => response.text())
+//       .then(data => {
+//         alert(data);
+//       })
+//       .catch(error => {
+//         console.error('임시저장 실패:', error);
+//         alert('임시저장에 실패했습니다.');
+//       });
+// }
+//
+// // 도우미 함수: URL 파라미터 가져오기
+// function getParameterByName(name) {
+//   const urlParams = new URLSearchParams(window.location.search);
+//   return urlParams.get(name);
+// }
+
+
+function tenpoirySave() {
+  console.log("tenpoirySave() 함수가 호출")
+  // 1. inspResultId를 숨겨진 입력 필드에서 가져옵니다.
+  const inspResultIdElement = document.getElementById('inspResultId');
+  const inspResultId = inspResultIdElement ? inspResultIdElement.value : null;
+
+  if (!inspResultId) {
+    alert('inspResultId가 누락되었습니다.');
+    return;
   }
+
+  // 2. URL 파라미터에서 필요한 값 가져오기
+  const chklstId = getParameterByName('chklstId');
+  const storeNm = getParameterByName('storeNm');
+  const inspPlanDt = getParameterByName('inspPlanDt');
+
+  if (!chklstId || !storeNm || !inspPlanDt) {
+    alert('필수 파라미터(chklstId, storeNm, inspPlanDt)가 누락되었습니다.');
+    return;
+  }
+
+  // 3. inspections 배열 초기화
+  const inspections = [];
+
+  // 각 카테고리 탭을 순회
+  document.querySelectorAll('.inspection-tab').forEach(tab => {
+    const categoryId = tab.getAttribute('data-tab');
+    const categoryName = tab.textContent.trim();
+
+    const subcategories = [];
+
+    // 해당 카테고리에 속한 inspection-list 섹션을 찾기
+    const inspectionList = document.getElementById(categoryId);
+    if (inspectionList) {
+      // 각 inspection-box (중분류) 순회
+      inspectionList.querySelectorAll('.inspection-box').forEach(box => {
+        const subcategoryHeader = box.querySelector('.inspection-header');
+        const subcategoryName = subcategoryHeader ? subcategoryHeader.textContent.trim() : "Unknown Subcategory";
+
+        // 각 서브카테고리의 inspection-content-detail 순회
+        box.querySelectorAll('.inspection-content-detail').forEach(detail => {
+          const evitId = parseInt(detail.getAttribute('data-evit-id'), 10);
+          if (isNaN(evitId)) {
+            console.warn('유효하지 않은 evitId:', detail);
+            return;
+          }
+
+          const answerContent = getAnswerContent(detail);
+          if (!answerContent) {
+            // 답변이 없는 경우 건너뜁니다.
+            return;
+          }
+
+          const pdtNmDtplc = getProductName(detail);
+          const vltContent = getViolationContent(detail);
+          const vltCnt = getViolationCount(detail);
+          const caupvdCd = getCaupvdCd(detail);
+          const vltCause = getVltCause(detail);
+          const instruction = getInstruction(detail);
+          const vltPlcCd = getVltPlcCd(detail);
+          const photoPaths = getPhotoPaths(detail);
+
+          const subcategoryInspection = {
+            subcategoryName: subcategoryName,
+            evitId: evitId,
+            answerContent: answerContent,
+            pdtNmDtplc: pdtNmDtplc,
+            vltContent: vltContent,
+            vltCnt: vltCnt,
+            caupvdCd: caupvdCd,
+            vltCause: vltCause,
+            instruction: instruction,
+            vltPlcCd: vltPlcCd,
+            photoPaths: photoPaths,
+            inspResultId: parseInt(inspResultId, 10)
+          };
+
+          subcategories.push(subcategoryInspection);
+        });
+      });
+    }
+
+    const categoryInspection = {
+      categoryName: categoryName,
+      subcategories: subcategories
+    };
+
+    inspections.push(categoryInspection);
+  });
+
+  // 최종 requestData 객체 구성
+  const requestData = {
+    inspResultId: parseInt(inspResultId, 10),
+    inspSchdId: parseInt(chklstId, 10),
+    inspComplW: "N", // 임시저장 상태
+    inspections: inspections
+  };
+
+  // 콘솔에 requestData 확인 (디버깅용)
+  console.log('임시저장 요청 데이터:', requestData);
+
+  // 4. POST 요청 전송
+  fetch('/filter/store_inspection_save', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(requestData),
+  })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`서버 응답이 올바르지 않습니다. 상태 코드: ${response.status}`);
+        }
+        return response.text();
+      })
+      .then(data => {
+        alert("임시저장이 완료되었습니다.");
+      })
+      .catch(error => {
+        console.error('임시저장 실패:', error);
+        alert("임시저장에 실패했습니다.");
+      });
 }
+
+/**
+ * 서브카테고리에서 답변 내용 추출
+ *
+ * @param {Element} detail - 서브카테고리 요소
+ * @return {string|null} 답변 내용
+ */
+function getAnswerContent(detail) {
+  // 2-choice
+  const activeBtn = detail.querySelector('.answer-btn.active');
+  if (activeBtn) {
+    return activeBtn.getAttribute('data-option-value');
+  }
+
+  // 5-choice
+  const selectedRadio = detail.querySelector('input[type="radio"]:checked');
+  if (selectedRadio) {
+    return selectedRadio.value;
+  }
+
+  return null;
+}
+
+/**
+ * 서브카테고리에서 제품명/위생상태 추출
+ *
+ * @param {Element} detail - 서브카테고리 요소
+ * @return {string|null} 제품명/위생상태
+ */
+function getProductName(detail) {
+  const productInput = detail.querySelector('.product-name');
+  return productInput ? productInput.value.trim() : null;
+}
+
+/**
+ * 서브카테고리에서 위반 내용 추출
+ *
+ * @param {Element} detail - 서브카테고리 요소
+ * @return {string|null} 위반 내용
+ */
+function getViolationContent(detail) {
+  const violationContent = detail.querySelector('.violation');
+  return violationContent ? violationContent.value.trim() : null;
+}
+
+/**
+ * 서브카테고리에서 위반 횟수 추출
+ *
+ * @param {Element} detail - 서브카테고리 요소
+ * @return {number|null} 위반 횟수
+ */
+function getViolationCount(detail) {
+  const violationQty = detail.querySelector('.violation-quantity');
+  return violationQty ? parseInt(violationQty.value, 10) || null : null;
+}
+
+/**
+ * 서브카테고리에서 책임자 코드 추출
+ *
+ * @param {Element} detail - 서브카테고리 요소
+ * @return {string|null} 책임자 코드
+ */
+function getCaupvdCd(detail) {
+  const selectedResponsibility = detail.querySelector('input[name^="responsibility_"]:checked');
+  const caupvdValueMap = {
+    "점주": "C001",
+    "SV": "C002",
+    "직원": "C003",
+    "기타": "C004"
+  };
+  return selectedResponsibility ? caupvdValueMap[selectedResponsibility.value] || null : null;
+}
+
+/**
+ * 서브카테고리에서 위반 원인 추출
+ *
+ * @param {Element} detail - 서브카테고리 요소
+ * @return {string|null} 위반 원인
+ */
+function getVltCause(detail) {
+  const cause = detail.querySelector('.vltCause');
+  return cause ? cause.value.trim() : null;
+}
+
+/**
+ * 서브카테고리에서 지시사항 추출
+ *
+ * @param {Element} detail - 서브카테고리 요소
+ * @return {string|null} 지시사항
+ */
+function getInstruction(detail) {
+  const instruction = detail.querySelector('.instruction');
+  return instruction ? instruction.value.trim() : null;
+}
+
+/**
+ * 서브카테고리에서 위반 장소 코드 추출
+ *
+ * @param {Element} detail - 서브카테고리 요소
+ * @return {string|null} 위반 장소 코드
+ */
+function getVltPlcCd(detail) {
+  const selectedLocation = detail.querySelector('input[name^="location_"]:checked');
+  const plcValueMap = {
+    "매장": "VP001",
+    "카페": "VP002",
+    "주방": "VP003",
+    "기타": "VP004"
+  };
+  return selectedLocation ? plcValueMap[selectedLocation.value] || null : null;
+}
+
+/**
+ * 서브카테고리에서 사진 경로 목록 추출
+ *
+ * @param {Element} detail - 서브카테고리 요소
+ * @return {Array} 사진 경로 목록
+ */
+function getPhotoPaths(detail) {
+  const photoBoxes = detail.querySelectorAll('.photo-box');
+  const paths = [];
+  photoBoxes.forEach(box => {
+    const bgImage = box.style.backgroundImage;
+    if (bgImage && bgImage !== 'none') {
+      const urlMatch = bgImage.match(/url\(["']?(.+?)["']?\)/);
+      if (urlMatch && urlMatch[1]) {
+        paths.push(urlMatch[1]);
+      }
+    }
+  });
+  return paths;
+}
+
+
+
+
+
+
 
 // -------------------------데이터 전달 함수-------------------------
 function checkInspection() {

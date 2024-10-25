@@ -83,7 +83,8 @@
     <button class="go-inspection" onclick="tenpoirySave()">임시저장</button>
 </div>
 
-
+<!-- 숨겨진 필드로 inspResultId 저장 -->
+<input type="hidden" id="inspResultId" value="${param.inspResultId}" />
 
 
 
