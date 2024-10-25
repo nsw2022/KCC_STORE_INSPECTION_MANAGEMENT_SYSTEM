@@ -24,6 +24,6 @@ public interface StoreInspectionMapper {
     List<StoreLocationResponse> selectInspectionsByInspector(@Param("mbrNo") String mbrNo);
 
     /** @return 전체 점검 매장  */
-    List<StoreAllLocationResponse> selectAllInspectionMap();
+    List<StoreAllLocationResponse> selectAllInspectionMap(@Param("currentMbrNo") String currentMbrNo);
 
 }

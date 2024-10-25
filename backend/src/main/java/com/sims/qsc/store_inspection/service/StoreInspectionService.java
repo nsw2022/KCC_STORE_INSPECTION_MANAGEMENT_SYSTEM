@@ -22,5 +22,5 @@ public interface StoreInspectionService {
     /**
      * @return 전체 점검 매장
      */
-    List<StoreAllLocationResponse> selectAllInspectionMap();
+    List<StoreAllLocationResponse> selectAllInspectionMap(@Param("currentMbrNo") String currentMbrNo);
 }

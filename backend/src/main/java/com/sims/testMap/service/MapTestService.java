@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.sims.testMap.vo.Coordinates;
-import com.sims.testMap.vo.RouteMatrix;
-import com.sims.testMap.vo.RouteResponse;
-import com.sims.testMap.vo.TSPSolver;
+import com.sims.testMap.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -351,14 +348,23 @@ public class MapTestService {
         List<Coordinates> goals = Arrays.asList(
         new Coordinates(126.9770667, 37.5701624),
                 new Coordinates(126.9111487, 37.5468925),
-                new Coordinates(127.0270202, 37.4978795),
-                new Coordinates(127.0370489, 37.5678142)
-
-
-
+                new Coordinates(127.0270202, 37.4978795)
         );
         return getOptimizedDrivingRoute(start, goals, null);
     }
+
+    /**
+     *
+     * @param routeRequest 요청길 List<Coordinates>
+     * @return  최적화된 길 json 응답
+     */
+    public RouteResponse selectDrivingRoute(RouteRequest routeRequest){
+        Coordinates start = routeRequest.getStart();
+        List<Coordinates> goals = routeRequest.getGoals();
+        List<Coordinates> viaPoints = routeRequest.getViaPoints();
+        return getOptimizedDrivingRoute(start, goals, viaPoints);
+    }
+
 
     /**
      * 테스트용 메서드: 최적화된 경로 호출 및 로그 출력
