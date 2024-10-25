@@ -225,6 +225,11 @@
   background-color: #eeeeee;
 }
 
+#wrapper > .div_calendar >:nth-child(7n) span,
+#wrapper > .div_calendar >:nth-child(7n+1) span {
+	color : red;
+}
+
 #wrapper  .text-end {
   border: 1px solid #cccccc;
 }

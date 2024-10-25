@@ -786,7 +786,7 @@ document.addEventListener("DOMContentLoaded", function () {
       case 2:
         return "congestionConfusion"; // 혼잡
       default:
-        return "congestionUnknown"; // 알 수 없음
+        return "congestionConfusion"; // 혼잡
     }
   }
 

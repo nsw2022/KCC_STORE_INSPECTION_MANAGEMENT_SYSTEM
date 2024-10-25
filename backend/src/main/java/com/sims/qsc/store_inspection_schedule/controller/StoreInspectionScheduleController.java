@@ -1,5 +1,6 @@
 package com.sims.qsc.store_inspection_schedule.controller;
 
+import java.io.Console;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -25,12 +26,19 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/qsc")
 @Slf4j
 @RequiredArgsConstructor
+
+/**
+ * @Description 가맹점 점검 일정 Controller
+ * @author 원승언
+ * @Date 2024.10.21
+ *
+ */
 public class StoreInspectionScheduleController {
    
    private final StoreInspectionScheduleService storeInspectionScheduleService;
 
    /**
-    * 가맹점 점검 일정 조회 페이지
+    * 요구사항 작업 - 가맹점 점검 일정 조회 페이지
     * @return 
     */
    @GetMapping("/store-inspection-schedule")
@@ -45,8 +53,9 @@ public class StoreInspectionScheduleController {
    }
 
    /**
+    * 요구사항 작업 - 점검 일정 조회
     * 점검자들의 일정을 달력에서 볼 수 있게끔 한다.
-    * @return List<StoreInspectionSchedule>	
+    * @return 점검 일정 표시	
     * @throws Exception
     */
    @ResponseBody
@@ -82,8 +91,9 @@ public class StoreInspectionScheduleController {
    }
    
    /**
+    * 요구사항 작업 - 점검자 조회
     * 모든 점검자들을 검색하는 필터에서 모든 점검자들을 보여준다.
-    * @return List<String>
+    * @return 점검자 목록 표시
     * @throws Exception
     */
    @ResponseBody
@@ -119,10 +129,11 @@ public class StoreInspectionScheduleController {
    }
    
    /**
+    * 요구사항 작업 - 가맹점의 점검할 체크리스트 조회
     * 가맹점명과 점검일정을 통해 해당 가맹점의 점검 체크리스트들을 볼 수 있다.
-    * @param storeNm
-    * @param inspPlanDt
-    * @return List<StoreInspectionSchedule>
+    * @param storeNm			// 가맹점명
+    * @param inspPlanDt			// 점검일정
+    * @return 가맹점 & 점검일정을 통해서 점검사항 목록 표시
     */
    @ResponseBody
    @PostMapping("/store-inspection-schedule/chklst/{storeNm}/{inspPlanDt}")
@@ -136,24 +147,46 @@ public class StoreInspectionScheduleController {
    }
    
    /**
+    * 요구사항 작업 - 점검유형 조회
     * 일정이 잡혀있는 체크리스트 들의 점검유형을 가져와 검색 영역에 보여줌
-    * @return List<String> 
+    * @return 점검유형 목록 표시 
     */
    @ResponseBody
    @GetMapping("/store-inspection-schedule/inspection-types")
    public ResponseEntity<List<String>> inspectionTypeList() {
-	   List<String> inspectionTypes =storeInspectionScheduleService.selectInspectionTypeList();
-	   if(inspectionTypes.isEmpty()) {
-		   return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	   Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	   String username = auth.getName();
+	   String usernameCode = username.substring(0,1);
+	   
+	   if(usernameCode.equals("S")) {
+		   List<String> list = storeInspectionScheduleService.selectInspectionTypeList(username, null);
+		   if(list.isEmpty()) {
+			   return new ResponseEntity<>(HttpStatus.NOT_FOUND);		   
+		   } else {
+			   return new ResponseEntity<>(list, HttpStatus.OK);
+		   }
+	   } else if(usernameCode.equals("C")) {
+		   List<String> list = storeInspectionScheduleService.selectInspectionTypeList(null, username);
+		   if(list.isEmpty()) {
+			   return new ResponseEntity<>(HttpStatus.NOT_FOUND);		   
+		   } else {
+			   return new ResponseEntity<>(list, HttpStatus.OK);
+		   }
 	   } else {
-		   return new ResponseEntity<>(inspectionTypes, HttpStatus.OK);
+		   List<String> list = storeInspectionScheduleService.selectInspectionTypeList(null, null);
+		   if(list.isEmpty()) {
+			   return new ResponseEntity<>(HttpStatus.NOT_FOUND);		   
+		   } else {
+			   return new ResponseEntity<>(list, HttpStatus.OK);
+		   }
 	   }
    }
    
    /**
+    * 요구사항 작업 - 점검자 검색
     * 점검자를 검색하면 그 점검자의 점검 일정을 조회해준다. 
-    * @param {string} mbrNo 사원번호
-    * @return List<StoreInspectionSchedule>
+    * @param  mbrNo	// 사원번호
+    * @return 점검자 검색에 따라 일정 표시
     */
    @ResponseBody
    @PostMapping("/store-inspection-schedule/no/{mbrNo}")
@@ -167,26 +200,49 @@ public class StoreInspectionScheduleController {
    }
    
    /**
+    * 요구사항 작업 - 점검유형 검색
     * 점검유형을 검색하면 그 점검 유형에 해당하는 점검 일정을 보여준다.
-    * @param {string}inspTypeCd 점검유형코드
-    * @return List<StoreInspectionSchedule>
+    * @param inspTypeCd		// 점검유형코드
+    * @return 점검 유형에 따라 일정을 다르게 표시
     */
    @ResponseBody
    @PostMapping("/store-inspection-schedule/type/{inspTypeCd}")
    public ResponseEntity<List<StoreInspectionScheduleRequest>> storeInspectionScheduleByInspTypeCd(@PathVariable("inspTypeCd") String inspTypeCd) {
-	   List<StoreInspectionScheduleRequest> list = storeInspectionScheduleService.selectScheduleListByMbrNoAndInspTypeCd(null, inspTypeCd, null);
-	   if(list.isEmpty()) {
-		   return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	   
+	   Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	   String username = auth.getName();
+	   String usernameCode = username.substring(0,1);
+	   
+	   if(usernameCode.equals("S")) {
+		   List<StoreInspectionScheduleRequest> list = storeInspectionScheduleService.selectScheduleListByMbrNoAndInspTypeCd(null, inspTypeCd, username);
+		   if(list.isEmpty()) {
+			   return new ResponseEntity<>(HttpStatus.NOT_FOUND);		   
+		   } else {
+			   return new ResponseEntity<>(list, HttpStatus.OK);
+		   }
+	   } else if(usernameCode.equals("C")) {
+		   List<StoreInspectionScheduleRequest> list = storeInspectionScheduleService.selectScheduleListByMbrNoAndInspTypeCd(username, inspTypeCd, null);
+		   if(list.isEmpty()) {
+			   return new ResponseEntity<>(HttpStatus.NOT_FOUND);		   
+		   } else {
+			   return new ResponseEntity<>(list, HttpStatus.OK);
+		   }
 	   } else {
-		   return new ResponseEntity<>(list, HttpStatus.OK);
+		   List<StoreInspectionScheduleRequest> list = storeInspectionScheduleService.selectScheduleListByMbrNoAndInspTypeCd(null, inspTypeCd, null);
+		   if(list.isEmpty()) {
+			   return new ResponseEntity<>(HttpStatus.NOT_FOUND);		   
+		   } else {
+			   return new ResponseEntity<>(list, HttpStatus.OK);
+		   }
 	   }
    }
    
    /**
+    * 요구사항 작업 - 점검 유형 & 점검자 검색
     * 점검자와 점검유형을 검색하여 그 조건에 맞는 점검 일정을 보여준다.
-    * @param {string} mbrNo 사원번호 
-    * @param {string} inspTypeCd 점검유형코드
-    * @return List<StoreInspectionSchedule>
+    * @param mbrNo			// 사원번호 
+    * @param inspTypeCd		// 점검유형코드
+    * @return 점검유형과 점검자에 따라 점검 일정 다르게 표시
     */
    @ResponseBody
    @PostMapping("/store-inspection-schedule/search/{mbrNo}/{inspTypeCd}")

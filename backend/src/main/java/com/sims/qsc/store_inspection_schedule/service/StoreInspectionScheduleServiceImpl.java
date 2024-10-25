@@ -40,8 +40,8 @@ public class StoreInspectionScheduleServiceImpl implements StoreInspectionSchedu
 	}
 
 	@Override
-	public List<String> selectInspectionTypeList() {
-		List<String> inspectionTypeList = storeInspectionScheduleMapper.selectInspectionType();
+	public List<String> selectInspectionTypeList(String svMbrNo, String inspMbrNo) {
+		List<String> inspectionTypeList = storeInspectionScheduleMapper.selectInspectionType(svMbrNo, inspMbrNo);
 		return inspectionTypeList;
 	}
 

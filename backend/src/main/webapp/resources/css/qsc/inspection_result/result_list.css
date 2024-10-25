@@ -562,6 +562,48 @@ table tr td input {
   .top-box-content>.col{
     margin-top: 10px;
   }
+  
+  .top-box-content > .col > .d-flex > .d-flex {
+  	width : 38%;
+  }
+  
+  .top-box-content > .col > .d-flex .my-3 {
+  	width : 100%;
+  	display : flex;
+  }
+  
+  .top-box-content > .col > .d-flex .my-3 > button {
+  	width : 50%;
+  	font : 400 13px "Noto Sans KR";
+  } 
+  
+  .top-box-content > .col > .d-flex .my-3 :nth-child(1) {
+  	margin-right : 10px !important;
+  }
+  
+  
+  .ag-row, .ag-paging-row-summary-panel, .ag-paging-page-summary-panel {
+  	font : 400 13px "Noto Sans KR" !important;
+  	overflow : auto;
+  }
+  .ag-header-row  {
+  	font : 500 13px "Noto Sans KR" !important;
+  	overflow : auto;
+  }
+  
+  .ag-header-cell, .ag-cell-value, .ag-cell {
+  	padding : 0 8px !important;
+  }
+  
+  .ag-paging-page-size {
+  	display : none;
+  }
+  
+  .hide-list {
+  	position : relative;
+  }
+     
+
 
   /*  모달 끝 */
   .calendar-body td {

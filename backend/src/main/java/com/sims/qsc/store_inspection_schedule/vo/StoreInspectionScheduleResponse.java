@@ -4,6 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * @Description 가맹점 점검 일정 조회
+ * @author 원승언
+ * @Date 2024.10.22
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
