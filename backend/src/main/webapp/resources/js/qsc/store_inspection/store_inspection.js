@@ -82,6 +82,7 @@ function transformData(data) {
 
         // 점검 항목 추가
         category.SUB_CTH_NM.push({
+            STORE_NM: storeNm,
             CHKLST_NM: CHKLST_NM,
             INSP_PLAN_DT: inspPlanDt,
             INSP_STTS_CD: inspSttsCd,
@@ -347,7 +348,7 @@ function generateTodayInspectionList(date) {
                         h4.textContent = category.CTG_NM;
                         const pTitle = document.createElement('p');
                         pTitle.classList.add('today_inspection_list_title');
-                        pTitle.textContent = item.CHKLST_NM;
+                        pTitle.textContent = item.STORE_NM;
                         const pDate = document.createElement('p');
                         pDate.classList.add('today_inspection_list_date');
                         pDate.textContent = item.INSP_PLAN_DT.replace(/\//g, '.');

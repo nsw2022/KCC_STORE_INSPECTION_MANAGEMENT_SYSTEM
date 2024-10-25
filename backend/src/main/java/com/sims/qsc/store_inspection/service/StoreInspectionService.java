@@ -8,6 +8,11 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface StoreInspectionService {
+
+    /**
+     *
+     * @return
+     */
     List<StoreInspectionResponse> selectAllInspectionSchedules();
 
     StoreInspectionResponse selectInspectionByChklstId(String chklstId, String storeNm, String inspPlanDt);

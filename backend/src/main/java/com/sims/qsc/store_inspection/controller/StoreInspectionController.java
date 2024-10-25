@@ -81,7 +81,8 @@ public class StoreInspectionController {
         String mbrNo = inspection.getMbrNo();
         if (!Objects.equals(username, mbrNo)) {
             log.info("사용자 {}는 chklstId {}에 접근할 권한이 없습니다.", username, chklstId);
-            return "qsc/store_inspection/store_inspection"; // 접근 금지 페이지로 이동
+//            return "qsc/store_inspection/alert_error"; // 접근 금지 페이지로 이동
+            inspection = null;
         }
 
         // 검사 데이터 모델에 추가

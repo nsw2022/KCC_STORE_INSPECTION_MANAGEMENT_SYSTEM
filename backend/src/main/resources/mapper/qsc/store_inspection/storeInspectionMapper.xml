@@ -6,14 +6,14 @@
 <mapper namespace="com.sims.qsc.store_inspection.mapper.StoreInspectionMapper">
     <select id="selectAllInspectionSchedules" resultType="com.sims.qsc.store_inspection.vo.StoreInspectionResponse">
         SELECT
-            m.MBR_ID,
-            m.MBR_NM,
-            m.MBR_NO,
-            c.CHKLST_NM,
-            c.CHKLST_ID,
-            st.STORE_NM,
-            s.INSP_PLAN_DT,
-            s.INSP_STTS_CD
+            m.MBR_ID
+            , m.MBR_NM
+            , m.MBR_NO
+            , c.CHKLST_NM
+            , c.CHKLST_ID
+            , st.STORE_NM
+            , s.INSP_PLAN_DT
+            , s.INSP_STTS_CD
         FROM INSP_SCHD s
                  JOIN STORE st ON s.STORE_ID = st.STORE_ID
                  JOIN MBR m ON st.INSP_MBR_ID = m.MBR_ID
@@ -24,14 +24,14 @@
     <!-- 추가된 쿼리: chklstId로 검사 데이터 조회 -->
     <select id="selectInspectionByChklstId" parameterType="string" resultType="com.sims.qsc.store_inspection.vo.StoreInspectionResponse">
         SELECT
-            m.MBR_ID,
-            m.MBR_NM,
-            m.MBR_NO,
-            c.CHKLST_NM,
-            c.CHKLST_ID,
-            st.STORE_NM,
-            s.INSP_PLAN_DT,
-            s.INSP_STTS_CD
+            m.MBR_ID
+            , m.MBR_NM
+            , m.MBR_NO
+            , c.CHKLST_NM
+            , c.CHKLST_ID
+            , st.STORE_NM
+            , s.INSP_PLAN_DT
+            , s.INSP_STTS_CD
         FROM INSP_SCHD s
                  JOIN STORE st ON s.STORE_ID = st.STORE_ID
                  JOIN MBR m ON st.INSP_MBR_ID = m.MBR_ID
