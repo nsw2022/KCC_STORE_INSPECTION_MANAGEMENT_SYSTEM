@@ -1,10 +1,8 @@
 package com.sims.master.checklist_manage.controller;
 
 import com.sims.master.checklist_manage.service.ChecklistService;
-import com.sims.master.checklist_manage.vo.ChecklistDeleteRequest;
-import com.sims.master.checklist_manage.vo.ChecklistOptionsResponse;
-import com.sims.master.checklist_manage.vo.ChecklistRequest;
-import com.sims.master.checklist_manage.vo.ChecklistResponse;
+import com.sims.master.checklist_manage.vo.*;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -61,7 +59,7 @@ public class ChecklistController {
     }
     /**
      * 체크리스트 옵션 목록 조회
-     * @return 체크리스트 옵션 리스트(브랜드 이 리스트, 점검유형 이름 리스트, 체크리스트 이름 리스트)
+     * @return 체크리스트 옵션 리스트(브랜드 이름 리스트, 점검유형 이름 리스트, 체크리스트 이름 리스트)
      */
     @GetMapping("/checklist/options")
     @ResponseBody
@@ -79,4 +77,6 @@ public class ChecklistController {
         checklistService.insertOrUpdateChecklist(checklistRequests);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+
 }

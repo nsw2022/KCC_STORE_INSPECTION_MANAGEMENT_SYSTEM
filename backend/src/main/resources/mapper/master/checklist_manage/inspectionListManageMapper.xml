@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sims.master.inspection_list_manage.mapper.InspectionListManageMapper">
+    <select id="selectChklstNmByChklstId">
+        SELECT
+            CHKLST_NM
+        FROM
+            CHKLST
+        WHERE
+            CHKLST_ID = #{chklstId}
+    </select>
+
+</mapper>

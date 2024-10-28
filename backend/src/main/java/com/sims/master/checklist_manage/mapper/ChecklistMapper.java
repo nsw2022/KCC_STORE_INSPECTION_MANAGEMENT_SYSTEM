@@ -58,4 +58,6 @@ public interface ChecklistMapper {
      * @return 저장 / 수정된 데이터 갯수
      */
     public int insertOrUpdateChecklist(List<ChecklistRequest> checklistRequests);
+
+
 }

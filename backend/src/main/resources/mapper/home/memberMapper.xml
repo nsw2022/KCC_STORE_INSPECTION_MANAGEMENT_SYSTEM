@@ -50,7 +50,7 @@
             , CRE_MBR_ID
             , UPD_MBR_ID
             , CRE_TM
-            , UPD_TM
+            , UPD_TMgit
             , LAST_LOGIN_TM
         )
         VALUES (

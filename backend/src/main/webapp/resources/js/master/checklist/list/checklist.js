@@ -19,8 +19,11 @@ async function getChecklistAll(searchCriteria = {}) {
     const data = await response.json();
     console.log(data);
 
+    if(defaultRowData.length === 0){
+      defaultRowData = data;
+      console.log(defaultRowData)
+    }
     // rowData에 데이터를 할당
-    defaultRowData = data;
     rowData = data.map((item) => {
       firstRowLength++;
       item.is_master_checklist = item.masterChklstNm === null ? 'N' : 'Y';
@@ -96,7 +99,8 @@ function initializeGrid() {
 
           $editDiv.on("click", function (e) {
             e.stopPropagation();
-            location.href = "/master/inspection/list/manage";
+
+            location.href = `/master/inspection-list-manage/${gridApi.getSelectedRows()[0].chklstId}`;
             $editDiv.removeClass("show");
           });
 
@@ -134,7 +138,6 @@ function initializeGrid() {
       } else if (!event.node.isSelected() && event.node.rowIndex === selectedRowNo) {
         // 행이 선택 해제될 때 선택된 행 번호를 초기화합니다.
         selectedRowNo = null;
-        console.log("선택된 행이 해제되었습니다.");
         disableSearchBtn(); // 검색 버튼 비활성화
       }
     },
@@ -167,7 +170,7 @@ disableSearchBtn();
 // 체크리스트 카운트 업데이트 함수
 function updateChecklistCount() {
   const checklistCount = document.querySelector(".checklist_count");
-  checklistCount.textContent = rowData.length;
+  checklistCount.textContent = gridApi.getDisplayedRowCount();
 }
 
 // 새로운 Row 생성 함수
@@ -605,3 +608,10 @@ $(window).on("beforeunload", function() {
 });
 
 
+$('.edit-container').click(function(e) {
+  console.log("clicked");
+});
+
+$('.bi').click(function(e) {
+  console.log("clicked");
+});

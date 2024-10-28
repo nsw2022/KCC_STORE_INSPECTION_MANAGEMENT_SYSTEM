@@ -296,20 +296,8 @@ pageEncoding="UTF-8" %>
                       <div class="col-lg-3 col-md-6 col-12">
                         <label for="checklistName" class="form-label">체크리스트</label>
                         <div class="wrapper bottom-wrapper" data-autocomplete="CHKLST1">
-                          <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
+                          <div class="search-btn top-search form-control d-flex align-items-center justify-content-between" contenteditable="true" style="height: 34px">
                             <span class="checklistPlaceholder">체크리스트</span>
-                            <i class="uil uil-angle-down"></i>
-                          </div>
-                          <div class="hide-list">
-                            <div class="search">
-                              <input
-                                      type="text"
-                                      class="form-control top-search"
-                                      id="checklistName2"
-                                      placeholder="체크리스트를 입력해주세요"
-                              />
-                              <ul class="options"></ul>
-                            </div>
                           </div>
                         </div>
                       </div>
@@ -378,26 +366,7 @@ pageEncoding="UTF-8" %>
               <button class="btn btn-outline-secondary chklst-search-btn" type="button" id="button-addon2">검색</button>
             </div>
             <ol class="list-group">
-              <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
-                <div class="item-info d-flex align-items-center">
-                  <span class="me-3">01</span>
-                  <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
-                </div>
-                <button class="btn btn-primary btn-sm rounded-20" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
-                  미리보기
-                  <i class="fa-regular fa-eye"></i>
-                </button>
-              </li>
-              <li class="list-group-item d-flex justify-content-between align-items-center mb-1">
-                <div class="item-info d-flex align-items-center">
-                  <span class="me-3">01</span>
-                  <p class="mb-0">KCC 카페 제품 점검 체크리스트</p>
-                </div>
-                <button class="btn btn-primary btn-sm" type="button" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal">
-                  미리보기
-                  <i class="fa-regular fa-eye"></i>
-                </button>
-              </li>
+
             </ol>
           </div>
           <%-------------- modal body --------------%>
