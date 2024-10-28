@@ -2,6 +2,7 @@ package com.sims.config.s3;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.util.IOUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -114,5 +115,11 @@ public class AwsFileService {
 		return s3Object.getObjectContent();
 	}
 
-
+	/**
+	 * S3에서 파일을 삭제하는 메서드
+	 * @param path 삭제할 파일의 S3 URL
+	 */
+	public void deleteFile(String path) {
+		amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, path));
+	}
 }

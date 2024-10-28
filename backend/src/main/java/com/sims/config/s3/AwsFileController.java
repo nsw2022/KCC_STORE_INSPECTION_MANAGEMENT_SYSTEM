@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller
@@ -68,7 +69,28 @@ public class AwsFileController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @PostMapping("/delete")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> deleteFile(@RequestBody Map<String, String> request) {
 
+        String path = request.get("path");
+        log.info("파일 삭제 시작: " + path);
+        if (path == null || path.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "경로는 null이나 비어 있을 수 없습니다."));
+        }
+
+        try {
+            awsFileService.deleteFile(path);
+            Map<String, String> response = new HashMap<>();
+            response.put("success", "파일이 성공적으로 삭제되었습니다.");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("파일 삭제 실패", e);
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "파일 삭제에 실패했습니다.");
+            return ResponseEntity.status(500).body(errorResponse);
+        }
+    }
 
 }
 
