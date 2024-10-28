@@ -15,6 +15,8 @@
 <button onclick="showImage()">이미지 보기</button>
 <br><br>
 <img id="uploadedImage" src="" alt="Uploaded Image" style="display: none; width: 300px;"/>
+<br><br>
+<button onclick="deleteImageFromS3()">삭제하기</button>
 
 <script>
     function uploadFile() {
@@ -42,7 +44,7 @@
             });
     }
 
-    const path = 'inspection_img/' + `15e00eff-fd68-498b-84ee-0e0b5f310ef2`;
+    const path = 'inspection_img/' + `0d515772-8919-4f5a-9692-e3fa53408e2f`;
     console.log(path);
 
     function showImage() {
@@ -65,6 +67,27 @@
                 img.src = url; // Blob URL을 img 태그의 src로 설정
                 img.style.display = 'block'; // 이미지 태그 보이기
             })
+    }
+
+    function deleteImageFromS3() {
+        fetch('/delete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ path: path })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    console.log("S3에서 파일 삭제 성공");
+                } else {
+                    console.error("S3에서 파일 삭제 실패:", data.error);
+                }
+            })
+            .catch(error => {
+                console.error("S3에서 파일 삭제 실패:", error);
+            });
     }
 </script>
 </body>
