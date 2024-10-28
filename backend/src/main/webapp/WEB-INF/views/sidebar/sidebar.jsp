@@ -44,7 +44,6 @@
             <div class="sidebar-menu">
                 <ul>
                     <li class="sidebar-dropdown">
-
                         <a href="#">
                             <form id="dashBoard" action="/" method="get"></form>
                             <a href="#" onclick="document.getElementById('dashBoard').submit()">대시보드</a>
@@ -118,6 +117,18 @@
     </nav>
     <div class="top-bar">
         <span id="breadcrumb"></span>
+        <div id="login-wrap">
+            <p id="login-user">
+                <span id="login-user-roll"></span>
+                <span id="login-user-name"></span>
+            </p>
+            <button id="logOut">로그아웃</button>
+        </div>
+
+        <div id="user_mini">
+            <i class="fa-solid fa-user"></i>
+        </div>
+
     </div>
     <!-- sidebar-wrapper  -->
 </div>

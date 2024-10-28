@@ -16,6 +16,10 @@
             href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap"
             rel="stylesheet"
     />
+    <link
+            href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+            rel="stylesheet"
+    />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
@@ -25,6 +29,7 @@
     <link rel="stylesheet" href="/resources/css/qsc/store_inspection/popup_inspection.css">
     <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js'></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 <div class="progress-container">
@@ -82,10 +87,6 @@
     <button class="go-inspection" onclick="checkInspection()">점검확인</button>
     <button class="go-inspection" onclick="tenpoirySave()">임시저장</button>
 </div>
-
-<!-- 숨겨진 필드로 inspResultId 저장 -->
-<input type="hidden" id="inspResultId" value="${param.inspResultId}" />
-
 
 
 </body>

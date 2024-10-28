@@ -1,3 +1,5 @@
+let inspectionData = null;
+
 // 날짜 형식 포맷 함수 (YYYY - MM - DD)
 function formatDate(dateStr) {
     // dateStr이 'YYYYMMDD' 형식인지 확인
@@ -99,6 +101,9 @@ function fetchPopupData(chklstId, storeNm, inspPlanDt) {
             if (data.length > 0) {
                 // 첫 번째 데이터를 inspection-detail 섹션에 채움
                 populateInspectionDetail(data[0]);
+
+                // 전역 변수에 데이터 저장
+                inspectionData = data[0];
             } else {
                 alert('점검 상세 데이터가 없습니다.');
             }
@@ -223,57 +228,18 @@ function viewHistory(item) {
     alert(`점검 유형: ${item.chklstNm}\n점검일자: ${formatDate(item.inspPlanDt)}\n점검자: ${item.mbrNm}\n점수: ${item.totalScore !== null ? item.totalScore : '점수없음'}`);
 }
 
-// 점검 시작 버튼 클릭 시 호출되는 함수
-// function startInspection() {
-//     // 현재 페이지의 URL에서 파라미터 추출
-//     const urlParams = new URLSearchParams(window.location.search);
-//     const chklstId = urlParams.get('chklstId');
-//     const storeNm = urlParams.get('storeNm');
-//     const inspPlanDt = urlParams.get('inspPlanDt');
-//
-//     if (!chklstId || !storeNm || !inspPlanDt) {
-//         alert('필수 파라미터(chklstId, storeNm, inspPlanDt)가 지정되지 않았습니다.');
-//         return;
-//     }
-//
-//     // inspPlanDt의 '/' 문자 제거 (예: '2024/10/18' -> '20241018')
-//     const formattedInspPlanDt = inspPlanDt.replace(/\//g, '');
-//
-//     // 폼 생성
-//     var form = document.createElement("form");
-//     form.method = "GET"; // @GetMapping에 맞춰 GET 방식 사용
-//     form.action = "/qsc/popup_page_inspection";
-//
-//     // 숨겨진 입력 필드 생성 및 추가
-//     var input1 = document.createElement("input");
-//     input1.type = "hidden";
-//     input1.name = "chklstId";
-//     input1.value = chklstId;
-//     form.appendChild(input1);
-//
-//     var input2 = document.createElement("input");
-//     input2.type = "hidden";
-//     input2.name = "storeNm";
-//     input2.value = storeNm;
-//     form.appendChild(input2);
-//
-//     var input3 = document.createElement("input");
-//     input3.type = "hidden";
-//     input3.name = "inspPlanDt";
-//     input3.value = formattedInspPlanDt;
-//     form.appendChild(input3);
-//
-//     // 폼을 문서에 추가하고 제출
-//     document.body.appendChild(form);
-//     form.submit();
-// }
-
 function startInspection() {
     // 현재 페이지의 URL에서 파라미터 추출
     const urlParams = new URLSearchParams(window.location.search);
     const chklstId = urlParams.get('chklstId');
     const storeNm = urlParams.get('storeNm');
     const inspPlanDt = urlParams.get('inspPlanDt');
+    const inspSchdId = inspectionData.inspSchdId;
+
+
+    const url = `/filter/store_inspection_popup?chklstId=${chklstId}&storeNm=${encodeURIComponent(storeNm)}&inspPlanDt=${inspPlanDt}`;
+
+    console.log(inspSchdId);
 
     if (!chklstId || !storeNm || !inspPlanDt) {
         alert('필수 파라미터(chklstId, storeNm, inspPlanDt)가 지정되지 않았습니다.');
@@ -283,26 +249,19 @@ function startInspection() {
     // inspPlanDt의 '/' 문자 제거 (예: '2024/10/18' -> '20241018')
     const formattedInspPlanDt = inspPlanDt.replace(/\//g, '');
 
-    // 요청 데이터 (StoreInspectionPopupRequest의 INSP_RESULT 삽입에 필요한 필드만)
-    // const requestData = {
-    //     inspSchdId: parseInt(chklstId, 10),
-    //     inspComplW: 'N', // 점검 완료 여부 초기화
-    //     creMbrId: null, // 서버에서 설정
-    //     inspections: [] // 초기에는 비어있음
-    // };
 
     const requestData = {
         chklstId: parseInt(chklstId, 10),
         storeNm: storeNm,
         inspPlanDt: inspPlanDt,
-        inspSchdId: parseInt(chklstId, 10), // 필요 시 조정
+        inspSchdId: parseInt(inspSchdId, 10), // 필요 시 조정
         inspComplW: 'N', // 점검 완료 여부 초기화
         creMbrId: null, // 서버에서 설정
         inspections: [] // 초기에는 비어있음
     };
 
     // AJAX POST 요청 to insert INSP_RESULT
-    fetch('/filter/insert_insp_result', {
+    fetch('/filter/get_or_insert_insp_result', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -317,7 +276,8 @@ function startInspection() {
             return response.json(); // inspResultId 반환 예상
         })
         .then(inspResultId => {
-            // 팝업 페이지로 이동하면서 inspResultId를 전달
+
+            // 팝업 페이지로 이동하면서 inspSchdId 전달
             var form = document.createElement("form");
             form.method = "GET"; // @GetMapping에 맞춰 GET 방식 사용
             form.action = "/qsc/popup_page_inspection";
@@ -343,9 +303,15 @@ function startInspection() {
 
             var input4 = document.createElement("input");
             input4.type = "hidden";
-            input4.name = "inspResultId";
-            input4.value = inspResultId;
+            input4.name = "inspSchdId";
+            input4.value = inspSchdId;
             form.appendChild(input4);
+
+            var input5 = document.createElement("input");
+            input5.type = "hidden";
+            input5.name = "inspResultId";
+            input5.value = inspResultId;
+            form.appendChild(input5);
 
             // 폼을 문서에 추가하고 제출
             document.body.appendChild(form);

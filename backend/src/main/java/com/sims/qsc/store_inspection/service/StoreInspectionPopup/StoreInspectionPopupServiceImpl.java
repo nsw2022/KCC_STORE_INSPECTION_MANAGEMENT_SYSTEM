@@ -11,9 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -32,79 +30,6 @@ public class StoreInspectionPopupServiceImpl implements StoreInspectionPopupServ
     }
 
 
-//    @Override
-//    @Transactional
-//    public void insertInspectionResult(StoreInspectionPopupRequest request) {
-//        log.info("점검 결과 삽입 요청 데이터: {}", request);
-//        Long creMbrId = request.getCreMbrId();
-//
-//        try {
-//            log.info("INSP_RESULT 삽입 호출: {}", request);
-//            storeInspectionPopupMapper.insertINSP_RESULT(request);
-//            log.info("INSP_RESULT 삽입 완료. 생성된 INSP_RESULT_ID: {}", request.getInspResultId());
-//        } catch (Exception e) {
-//            log.error("INSP_RESULT 삽입 실패: {} - {}", e.getClass().getName(), e.getMessage(), e);
-//            throw e; // 트랜잭션 롤백을 위해 예외 재발생
-//        }
-//
-//        log.info("INSP_RESULT 삽입 후 inspResultId: {}", request.getInspResultId());
-//
-//        for (StoreInspectionPopupRequest.CategoryInspection category : request.getInspections()) {
-//            log.info("카테고리 처리 중: {}", category.getCategoryName());
-//
-//            for (StoreInspectionPopupRequest.SubcategoryInspection subcategory : category.getSubcategories()) {
-//                log.info("서브카테고리 처리 중: {}", subcategory.getSubcategoryName());
-//
-//                try {
-//                    // inspResultId 및 creMbrId 설정
-//                    subcategory.setCreMbrId(creMbrId);
-//                    subcategory.setInspResultId(request.getInspResultId());
-//
-//                    // EVIT_ANSW 삽입
-//                    log.info("EVIT_ANSW 삽입 호출: {}", subcategory);
-//                    storeInspectionPopupMapper.insertEVIT_ANSW(subcategory);
-//
-//                    // EVIT_VLT 삽입
-//                    log.info("EVIT_VLT 삽입 호출: {}", subcategory);
-//                    storeInspectionPopupMapper.insertEVIT_VLT(subcategory);
-//
-//                    // EVIT_ANSW_IMG 삽입
-//                    if (subcategory.getPhotoPaths() != null && !subcategory.getPhotoPaths().isEmpty()) {
-//                        log.info("EVIT_ANSW_IMG 삽입 준비: {}", subcategory.getPhotoPaths());
-//                        int seq = 1;
-//
-//                        for (String photoPath : subcategory.getPhotoPaths()) {
-//                            if (photoPath == null || photoPath.isBlank()) {
-//                                log.warn("빈 사진 경로 발견, 건너뜁니다.");
-//                                continue;
-//                            }
-//
-//                            Map<String, Object> params = new HashMap<>();
-//                            params.put("evitId", subcategory.getEvitId());
-//                            params.put("inspResultId", subcategory.getInspResultId());
-//                            params.put("photoPath", photoPath);
-//                            params.put("seq", seq++);
-//                            params.put("creMbrId", creMbrId);
-//
-//                            try {
-//                                log.info("EVIT_ANSW_IMG 삽입 호출: {}", params);
-//                                storeInspectionPopupMapper.insertEVIT_ANSW_IMG(params);
-//                            } catch (Exception e) {
-//                                log.error("EVIT_ANSW_IMG 삽입 실패: {}", e.getMessage(), e);
-//                                throw e;
-//                            }
-//                        }
-//                    } else {
-//                        log.info("사진 경로가 없어 EVIT_ANSW_IMG 삽입을 건너뜁니다.");
-//                    }
-//
-//                } catch (Exception e) {
-//                    log.error("EVIT_ID에 대한 검사 데이터 삽입 중 오류: {}", subcategory.getEvitId(), e);
-//                    throw e; // 트랜잭션 롤백을 위해 예외 재발생
-//                }
-//            }
-//        }
-//    }
 
     /**
      * INSP_RESULT 삽입 및 생성된 INSP_RESULT_ID 반환
@@ -114,34 +39,47 @@ public class StoreInspectionPopupServiceImpl implements StoreInspectionPopupServ
      */
     @Override
     @Transactional
-    public Long insertInspResult(StoreInspectionPopupRequest request) {
-        log.info("INSP_RESULT 삽입 요청 데이터: {}", request);
-        Long creMbrId = getCurrentUserId(); // 현재 사용자 ID 가져오기
+    public Long getOrInsertInspResultId(StoreInspectionPopupRequest request) {
+        log.info("getOrInsertInspResultId 메서드 호출됨: inspSchdId={}", request.getInspSchdId());
 
-        // creMbrId가 정상적으로 조회되지 않으면 예외 발생
-        if (creMbrId == null) {
-            log.error("현재 사용자의 MBR_ID를 조회할 수 없습니다.");
-            throw new IllegalStateException("현재 사용자의 MBR_ID를 조회할 수 없습니다.");
-        }
+        // INSP_SCHD_ID를 기반으로 기존 INSP_RESULT 조회
+        StoreInspectionPopupRequest existingInspResult = storeInspectionPopupMapper.selectExistingInspResultIdBySchdId(request.getInspSchdId());
+        log.debug("selectExistingInspResultIdBySchdId 반환 값: {}", existingInspResult);
 
-        // INSP_RESULT 삽입에 필요한 필드만 설정
-        StoreInspectionPopupRequest inspRequest = StoreInspectionPopupRequest.builder()
-                .inspSchdId(request.getInspSchdId())
-//                .inspStartTm(request.getInspStartTm()) // INSP_START_TM 필드 설정
-                .inspComplW("N") // 점검 완료 여부 초기화
-                .creMbrId(creMbrId)
-                .build();
+        if (existingInspResult != null && existingInspResult.getInspResultId() != null) {
+            log.info("기존 INSP_SCHD_ID 발견: {}", existingInspResult.getInspSchdId());
+            // INSP_RESULT_ID 반환
+            return existingInspResult.getInspResultId();
+        } else {
+            // 존재하지 않으면 새로 삽입
+            log.info("새로운 INSP_RESULT 삽입 필요");
+            Long creMbrId = getCurrentUserId(); // 현재 사용자 ID 가져오기
 
-        try {
-            log.info("INSP_RESULT 삽입 호출: {}", inspRequest);
-            storeInspectionPopupMapper.insertINSP_RESULT(inspRequest);
-            log.info("INSP_RESULT 삽입 완료. 생성된 INSP_RESULT_ID: {}", inspRequest.getInspResultId());
-            return inspRequest.getInspResultId();
-        } catch (Exception e) {
-            log.error("INSP_RESULT 삽입 실패: {}", e.getMessage(), e);
-            throw e; // 트랜잭션 롤백
+            if (creMbrId == null) {
+                log.error("현재 사용자의 MBR_ID를 조회할 수 없습니다.");
+                throw new IllegalStateException("현재 사용자의 MBR_ID를 조회할 수 없습니다.");
+            }
+
+            // INSP_RESULT 삽입에 필요한 필드만 설정
+            StoreInspectionPopupRequest inspRequest = StoreInspectionPopupRequest.builder()
+                    .inspSchdId(request.getInspSchdId())
+                    .inspComplW("N") // 점검 완료 여부 초기화
+                    .creMbrId(creMbrId)
+                    .build();
+
+            try {
+                log.info("INSP_RESULT 삽입 호출: {}", inspRequest);
+                storeInspectionPopupMapper.insertINSP_RESULT(inspRequest);
+                log.info("INSP_RESULT 삽입 완료. 생성된 INSP_RESULT_ID: {}", inspRequest.getInspResultId());
+                return inspRequest.getInspResultId();
+            } catch (Exception e) {
+                log.error("INSP_RESULT 삽입 실패: {}", e.getMessage(), e);
+                throw e; // 트랜잭션 롤백
+            }
         }
     }
+
+
 
     /**
      * 점검 결과 임시저장 (EVIT_ANSW, EVIT_VLT, EVIT_ANSW_IMG 삽입)
@@ -151,7 +89,7 @@ public class StoreInspectionPopupServiceImpl implements StoreInspectionPopupServ
     @Override
     @Transactional
     public void insertInspectionResult(StoreInspectionPopupRequest request) {
-        log.info("점검 결과 삽입 요청 데이터: {}", request);
+        log.info("점검 결과 병합 요청 데이터: {}", request);
         Long creMbrId = getCurrentUserId(); // 현재 사용자 ID 가져오기
         Long inspResultId = request.getInspResultId();
 
@@ -161,7 +99,7 @@ public class StoreInspectionPopupServiceImpl implements StoreInspectionPopupServ
         }
 
         try {
-            log.info("EVIT_ANSW, EVIT_VLT, EVIT_ANSW_IMG 삽입 시작.");
+            log.info("EVIT_ANSW, EVIT_VLT, EVIT_ANSW_IMG 병합 시작.");
             for (StoreInspectionPopupRequest.CategoryInspection category : request.getInspections()) {
                 log.info("카테고리 처리 중: {}", category.getCategoryName());
 
@@ -173,17 +111,21 @@ public class StoreInspectionPopupServiceImpl implements StoreInspectionPopupServ
                         subcategory.setInspResultId(inspResultId);
                         subcategory.setCreMbrId(creMbrId);
 
-                        // EVIT_ANSW 삽입
-                        log.info("EVIT_ANSW 삽입 호출: {}", subcategory);
-                        storeInspectionPopupMapper.insertEVIT_ANSW(subcategory);
+                        // EVIT_ANSW 병합
+                        log.info("EVIT_ANSW 병합 호출: {}", subcategory);
+                        storeInspectionPopupMapper.mergeEVIT_ANSW(subcategory);
 
-                        // EVIT_VLT 삽입
-                        log.info("EVIT_VLT 삽입 호출: {}", subcategory);
-                        storeInspectionPopupMapper.insertEVIT_VLT(subcategory);
+                        // EVIT_VLT 병합: 긍정적인 답변이 아닌 경우에만 호출
+                        if (!isPositiveAnswer(subcategory.getAnswerContent())) {
+                            log.info("EVIT_VLT 병합 호출: {}", subcategory);
+                            storeInspectionPopupMapper.mergeEVIT_VLT(subcategory);
+                        } else {
+                            log.info("긍정적인 답변이므로 EVIT_VLT 병합을 건너뜁니다. evitId: {}", subcategory.getEvitId());
+                        }
 
-                        // EVIT_ANSW_IMG 삽입
+                        // EVIT_ANSW_IMG 병합
                         if (subcategory.getPhotoPaths() != null && !subcategory.getPhotoPaths().isEmpty()) {
-                            log.info("EVIT_ANSW_IMG 삽입 준비: {}", subcategory.getPhotoPaths());
+                            log.info("EVIT_ANSW_IMG 병합 준비: {}", subcategory.getPhotoPaths());
                             int seq = 1;
 
                             for (String photoPath : subcategory.getPhotoPaths()) {
@@ -200,53 +142,148 @@ public class StoreInspectionPopupServiceImpl implements StoreInspectionPopupServ
                                 params.put("creMbrId", creMbrId);
 
                                 try {
-                                    log.info("EVIT_ANSW_IMG 삽입 호출: {}", params);
-                                    storeInspectionPopupMapper.insertEVIT_ANSW_IMG(params);
+                                    log.info("EVIT_ANSW_IMG 병합 호출: {}", params);
+                                    storeInspectionPopupMapper.mergeEVIT_ANSW_IMG(params);
                                 } catch (Exception e) {
-                                    log.error("EVIT_ANSW_IMG 삽입 실패: {}", e.getMessage(), e);
+                                    log.error("EVIT_ANSW_IMG 병합 실패: {}", e.getMessage(), e);
                                     throw e;
                                 }
                             }
                         } else {
-                            log.info("사진 경로가 없어 EVIT_ANSW_IMG 삽입을 건너뜁니다.");
+                            log.info("사진 경로가 없어 EVIT_ANSW_IMG 병합을 건너뜁니다.");
                         }
 
                     } catch (Exception e) {
-                        log.error("EVIT_ID [{}]에 대한 검사 데이터 삽입 중 오류: {}", subcategory.getEvitId(), e.getMessage(), e);
+                        log.error("EVIT_ID [{}]에 대한 검사 데이터 병합 중 오류: {}", subcategory.getEvitId(), e.getMessage(), e);
                         throw e; // 트랜잭션 롤백
                     }
                 }
             }
-            log.info("EVIT_ANSW, EVIT_VLT, EVIT_ANSW_IMG 삽입 완료.");
+            log.info("EVIT_ANSW, EVIT_VLT, EVIT_ANSW_IMG 병합 완료.");
         } catch (Exception e) {
-            log.error("EVIT_ANSW, EVIT_VLT, EVIT_ANSW_IMG 삽입 중 오류 발생: {}", e.getMessage(), e);
+            log.error("EVIT_ANSW, EVIT_VLT, EVIT_ANSW_IMG 병합 중 오류 발생: {}", e.getMessage(), e);
             throw e; // 트랜잭션 롤백
         }
     }
 
-
-
-    @Override
-    @Transactional
-    public Long getOrInsertInspResultId(StoreInspectionPopupRequest request) {
-        // 기존 INSP_RESULT가 존재하는지 조회
-        Long inspResultId = storeInspectionPopupMapper.selectExistingInspResultId(
-                request.getChklstId(),
-                request.getStoreNm(),
-                request.getInspPlanDt()
-        );
-
-        if (inspResultId != null) {
-            log.info("기존 INSP_RESULT_ID 발견: {}", inspResultId);
-            return inspResultId;
-        } else {
-            // 존재하지 않으면 새로 삽입
-            log.info("새로운 INSP_RESULT 삽입 필요");
-            Long newInspResultId = insertInspResult(request);
-            log.info("새로운 INSP_RESULT_ID 생성: {}", newInspResultId);
-            return newInspResultId;
+    /**
+     * 답변 내용이 긍정적인지 여부를 확인하는 메서드
+     *
+     * @param answerContent 답변 내용
+     * @return 긍정적인 답변인 경우 true, 그렇지 않은 경우 false
+     */
+    private boolean isPositiveAnswer(String answerContent) {
+        if (answerContent == null) {
+            return false;
         }
+        // 긍정적인 답변 목록
+        List<String> positiveAnswers = Arrays.asList("적합", "매우좋음", "좋음", "보통");
+        return positiveAnswers.contains(answerContent.trim());
     }
+
+
+    /**
+     * 임시저장된 점검 결과 조회
+     *
+     * @param inspResultId 점검 결과 ID
+     * @return 임시저장된 점검 결과 데이터
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public StoreInspectionPopupRequest getTemporaryInspection(Long inspResultId) {
+        log.info("임시저장된 점검 결과 조회 요청: inspResultId={}", inspResultId);
+
+        List<StoreInspectionPopupResponse.EvitAnswImgVO> answImgList = storeInspectionPopupMapper.selectTemporaryAnswImg(inspResultId);
+        List<StoreInspectionPopupResponse.EvitVltVO> vltList = storeInspectionPopupMapper.selectTemporaryVlt(inspResultId);
+
+        // answImgList와 vltList가 모두 null 또는 비어 있으면 임시저장된 데이터가 없는 것으로 판단
+        if ((answImgList == null || answImgList.isEmpty()) && (vltList == null || vltList.isEmpty())) {
+            log.info("임시저장된 데이터가 없습니다.");
+            return null;
+        }
+
+        // StoreInspectionPopupRequest 객체 생성 및 설정
+        StoreInspectionPopupRequest request = StoreInspectionPopupRequest.builder()
+                .inspResultId(inspResultId)
+                .inspComplW("N")
+                .inspections(new ArrayList<>())
+                .build();
+
+        // EVIT_ANSW_IMG 데이터를 SubcategoryInspection에 매핑
+        Map<Long, StoreInspectionPopupRequest.SubcategoryInspection> subcategoryMap = new HashMap<>();
+        if (answImgList != null) {
+            for (StoreInspectionPopupResponse.EvitAnswImgVO dto : answImgList) {
+                if (dto == null) {
+                    log.warn("answImgList에 null 요소가 있습니다. 건너뜁니다.");
+                    continue;
+                }
+
+                StoreInspectionPopupRequest.SubcategoryInspection subcategory = subcategoryMap.get(dto.getEaEvitId());
+                if (subcategory == null) {
+                    subcategory = StoreInspectionPopupRequest.SubcategoryInspection.builder()
+                            .evitId(dto.getEaEvitId())
+                            .answerContent(dto.getEvitAnswContent())
+                            .creMbrId(dto.getEaCreMbrId())
+                            .photoPaths(new ArrayList<>())
+                            .build();
+                    subcategoryMap.put(dto.getEaEvitId(), subcategory);
+                }
+                if (dto.getEvitAnswImgPath() != null) {
+                    subcategory.getPhotoPaths().add(dto.getEvitAnswImgPath());
+                }
+            }
+        }
+
+        // EVIT_VLT 데이터를 SubcategoryInspection에 매핑
+        if (vltList != null) {
+            for (StoreInspectionPopupResponse.EvitVltVO dto : vltList) {
+                if (dto == null) {
+                    log.warn("vltList에 null 요소가 있습니다. 건너뜁니다.");
+                    continue;
+                }
+
+                StoreInspectionPopupRequest.SubcategoryInspection subcategory = subcategoryMap.get(dto.getEvitId());
+                if (subcategory == null) {
+                    subcategory = StoreInspectionPopupRequest.SubcategoryInspection.builder()
+                            .evitId(dto.getEvitId())
+                            .answerContent(dto.getEvitAnswContent())
+                            .creMbrId(dto.getCreMbrId())
+                            .photoPaths(new ArrayList<>())
+                            .build();
+                    subcategoryMap.put(dto.getEvitId(), subcategory);
+                }
+
+                // EVIT_VLT 필드 설정
+                subcategory.setPdtNmDtplc(dto.getPdtNmDtplc());
+                subcategory.setVltContent(dto.getVltContent());
+                subcategory.setVltCnt(dto.getVltCnt());
+                subcategory.setCaupvdCd(dto.getCaupvdCd());
+                subcategory.setVltCause(dto.getVltCause());
+                subcategory.setInstruction(dto.getInstruction());
+                subcategory.setVltPlcCd(dto.getVltPlcCd());
+                subcategory.setInspResultId(dto.getInspResultId());
+            }
+        }
+
+        // subcategoryMap이 비어 있지 않은 경우에만 카테고리를 추가
+        if (!subcategoryMap.isEmpty()) {
+            StoreInspectionPopupRequest.CategoryInspection category = StoreInspectionPopupRequest.CategoryInspection.builder()
+                    .categoryName("임시카테고리") // 실제 카테고리 이름으로 대체 필요
+                    .subcategories(new ArrayList<>(subcategoryMap.values()))
+                    .build();
+
+            request.getInspections().add(category);
+        }
+
+        // inspections 리스트가 비어 있는지 확인
+        if (request.getInspections().isEmpty()) {
+            log.info("임시저장된 데이터가 없습니다. inspections 리스트가 비어 있습니다.");
+            return null;
+        }
+
+        return request;
+    }
+
 
 
 
@@ -280,7 +317,5 @@ public class StoreInspectionPopupServiceImpl implements StoreInspectionPopupServ
         return mbrId;
     }
 
-
-
-
 }
+

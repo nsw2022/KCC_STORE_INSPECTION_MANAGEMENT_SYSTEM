@@ -48,19 +48,6 @@ public class StoreInspectionRestController {
         return storeInspectionPopupService.selectRecentInspectionHistory(storeNm, inspSttsCd);
     }
 
-    /**
-     * 점검 결과 임시저장
-     *
-     * @param request 점검 결과 요청 데이터
-     * @return 응답 메시지
-     */
-    @PostMapping("/insert_insp_result")
-    public ResponseEntity<Long> insertInspResult(@RequestBody StoreInspectionPopupRequest request) {
-        Long inspResultId = storeInspectionPopupService.insertInspResult(request);
-        return ResponseEntity.ok(inspResultId);
-    }
-
-
 
     /**
      * INSP_RESULT를 조회하거나, 존재하지 않으면 삽입 후 ID 반환
@@ -69,12 +56,17 @@ public class StoreInspectionRestController {
      * @return INSP_RESULT_ID
      */
     @PostMapping("/get_or_insert_insp_result")
-    public Long getOrInsertInspResult(@RequestBody StoreInspectionPopupRequest request) {
-        return storeInspectionPopupService.getOrInsertInspResultId(request);
+    public ResponseEntity<Long> getOrInsertInspResult(@RequestBody StoreInspectionPopupRequest request) {
+        log.info("Controller: getOrInsertInspResult 호출 - 요청 데이터: {}", request);
+        try {
+            Long inspResultId = storeInspectionPopupService.getOrInsertInspResultId(request);
+            log.info("Controller: getOrInsertInspResult 반환 값: {}", inspResultId);
+            return ResponseEntity.ok(inspResultId);
+        } catch (Exception e) {
+            log.error("Controller: getOrInsertInspResult 실패 - 에러 메시지: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).build();
+        }
     }
-
-
-
 
     /**
      * 점검 결과 임시저장 엔드포인트
@@ -84,9 +76,42 @@ public class StoreInspectionRestController {
      */
     @PostMapping("/store_inspection_save")
     public ResponseEntity<String> storeInspectionSave(@RequestBody StoreInspectionPopupRequest request) {
-        storeInspectionPopupService.insertInspectionResult(request);
-        return ResponseEntity.ok("임시저장이 완료되었습니다.");
+        log.info("Controller: storeInspectionSave 호출 - 요청 데이터: {}", request);
+        try {
+            storeInspectionPopupService.insertInspectionResult(request);
+            return ResponseEntity.ok("임시저장이 완료되었습니다.");
+        } catch (Exception e) {
+            log.error("Controller: storeInspectionSave 실패 - 에러 메시지: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).body("임시저장에 실패했습니다.");
+        }
     }
+
+
+    /**
+     * 임시저장된 점검 결과 조회 엔드포인트
+     *
+     * @param inspResultId 점검 결과 ID
+     * @return 임시저장된 점검 결과 데이터
+     */
+    @GetMapping("/get_temporary_inspection")
+    public ResponseEntity<StoreInspectionPopupRequest> getTemporaryInspection(@RequestParam Long inspResultId) {
+        log.info("Controller: getTemporaryInspection 호출 - inspResultId: {}", inspResultId);
+        try {
+            StoreInspectionPopupRequest temporaryData = storeInspectionPopupService.getTemporaryInspection(inspResultId);
+            if (temporaryData != null && temporaryData.getInspections() != null && !temporaryData.getInspections().isEmpty()) {
+                return ResponseEntity.ok(temporaryData);
+            } else {
+                log.info("임시저장된 데이터가 없습니다. HTTP 204 No Content 반환");
+                return ResponseEntity.noContent().build();
+            }
+        } catch (Exception e) {
+            log.error("Controller: getTemporaryInspection 실패 - 에러 메시지: {}", e.getMessage(), e);
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+
+
 
 
 }
