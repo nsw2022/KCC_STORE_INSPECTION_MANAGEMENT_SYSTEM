@@ -243,7 +243,7 @@
   top: 0;
   left: 0;
   z-index: 25;
-  display: inline-block;
+  /*display: inline-block;*/
   width: 100%;
   height: 50px;
   background-color: #f4f7ff;
@@ -294,6 +294,71 @@
   overflow-x: hidden;
 }
 
+#user_mini {
+  display: flex; /* 숨김 상태에서 보이도록 변경 */
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
+  background-color: white;
+  color: #4318FF;
+  cursor: pointer;
+  position: absolute;
+  right: 20px;
+  transition: background-color 0.3s ease-out;
+}
+
+#login-wrap{
+  display: none;
+  position: absolute;
+  top: 60px; /* user_mini 아래에 표시되도록 조정 */
+  right: 10px;
+  width: 270px;
+  background-color: #222222;
+
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+#login-wrap.show {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  padding: 20px 20px 3px 20px;
+
+  opacity: 90%;
+}
+
+#login-user-name{
+  font: 500 16px "Noto Sans KR";
+  color: white;
+}
+#login-user-roll{
+  font: 500 16px "Noto Sans KR";
+  color: #cccccc;
+  margin-right: 5px;
+}
+
+#logOut{
+  width: 90px;
+  height: 30px;
+  border-radius: 15px;
+  border: solid 1px #4318FF;
+  color: #4318FF;
+  font: 500 14px "Noto Sans KR";
+  background-color: white;
+  margin-top: -4px;
+  transition: ease-out 0.3s;
+}
+#logOut:hover{
+  background-color: #4318FF;
+  color: white;
+  transition: ease-out 0.3s;
+}
+
 @media screen and (min-width: 1000px) {
   .page-wrapper.toggled .page-content {
     padding-left: 250px;
@@ -302,7 +367,8 @@
   }
   .top-bar {
     background-color: #ffffff;
-    padding-left: 350px;
+    padding-left: 320px;
+    padding-right: 70px;
     box-sizing: border-box;
     display: block;
   }
@@ -333,6 +399,38 @@
   .page-wrapper2 {
     padding-left: 250px;
     box-sizing: border-box;
+  }
+
+  #login-wrap{
+    /*position: inherit;*/
+    top: 13px;
+    right: 70px;
+    float: right;
+    width: 210px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background: none;
+    box-shadow: none;
+  }
+
+  #user_mini {
+    display: none;
+  }
+
+  #login-user-roll{
+    font: 500 16px "Noto Sans KR";
+    margin-right: 5px;
+  }
+
+  #login-user-name{
+    font: 500 16px "Noto Sans KR";
+    color: black;
+  }
+  #login-user-roll{
+    font: 500 16px "Noto Sans KR";
+    color: #5a5a5a;
+    margin-right: 5px;
   }
 }
 

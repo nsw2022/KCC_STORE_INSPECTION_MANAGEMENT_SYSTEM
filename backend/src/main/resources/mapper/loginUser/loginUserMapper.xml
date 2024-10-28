@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sims.login_user.mapper.LoginUserMapper">
+    <select id="selectLoginUser" parameterType="string" resultType="com.sims.login_user.vo.LoginUserResponse">
+        SELECT
+            CASE
+                WHEN MBR_ROLE_CD = 'MR001' THEN '관리자'
+                WHEN MBR_ROLE_CD = 'MR002' THEN '품질관리자'
+                WHEN MBR_ROLE_CD = 'MR003' THEN 'SV'
+                WHEN MBR_ROLE_CD = 'MR004' THEN '점검자'
+            END AS MBR_ROLE_CD
+            , MBR_NM AS mbrNm
+        FROM
+            MBR
+        WHERE
+            MBR_NO = #{mbrNo}
+    </select>
+
+
+</mapper>

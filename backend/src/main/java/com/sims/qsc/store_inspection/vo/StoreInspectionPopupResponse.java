@@ -1,8 +1,6 @@
 package com.sims.qsc.store_inspection.vo;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @Description 점검 팝업
@@ -65,4 +63,40 @@ public class StoreInspectionPopupResponse {
     private Integer penalty;           // PENALTY
     private Integer scoreEvitChclst;   // SCORE(EVIT_CHCLST)
 
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @ToString
+    public static class EvitAnswImgVO {
+        private String evitAnswContent;
+        private Long eaEvitId;
+        private Long eaCreMbrId;
+        private String evitAnswImgPath;
+        private Long eaiEvitId;
+        private Long eaiCreMbrId;
+        private Integer seq;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @ToString
+    public static class EvitVltVO {
+        private Long vltId;
+        private Long evitId;
+        private Long inspResultId;
+        private String pdtNmDtplc;
+        private String vltContent;
+        private Integer vltCnt;
+        private String caupvdCd;
+        private String vltCause;
+        private String instruction;
+        private String vltPlcCd;
+        private Long creMbrId;
+        private String creTm;
+        private String evitAnswContent;
+        private String evitAnswImgPath;
+        private Integer seq;
+    }
 }

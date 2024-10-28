@@ -27,16 +27,9 @@ public interface StoreInspectionPopupService {
      */
     List<RecentInspectionHistoryResponse> selectRecentInspectionHistory(String storeNm, String inspSttsCd);
 
-    /**
-     * INSP_RESULT를 삽입하고 생성된 INSP_RESULT_ID를 반환하는 메소드
-     *
-     * @param request StoreInspectionPopupRequest 객체
-     * @return 생성된 INSP_RESULT_ID
-     */
-    Long insertInspResult(StoreInspectionPopupRequest request);
 
     /**
-     * 점검 결과 삽입 (임시저장)
+     * 점검 결과 삽입 또는 업데이트 (MERGE) (임시저장)
      *
      * @param request 점검 결과 요청 데이터
      */
@@ -49,4 +42,14 @@ public interface StoreInspectionPopupService {
      * @return INSP_RESULT_ID
      */
     Long getOrInsertInspResultId(StoreInspectionPopupRequest request);
+
+
+    /**
+     * 임시저장된 점검 결과 조회
+     *
+     * @param inspResultId 점검 결과 ID
+     * @return 임시저장된 점검 결과 데이터
+     */
+    StoreInspectionPopupRequest getTemporaryInspection(Long inspResultId);
+
 }
