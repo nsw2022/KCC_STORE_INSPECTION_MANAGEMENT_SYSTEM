@@ -55,4 +55,7 @@ function onSearchInit(){
     let searchDatePlaceholder = $('.searchDatePlaceholder').val('');
     let searchMasterSttsPlaceholder = $('.searchMasterSttsPlaceholder').text("마스터여부");
     let searchUseWPlaceholder = $('.searchUseWPlaceholder').text("사용여부");
+
+    gridApi.setGridOption("rowData", defaultRowData); // 데이터 설정
+    updateChecklistCount();
 }

@@ -78,7 +78,7 @@
                                     <a href="#" onclick="document.getElementById('checklist_list').submit()">체크리스트 관리</a>
                                 </li>
                                 <li>
-                                    <form id="inspection_list" action="/master/inspection/list/manage" method="get"></form>
+                                    <form id="inspection_list" action="/master/inspection-list-manage" method="get"></form>
                                     <a href="#" onclick="document.getElementById('inspection_list').submit()">점검 항목 관리</a>
                                 </li>
                             </ul>

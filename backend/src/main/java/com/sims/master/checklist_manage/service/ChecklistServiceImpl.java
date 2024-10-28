@@ -4,14 +4,12 @@ import com.sims.config.Exception.CustomException;
 import com.sims.config.Exception.ErrorCode;
 import com.sims.config.common.aop.PRoleCheck;
 import com.sims.master.checklist_manage.mapper.ChecklistMapper;
-import com.sims.master.checklist_manage.vo.ChecklistDeleteRequest;
-import com.sims.master.checklist_manage.vo.ChecklistOptionsResponse;
-import com.sims.master.checklist_manage.vo.ChecklistRequest;
-import com.sims.master.checklist_manage.vo.ChecklistResponse;
+import com.sims.master.checklist_manage.vo.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -77,4 +75,6 @@ public class ChecklistServiceImpl implements ChecklistService{
         else
             throw new CustomException(ErrorCode.SAVE_FAIL);
     }
+
+
 }
