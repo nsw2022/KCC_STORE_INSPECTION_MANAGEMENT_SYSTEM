@@ -66,7 +66,7 @@
         WHERE
             DTL_CD
                 LIKE
-                    'B%'
+                    'B0%'
     </select>
 
     <select id="selectInspTypeOptions">
@@ -189,4 +189,26 @@
             )
         </foreach>
     </insert>
+
+    <select id="selectChecklistPreview" resultType="Map" parameterType="String">
+        SELECT
+            CTG.CTG_NM AS category,                    -- 대분류 이름
+            SUBCTG.CTG_NM AS subCategory,              -- 중분류 이름
+            EVIT.EVIT_CONTENT AS evitContent,          -- 평가항목 내용
+            CHCLST.CHCLST_CONTENT AS checkListContent,  -- 선택지 내용
+            CHCLST.CHCLST_ID AS checkListId             -- 선택지 ID
+        FROM
+            CHKLST_CTG CTG
+                LEFT JOIN
+            CHKLST_CTG SUBCTG ON CTG.CTG_ID = SUBCTG.MASTER_CTG_ID
+                LEFT JOIN
+            CHKLST_EVIT EVIT ON SUBCTG.CTG_ID = EVIT.CTG_ID
+                LEFT JOIN
+            EVIT_CHCLST CHCLST ON EVIT.EVIT_ID = CHCLST.EVIT_ID
+        WHERE
+            SUBCTG.CHKLST_ID = (SELECT CHKLST_ID FROM CHKLST WHERE CHKLST_NM = #{chklstNm})
+        ORDER BY
+            CTG.CTG_ID, SUBCTG.CTG_ID, EVIT.EVIT_ID, CHCLST.CHCLST_ID
+    </select>
+
 </mapper>

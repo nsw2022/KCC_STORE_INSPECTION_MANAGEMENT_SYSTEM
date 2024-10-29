@@ -281,6 +281,15 @@ body {
   /*opacity: 0.7;*/
   background-color: #E9ECEF !important;
 }
+.checklistPlaceholder {
+  outline: none; /* 클릭 시 생기는 기본 보더 제거 */
+}
+
+/* 추가적으로 활성화 시에도 보더를 없애기 위해 */
+.checklistPlaceholder:focus {
+  outline: none; /* 포커스 시에도 보더 제거 */
+  border: none !important; /* 필요하다면 보더도 제거 */
+}
 
 
 /******************   first modal   ********************/

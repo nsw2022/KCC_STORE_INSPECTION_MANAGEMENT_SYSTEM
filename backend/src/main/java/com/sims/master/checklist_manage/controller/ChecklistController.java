@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description 체크리스트 관리 컨트롤러 클래스
@@ -78,5 +79,16 @@ public class ChecklistController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * 체크리스트 미리보기
+     * @param chklstNm 체크리스트 이름
+     * @return 체크리스트(분류, 평가항목, 선택지)
+     */
+    @GetMapping("/checklist/detail/{chklst-nm}")
+    @ResponseBody
+    public ResponseEntity<ChecklistPreviewResponse> selectChecklistDetail(@PathVariable("chklst-nm") String chklstNm){
+        log.info("chklstNm = {}", chklstNm);
+        return new ResponseEntity<ChecklistPreviewResponse>(checklistService.getComplianceData(chklstNm), HttpStatus.OK);
+    }
 
 }

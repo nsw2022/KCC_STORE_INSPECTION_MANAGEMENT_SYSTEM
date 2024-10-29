@@ -128,7 +128,7 @@ function initializeGrid() {
         const selectedNode = event.node; // 선택된 노드를 가져옴
         selectedRowNo = selectedNode.rowIndex; // 선택된 행의 인덱스를 저장
         console.log("선택된 행 번호: ", selectedRowNo);
-
+        console.log("chklstNm: ", selectedRows[0].chklstNm);
         $(".brandPlaceholder").text(selectedRows[0].brandNm);
         $(".checklistPlaceholder").text(selectedRows[0].chklstNm);
         $(".masterChecklistPlaceholder").text(selectedRows[0].masterChklstNm);
@@ -609,9 +609,5 @@ $(window).on("beforeunload", function() {
 
 
 $('.edit-container').click(function(e) {
-  console.log("clicked");
-});
-
-$('.bi').click(function(e) {
   console.log("clicked");
 });

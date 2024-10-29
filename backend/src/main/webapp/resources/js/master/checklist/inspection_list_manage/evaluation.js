@@ -43,6 +43,14 @@ const gridOptions3 = {
     onCellClicked: params => {
         console.log('cell was clicked', params);
     },
+    onGridReady: (params) => {
+        // 그리드가 로드된 후 첫 번째 행 선택
+        params.api.forEachNode((node, index) => {
+            if (index === 0) {
+                node.setSelected(true);
+            }
+        });
+    },
 
     // 드래그 종료 후 seq 업데이트
     onRowDragEnd: params => {

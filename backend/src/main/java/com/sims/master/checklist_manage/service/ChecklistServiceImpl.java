@@ -11,7 +11,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author 유재원
@@ -34,6 +37,7 @@ public class ChecklistServiceImpl implements ChecklistService{
 
     @Override
     @PRoleCheck
+    @Transactional(rollbackFor = Exception.class)
     public int deleteChecklistByChklstId(List<ChecklistDeleteRequest> checklistDeleteRequest) {
         if (checklistMapper.selectChklstIdByChklstIdAndChklstUseW(checklistDeleteRequest).size() > 0) {
             throw new CustomException(ErrorCode.CHECKLIST_IN_USE);
@@ -56,6 +60,7 @@ public class ChecklistServiceImpl implements ChecklistService{
 
     @Override
     @PRoleCheck
+    @Transactional(rollbackFor = Exception.class)
     public int insertOrUpdateChecklist(List<ChecklistRequest> checklistRequests) {
         String mbrNo = SecurityContextHolder.getContext().getAuthentication().getName();
         int requestDataLength = checklistRequests.size();
@@ -75,6 +80,57 @@ public class ChecklistServiceImpl implements ChecklistService{
         else
             throw new CustomException(ErrorCode.SAVE_FAIL);
     }
+
+//    @Override
+//    public ChecklistPreviewResponse selectChecklistPreview(String chklstNm) {
+//
+//        return checklistMapper.selectChecklistPreview(chklstNm);
+//    }
+
+    @Override
+    public ChecklistPreviewResponse getComplianceData(String chklstNm) {
+        List<Map<String, Object>> results = checklistMapper.selectChecklistPreview(chklstNm);
+        ChecklistPreviewResponse complianceData = new ChecklistPreviewResponse();
+        Map<String, Map<String, Map<String, List<String>>>> dataMap = new HashMap<>();
+
+        if (results.isEmpty()) {
+            System.out.println("No results found for checklist name: " + chklstNm);
+            return complianceData; // 빈 데이터 반환
+        }
+
+        for (Map<String, Object> row : results) {
+            Object categoryObj = row.get("CATEGORY");
+            Object subCategoryObj = row.get("SUBCATEGORY");
+            Object evitContentObj = row.get("EVITCONTENT");
+            Object checkListContentObj = row.get("CHECKLISTCONTENT");
+
+            if (categoryObj == null || subCategoryObj == null || evitContentObj == null || checkListContentObj == null) {
+                System.out.println("Row contains null values: " + row);
+                continue; // null 값이 있는 경우 해당 행을 건너뜀
+            }
+
+            String category = categoryObj.toString();
+            String subCategory = subCategoryObj.toString();
+            String evitContent = evitContentObj.toString();
+            String checkListContent = checkListContentObj.toString();
+
+            dataMap.putIfAbsent(category, new HashMap<>());
+            dataMap.get(category).putIfAbsent(subCategory, new HashMap<>());
+            dataMap.get(category).get(subCategory).putIfAbsent(evitContent, new ArrayList<>());
+
+            List<String> checkList = dataMap.get(category).get(subCategory).get(evitContent);
+            checkList.add(checkListContent);
+        }
+
+        complianceData.setData(dataMap);
+        System.out.println("Current dataMap state: " + dataMap);
+        System.out.println(complianceData);
+
+        return complianceData;
+    }
+
+
+
 
 
 }

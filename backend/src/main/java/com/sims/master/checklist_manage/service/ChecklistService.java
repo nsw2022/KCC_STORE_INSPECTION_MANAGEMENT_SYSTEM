@@ -3,6 +3,8 @@ package com.sims.master.checklist_manage.service;
 import com.sims.master.checklist_manage.vo.*;
 
 import java.util.List;
+import java.util.Map;
+
 /**
  * @Description 체크리스트 관리 서비스
  * @Author 유재원
@@ -35,4 +37,6 @@ public interface ChecklistService {
      */
     public int insertOrUpdateChecklist(List<ChecklistRequest> checklistRequests);
 
+
+    public ChecklistPreviewResponse getComplianceData(String chklstNm);
 }

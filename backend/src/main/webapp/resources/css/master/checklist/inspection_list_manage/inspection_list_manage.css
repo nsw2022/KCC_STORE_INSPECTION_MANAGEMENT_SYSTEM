@@ -221,46 +221,46 @@ body {
   box-shadow: rgba(0, 0, 0, 0.15) 0px 0px 0px !important;
 }
 
-.list-group {
+.list-group, .master-list-group {
   max-height: 500px; /* 모바일에서는 최대 높이를 조금 줄임 */
   overflow-y: auto;
 }
 
-.input-group {
+.input-group, .master-input-group {
   display: flex;
   flex-wrap: nowrap !important;
   width: 100%;
   flex-direction: row !important;
 }
 
-.modal-search-box {
+.modal-search-box, .master-modal-search-box {
   flex-direction: row;
   flex-wrap: nowrap !important;
 }
 
-.modal-search-box input {
+.modal-search-box input, .master-modal-search-box input {
   border-color: #d0d5dd;
   border-radius: 10px !important;
   font: 350 13px "Noto Sans KR";
   color: #858d9d;
 }
-.modal-search-box button {
+.modal-search-box button, .master-modal-search-box button{
   border-color: #d0d5dd;
   border-radius: 10px !important;
   font: 350 13px "Noto Sans KR";
   color: #858d9d;
 }
 
-.list-item {
+.list-item, .master-list-item{
   display: flex;
   justify-content: space-between;
   align-items: baseline;
 }
 
-.list-group-item {
+.list-group-item, .master-list-group-item{
   border: none !important;
 }
-.item-info {
+.item-info, .master-item-info{
   box-shadow:
     rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
     rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
@@ -271,11 +271,11 @@ body {
   font: 400 13px "Noto Sans KR";
 }
 
-.item-info:hover {
+.item-info:hover, .master-item-info:hover{
   background-color: #f2f6ff !important;
   border: 1px solid #3274fa;
 }
-.list-group button {
+.list-group button, .master-list-group button{
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -285,7 +285,7 @@ body {
   height: 60px;
   color: black;
 }
-.list-group-item button {
+.list-group-item button, .list-group-item button{
   font: 400 13px "Noto Sans KR";
 }
 
@@ -429,7 +429,7 @@ body {
     height: 324px !important;
   }
 
-  .item-info {
+  .item-info, .master-item-info{
     box-shadow:
       rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
       rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
@@ -439,7 +439,7 @@ body {
     padding: 10px;
     font: 400 10px "Noto Sans KR";
   }
-  .list-group button {
+  .list-group button, .master-list-group button{
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -449,7 +449,7 @@ body {
     height: 60px;
     color: black;
   }
-  .list-group-item button {
+  .list-group-item button, .master-list-group-item button {
     font: 400 10px "Noto Sans KR";
   }
   .container {

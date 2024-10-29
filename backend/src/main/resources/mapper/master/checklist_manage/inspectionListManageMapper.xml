@@ -6,11 +6,15 @@
 <mapper namespace="com.sims.master.inspection_list_manage.mapper.InspectionListManageMapper">
     <select id="selectChklstNmByChklstId">
         SELECT
-            CHKLST_NM
+            c.CHKLST_NM AS chklstNm
+            , m.CHKLST_NM AS masterChklstNm
         FROM
-            CHKLST
+            CHKLST c
+                LEFT JOIN
+            CHKLST m ON c.MASTER_CHKLST_ID = m.CHKLST_ID
         WHERE
-            CHKLST_ID = #{chklstId}
+            c.CHKLST_STTS_W = '1'
+          AND c.CHKLST_ID = #{chklstId}
     </select>
 
 </mapper>
