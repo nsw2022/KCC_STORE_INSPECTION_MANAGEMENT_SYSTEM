@@ -151,6 +151,29 @@
                     VALUES (EVIT_ANSW_IMG_SEQ.NEXTVAL, #{evitId}, #{inspResultId}, #{photoPath}, #{seq}, #{creMbrId}, TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI'))
     </insert>
 
+    <delete id="deleteUnmatchedEVIT_ANSW_IMG" parameterType="map">
+        DELETE FROM EVIT_ANSW_IMG t
+        WHERE t.EVIT_ID = #{evitId}
+          AND t.INSP_RESULT_ID = #{inspResultId}
+          AND t.SEQ NOT IN
+      <foreach item="seq" index="index" collection="seqList" open="(" separator="," close=")">
+            #{seq}
+            </foreach>
+    </delete>
+
+    <!--  삭제될 이미지의 경로를 조회  -->
+    <select id="selectUnmatchedEVIT_ANSW_IMGPaths" parameterType="map" resultType="string">
+        SELECT t.EVIT_ANSW_IMG_PATH
+        FROM EVIT_ANSW_IMG t
+        WHERE t.EVIT_ID = #{evitId}
+        AND t.INSP_RESULT_ID = #{inspResultId}
+        AND t.SEQ NOT IN
+        <foreach item="seq" index="index" collection="seqList" open="(" separator="," close=")">
+            #{seq}
+        </foreach>
+    </select>
+
+
 
 
     <!-- 임시저장된 EVIT_ANSW 및 EVIT_ANSW_IMG 조회 -->

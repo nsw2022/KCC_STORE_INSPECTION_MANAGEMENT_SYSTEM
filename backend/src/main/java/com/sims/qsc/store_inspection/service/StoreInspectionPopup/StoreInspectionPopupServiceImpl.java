@@ -1,5 +1,6 @@
 package com.sims.qsc.store_inspection.service.StoreInspectionPopup;
 
+import com.sims.config.s3.AwsFileService;
 import com.sims.qsc.store_inspection.mapper.StoreInspectionPopupMapper;
 import com.sims.qsc.store_inspection.vo.RecentInspectionHistoryResponse;
 import com.sims.qsc.store_inspection.vo.StoreInspectionPopupRequest;
@@ -17,7 +18,10 @@ import java.util.*;
 @RequiredArgsConstructor
 @Slf4j
 public class StoreInspectionPopupServiceImpl implements StoreInspectionPopupService {
+
     private final StoreInspectionPopupMapper storeInspectionPopupMapper;
+    private final AwsFileService awsFileService;
+
 
     @Override
     public List<StoreInspectionPopupResponse> selectInspectionDetails(Long chklstId, String storeNm, String inspPlanDt) {
@@ -123,10 +127,11 @@ public class StoreInspectionPopupServiceImpl implements StoreInspectionPopupServ
                             log.info("긍정적인 답변이므로 EVIT_VLT 병합을 건너뜁니다. evitId: {}", subcategory.getEvitId());
                         }
 
-                        // EVIT_ANSW_IMG 병합
+                        // EVIT_ANSW_IMG 병합 및 삭제 로직 추가
                         if (subcategory.getPhotoPaths() != null && !subcategory.getPhotoPaths().isEmpty()) {
                             log.info("EVIT_ANSW_IMG 병합 준비: {}", subcategory.getPhotoPaths());
                             int seq = 1;
+                            List<Integer> seqList = new ArrayList<>();
 
                             for (String photoPath : subcategory.getPhotoPaths()) {
                                 if (photoPath == null || photoPath.isBlank()) {
@@ -138,14 +143,51 @@ public class StoreInspectionPopupServiceImpl implements StoreInspectionPopupServ
                                 params.put("evitId", subcategory.getEvitId());
                                 params.put("inspResultId", inspResultId);
                                 params.put("photoPath", photoPath);
-                                params.put("seq", seq++);
+                                params.put("seq", seq);
                                 params.put("creMbrId", creMbrId);
 
                                 try {
                                     log.info("EVIT_ANSW_IMG 병합 호출: {}", params);
                                     storeInspectionPopupMapper.mergeEVIT_ANSW_IMG(params);
+                                    seqList.add(seq);
+                                    seq++;
                                 } catch (Exception e) {
                                     log.error("EVIT_ANSW_IMG 병합 실패: {}", e.getMessage(), e);
+                                    throw e;
+                                }
+                            }
+
+                            // 불필요한 레코드 삭제
+                            if (!seqList.isEmpty()) {
+                                Map<String, Object> deleteParams = new HashMap<>();
+                                deleteParams.put("evitId", subcategory.getEvitId());
+                                deleteParams.put("inspResultId", inspResultId);
+                                deleteParams.put("seqList", seqList);
+
+//                                try {
+//                                    log.info("EVIT_ANSW_IMG 삭제 호출: {}", deleteParams);
+//                                    storeInspectionPopupMapper.deleteUnmatchedEVIT_ANSW_IMG(deleteParams);
+//                                } catch (Exception e) {
+//                                    log.error("EVIT_ANSW_IMG 삭제 실패: {}", e.getMessage(), e);
+//                                    throw e;
+//                                }
+                                try {
+                                    // 삭제될 이미지 경로 조회
+                                    List<String> imgPaths = storeInspectionPopupMapper.selectUnmatchedEVIT_ANSW_IMGPaths(deleteParams);
+
+                                    // S3에서 이미지 삭제
+                                    for (String imgPath : imgPaths) {
+                                        String s3Key = "inspection_img/" + imgPath;
+                                        awsFileService.deleteFile(s3Key);
+                                        log.info("S3에서 이미지 삭제 완료: {}", s3Key);
+                                    }
+
+                                    // 데이터베이스에서 이미지 레코드 삭제
+                                    log.info("EVIT_ANSW_IMG 삭제 호출: {}", deleteParams);
+                                    storeInspectionPopupMapper.deleteUnmatchedEVIT_ANSW_IMG(deleteParams);
+
+                                } catch (Exception e) {
+                                    log.error("EVIT_ANSW_IMG 삭제 실패: {}", e.getMessage(), e);
                                     throw e;
                                 }
                             }
