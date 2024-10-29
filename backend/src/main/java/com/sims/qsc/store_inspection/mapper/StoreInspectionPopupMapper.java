@@ -36,6 +36,11 @@ public interface StoreInspectionPopupMapper {
     // EVIT_ANSW_IMG 병합
     void mergeEVIT_ANSW_IMG(Map<String, Object> params);
 
+    // deleteUnmatchedEVIT_ANSW_IMG 메서드
+    void deleteUnmatchedEVIT_ANSW_IMG(Map<String, Object> params);
+
+    // 삭제할 이미지 조회
+    List<String> selectUnmatchedEVIT_ANSW_IMGPaths(Map<String, Object> params);
 
     // MBR_NO로 MBR_ID 조회
     @Select("SELECT MBR_ID FROM MBR WHERE MBR_NO = #{mbrNo}")

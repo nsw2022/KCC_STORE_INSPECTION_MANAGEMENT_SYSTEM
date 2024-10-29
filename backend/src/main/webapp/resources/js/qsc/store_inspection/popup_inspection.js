@@ -305,8 +305,113 @@ function applyDetailContent(wrapper, tempData) {
 
     // 위치정보 설정
     setLocation(locationContent, tempData);
+
   }
+
+  // 사진 설정
+  console.log("Setting photo paths:", tempData.photoPaths); // 디버깅 로그
+
+  // 로컬 경로를 제외하고 S3 경로만 추출
+  const s3PhotoPaths = tempData.photoPaths.filter(path => path && !path.startsWith('/'));
+
+  setPhotoPaths(wrapper, s3PhotoPaths);
 }
+
+// S3 베이스 URL을 사용하는 대신, /download 엔드포인트를 사용
+function setPhotoPaths(inspectionContentWrapper, photoPaths) {
+  if (!photoPaths || !Array.isArray(photoPaths)) {
+    console.warn("photoPaths가 유효하지 않습니다:", photoPaths);
+    return;
+  }
+
+  const photoBoxes = inspectionContentWrapper.querySelectorAll('.photo-box');
+
+  photoBoxes.forEach((box, index) => {
+    const path = photoPaths[index];
+    console.log(`Processing photo box ${index} with path: ${path}`); // 디버깅 로그
+
+    if (path && !path.startsWith('/')) {
+      // S3 경로인 경우에만 처리
+      const s3Key = 'inspection_img/' + path;
+      console.log(`Path ${s3Key} is recognized as an S3 key.`);
+      fetch('/download', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ path: s3Key })
+      })
+          .then(response => {
+            console.log("Download response status:", response.status); // 디버깅 로그
+            if (!response.ok) {
+              throw new Error(`파일 다운로드 실패: ${response.statusText}`);
+            }
+            return response.blob();
+          })
+          .then(blob => {
+            const imageUrl = URL.createObjectURL(blob);
+            console.log("Image URL created:", imageUrl); // 디버깅 로그
+
+            // 이미지 표시
+            box.style.backgroundImage = `url(${imageUrl})`;
+            box.style.backgroundSize = "cover";
+            box.style.backgroundPosition = "center";
+            box.style.backgroundRepeat = "no-repeat";
+            box.textContent = "";
+
+            // S3 경로 저장 (접두사 없이 원본 path만 저장)
+            box.setAttribute('data-path', path);
+
+            // X 버튼 추가 (이미 존재하지 않을 경우)
+            if (!box.querySelector(".delete-btn")) {
+              const deleteButton = document.createElement("button");
+              deleteButton.classList.add("delete-btn");
+              deleteButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+              box.appendChild(deleteButton);
+
+              // 이미지 삭제 기능
+              deleteButton.addEventListener("click", function () {
+                fetch('/delete', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ path: s3Key })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                      if (data.error) {
+                        throw new Error(data.error);
+                      }
+                      // 이미지 제거
+                      box.style.backgroundImage = "";
+                      box.textContent = "사진 미등록";
+                      box.removeAttribute('data-path');
+                      deleteButton.remove();
+                      // photoCount 감소 (필요한 경우 변수 선언 및 관리)
+                    })
+                    .catch(error => {
+                      console.error("파일 삭제 실패:", error);
+                      alert("파일 삭제에 실패했습니다.");
+                    });
+              });
+            }
+          })
+          .catch(error => {
+            console.error(`이미지 로드 실패 (path: ${s3Key}):`, error);
+            box.textContent = "이미지 로드 실패";
+          });
+    } else {
+      // path가 없거나 로컬 경로인 경우 처리
+      console.warn(`Photo box ${index}에 대한 유효한 S3 path가 없습니다.`);
+      box.style.backgroundImage = "";
+      box.textContent = "사진 미등록";
+    }
+  });
+}
+
+
+
 
 function disableAndClearFields(container) {
   if (!container) return;
@@ -850,7 +955,7 @@ function generateContent(data) {
         photoSection.appendChild(photoBoxes);
 
         // setupPhotoUpload 호출
-        setupPhotoUpload(photoBoxes, cameraBtn, galleryBtn);
+        setupPhotoUpload(photoBoxes, cameraBtn, galleryBtn, inspectionContentWrapper);
 
         inspectionContentWrapper.appendChild(photoSection);
 
@@ -1118,7 +1223,103 @@ function generateContent(data) {
 
 
 // -----------------사진 업로드 및 촬영 기능 설정--------------
-function setupPhotoUpload(photoBoxes, cameraBtn, galleryBtn) {
+// function setupPhotoUpload(photoBoxes, cameraBtn, galleryBtn) {
+//   let photoCount = 0;
+//
+//   // 카메라 버튼 클릭 시
+//   cameraBtn.addEventListener("click", function () {
+//     if (photoCount >= 2) {
+//       alert("이미지는 최대 2개까지만 업로드할 수 있습니다.");
+//       return;
+//     }
+//
+//     const fileInput = document.createElement("input");
+//     fileInput.type = "file";
+//     fileInput.accept = "image/*";
+//     fileInput.capture = "camera"; // 카메라만 호출
+//     fileInput.style.display = "none";
+//
+//     fileInput.addEventListener("change", function (event) {
+//       const file = event.target.files[0];
+//       if (file) {
+//         displayImage(file, photoBoxes);
+//         photoCount++;
+//       }
+//     });
+//
+//     fileInput.click();
+//   });
+//
+//   // 갤러리 버튼 클릭 시
+//   galleryBtn.addEventListener("click", function () {
+//     if (photoCount >= 2) {
+//       alert("이미지는 최대 2개까지만 업로드할 수 있습니다.");
+//       return;
+//     }
+//
+//     const fileInput = document.createElement("input");
+//     fileInput.type = "file";
+//     fileInput.accept = "image/*";
+//     fileInput.style.display = "none";
+//
+//     fileInput.addEventListener("change", function (event) {
+//       const file = event.target.files[0];
+//       if (file) {
+//         displayImage(file, photoBoxes);
+//         photoCount++;
+//       }
+//     });
+//
+//     fileInput.click();
+//   });
+//
+//   // 이미지 삭제 처리
+//   function removeImage(imageBox) {
+//     imageBox.style.backgroundImage = ""; // 배경 이미지 제거
+//     imageBox.textContent = "사진 미등록"; // 기본 텍스트로 복원
+//     const deleteButton = imageBox.querySelector(".delete-btn");
+//     if (deleteButton) {
+//       deleteButton.remove(); // 삭제 버튼 제거
+//     }
+//     photoCount--; // 사진 개수 감소
+//   }
+//
+//   // 이미지 파일을 표시하는 함수
+//   function displayImage(file, photoBoxes) {
+//     const reader = new FileReader();
+//     reader.onload = function (e) {
+//       const emptyBox = Array.from(photoBoxes.children).find(
+//         (box) => !box.style.backgroundImage,
+//       );
+//       if (emptyBox) {
+//         // 이미지 표시
+//         emptyBox.style.backgroundImage = `url(${e.target.result})`;
+//         emptyBox.style.backgroundSize = "cover";
+//         emptyBox.style.backgroundPosition = "center";
+//         emptyBox.style.backgroundRepeat = "no-repeat";
+//         emptyBox.textContent = "";
+//
+//         // X 버튼 추가
+//         const deleteButton = document.createElement("button");
+//         deleteButton.classList.add("delete-btn");
+//         deleteButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+//
+//         // 이미지 삭제 기능
+//         deleteButton.addEventListener("click", function () {
+//           removeImage(emptyBox);
+//         });
+//
+//         emptyBox.appendChild(deleteButton);
+//       }
+//     };
+//     reader.readAsDataURL(file);
+//   }
+// }
+
+// 전역 변수로 삭제할 이미지 목록을 관리
+let deletedImages = [];
+
+function setupPhotoUpload(photoBoxes, cameraBtn, galleryBtn, inspectionContentWrapper) {
   let photoCount = 0;
 
   // 카메라 버튼 클릭 시
@@ -1137,8 +1338,7 @@ function setupPhotoUpload(photoBoxes, cameraBtn, galleryBtn) {
     fileInput.addEventListener("change", function (event) {
       const file = event.target.files[0];
       if (file) {
-        displayImage(file, photoBoxes);
-        photoCount++;
+        uploadAndDisplayImage(file, photoBoxes, inspectionContentWrapper);
       }
     });
 
@@ -1160,56 +1360,141 @@ function setupPhotoUpload(photoBoxes, cameraBtn, galleryBtn) {
     fileInput.addEventListener("change", function (event) {
       const file = event.target.files[0];
       if (file) {
-        displayImage(file, photoBoxes);
-        photoCount++;
+        uploadAndDisplayImage(file, photoBoxes, inspectionContentWrapper);
       }
     });
 
     fileInput.click();
   });
 
-  // 이미지 삭제 처리
-  function removeImage(imageBox) {
-    imageBox.style.backgroundImage = ""; // 배경 이미지 제거
-    imageBox.textContent = "사진 미등록"; // 기본 텍스트로 복원
-    const deleteButton = imageBox.querySelector(".delete-btn");
-    if (deleteButton) {
-      deleteButton.remove(); // 삭제 버튼 제거
-    }
-    photoCount--; // 사진 개수 감소
-  }
+  // 이미지 업로드 및 표시 처리 함수
+  function uploadAndDisplayImage(file, photoBoxes, inspectionContentWrapper) {
+    const formData = new FormData();
+    formData.append("file", file);
 
-  // 이미지 파일을 표시하는 함수
-  function displayImage(file, photoBoxes) {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      const emptyBox = Array.from(photoBoxes.children).find(
-        (box) => !box.style.backgroundImage,
-      );
-      if (emptyBox) {
-        // 이미지 표시
-        emptyBox.style.backgroundImage = `url(${e.target.result})`;
-        emptyBox.style.backgroundSize = "cover";
-        emptyBox.style.backgroundPosition = "center";
-        emptyBox.style.backgroundRepeat = "no-repeat";
-        emptyBox.textContent = "";
+    fetch('/upload', {
+      method: 'POST',
+      body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+          console.log("Upload response data:", data); // 디버깅 로그
+          if (data.error) {
+            throw new Error(data.error);
+          }
 
-        // X 버튼 추가
-        const deleteButton = document.createElement("button");
-        deleteButton.classList.add("delete-btn");
-        deleteButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+          // S3 키 생성 (업로드 시에는 접두사를 붙이지 않음)
+          const s3Key = 'inspection_img/' + data.path;
 
-        // 이미지 삭제 기능
-        deleteButton.addEventListener("click", function () {
-          removeImage(emptyBox);
+          const emptyBox = Array.from(photoBoxes.children).find(
+              (box) => !box.style.backgroundImage
+          );
+          if (emptyBox) {
+            console.log("Fetching image from path:", s3Key); // 추가된 로그
+            fetch('/download', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ path: s3Key })
+            })
+                .then(response => {
+                  console.log("Download response status:", response.status); // 디버깅 로그
+                  if (!response.ok) {
+                    throw new Error(`파일 다운로드 실패: ${response.statusText}`);
+                  }
+                  return response.blob();
+                })
+                .then(blob => {
+                  const imageUrl = URL.createObjectURL(blob);
+                  console.log("Image URL created:", imageUrl); // 디버깅 로그
+
+                  // 이미지 표시
+                  emptyBox.style.backgroundImage = `url(${imageUrl})`;
+                  emptyBox.style.backgroundSize = "cover";
+                  emptyBox.style.backgroundPosition = "center";
+                  emptyBox.style.backgroundRepeat = "no-repeat";
+                  emptyBox.textContent = "";
+
+                  // S3 경로 저장 (접두사 없이 원본 path만 저장)
+                  emptyBox.setAttribute('data-path', data.path);
+
+                  // X 버튼 추가
+                  const deleteButton = document.createElement("button");
+                  deleteButton.classList.add("delete-btn");
+                  deleteButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+
+                  // 이미지 삭제 기능
+                  deleteButton.addEventListener("click", function () {
+                    fetch('/delete', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify({ path: s3Key })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                          if (data.error) {
+                            throw new Error(data.error);
+                          }
+                          // 이미지 제거
+                          emptyBox.style.backgroundImage = "";
+                          emptyBox.textContent = "사진 미등록";
+                          emptyBox.removeAttribute('data-path');
+                          deleteButton.remove();
+                          photoCount--;
+                        })
+                        .catch(error => {
+                          console.error("파일 삭제 실패:", error);
+                          alert("파일 삭제에 실패했습니다.");
+                        });
+                  });
+
+                  emptyBox.appendChild(deleteButton);
+                  photoCount++;
+                })
+                .catch(error => {
+                  console.error(`이미지 로드 실패 (path: ${s3Key}):`, error);
+                  alert("파일 다운로드에 실패했습니다.");
+                });
+          }
+        })
+        .catch(error => {
+          console.error("파일 업로드 실패:", error);
+          alert("파일 업로드에 실패했습니다.");
         });
-
-        emptyBox.appendChild(deleteButton);
-      }
-    };
-    reader.readAsDataURL(file);
   }
+
+
+
+
+  // 이미지 삭제 시 S3에서도 삭제하는 함수 (옵션)
+  /*
+  function deleteImageFromS3(path) {
+      fetch('/delete', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ path: path })
+      })
+          .then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  console.log("S3에서 파일 삭제 성공");
+              } else {
+                  console.error("S3에서 파일 삭제 실패:", data.error);
+              }
+          })
+          .catch(error => {
+              console.error("S3에서 파일 삭제 실패:", error);
+          });
+  }
+  */
 }
+
+
 
 // ------------------------- 기존 함수들 -------------------------
 
@@ -1452,7 +1737,8 @@ function tenpoirySave() {
           const vltCause = getVltCause(detailContent);
           const instruction = getInstruction(detailContent);
           const vltPlcCd = getVltPlcCd(locationContent);
-          const photoPaths = getPhotoPaths(detailContent);
+          // const photoPaths = getPhotoPaths(detailContent);
+          const photoPaths = getPhotoPaths(inspectionContentWrapper);
 
           const subcategoryInspection = {
             subcategoryName: subcategoryName,
@@ -1626,16 +1912,15 @@ function getVltPlcCd(locationContent) {
   return null;
 }
 
-function getPhotoPaths(detailContent) {
-  const photoBoxes = detailContent.querySelectorAll('.photo-box');
+function getPhotoPaths(inspectionContentWrapper) {
+  const photoBoxes = inspectionContentWrapper.querySelectorAll('.photo-box');
   const paths = [];
   photoBoxes.forEach(box => {
-    const bgImage = box.style.backgroundImage;
-    if (bgImage && bgImage !== 'none') {
-      const urlMatch = bgImage.match(/url\(["']?(.+?)["']?\)/);
-      if (urlMatch && urlMatch[1]) {
-        paths.push(urlMatch[1]);
-      }
+    const path = box.getAttribute('data-path');
+    if (path) {
+      paths.push(path);
+    } else {
+      paths.push(null); // undefined 대신 null 사용
     }
   });
   return paths;
@@ -1648,26 +1933,139 @@ function getPhotoPaths(detailContent) {
 
 
 // -------------------------데이터 전달 함수-------------------------
+// function checkInspection() {
+//   // 모든 textarea 데이터를 가져옴
+//   const textareaData = {};
+//   document.querySelectorAll("textarea").forEach((textarea) => {
+//     textareaData[textarea.name] = textarea.value;
+//   });
+//
+//   // 폼을 생성하여 데이터를 전송
+//   const form = document.createElement("form");
+//   form.method = "POST";
+//   form.action = "/qsc/popup_middleCheck";
+//
+//   // textarea 데이터를 숨겨진 input 필드로 추가
+//   const input = document.createElement("input");
+//   input.type = "hidden";
+//   input.name = "textareaData";
+//   input.value = JSON.stringify(textareaData);
+//   form.appendChild(input);
+//
+//   // 폼을 문서에 추가한 뒤 제출
+//   document.body.appendChild(form);
+//   form.submit();
+// }
+
 function checkInspection() {
-  // 모든 textarea 데이터를 가져옴
+  // 모든 inspection-content-wrapper 요소를 가져옵니다.
+  const inspectionWrappers = document.querySelectorAll('.inspection-content-wrapper');
+  let allInputsValid = true; // 모든 입력이 유효한지 확인하기 위한 플래그
+
+  // 각 문항을 순회하며 검증합니다.
+  inspectionWrappers.forEach(wrapper => {
+    let answer = null;
+
+    // 2지선다형 답변 가져오기
+    const activeBtn = wrapper.querySelector('.answer-btn.active');
+    if (activeBtn) {
+      answer = activeBtn.getAttribute('data-option-value');
+    } else {
+      // 5지선다형 답변 가져오기
+      const selectedRadio = wrapper.querySelector('input[type="radio"]:checked');
+      if (selectedRadio) {
+        answer = selectedRadio.value;
+      }
+    }
+
+    if (!answer) {
+      // 답변이 선택되지 않은 경우
+      allInputsValid = false;
+      return; // 다음 문항으로 넘어감
+    }
+
+    // 부정적인 답변인지 확인
+    const negativeAnswers = ['부적합', '나쁨', '매우나쁨'];
+    if (negativeAnswers.includes(answer)) {
+      // 위치정보와 상세입력 필드 검증
+      const locationContent = wrapper.querySelector('.location-content');
+      const detailContent = wrapper.querySelector('.detail-content');
+
+      // 위치정보 라디오 버튼 확인
+      const locationRadios = locationContent.querySelectorAll('input[name^="location_"]');
+      const locationChecked = Array.from(locationRadios).some(radio => radio.checked);
+      if (!locationChecked) {
+        allInputsValid = false;
+        return;
+      }
+
+      // "기타"가 선택된 경우 추가 입력 확인
+      const locationEtcRadio = locationContent.querySelector('input[name^="location_"][value="기타"]');
+      if (locationEtcRadio && locationEtcRadio.checked) {
+        const etcInput = locationContent.querySelector('.etc-input');
+        if (!etcInput || !etcInput.value.trim()) {
+          allInputsValid = false;
+          return;
+        }
+      }
+
+      // 상세입력 필드 확인
+      const requiredDetailFields = [
+        '.product-name',
+        '.violation-quantity',
+        '.reason',
+        '.action',
+        '.violation'
+      ];
+      for (const selector of requiredDetailFields) {
+        const input = detailContent.querySelector(selector);
+        if (!input || !input.value.trim()) {
+          allInputsValid = false;
+          return;
+        }
+      }
+
+      // 귀책사유 라디오 버튼 확인
+      const responsibilityRadios = detailContent.querySelectorAll('input[name^="responsibility_"]');
+      const responsibilityChecked = Array.from(responsibilityRadios).some(radio => radio.checked);
+      if (!responsibilityChecked) {
+        allInputsValid = false;
+        return;
+      }
+
+      // 귀책사유 "기타" 선택 시 추가 입력 확인
+      const responsibilityEtcRadio = detailContent.querySelector('input[name^="responsibility_"][value="기타"]');
+      if (responsibilityEtcRadio && responsibilityEtcRadio.checked) {
+        const caupvdInput = detailContent.querySelector('.caupvd');
+        if (!caupvdInput || !caupvdInput.value.trim()) {
+          allInputsValid = false;
+          return;
+        }
+      }
+    }
+  });
+
+  if (!allInputsValid) {
+    alert('모든 항목을 응답해주십시오.');
+    return; // 검증 실패 시 함수 종료
+  }
+
+  // 폼 데이터를 수집하고 제출합니다.
   const textareaData = {};
   document.querySelectorAll("textarea").forEach((textarea) => {
     textareaData[textarea.name] = textarea.value;
   });
 
-  // 폼을 생성하여 데이터를 전송
   const form = document.createElement("form");
   form.method = "POST";
   form.action = "/qsc/popup_middleCheck";
 
-  // textarea 데이터를 숨겨진 input 필드로 추가
   const input = document.createElement("input");
   input.type = "hidden";
   input.name = "textareaData";
   input.value = JSON.stringify(textareaData);
   form.appendChild(input);
 
-  // 폼을 문서에 추가한 뒤 제출
   document.body.appendChild(form);
   form.submit();
 }
