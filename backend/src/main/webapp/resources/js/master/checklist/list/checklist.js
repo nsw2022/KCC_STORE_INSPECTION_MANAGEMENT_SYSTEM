@@ -128,7 +128,7 @@ function initializeGrid() {
         const selectedNode = event.node; // 선택된 노드를 가져옴
         selectedRowNo = selectedNode.rowIndex; // 선택된 행의 인덱스를 저장
         console.log("선택된 행 번호: ", selectedRowNo);
-
+        console.log("chklstNm: ", selectedRows[0].chklstNm);
         $(".brandPlaceholder").text(selectedRows[0].brandNm);
         $(".checklistPlaceholder").text(selectedRows[0].chklstNm);
         $(".masterChecklistPlaceholder").text(selectedRows[0].masterChklstNm);
@@ -302,7 +302,6 @@ function confirmationDialog() {
               }
               return Promise.reject();
             }
-            return response.json(); // 성공적으로 응답을 받았으면 데이터를 JSON으로 변환
           })
           .then((data) => {
             // 서버 저장이 성공하면 완료 알림 표시
@@ -609,9 +608,5 @@ $(window).on("beforeunload", function() {
 
 
 $('.edit-container').click(function(e) {
-  console.log("clicked");
-});
-
-$('.bi').click(function(e) {
   console.log("clicked");
 });

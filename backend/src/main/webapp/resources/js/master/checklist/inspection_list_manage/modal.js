@@ -1,11 +1,42 @@
 let clickedListText = "";
 let placeholderText = "";
+let defaultRowData = [];
+
+async function getChecklistAll(searchCriteria = {}) {
+    try {
+        const response = await fetch("/master/checklist/list", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(searchCriteria)
+        });
+
+        const data = await response.json();
+        console.log(data);
+
+        if (defaultRowData.length === 0) {
+            defaultRowData = data;
+        }
+
+        // rowData에 데이터를 할당
+        defaultRowData = data.map((item) => {
+            item.is_master_checklist = item.masterChklstNm === null ? 'N' : 'Y';
+            return item;
+        });
+
+        // 리스트 아이템 생성 호출
+        createChecklistItems();
+    } catch (error) {
+        console.error("Error fetching checklist data:", error);
+    }
+}
 
 // 리스트 아이템을 생성하는 함수
-$('.masterChklstSearchBtn .search-btn').click(function(e) {
+function createChecklistItems() {
     let listItems = '';  // 리스트 아이템을 담을 문자열 변수 초기화
 
-    placeholderText = $('.masterChecklistPlaceholder').text();
+    placeholderText = $('.chklstTitlePlaceholder').attr('placeholder');
 
     // defaultRowData 배열에서 placeholderText와 일치하는 항목을 분리
     const matchedItem = defaultRowData.find(item => item.chklstNm === placeholderText);
@@ -24,7 +55,7 @@ $('.masterChklstSearchBtn .search-btn').click(function(e) {
           <span class="me-3">${(i + 1).toString().padStart(2, '0')}</span>
           <p class="mb-0">${filteredData[i].chklstNm}</p>
         </div>
-        <button class="btn btn-primary btn-sm rounded-20 masterChecklistPreviewBtn" type="button" data-bs-target="#MasterChecklistPreviewModal" data-bs-toggle="modal">
+        <button class="btn btn-primary btn-sm rounded-20 checklistPreviewBtn" type="button" data-bs-target="#checklistPreviewModal" data-bs-toggle="modal">
           미리보기
           <i class="fa-regular fa-eye"></i>
         </button>
@@ -37,7 +68,7 @@ $('.masterChklstSearchBtn .search-btn').click(function(e) {
     // 기존 placeholderText와 일치하는 리스트 아이템 강조
     $('.list-group-item').each(function() {
         let text = $(this).find('p').text();
-        if(text === placeholderText){
+        if (text === placeholderText) {
             // 클릭된 리스트 아이템의 스타일을 변경
             $(this).find('.item-info').css({
                 'background-color': '#f2f6ff',
@@ -69,9 +100,14 @@ $('.masterChklstSearchBtn .search-btn').click(function(e) {
         });
     });
 
-    $('.chklstSelectBtn').click(function(){
-        $('.masterChecklistPlaceholder').text(clickedListText);
+    $('.chklstSelectBtn').click(function() {
+        $('.chklstTitlePlaceholder').text(clickedListText);
     });
+}
+
+// 클릭 시 모든 체크리스트 불러오기
+$('.chklstTitlePlaceholder').click(function(e) {
+    getChecklistAll();
 });
 
 // 검색 버튼 클릭 시 실행
@@ -95,7 +131,7 @@ $('.chklst-search-btn').click(function() {
           <span class="me-3">${(i + 1).toString().padStart(2, '0')}</span>
           <p class="mb-0">${filteredData[i].chklstNm}</p>
         </div>
-        <button class="btn btn-primary btn-sm rounded-20 preview-btn masterChecklistPreviewBtn" type="button" data-bs-target="#MasterChecklistPreviewModal" data-bs-toggle="modal">
+        <button class="btn btn-primary btn-sm rounded-20 checklistPreviewBtn" type="button" data-bs-target="#checklistPreviewModal" data-bs-toggle="modal">
           미리보기
           <i class="fa-regular fa-eye"></i>
         </button>
@@ -131,4 +167,9 @@ $('.chklst-search-box').on('keyup', function(event) {
     if (event.key === 'Enter') {
         $('.chklst-search-btn').click();
     }
+});
+
+// 선택 시 placeholder 내용 수정
+$('.chklstSelectBtn').click(function() {
+    $('.chklstTitlePlaceholder').attr('placeholder', clickedListText);
 });

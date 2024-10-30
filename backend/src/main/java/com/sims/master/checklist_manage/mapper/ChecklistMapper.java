@@ -1,11 +1,13 @@
 package com.sims.master.checklist_manage.mapper;
 
 import com.sims.master.checklist_manage.vo.ChecklistDeleteRequest;
+import com.sims.master.checklist_manage.vo.ChecklistPreviewResponse;
 import com.sims.master.checklist_manage.vo.ChecklistRequest;
 import com.sims.master.checklist_manage.vo.ChecklistResponse;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description 체크리스트 관리 매퍼
@@ -59,5 +61,6 @@ public interface ChecklistMapper {
      */
     public int insertOrUpdateChecklist(List<ChecklistRequest> checklistRequests);
 
+    public List<Map<String, Object>> selectChecklistPreview(String chklstNm);
 
 }

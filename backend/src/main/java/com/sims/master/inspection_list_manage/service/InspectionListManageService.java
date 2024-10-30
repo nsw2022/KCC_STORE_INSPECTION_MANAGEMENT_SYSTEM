@@ -1,5 +1,7 @@
 package com.sims.master.inspection_list_manage.service;
 
+import com.sims.master.inspection_list_manage.vo.InspectionPageResponse;
+
 public interface InspectionListManageService {
-    public String selectChklstNmByChklstId(String chklstId);
+    public InspectionPageResponse selectChklstNmByChklstId(String chklstId);
 }

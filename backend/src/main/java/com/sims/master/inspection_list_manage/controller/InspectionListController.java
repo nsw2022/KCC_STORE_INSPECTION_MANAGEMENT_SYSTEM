@@ -1,6 +1,7 @@
 package com.sims.master.inspection_list_manage.controller;
 
 import com.sims.master.inspection_list_manage.service.InspectionListManageService;
+import com.sims.master.inspection_list_manage.vo.InspectionPageResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -21,7 +22,11 @@ public class InspectionListController {
     @GetMapping("/inspection-list-manage/{chklst-id}")
     public String getInspectionListManagePage(@PathVariable (value = "chklst-id")String chklistId, Model model){
         model.addAttribute("chklstId", chklistId);
-        model.addAttribute("chklstNm", inspectionListService.selectChklstNmByChklstId(chklistId));
+
+        InspectionPageResponse  response = inspectionListService.selectChklstNmByChklstId(chklistId);
+
+        model.addAttribute("chklstNm", response.getChklstNm());
+        model.addAttribute("masterChklstNm", response.getMasterChklstNm());
 
         return "master/checklist/inspection_list_manage/inspection_list_manage";
     }

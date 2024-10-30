@@ -1,6 +1,7 @@
 package com.sims.master.inspection_list_manage.service;
 
 import com.sims.master.inspection_list_manage.mapper.InspectionListManageMapper;
+import com.sims.master.inspection_list_manage.vo.InspectionPageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +11,7 @@ public class InspectionListManageServiceImpl implements InspectionListManageServ
 
     private final InspectionListManageMapper inspectionListManageMapper;
     @Override
-    public String selectChklstNmByChklstId(String chklstId) {
+    public InspectionPageResponse selectChklstNmByChklstId(String chklstId) {
 
         return inspectionListManageMapper.selectChklstNmByChklstId(chklstId);
     }

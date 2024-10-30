@@ -2,7 +2,6 @@ package com.sims.master.checklist_manage.controller;
 
 import com.sims.master.checklist_manage.service.ChecklistService;
 import com.sims.master.checklist_manage.vo.*;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -78,5 +77,16 @@ public class ChecklistController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    /**
+     * 체크리스트 미리보기
+     * @param chklstNm 체크리스트 이름
+     * @return 체크리스트(분류, 평가항목, 선택지)
+     */
+    @GetMapping("/checklist/detail/{chklst-nm}")
+    @ResponseBody
+    public ResponseEntity<ChecklistPreviewResponse> selectChecklistDetail(@PathVariable("chklst-nm") String chklstNm){
+        log.info("chklstNm = {}", chklstNm);
+        return new ResponseEntity<ChecklistPreviewResponse>(checklistService.getComplianceData(chklstNm), HttpStatus.OK);
+    }
 
 }
