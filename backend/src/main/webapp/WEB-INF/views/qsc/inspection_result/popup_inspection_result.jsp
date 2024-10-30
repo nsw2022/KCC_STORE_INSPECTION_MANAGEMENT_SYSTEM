@@ -51,6 +51,12 @@
     <div class="inspection-tabs">
         <button class="inspection-tab active" data-tab="report-summary">보고서 간략</button>
         <button class="inspection-tab" data-tab="detailed-result">세부결과</button>
+        <div class="d-flex align-items-center justify-content-end" style="height: 100%;">
+            부적합 사항만 보기
+            <input type="checkbox" id="checkboxInput">
+            <label for="checkboxInput" class="toggleSwitch ms-2">
+            </label>
+        </div>
     </div>
 
     <%--  ----------------탭에 따라서 변하는 구역----------------  --%>
@@ -67,10 +73,10 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td>70</td>
-                    <td>70</td>
-                    <td>30</td>
-                    <td>0</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                 </tr>
                 </tbody>
             </table>
@@ -78,11 +84,11 @@
             <div class="grade-section">
                 <div class="grade-box">
                     <p>등급</p>
-                    <p class="grade-text"><span>S</span> 등급</p>
+                    <p class="grade-text"><span></span> 등급</p>
                 </div>
                 <div class="total-score-box">
                     <p>백점환산</p>
-                    <p class="total-score-text"><span>100</span> 점</p>
+                    <p class="total-score-text"><span></span> 점</p>
                 </div>
             </div>
         </div>
@@ -93,13 +99,13 @@
                 <div class="fine-box-wrapper">
                     <p>과태료</p>
                     <div class="fine-box">
-                        <p class="fine-amount"><span>0</span> 만원</p>
+                        <p class="fine-amount"><span></span> 만원</p>
                     </div>
                 </div>
                 <div class="closure-box-wrapper">
                     <p>영업정지</p>
                     <div class="closure-box">
-                        <p class="closure-days"><span>0</span> 일</p>
+                        <p class="closure-days"><span></span> 일</p>
                     </div>
                 </div>
 
@@ -144,4 +150,5 @@
 
 </body>
 <script src="/resources/js/qsc/inspection_result/popup_inspection_result.js"></script>
+<input type="hidden" value="${content}"/>
 </html>

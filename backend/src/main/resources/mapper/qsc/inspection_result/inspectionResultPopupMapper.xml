@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sims.qsc.inspection_result.mapper.InspectionResultPopupMapper">
+
+	<!-- selectInspectionResultDetailByInspResultId에 쓰이는 resultMap-->
+	<resultMap type="com.sims.qsc.inspection_result.vo.InspectionResultDetailResponse" id="inspResultDetail">
+		<id property="inspResultId" column="INSP_RESULT_ID"/>
+		<result property="storeNm" column="STORE_NM"/>
+		<result property="chklstNm" column="CHKLST_NM"/>
+		<result property="brandNm" column="brandNm"/>
+		<result property="inspTypeNm" column="inspTypeNm"/>
+		<result property="mbrNm" column="MBR_NM"/>
+		<result property="inspComplTm" column="INSP_COMPL_TM"/>
+		<result property="totalPenalty" column="TOTAL_PENALTY"/>
+		<result property="totalBsnSspn" column="TOTAL_BSN_SSPN"/>
+	</resultMap>
+
+	<select id="selectInspectionResultDetailByInspResultId" resultMap="inspResultDetail">
+		SELECT /* InsepctionResultMapper.selectInspectionResultDetailByInspResultId 원승언 */
+			INRE.INSP_RESULT_ID
+	      , ST.STORE_NM
+	      , CH.CHKLST_NM
+	      , CASE
+		        WHEN ST.BRAND_CD ='B001' THEN 'KCC 크라상'
+		        WHEN ST.BRAND_CD ='B002' THEN 'KCC 도넛'
+		        WHEN ST.BRAND_CD ='B003' THEN 'KCC 브레드'
+		        WHEN ST.BRAND_CD ='B004' THEN 'KCC 카페'
+		      END AS brandNm
+		  , CASE
+		        WHEN CH.INSP_TYPE_CD ='IT001' THEN '제품점검'
+		        WHEN CH.INSP_TYPE_CD ='IT002' THEN '위생점검'
+                WHEN CH.INSP_TYPE_CD ='IT003' THEN '정기점검'
+                WHEN CH.INSP_TYPE_CD ='IT004' THEN '비정기점검'
+                WHEN CH.INSP_TYPE_CD ='IT005' THEN '기획점검'
+		      END AS inspTypeNm
+	      , MB.MBR_NM
+	      , INRE.INSP_COMPL_TM
+	      , INRE.TOTAL_PENALTY
+	      , INRE.TOTAL_BSN_SSPN
+	    FROM
+	        INSP_RESULT INRE
+	    INNER JOIN INSP_SCHD INSC
+	        ON INSC.INSP_SCHD_ID = INRE.INSP_SCHD_ID
+	    INNER JOIN STORE ST
+	        ON ST.STORE_ID = INSC.STORE_ID
+	    INNER JOIN MBR MB
+	        ON MB.MBR_ID = ST.INSP_MBR_ID
+	    INNER JOIN INSP_PLAN INPL
+	    	ON INPL.INSP_PLAN_ID = INSC.INSP_PLAN_ID
+	    INNER JOIN CHKLST CH
+	        ON CH.CHKLST_ID = INPL.CHKLST_ID
+	    <where>
+	    	INRE.INSP_COMPL_W = 'Y'
+	  		<if test="inspResultId != null">
+	  			AND INRE.INSP_RESULT_ID = #{inspResultId}
+	  		</if>
+	  	</where>
+	</select>
+
+	<resultMap id="inspResultCategory" type="com.sims.qsc.inspection_result.vo.InspectionResultCategoryDetailResponse">
+		<result property="categoryNm" column="CTG_NM"/>
+		<result property="categoryStndScore" column="STND_SCORE"/>
+		<result property="totalScore" column="TOTAL_RECEIVED_SCORE"/>
+		<result property="profitCnt" column="PROFIT_CNT"/>
+		<result property="nonProfitCnt" column="NON_PROFIT_CNT"/>
+		<result property="totalEvaluationCnt" column="TOTAL_EVALUATION_CNT"/>
+	</resultMap>
+
+	<select id="selectInspectionResultCategoryContentByInspResultId" resultMap="inspResultCategory">
+		SELECT /* InsepctionResultMapper.selectInspectionResultCategoryContent 원승언 */
+			CHCTP.CTG_NM
+			, CHCTP.STND_SCORE
+			, SUM(EVCH.SCORE) TOTAL_RECEIVED_SCORE
+			, SUM(CASE WHEN EVAN.EVIT_ANSW_CONTENT IN('적합', '매우좋음', '좋음', '보통') THEN 1 ELSE 0 END) PROFIT_CNT
+			, SUM(CASE WHEN EVAN.EVIT_ANSW_CONTENT IN('부적합', '매우나쁨', '나쁨') THEN 1 ELSE 0 END) NON_PROFIT_CNT
+			, SUM(CASE WHEN EVAN.EVIT_ANSW_CONTENT IS NOT NULL THEN 1 ELSE 0 END) TOTAL_EVALUATION_CNT
+		FROM
+			EVIT_ANSW EVAN
+		INNER JOIN CHKLST_EVIT CHEV
+			ON EVAN.EVIT_ID = CHEV.EVIT_ID
+		INNER JOIN EVIT_CHCLST EVCH
+		   ON EVCH.EVIT_ID = EVAN.EVIT_ID
+		INNER JOIN CHKLST_CTG CHCTC
+		   ON CHCTC.CTG_ID = CHEV.CTG_ID
+		INNER JOIN CHKLST_CTG CHCTP
+		   ON CHCTP.CTG_ID = CHCTC.MASTER_CTG_ID
+		<where>
+			EVAN.EVIT_ANSW_CONTENT = EVCH.CHCLST_CONTENT
+			<if test="inspResultId != null">
+				AND EVAN.INSP_RESULT_ID = #{inspResultId}
+			</if>
+		</where>
+		GROUP BY
+		    CHCTP.CTG_NM, CHCTP.STND_SCORE
+	</select>
+
+
+	<select id="selectInspectionResultSubCategoryContentByInspResultId" resultType="com.sims.qsc.inspection_result.vo.InspectionResultSubCategoryDetailResponse">
+		SELECT /* InsepctionResultMapper.selectInspectionResultSubCategoryContentByInspResultId 원승언 */
+			DISTINCT
+			CHCTC.SEQ,
+			CHCTC.CTG_NM AS SUB_CTG_NM
+		FROM
+			INSP_RESULT INRE
+		INNER JOIN EVIT_ANSW EVAN
+			ON EVAN.INSP_RESULT_ID = INRE.INSP_RESULT_ID
+		LEFT JOIN EVIT_VLT EVVL
+			ON EVAN.EVIT_ID = EVVL.EVIT_ID
+			AND EVAN.INSP_RESULT_ID = EVVL.INSP_RESULT_ID
+		INNER JOIN CHKLST_EVIT CHEV
+			ON CHEV.EVIT_ID = EVAN.EVIT_ID
+		INNER JOIN EVIT_CHCLST EVCH
+			ON EVCH.EVIT_ID = EVAN.EVIT_ID
+		INNER JOIN CHKLST_CTG CHCTC
+			ON CHCTC.CTG_ID = CHEV.CTG_ID
+		INNER JOIN CHKLST_CTG CHCTP
+			ON CHCTC.MASTER_CTG_ID = CHCTP.CTG_ID
+		<where>
+			EVAN.EVIT_ANSW_CONTENT = EVCH.CHCLST_CONTENT
+		AND
+			INRE.INSP_COMPL_W = 'Y'
+			<if test="inspResultId != null">
+				AND EVAN.INSP_RESULT_ID = #{inspResultId}
+			</if>
+			<if test="categoryNm != null">
+				AND CHCTP.CTG_NM = #{categoryNm}
+			</if>
+		</where>
+		ORDER BY
+			CHCTC.SEQ
+	</select>
+
+	<resultMap id="inspResultBySubCategory" type="com.sims.qsc.inspection_result.vo.InspectionResultSubCategoriesQuestionsResponse">
+		<id property="evitId" column="EVIT_ID"/>
+		<result property="vltId" column="VLT_ID"/>
+		<result property="questionContent" column="EVIT_CONTENT"/>
+		<result property="questionSeq" column="EVIT_SEQ"/>
+		<result property="score" column="SCORE"/>
+		<result property="receivedScore" column="RECEIVED_SCORE"/>
+		<result property="penalty" column="PENALTY"/>
+		<result property="bsnSspnDaynum" column="BSN_SSPN_DAYNUM"/>
+		<result property="questionAnswContent" column="EVIT_ANSW_CONTENT"/>
+		<result property="vltPlcNm" column="VLT_PLC_NM"/>
+		<result property="pdtNmDtplc" column="PDT_NM_DTPLC"/>
+		<result property="vltContent" column="VLT_CONTENT"/>
+		<result property="cauPvdNm" column="CAUPVD_NM"/>
+		<result property="vltCnt" column="VLT_CNT"/>
+		<result property="vltCause" column="VLT_CAUSE"/>
+		<result property="instruction" column="INSTRUCTION"/>
+	</resultMap>
+
+	<select id="selectInspResultEvaluationByCategoryNms" resultMap="inspResultBySubCategory">
+		SELECT /* InsepctionResultMapper.selectInspResultEvaluationByCategoryNms 원승언 */
+			  EVAN.EVIT_ID
+		    , EVVL.VLT_ID
+			, CHEV.EVIT_CONTENT
+			, CHEV.EVIT_SEQ
+			, CHEV.SCORE
+			, EVCH.SCORE AS RECEIVED_SCORE
+			, EVCH.PENALTY
+			, EVCH.BSN_SSPN_DAYNUM
+			, EVAN.EVIT_ANSW_CONTENT
+			, CASE
+				WHEN EVVL.VLT_PLC_CD = 'VP001' THEN '매장(홀)'
+				WHEN EVVL.VLT_PLC_CD = 'VP002' THEN '주방'
+				WHEN EVVL.VLT_PLC_CD = 'VP003' THEN '카페'
+				ELSE EVVL.VLT_PLC_CD
+				END VLT_PLC_NM
+			, EVVL.PDT_NM_DTPLC
+			, EVVL.VLT_CONTENT
+			, CASE
+				WHEN EVVL.CAUPVD_CD = 'C001' THEN '점주'
+				WHEN EVVL.CAUPVD_CD = 'C002' THEN 'SV'
+				WHEN EVVL.CAUPVD_CD = 'C003' THEN '직원'
+				ELSE EVVL.CAUPVD_CD
+				END CAUPVD_NM
+			, EVVL.VLT_CNT
+			, EVVL.VLT_CAUSE
+			, EVVL.INSTRUCTION
+		FROM
+			INSP_RESULT INRE
+		INNER JOIN EVIT_ANSW EVAN
+		    ON EVAN.INSP_RESULT_ID = INRE.INSP_RESULT_ID
+		LEFT JOIN EVIT_VLT EVVL
+		    ON EVAN.EVIT_ID = EVVL.EVIT_ID
+		    AND EVAN.INSP_RESULT_ID = EVVL.INSP_RESULT_ID
+		INNER JOIN CHKLST_EVIT CHEV
+			ON CHEV.EVIT_ID = EVAN.EVIT_ID
+		INNER JOIN EVIT_CHCLST EVCH
+			ON EVCH.EVIT_ID = EVAN.EVIT_ID
+		INNER JOIN CHKLST_CTG CHCTC
+			ON CHCTC.CTG_ID = CHEV.CTG_ID
+		INNER JOIN CHKLST_CTG CHCTP
+			ON CHCTC.MASTER_CTG_ID = CHCTP.CTG_ID
+		<where>
+			EVAN.EVIT_ANSW_CONTENT = EVCH.CHCLST_CONTENT
+		  AND
+			INRE.INSP_COMPL_W = 'Y'
+			<if test="inspResultId != null">
+		  		AND EVAN.INSP_RESULT_ID = #{inspResultId}
+			</if>
+			<if test="categoryNm != null">
+		  		AND CHCTP.CTG_NM = #{categoryNm}
+			</if>
+			<if test="subCategoryNm != null">
+		  		AND CHCTC.CTG_NM = #{subCategoryNm}
+			</if>
+		</where>
+		ORDER BY
+			CHEV.EVIT_SEQ
+	</select>
+
+
+	<select id="selectAnswImgByInspResultId" resultType="com.sims.qsc.inspection_result.vo.InspectionResultAnswImgResponse">
+		SELECT /* InsepctionResultMapper.selectAnswImgByInspResultId 원승언 */
+		    EAI.EVIT_ID
+		  , EVIT_ANSW_IMG_PATH
+		  , SEQ
+		FROM
+		EVIT_ANSW_IMG EAI
+		INNER JOIN EVIT_ANSW EVAN
+		ON EVAN.INSP_RESULT_ID = EAI.INSP_RESULT_ID
+		AND EVAN.EVIT_ID = EAI.EVIT_ID
+		<where>
+			<if test="inspResultId != null">
+				AND EAI.INSP_RESULT_ID = #{inspResultId}
+			</if>
+		</where>
+	</select>
+</mapper>

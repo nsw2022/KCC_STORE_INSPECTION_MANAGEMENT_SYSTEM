@@ -7,7 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * @Description 가맹점 점검 결과
+ * @Description 가맹점 점검 결과 페이지에서 가맹점 점검결과 목록 보여줌
  * @author 원승언
  * @Date 2024.10.23
  *

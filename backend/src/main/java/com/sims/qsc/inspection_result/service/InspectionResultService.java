@@ -2,6 +2,8 @@ package com.sims.qsc.inspection_result.service;
 
 import java.util.List;
 
+import com.sims.qsc.inspection_result.vo.InspectionResultDetailResponse;
+import com.sims.qsc.inspection_result.vo.InspectionResultRequest;
 import com.sims.qsc.inspection_result.vo.InspectionResultResponse;
 
 /**
@@ -19,4 +21,7 @@ public interface InspectionResultService {
 	 * @return 점검 결과 목록 표시 
 	 */
 	public List<InspectionResultResponse> selectInspectionResultList(String currentMbrNo);
+
+	public List<InspectionResultResponse> selectInspectionResultListBySearch(InspectionResultRequest request, String currentMbrNo);
+
 }

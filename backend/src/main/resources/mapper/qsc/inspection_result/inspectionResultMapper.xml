@@ -41,6 +41,7 @@
 		    ON INPL.CHKLST_ID = CH.CHKLST_ID
 		<where>
 			INRE.INSP_COMPL_W ='Y'
+			
 			<choose>
                 <!-- SV로 로그인한 경우 -->
                 <when test="currentMbrNo != null and currentMbrNo.startsWith('S')">
@@ -63,29 +64,88 @@
                 </otherwise>
             </choose>
 
-			<!-- 
-			<if test="storeNm != null">
-				AND ST.STORE_NM = #{storeNm}
-			</if>
-			<if test="brandCd != null">
-				AND BRAND_CD = #{brandCd}
-			</if>
-			<if test="inspComplDt != null">
-				AND INSP_COMPL_DT = #{inspComplDt}
-			</if>
-			<if test="chklstNm != null">
-				AND CHKLST_NM = #{chklstNm}
-			</if>
-			<if test="inspTypeCd != null">
-				AND INSP_TYPE_CD = #{inspTypeCd}
-			</if>
-			<if test="mbrNm != null">
-				AND MB2.mbrNm = #{mbrNm}
-			</if>
-			 -->
 		</where>
 		ORDER BY
 			INSP_COMPL_TM DESC
 	</select>
+	<select id="selectInspectionResultBySearch" resultType="com.sims.qsc.inspection_result.vo.InspectionResultResponse"
+	parameterType="com.sims.qsc.inspection_result.vo.InspectionResultRequest">
+		SELECT	/* InsepctionResultMapper.selectInspectionResultList 원승언 */
+			  INSP_RESULT_ID
+			, STORE_NM
+			, CASE
+				  WHEN ST.BRAND_CD ='B001' THEN 'KCC 크라상'
+				  WHEN ST.BRAND_CD ='B002' THEN 'KCC 도넛'
+				  WHEN ST.BRAND_CD ='B003' THEN 'KCC 브레드'
+				  WHEN ST.BRAND_CD ='B004' THEN 'KCC 카페'
+			  END AS brandCd
+			, CHKLST_NM
+			, CASE
+				  WHEN INSP_TYPE_CD ='IT001' THEN '제품점검'
+				  WHEN INSP_TYPE_CD ='IT002' THEN '위생점검'
+				  WHEN INSP_TYPE_CD ='IT003' THEN '정기점검'
+				  WHEN INSP_TYPE_CD ='IT004' THEN '비정기점검'
+				  WHEN INSP_TYPE_CD ='IT005' THEN '기획점검'
+			  END AS inspTypeCd
+			, INSP_COMPL_TM
+			, MB2.MBR_NM
+		FROM
+			INSP_RESULT INRE
+		INNER JOIN INSP_SCHD INSC
+			ON INSC.INSP_SCHD_ID = INRE.INSP_SCHD_ID
+		INNER JOIN INSP_PLAN INPL
+			ON INPL.INSP_PLAN_ID = INSC.INSP_PLAN_ID
+		INNER JOIN STORE ST
+			ON ST.STORE_ID = INSC.STORE_ID
+		INNER JOIN MBR MB1
+			ON ST.SV_MBR_ID = MB1.MBR_ID
+		INNER JOIN MBR MB2
+			ON ST.INSP_MBR_ID = MB2.MBR_ID
+		INNER JOIN CHKLST CH
+			ON INPL.CHKLST_ID = CH.CHKLST_ID
+		<where>
+			INRE.INSP_COMPL_W ='Y'
+			<if test="request.storeNm != null">
+				AND ST.STORE_NM = #{request.storeNm}
+			</if>
+			<if test="request.brandCd != null">
+				AND ST.BRAND_CD = #{request.brandCd}
+			</if>
+			<if test="request.inspComplTm != null">
+				AND INRE.INSP_COMPL_TM LIKE '%'||#{request.inspComplTm}||'%'
+			</if>
+			<if test="request.chklstNm != null">
+				AND CH.CHKLST_NM = #{request.chklstNm}
+			</if>
+			<if test="request.inspTypeCd != null">
+				AND CH.INSP_TYPE_CD = #{request.inspTypeCd}
+			</if>
+			<if test="request.mbrNm != null">
+				AND MB2.MBR_NM = #{request.mbrNm}
+			</if>
+			<choose>
+				<!-- SV로 로그인한 경우 -->
+				<when test="currentMbrNo != null and currentMbrNo.startsWith('S')">
+					AND ST.SV_MBR_ID = (SELECT MBR_ID FROM MBR WHERE MBR_NO = #{currentMbrNo})
+				</when>
+				<!-- 점검자로 로그인한 경우 -->
+				<when test="currentMbrNo != null and currentMbrNo.startsWith('C')">
+					AND ST.SV_MBR_ID = (
+										SELECT
+											DISTINCT SV_MBR_ID
+										FROM
+											STORE
+										WHERE
+											INSP_MBR_ID = (SELECT MBR_ID FROM MBR WHERE MBR_NO= #{currentMbrNo})
+										)
+				</when>
+				<!-- 품질관리자 및 관리자인 경우: 조건 없음 -->
+				<otherwise>
 
+				</otherwise>
+			</choose>
+		</where>
+		ORDER BY
+			INSP_COMPL_TM DESC
+	</select>
 </mapper>
