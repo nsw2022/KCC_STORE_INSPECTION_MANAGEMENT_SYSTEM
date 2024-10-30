@@ -335,7 +335,20 @@ body {
   font-size: 13px;
   color: #858d9d;
 }
-
+.wrapper.disabled {
+  cursor: not-allowed;
+}
+.wrapper.disabled > .search-btn {
+  pointer-events: none; /* 모든 클릭 이벤트를 비활성화 */
+  /*opacity: 0.7;*/
+  background-color: #e9ecef !important;
+}
+select.disabled {
+  cursor: not-allowed;
+  pointer-events: none; /* 모든 클릭 이벤트를 비활성화 */
+  /*opacity: 0.7;*/
+  background-color: #e9ecef !important;
+}
 /******************   first modal   ********************/
 .list-group {
   max-height: 500px; /* 모바일에서는 최대 높이를 조금 줄임 */
