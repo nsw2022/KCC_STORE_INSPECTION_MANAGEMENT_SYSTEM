@@ -123,7 +123,6 @@ body{
 }
 
 .inspection-table td {
-
     vertical-align: top;
     font-size: 1rem;
     color: #333;
@@ -137,13 +136,13 @@ body{
 }
 
 .info-title {
-    width: 180px;
     vertical-align: top;
     word-break: break-word; /* 텍스트가 길면 줄 바꿈 */
     font-weight: 700;
     color: #333;
     white-space: nowrap;
-    padding: 15px;
+    padding: 26px;
+    text-align : center;
     box-sizing: border-box;
 }
 .inspection-table td.info-title p {
@@ -234,6 +233,50 @@ body{
 .report-summary, .detailed-result {
     width: 100%;
 }
+
+/** 부적합 문항 버튼 스타일 */
+/* From Uiverse.io by vinodjangid07 */
+/* To hide the checkbox */
+#checkboxInput {
+    display: none;
+}
+
+.toggleSwitch {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 46px;
+    height: 30px;
+    background-color: #aaa3a3;
+    border-radius: 20px;
+    cursor: pointer;
+    transition-duration: .2s;
+}
+
+.toggleSwitch::after {
+    content: "";
+    position: absolute;
+    height: 17px;
+    width: 17px;
+    left: 6px;
+    background-color: transparent;
+    border-radius: 50%;
+    transition-duration: .2s;
+    border: 5px solid white;
+}
+
+#checkboxInput:checked+.toggleSwitch::after {
+    transform: translateX(100%);
+    transition-duration: .2s;
+    background-color: white;
+}
+/* Switch background change */
+#checkboxInput:checked+.toggleSwitch {
+    background-color: rgb(148, 118, 255);
+    transition-duration: .2s;
+}
+
 
 
 

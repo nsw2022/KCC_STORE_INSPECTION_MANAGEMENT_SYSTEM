@@ -1,6 +1,5 @@
 package com.sims.qsc.store_inspection_schedule.controller;
 
-import java.io.Console;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
