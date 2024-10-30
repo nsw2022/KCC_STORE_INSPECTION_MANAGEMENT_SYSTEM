@@ -52,6 +52,12 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
     }
 
     @Override
+    public List<String> selectBottomChkLst() { return scheduleMapper.selectBottomChkLst();}
+
+    @Override
+    public List<String> selectBottomINSP() { return scheduleMapper.selectBottomINSP(); }
+
+    @Override
     public List<InspectionDetailsResponse> selectInspectionDetails(Integer storeId) {
         return scheduleMapper.selectInspectionDetails(storeId);
     }

@@ -86,6 +86,7 @@
                 , STO.STORE_ID
                 , STO.LATITUDE
                 , STO.LONGITUDE
+                , ISC.INSP_PLAN_DT
                 , INS.MBR_NO
                 , CASE
                         WHEN STO.BRAND_CD = 'B001' THEN 'KCC 크라상'
@@ -95,6 +96,7 @@
                 END AS BRAND_NM
                 , INS.MBR_NM AS INSPECTOR_NAME
                 , SV.MBR_NM AS SUPERVISOR_NAME
+                , ISR.INSP_COMPL_TM
         FROM INSP_SCHD ISC
                   INNER JOIN STORE STO
                             ON STO.STORE_ID = ISC.STORE_ID
@@ -104,6 +106,8 @@
                              ON INS.MBR_ID = STO.INSP_MBR_ID
                   INNER JOIN MBR SV
                              ON SV.MBR_ID = STO.SV_MBR_ID
+                  LEFT JOIN INSP_RESULT ISR
+                             ON ISR.INSP_SCHD_ID = ISC.INSP_SCHD_ID
         <where>
             <choose>
                 <!-- SV로 로그인한 경우 -->

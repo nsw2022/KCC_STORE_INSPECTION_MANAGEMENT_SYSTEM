@@ -29,23 +29,19 @@
             rel="stylesheet"
             href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
     />
-
+    <!-- SweetAlert2 CSS -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+            rel="stylesheet"
+    />
     <link rel="stylesheet" href="/resources/css/qsc/store_inspection/store_inspection.css">
     <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js'></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript"
             src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${naverClientId}&submodules=panorama,geocoder"
             defer></script>
-    <!--
-        서브 모듈 종류
-            submodules로 지정할 수 있는 주요 서브 모듈은 다음과 같습니다:
-
-            panorama: 파노라마 뷰 기능을 제공합니다.
-            geocoder: 주소 검색 및 좌표 변환(지오코딩) 기능을 제공합니다.
-            drawing: 지도 위에 도형(마커, 선, 다각형 등)을 그리는 기능을 제공합니다.
-            visualization: 데이터 시각화(히트맵 등) 기능을 제공합니다.
-     -->
-
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
 <body>
@@ -257,20 +253,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td>혜화점</td>
-                        <td>2024.09.17</td>
-                        <td>08:30</td>
-                        <td>위생점검</td>
-                        <td>2024.09.30</td>
-                    </tr>
-                    <tr>
-                        <td>혜화점</td>
-                        <td>2024.09.18</td>
-                        <td>15:00</td>
-                        <td>품질점검</td>
-                        <td>2024.10.01</td>
-                    </tr>
+
                     </tbody>
                 </table>
             </section>

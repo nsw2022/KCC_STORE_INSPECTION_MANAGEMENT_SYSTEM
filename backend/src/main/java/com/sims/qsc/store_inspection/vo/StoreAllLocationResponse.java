@@ -18,8 +18,10 @@ public class StoreAllLocationResponse {
     private String storeId;
     private Double latitude;
     private Double longitude;
+    private String inspPlanDt;
     private String mbrNo;
     private String brandNm;
     private String inspectorName;
     private String supervisorName;
+    private String inspComplTm;
 }

@@ -92,6 +92,18 @@ public class InspectionScheduleRestController {
         return ResponseEntity.ok(inspectors);
     }
 
+    @GetMapping("/bottom-checkLists")
+    public ResponseEntity<List<String>> selectAllBottomCheckLists() {
+        List<String> bottomCheckLists = inspectionScheduleService.selectBottomChkLst();
+        return ResponseEntity.ok(bottomCheckLists);
+    }
+
+    @GetMapping("/bottom-INSP-TYPE")
+    public ResponseEntity<List<String>> selectBottomINSPType() {
+        List<String> bottomINSP = inspectionScheduleService.selectBottomINSP();
+        return ResponseEntity.ok(bottomINSP);
+    }
+
     /**
      * 특정 스토어의 검사 상세 정보를 조회
      *

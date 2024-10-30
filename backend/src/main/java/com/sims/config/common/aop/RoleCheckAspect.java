@@ -10,6 +10,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
+
 /**
  * @Description 권한 체크 AOP 클래스
  * @Author 유재원
@@ -102,5 +104,22 @@ public class RoleCheckAspect {
         }
 
         return joinPoint.proceed();
+    }
+
+    /**
+     * SV, 점검자만 가능
+     * @param joinPoint
+     * @return
+     * @throws Throwable
+     */
+    @Around("@annotation(com.sims.config.common.aop.SVInspectorRolCheck)")
+    public Object checkSVInspectorRole(ProceedingJoinPoint joinPoint) throws Throwable {
+        GrantedAuthority role = (GrantedAuthority) SecurityContextHolder.getContext().getAuthentication().getAuthorities().iterator().next();
+        String roleName = role.getAuthority();
+
+        if ("MR003".equals(roleName) || "MR004".equals(roleName)) {
+            return joinPoint.proceed();
+        }
+        throw new CustomException(ErrorCode.HANDLE_ACCESS_DENIED);
     }
 }

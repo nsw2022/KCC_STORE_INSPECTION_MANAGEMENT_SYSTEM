@@ -1,5 +1,7 @@
 package com.sims.qsc.store_inspection.controller;
 
+import com.sims.config.Exception.ErrorCode;
+import com.sims.config.common.aop.SVInspectorRolCheck;
 import com.sims.qsc.store_inspection.service.StoreInspectionService;
 import com.sims.qsc.store_inspection.vo.StoreAllLocationResponse;
 import com.sims.qsc.store_inspection.vo.StoreLocationResponse;
@@ -50,6 +52,7 @@ public class StoreMapRestController {
      * @return 최적화된 경로 정보 또는 오류 메시지
      */
     @PostMapping("/select-driving-route")
+    @SVInspectorRolCheck // 'Rol'에서 'Role'로 수정
     public ResponseEntity<?> selectDrivingRoute(@RequestBody RouteRequest routeRequest) {
         try {
             RouteResponse response = mapTestService.selectDrivingRoute(routeRequest);
@@ -59,8 +62,8 @@ public class StoreMapRestController {
                     // 성공적인 응답
                     return ResponseEntity.ok(response);
                 } else {
-                    // API 응답 코드가 실패를 나타낼 경우
-                    return ResponseEntity.badRequest().body(response.getMessage());
+                    // 접근 거부 오류 처리
+                    return ResponseEntity.status(403).body(ErrorCode.HANDLE_ACCESS_DENIED);
                 }
             } else {
                 // 응답이 null인 경우

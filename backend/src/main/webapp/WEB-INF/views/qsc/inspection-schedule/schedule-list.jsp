@@ -268,9 +268,9 @@
                                 <!-- 점검유형 -->
                                 <div class="col-lg-3 col-md-6 col-12">
                                     <label for="inspectionType" class="form-label">점검 유형</label>
-                                    <div class="wrapper" data-autocomplete="INSP">
+                                    <div class="wrapper" data-autocomplete="BottomINSP" data-include-all="false">
                                         <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                                            <span>정기 점검 검색</span>
+                                            <span id="bottom-INSP">정검 유형</span>
                                             <i class="uil uil-angle-down"></i>
                                         </div>
                                         <div class="hide-list">
@@ -290,9 +290,9 @@
                                 <!-- 체크리스트명 -->
                                 <div class="col-lg-3 col-md-6 col-12">
                                     <label for="checklistName" class="form-label">체크리스트</label>
-                                    <div class="wrapper" data-autocomplete="CHKLST">
+                                    <div class="wrapper" data-autocomplete="BottomCHKLST" data-include-all="false">
                                         <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                                            <span>체크리스트 검색</span>
+                                            <span id="bottom-CHKLST">체크리스트</span>
                                             <i class="uil uil-angle-down"></i>
                                         </div>
                                         <div class="hide-list">
@@ -312,9 +312,9 @@
                                 <!-- 가맹점 -->
                                 <div class="col-lg-3 col-md-6 col-12">
                                     <label for="storeSearch" class="form-label">가맹점</label>
-                                    <div class="wrapper" data-autocomplete="store">
+                                    <div class="wrapper" data-autocomplete="store" data-include-all="false">
                                         <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                                            <span>가맹점 검색</span>
+                                            <span id="bottom-STORE">가맹점</span>
                                             <i class="uil uil-angle-down"></i>
                                         </div>
                                         <div class="hide-list">
@@ -334,9 +334,9 @@
                                 <!-- 브랜드 -->
                                 <div class="col-lg-3 col-md-6 col-12">
                                     <label for="brandSearch" class="form-label">브랜드</label>
-                                    <div class="wrapper" data-autocomplete="BRAND">
+                                    <div class="wrapper" data-autocomplete="BRAND" data-include-all="false">
                                         <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                                            <span>브랜드 검색</span>
+                                            <span id="bottom-BRAND">브랜드</span>
                                             <i class="uil uil-angle-down"></i>
                                         </div>
                                         <div class="hide-list">
@@ -356,9 +356,9 @@
                                 <!-- 점검자 -->
                                 <div class="col-lg-3 col-md-6 col-12">
                                     <label for="inspectorSearch" class="form-label">점검자</label>
-                                    <div class="wrapper" data-autocomplete="inspector">
+                                    <div class="wrapper" data-autocomplete="inspector" data-include-all="false">
                                         <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                                            <span>점검자 검색</span>
+                                            <span id="bottom-INSPECTOR">점검자</span>
                                             <i class="uil uil-angle-down"></i>
                                         </div>
                                         <div class="hide-list">
@@ -613,7 +613,7 @@
 </div>
 
 
-<script src="/resources/js/qsc/store_inspection/popup_inspection.js"></script>
+<%--<script src="/resources/js/qsc/store_inspection/popup_inspection.js"></script>--%>
 <script src="/resources/js/qsc/inspection_schedule/schedule_list.js"></script>
 <!-- SweetAlert2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

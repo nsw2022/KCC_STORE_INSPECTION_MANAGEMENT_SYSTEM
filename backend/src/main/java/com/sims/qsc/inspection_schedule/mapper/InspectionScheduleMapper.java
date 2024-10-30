@@ -41,8 +41,13 @@ public interface InspectionScheduleMapper {
     /** @return 자동완성 점검자 리스트 */
     List<String> selectAllInspectors();
 
+    /** @return 하단부분 자동완성  체크리스트 리스트 */
+    List<String> selectBottomChkLst();
+
+    /** @return 하단부분 자동완성 점검유형 */
+    List<String> selectBottomINSP();
+
     /**
-     *
      * @param storeId 가맹점 번호 - 시퀀스
      * @return 가맹점별 체크 리스트, 체크리스트 문항과 점수
      */

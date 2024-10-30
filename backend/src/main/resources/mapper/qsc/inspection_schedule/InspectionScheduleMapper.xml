@@ -20,6 +20,16 @@
             , MBR.MBR_NM
             , INP.CNT_CD
             , INP.FRQ_CD
+            , CASE
+                WHEN CHK.INSP_TYPE_CD = 'IT001' THEN '제품점검'
+                WHEN CHK.INSP_TYPE_CD = 'IT002' THEN '위생점검'
+                WHEN CHK.INSP_TYPE_CD = 'IT003' THEN '정기점검'
+                WHEN CHK.INSP_TYPE_CD = 'IT004' THEN '비정기점검'
+                WHEN CHK.INSP_TYPE_CD = 'IT005' THEN '기획점검'
+            END AS INSP_TYPE_CD
+            , INP.WEEK
+            , INP.SLCT_DT
+
         FROM INSP_SCHD ISC
             INNER JOIN STORE STO
                 ON STO.STORE_ID = ISC.STORE_ID
@@ -166,6 +176,25 @@
         ORDER BY
             CC.SEQ, CE.EVIT_SEQ
 
+    </select>
+
+    <select id="selectBottomChkLst" resultType="String">
+        SELECT /* InspectionScheduleMapper.selectBottomChkLst  노승우 */
+            DISTINCT
+                CHK.CHKLST_NM
+        FROM CHKLST CHK
+        WHERE CHK.CHKLST_STTS_W = '1'
+            AND CHK.CHKLST_USE_W = 'Y'
+        ORDER BY CHK.CHKLST_NM
+    </select>
+
+    <select id="selectBottomINSP" resultType="String">
+        SELECT /* InspectionScheduleMapper.selectBottomINSP 노승우 */
+            DTL_CD_NM
+        FROM
+            COMM_CD_DTL
+        WHERE
+            COMM_CD_ID = '4'
     </select>
 
 

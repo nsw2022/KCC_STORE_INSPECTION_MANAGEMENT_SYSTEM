@@ -21,4 +21,7 @@ public class InspectionScheduleRequest {
     private String mbrNm; // 회원번호
     private String cntCd; // 횟수
     private String frqCd; // 빈도
+    private String inspTypeCd;//점검유형
+    private String week;// 요일
+    private String slctDt;// 월에 일자
 }
