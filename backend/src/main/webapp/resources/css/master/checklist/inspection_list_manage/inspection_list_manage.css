@@ -344,6 +344,11 @@ body {
   position: relative !important; /* 위치 속성 설정 (필요 시 추가) */
 }
 
+.category-btn:focus, accordion-button:focus{
+  outline:none !important;
+  box-shadow:none !important;
+}
+
 @media (max-width: 650px) {
   .container {
     margin: 0.1rem 0.1rem;

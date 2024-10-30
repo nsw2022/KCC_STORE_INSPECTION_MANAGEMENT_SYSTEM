@@ -58,6 +58,10 @@ public class ChecklistServiceImpl implements ChecklistService{
                 .build();
     }
 
+
+    /**
+     * @Todo 체크리스트명 중복 체크
+     */
     @Override
     @PRoleCheck
     @Transactional(rollbackFor = Exception.class)

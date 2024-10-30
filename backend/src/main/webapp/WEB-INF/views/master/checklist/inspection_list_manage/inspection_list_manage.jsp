@@ -362,7 +362,7 @@
               <%-------------- body --------------%>
               <div class="modal-body">
                 <div class="input-group mb-3 modal-search-box" style="    padding: .5rem 1rem;">
-                  <input type="text" class="form-control me-2 chklst-search-box" placeholder="체크리스트 검색" aria-label="Recipient's username" aria-describedby="button-addon3">
+                  <input type="text" class="form-control me-2 chklst-search-box" placeholder="체크리스트 검색" aria-label="Recipient's username" aria-describedby="button-addon">
                   <button class="btn btn-outline-secondary chklst-search-btn" type="button" id="button-addon">검색</button>
                 </div>
                 <ol class="list-group"></ol>
@@ -396,44 +396,6 @@
               <%--------------           body       ----------------------%>
               <div class="modal-body subCategory">
                 <div class="row row-cols-2 d-flex justify-content-between category">
-                  <div class="col mb-3">
-                    <div class="accordion" id="accordionExample">
-                      <div class="accordion-item inner-accordion-item">
-                        <h2 class="accordion-header">
-                          <button class="accordion-button inner-accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#outerCollapseOne" aria-expanded="false" aria-controls="outerCollapseOne">
-                            영업취소
-                          </button>
-                        </h2>
-                        <div id="outerCollapseOne" class="accordion-collapse collapse" >
-                          <div class="accordion-body inner-accordion-body p-0">
-                            <!-- 내부 아코디언 -->
-                            <div class="accordion" id="innerAccordion1">
-                              <div class="accordion-item inner-accordion-item border border-0">
-                                <h2 class="accordion-header" id="innerHeadingOne">
-                                  <button class="accordion-button inner-accordion-button collapsed border border-0" style="background-color: white !important;" type="button" data-bs-toggle="collapse" data-bs-target="#innerCollapseOne" aria-expanded="false" aria-controls="innerCollapseOne">
-                                    <span style="font: 400 13px Noto Sans KR">1. </span><span style="font: 400 13px Noto Sans KR">소비기한 변조 및 삭제</span>
-                                  </button>
-                                </h2>
-                                <div id="innerCollapseOne" class="accordion-collapse collapse" aria-labelledby="innerHeadingOne">
-                                  <div class="accordion-body inner-accordion-body">
-                                    <div class="row row-cols-2 btn-box">
-                                      <div class="col-lg border border-light-subtle d-flex justify-content-center align-items-center">
-                                        <span>예</span>
-                                      </div>
-                                      <div class="col-lg border border-light-subtle d-flex justify-content-center align-items-center">
-                                        <span>아니오</span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                            <!-- 내부 아코디언 -->
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
                 <div class="d-flex flex-row justify-content-end align-items-center score">
                   <span class="me-2">총</span>
@@ -446,24 +408,6 @@
           </div>
         </div>
         <%--  checklist second modal end     --%>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
       <%------------- master checklist modal -------------%>
@@ -480,7 +424,7 @@
             <%-------------- header --------------%>
             <%-------------- body --------------%>
             <div class="modal-body">
-              <div class="input-group mb-3 modal-search-box" style="    padding: .5rem 1rem;">
+              <div class="input-group mb-3 modal-search-box" style="padding: .5rem 1rem;">
                 <input type="text" class="form-control me-2 master-chklst-search-box" placeholder="체크리스트 검색" aria-label="Recipient's username" aria-describedby="button-addon3">
                 <button class="btn btn-outline-secondary master-chklst-search-btn" type="button" id="button-addon2">검색</button>
               </div>
@@ -497,8 +441,36 @@
       </div>
       <%-- master checklist modal end --%>
 
-
-
+          <%--  master checklist second modal start     --%>
+          <div class="modal fade" id="masterChecklistPreviewBtn" aria-hidden="false" aria-labelledby="details" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+              <div class="modal-content">
+                <%--------------          header       ----------------------%>
+                <div class="modal-header">
+                  <div class="large-category-group">
+                  </div>
+                  <button class="btn back-btn" data-bs-target="#masterChecklistModal" data-bs-toggle="modal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                      <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+                    </svg>
+                  </button>
+                </div>
+                <%--------------           header       ----------------------%>
+                <%--------------           body       ----------------------%>
+                <div class="modal-body subCategory">
+                  <div class="row row-cols-2 d-flex justify-content-between category">
+                  </div>
+                  <div class="d-flex flex-row justify-content-end align-items-center score">
+                    <span class="me-2">총</span>
+                    <span style="color: #D90D0D">100</span>
+                    <span class="me-2">점</span>
+                  </div>
+                </div>
+                <%--------------           body       ----------------------%>
+              </div>
+            </div>
+          </div>
+          <%-- master checklist second modal end     --%>
 
 
 

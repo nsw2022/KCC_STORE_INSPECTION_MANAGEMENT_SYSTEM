@@ -345,175 +345,241 @@ pageEncoding="UTF-8" %>
   </div>
 
 
-  <%-------------  modal -------------%>
-  <div class="modal fade" id="masterChecklistModal" aria-hidden="true" aria-labelledby="masterChecklistList" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content">
+<%--  &lt;%&ndash;-----------  modal -----------&ndash;%&gt;--%>
+<%--  <div class="modal fade" id="masterChecklistModal" aria-hidden="true" aria-labelledby="masterChecklistList" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">--%>
+<%--    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">--%>
+<%--      <div class="modal-content">--%>
 
-        <%-------------- header --------------%>
-          <div class="modal-header">
+<%--        &lt;%&ndash;------------ header ------------&ndash;%&gt;--%>
+<%--          <div class="modal-header">--%>
+<%--          <span class="modal-title fs-5" id="masterChecklistList" style="font: 450 16px 'Noto Sans KR'">--%>
+<%--            마스터체크리스트 선택--%>
+<%--          </span>--%>
+<%--            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>--%>
+<%--          </div>--%>
+<%--        &lt;%&ndash;------------ header ------------&ndash;%&gt;--%>
+
+<%--        &lt;%&ndash;------------ body ------------&ndash;%&gt;--%>
+<%--        <div class="modal-body">--%>
+<%--          <div class="input-group mb-3 modal-search-box" style="    padding: .5rem 1rem;">--%>
+<%--            <input type="text" class="form-control me-2 chklst-search-box" placeholder="체크리스트 검색" aria-label="Recipient's username" aria-describedby="button-addon2">--%>
+<%--            <button class="btn btn-outline-secondary chklst-search-btn" type="button" id="button-addon2">검색</button>--%>
+<%--          </div>--%>
+<%--          <ol class="list-group">--%>
+
+<%--          </ol>--%>
+<%--        </div>--%>
+<%--        &lt;%&ndash;------------ modal body ------------&ndash;%&gt;--%>
+
+<%--        &lt;%&ndash;------------ modal footer ------------&ndash;%&gt;--%>
+<%--        <div class="modal-footer">--%>
+<%--          <button class="btn btn-primary chklstSelectBtn" data-bs-dismiss="modal">선택</button>--%>
+<%--        </div>--%>
+<%--        &lt;%&ndash;------------ modal footer ------------&ndash;%&gt;--%>
+<%--      </div>--%>
+<%--    </div>--%>
+<%--  </div>--%>
+
+
+<%--  &lt;%&ndash;    second modal     &ndash;%&gt;--%>
+<%--  <div class="modal fade" id="exampleModalToggle2" aria-hidden="false" aria-labelledby="details" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">--%>
+<%--    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">--%>
+<%--      <div class="modal-content">--%>
+<%--        &lt;%&ndash;------------         second modal header       --------------------&ndash;%&gt;--%>
+<%--        <div class="modal-header">--%>
+<%--          <div class="large-category-group">--%>
+<%--            <button type="button" class="btn btn-primary">중대법규</button>--%>
+<%--            <button type="button" class="btn btn-outline-primary">기타법규</button>--%>
+<%--          </div>--%>
+<%--          <button class="btn back-btn" data-bs-target="#masterChecklistModal" data-bs-toggle="modal">--%>
+<%--            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">--%>
+<%--              <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>--%>
+<%--            </svg>--%>
+<%--          </button>--%>
+<%--        </div>--%>
+<%--        &lt;%&ndash;------------          second modal header       --------------------&ndash;%&gt;--%>
+<%--        &lt;%&ndash;------------          second modal body       --------------------&ndash;%&gt;--%>
+<%--        <div class="modal-body">--%>
+<%--          <div class="row d-flex justify-content-between">--%>
+<%--            <div class="col-lg mb-3">--%>
+<%--              <div class="accordion" id="accordionExample">--%>
+<%--                <div class="accordion-item">--%>
+<%--                  <h2 class="accordion-header">--%>
+<%--                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">--%>
+<%--                      영업취소--%>
+<%--                    </button>--%>
+<%--                  </h2>--%>
+<%--                  <div id="collapseOne" class="accordion-collapse collapse" >--%>
+<%--                    <div class="accordion-body p-0">--%>
+<%--                      <!-- 내부 아코디언 -->--%>
+<%--                      <div class="accordion" id="innerAccordion1">--%>
+<%--                        <div class="accordion-item border border-0">--%>
+<%--                          <h2 class="accordion-header" id="innerHeadingOne">--%>
+<%--                            <button class="accordion-button collapsed border border-0" style="background-color: white !important;" type="button" data-bs-toggle="collapse" data-bs-target="#innerCollapseOne" aria-expanded="false" aria-controls="innerCollapseOne">--%>
+<%--                              <span style="font: 400 13px Noto Sans KR">1. </span><span style="font: 400 13px Noto Sans KR">소비기한 변조 및 삭제</span>--%>
+<%--                            </button>--%>
+<%--                          </h2>--%>
+<%--                          <div id="innerCollapseOne" class="accordion-collapse collapse" aria-labelledby="innerHeadingOne">--%>
+<%--                            <div class="accordion-body">--%>
+<%--                              <div class="row row-cols-2 btn-box">--%>
+<%--                                <div class="col-lg border border-light-subtle d-flex justify-content-center align-items-center">--%>
+<%--                                  <span>예</span>--%>
+<%--                                </div>--%>
+<%--                                <div class="col-lg border border-light-subtle d-flex justify-content-center align-items-center">--%>
+<%--                                  <span>아니오</span>--%>
+<%--                                </div>--%>
+<%--                              </div>--%>
+<%--                            </div>--%>
+<%--                          </div>--%>
+<%--                        </div>--%>
+<%--                    </div>--%>
+<%--                    <!-- 내부 아코디언 -->--%>
+<%--                  </div>--%>
+<%--                  </div>--%>
+<%--                </div>--%>
+<%--            </div>--%>
+<%--            </div>--%>
+<%--            <div class="col-lg mb-3">--%>
+<%--              <div class="accordion-item">--%>
+<%--                <h2 class="accordion-header">--%>
+<%--                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">--%>
+<%--                    영업정지 1개월 이상--%>
+<%--                  </button>--%>
+<%--                </h2>--%>
+<%--                <div id="collapseTwo" class="accordion-collapse collapse">--%>
+<%--                  <!-- 내부 아코디언 -->--%>
+<%--                  <div class="accordion" id="innerAccordion2">--%>
+<%--                    <div class="accordion-item border border-0">--%>
+<%--                      <h2 class="accordion-header" id="innerHeadingTwo">--%>
+<%--                        <button class="accordion-button collapsed border border-0" style="background-color: white !important;" type="button" data-bs-toggle="collapse" data-bs-target="#innerCollapseTwo" aria-expanded="false" aria-controls="innerCollapseTwo">--%>
+<%--                          <span style="font: 400 13px Noto Sans KR">1. </span><span style="font: 400 13px Noto Sans KR">표시사항 전부를 표시하지 않은 식품</span>--%>
+<%--                        </button>--%>
+<%--                      </h2>--%>
+<%--                      <div id="innerCollapseTwo" class="accordion-collapse collapse" aria-labelledby="innerHeadingTwo">--%>
+<%--                        <div class="accordion-body">--%>
+<%--                          <div class="row d-flex justify-content-center radio-box">--%>
+<%--                            <div class="col form-check">--%>
+<%--                              <label class="form-check-label" for="flexRadioDefault1">--%>
+<%--                                매우 좋음--%>
+<%--                              </label>--%>
+<%--                              <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">--%>
+<%--                            </div>--%>
+<%--                            <div class="col form-check">--%>
+<%--                              <label class="form-check-label" for="flexRadioDefault1">--%>
+<%--                                좋음--%>
+<%--                              </label>--%>
+<%--                              <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">--%>
+<%--                            </div>--%>
+<%--                            <div class="col form-check">--%>
+<%--                              <label class="form-check-label" for="flexRadioDefault1">--%>
+<%--                                보통--%>
+<%--                              </label>--%>
+<%--                              <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault3">--%>
+<%--                            </div>--%>
+<%--                            <div class="col form-check">--%>
+<%--                              <label class="form-check-label" for="flexRadioDefault1">--%>
+<%--                                나쁨--%>
+<%--                              </label>--%>
+<%--                              <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault4">--%>
+<%--                            </div>--%>
+<%--                            <div class="col form-check">--%>
+<%--                              <label class="form-check-label" for="flexRadioDefault1">--%>
+<%--                                매우 나쁨--%>
+<%--                              </label>--%>
+<%--                              <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault5">--%>
+<%--                            </div>--%>
+<%--                          </div>--%>
+<%--                        </div>--%>
+<%--                      </div>--%>
+<%--                    </div>--%>
+<%--                  </div>--%>
+<%--                  <!-- 내부 아코디언 -->--%>
+<%--                </div>--%>
+<%--              </div>--%>
+<%--            </div>--%>
+<%--          </div>--%>
+<%--          <div class="d-flex flex-row justify-content-end align-items-center score">--%>
+<%--            <span class="me-2">총</span>--%>
+<%--            <span style="color: #D90D0D">100</span>--%>
+<%--            <span class="me-2">점</span>--%>
+<%--          </div>--%>
+
+
+
+<%--        </div>--%>
+<%--        &lt;%&ndash;------------         second modal  body       --------------------&ndash;%&gt;--%>
+
+<%--      </div>--%>
+<%--    </div>--%>
+<%--  </div>--%>
+
+<%--  &lt;%&ndash;--------- second modal end -------------&ndash;%&gt;--%>
+
+<%-------------  modal -------------%>
+<div class="modal fade" id="masterChecklistModal" aria-hidden="true" aria-labelledby="masterChecklistList" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+
+      <%-------------- header --------------%>
+      <div class="modal-header">
           <span class="modal-title fs-5" id="masterChecklistList" style="font: 450 16px 'Noto Sans KR'">
             마스터체크리스트 선택
           </span>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-        <%-------------- header --------------%>
-
-        <%-------------- body --------------%>
-        <div class="modal-body">
-          <div class="input-group mb-3 modal-search-box" style="    padding: .5rem 1rem;">
-            <input type="text" class="form-control me-2 chklst-search-box" placeholder="체크리스트 검색" aria-label="Recipient's username" aria-describedby="button-addon2">
-            <button class="btn btn-outline-secondary chklst-search-btn" type="button" id="button-addon2">검색</button>
-          </div>
-          <ol class="list-group">
-
-          </ol>
-        </div>
-        <%-------------- modal body --------------%>
-
-        <%-------------- modal footer --------------%>
-        <div class="modal-footer">
-          <button class="btn btn-primary chklstSelectBtn" data-bs-dismiss="modal">선택</button>
-        </div>
-        <%-------------- modal footer --------------%>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
+      <%-------------- header --------------%>
+
+      <%-------------- body --------------%>
+      <div class="modal-body">
+        <div class="input-group mb-3 modal-search-box" style="    padding: .5rem 1rem;">
+          <input type="text" class="form-control me-2 chklst-search-box" placeholder="체크리스트 검색" aria-label="Recipient's username" aria-describedby="button-addon2">
+          <button class="btn btn-outline-secondary chklst-search-btn" type="button" id="button-addon2">검색</button>
+        </div>
+        <ol class="list-group">
+
+        </ol>
+      </div>
+      <%-------------- modal body --------------%>
+
+      <%-------------- modal footer --------------%>
+      <div class="modal-footer">
+        <button class="btn btn-primary chklstSelectBtn" data-bs-dismiss="modal">선택</button>
+      </div>
+      <%-------------- modal footer --------------%>
     </div>
   </div>
+</div>
 
 
-  <%--    second modal     --%>
-  <div class="modal fade" id="exampleModalToggle2" aria-hidden="false" aria-labelledby="details" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
-      <div class="modal-content">
-        <%--------------         second modal header       ----------------------%>
-        <div class="modal-header">
-          <div class="large-category-group">
-            <button type="button" class="btn btn-primary">중대법규</button>
-            <button type="button" class="btn btn-outline-primary">기타법규</button>
-          </div>
-          <button class="btn back-btn" data-bs-target="#masterChecklistModal" data-bs-toggle="modal">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
-              <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
-            </svg>
-          </button>
+<%--    second modal     --%>
+<div class="modal fade" id="MasterChecklistPreviewModal" aria-hidden="false" aria-labelledby="details" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <%--------------         second modal header       ----------------------%>
+      <div class="modal-header">
+        <div class="large-category-group">
         </div>
-        <%--------------          second modal header       ----------------------%>
-        <%--------------          second modal body       ----------------------%>
-        <div class="modal-body">
-          <div class="row d-flex justify-content-between">
-            <div class="col-lg mb-3">
-              <div class="accordion" id="accordionExample">
-                <div class="accordion-item">
-                  <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                      영업취소
-                    </button>
-                  </h2>
-                  <div id="collapseOne" class="accordion-collapse collapse" >
-                    <div class="accordion-body p-0">
-                      <!-- 내부 아코디언 -->
-                      <div class="accordion" id="innerAccordion1">
-                        <div class="accordion-item border border-0">
-                          <h2 class="accordion-header" id="innerHeadingOne">
-                            <button class="accordion-button collapsed border border-0" style="background-color: white !important;" type="button" data-bs-toggle="collapse" data-bs-target="#innerCollapseOne" aria-expanded="false" aria-controls="innerCollapseOne">
-                              <span style="font: 400 13px Noto Sans KR">1. </span><span style="font: 400 13px Noto Sans KR">소비기한 변조 및 삭제</span>
-                            </button>
-                          </h2>
-                          <div id="innerCollapseOne" class="accordion-collapse collapse" aria-labelledby="innerHeadingOne">
-                            <div class="accordion-body">
-                              <div class="row row-cols-2 btn-box">
-                                <div class="col-lg border border-light-subtle d-flex justify-content-center align-items-center">
-                                  <span>예</span>
-                                </div>
-                                <div class="col-lg border border-light-subtle d-flex justify-content-center align-items-center">
-                                  <span>아니오</span>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                    </div>
-                    <!-- 내부 아코디언 -->
-                  </div>
-                  </div>
-                </div>
-            </div>
-            </div>
-            <div class="col-lg mb-3">
-              <div class="accordion-item">
-                <h2 class="accordion-header">
-                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                    영업정지 1개월 이상
-                  </button>
-                </h2>
-                <div id="collapseTwo" class="accordion-collapse collapse">
-                  <!-- 내부 아코디언 -->
-                  <div class="accordion" id="innerAccordion2">
-                    <div class="accordion-item border border-0">
-                      <h2 class="accordion-header" id="innerHeadingTwo">
-                        <button class="accordion-button collapsed border border-0" style="background-color: white !important;" type="button" data-bs-toggle="collapse" data-bs-target="#innerCollapseTwo" aria-expanded="false" aria-controls="innerCollapseTwo">
-                          <span style="font: 400 13px Noto Sans KR">1. </span><span style="font: 400 13px Noto Sans KR">표시사항 전부를 표시하지 않은 식품</span>
-                        </button>
-                      </h2>
-                      <div id="innerCollapseTwo" class="accordion-collapse collapse" aria-labelledby="innerHeadingTwo">
-                        <div class="accordion-body">
-                          <div class="row d-flex justify-content-center radio-box">
-                            <div class="col form-check">
-                              <label class="form-check-label" for="flexRadioDefault1">
-                                매우 좋음
-                              </label>
-                              <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
-                            </div>
-                            <div class="col form-check">
-                              <label class="form-check-label" for="flexRadioDefault1">
-                                좋음
-                              </label>
-                              <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
-                            </div>
-                            <div class="col form-check">
-                              <label class="form-check-label" for="flexRadioDefault1">
-                                보통
-                              </label>
-                              <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault3">
-                            </div>
-                            <div class="col form-check">
-                              <label class="form-check-label" for="flexRadioDefault1">
-                                나쁨
-                              </label>
-                              <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault4">
-                            </div>
-                            <div class="col form-check">
-                              <label class="form-check-label" for="flexRadioDefault1">
-                                매우 나쁨
-                              </label>
-                              <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault5">
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <!-- 내부 아코디언 -->
-                </div>
-              </div>
-            </div>
+        <button class="btn back-btn" data-bs-target="#masterChecklistModal" data-bs-toggle="modal">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+          </svg>
+        </button>
+      </div>
+      <%--------------          second modal header       ----------------------%>
+        <div class="modal-body subCategory">
+          <div class="row row-cols-2 d-flex justify-content-between category">
           </div>
           <div class="d-flex flex-row justify-content-end align-items-center score">
             <span class="me-2">총</span>
             <span style="color: #D90D0D">100</span>
             <span class="me-2">점</span>
           </div>
-
-
-
         </div>
-        <%--------------         second modal  body       ----------------------%>
-
-      </div>
+        <%--------------           body       ----------------------%>
     </div>
   </div>
-
-  <%----------- second modal end ---------------%>
+</div>
+<%----------- second modal end ---------------%>
 <script
   type="application/javascript"
   src="../../../../../resources/js/master/checklist/list/checklist.js"

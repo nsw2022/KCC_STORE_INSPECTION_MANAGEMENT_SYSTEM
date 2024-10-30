@@ -55,7 +55,7 @@ function createMasterChecklistItems() {
           <span class="me-3">${(i + 1).toString().padStart(2, '0')}</span>
           <p class="mb-0">${filteredData[i].chklstNm}</p>
         </div>
-        <button class="btn btn-primary btn-sm rounded-20 checklistPreviewBtn" type="button" data-bs-target="#checklistPreviewModal" data-bs-toggle="modal">
+        <button class="btn btn-primary btn-sm rounded-20 masterChecklistPreviewBtn" type="button" data-bs-target="#checklistPreviewModal" data-bs-toggle="modal">
           미리보기
           <i class="fa-regular fa-eye"></i>
         </button>
@@ -131,7 +131,7 @@ $('.master-chklst-search-btn').click(function() {
           <span class="me-3">${(i + 1).toString().padStart(2, '0')}</span>
           <p class="mb-0">${filteredData[i].chklstNm}</p>
         </div>
-        <button class="btn btn-primary btn-sm rounded-20 checklistPreviewBtn" type="button" data-bs-target="#checklistPreviewModal" data-bs-toggle="modal">
+        <button class="btn btn-primary btn-sm rounded-20 masterChecklistPreviewBtn" type="button" data-bs-target="#checklistPreviewModal" data-bs-toggle="modal">
           미리보기
           <i class="fa-regular fa-eye"></i>
         </button>

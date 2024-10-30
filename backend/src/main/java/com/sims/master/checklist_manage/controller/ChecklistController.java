@@ -2,7 +2,6 @@ package com.sims.master.checklist_manage.controller;
 
 import com.sims.master.checklist_manage.service.ChecklistService;
 import com.sims.master.checklist_manage.vo.*;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Description 체크리스트 관리 컨트롤러 클래스

@@ -302,7 +302,6 @@ function confirmationDialog() {
               }
               return Promise.reject();
             }
-            return response.json(); // 성공적으로 응답을 받았으면 데이터를 JSON으로 변환
           })
           .then((data) => {
             // 서버 저장이 성공하면 완료 알림 표시
