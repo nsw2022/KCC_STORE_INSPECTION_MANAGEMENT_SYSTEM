@@ -22,6 +22,23 @@ document.addEventListener("DOMContentLoaded", function () {
   var flagSchedule = false;
 
   /**
+   * 공통 SweetAlert2 메시지 표시 함수
+   * @param {string} title - 제목
+   * @param {string} text - 내용
+   * @param {string} icon - 아이콘 종류 (success, error, warning, info)
+   */
+  function showAlert(title, text, icon) {
+    Swal.fire({
+      title: title,
+      text: text,
+      icon: icon,
+      confirmButtonText: "확인",
+    });
+  }
+
+  // ----- 선언부 끝 구현부 시작 -----
+
+  /**
    * 네이버 지도를 초기화하는 함수
    */
   function initNaverMap() {
@@ -48,11 +65,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     map.data.setStyle(function (feature) {
       var styleOptions = {
-        fillColor: "#b9e1ff",
+        fillColor: "#dce8ff",
         fillOpacity: 0.4,
         strokeColor: "#f4f7ff",
         strokeWeight: 2,
-        strokeOpacity: 0.6,
+        strokeOpacity: 1,
         zIndex: 10,
       };
       return styleOptions;
@@ -83,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .text(regionName);
 
       map.data.overrideStyle(feature, {
-        fillOpacity: 0.6,
+        fillOpacity: 0.8,
         strokeWeight: 4,
         strokeOpacity: 1,
       });
@@ -137,33 +154,6 @@ document.addEventListener("DOMContentLoaded", function () {
       error: function (xhr, status, error) {
         console.error("전체 매장 AJAX 요청 실패:", status, error);
       },
-    });
-  }
-
-  /**
-   * 다른 Autocomplete 타입을 초기화하는 함수
-   */
-  function initializeOtherAutocompletes() {
-    const otherTypes = ["inspector", "INSP", "CHKLST", "BRAND"];
-    otherTypes.forEach((type) => {
-      if (autocompleteData[type]) {
-        autocompleteData[type]()
-          .then((response) => {
-            let dataList;
-            if (type === "INSP") {
-              dataList = response;
-            } else {
-              dataList = response.data || response;
-            }
-            initializeAutocomplete(type, dataList);
-          })
-          .catch((error) => {
-            console.error(
-              `Error fetching autocomplete data for type ${type}:`,
-              error,
-            );
-          });
-      }
     });
   }
 
@@ -367,25 +357,56 @@ document.addEventListener("DOMContentLoaded", function () {
               );
             }
             flagSchedule = true;
-            alert("경로가 정상적으로 조회되었습니다.");
+            showAlert("성공!", "경로가 정상적으로 조회되었습니다.", "success");
           } else {
-            alert(
+            showAlert(
+              "실패!",
               "경로 검색에 실패했습니다: " +
-                (response.message || "Unknown Error"),
+                (response.message || "알 수 없는 오류"),
+              "error",
+              activateMapAll(),
             );
             console.error("TestDrivingRoute Error:", response);
           }
         },
         error: function (jqXHR, textStatus, errorThrown) {
-          alert("서버 오류가 발생했습니다.");
           console.error(
             "TestDrivingRoute AJAX Error:",
             textStatus,
             errorThrown,
           );
+          if (jqXHR.status === 403) {
+            showAlert("실패!", "권한이 없습니다.", "error");
+          } else if (jqXHR.status === 409) {
+            showAlert("실패!", "사용중인 점검계획이 있습니다.", "error");
+          } else if (jqXHR.status === 400) {
+            showAlert("실패!", "잘못된 요청입니다.", "error");
+          } else {
+            showAlert("알림", "금일 점검하실 목록이 없습니다.", "info");
+          }
+          activateMapAll();
         },
       });
     }
+  }
+
+  /**
+   * 전체보기 버튼을 활성화하고, 오늘의 점검 버튼을 비활성화하며, 전체보기 뷰를 표시하는 함수
+   */
+  function activateMapAll() {
+    // 버튼 상태 변경
+    $("#map-all").addClass("active");
+    $("#map-tsp").removeClass("active");
+
+    // 뷰 전환
+    $("#all-view").show();
+    $("#today-inspection-view").hide();
+
+    // 캐시된 경로 데이터 초기화
+    cachedRouteData = null;
+
+    // 모든 매장 마커 추가
+    addMarkers(allStores);
   }
 
   /**
@@ -415,6 +436,7 @@ document.addEventListener("DOMContentLoaded", function () {
             브랜드: ${store.brandNm}<br>
             점검자: ${store.inspectorName || "미정"}<br>
             SV : ${store.supervisorName || "미정"}<br>
+            최근 점검일 : ${store.inspComplTm || "없음"}
             <div class='custom_tail'></div>
           </div>
         `;
@@ -431,6 +453,29 @@ document.addEventListener("DOMContentLoaded", function () {
           if (activeInfoWindow && activeInfoWindow !== infoWindow) {
             activeInfoWindow.close();
           }
+
+          // 왼쪽요소
+          $("#selectStore").val("");
+          $("#selectStore").val(store.storeNm);
+
+          $("#selectBrand").val("");
+          $("#selectBrand").val(store.brandNm);
+
+          $("#selectInspector").val("");
+          $("#selectInspector").val(store.inspectorName);
+
+          $("#selectSV").val("");
+          $("#selectSV").val(store.supervisorName);
+
+          $("#selectComplTm").val("");
+          $("#selectComplTm").val(store.inspComplTm);
+
+          // 동일한 storeNm을 가진 모든 매장 필터링
+          let matchingStores = allStores.filter(
+            (s) => s.storeNm === store.storeNm,
+          );
+
+          addStoreInfoSideTable(matchingStores);
 
           if (infoWindow.getMap()) {
             infoWindow.close();
@@ -875,28 +920,32 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   /**
+   * 중복되지 않은 모든 매장 정보를 사이드 테이블에 추가
+   * @param {Array} stores - 중복되지 않은 매장 정보 배열
+   */
+  function addStoreInfoSideTable(stores) {
+    // 기존 테이블 내용 비우기 (처음 한 번만 수행)
+    $(".custom-table tbody").empty();
+    console.log(stores);
+    // 각 매장 정보를 테이블에 추가
+    stores.forEach((store) => {
+      const newRow = $("<tr>");
+      newRow.append($("<td>").text(store.storeNm));
+      newRow.append($("<td>").text(store.inspPlanDt));
+      newRow.append($("<td>").text(store.brandNm));
+      newRow.append($("<td>").text(store.inspectorName));
+      newRow.append($("<td>").text(store.supervisorName));
+      $(".custom-table tbody").append(newRow);
+    });
+  }
+
+  /**
    * 이벤트 리스너를 설정하는 함수
    */
   function setupEventListeners() {
     // 테스트 버튼 이벤트
     $("#testBtn").click(function () {
       testDrivingRoute(); // 기존 기능 유지
-    });
-
-    $("#traffic").on("click", function (e) {
-      e.preventDefault();
-      toggleTrafficLayer();
-    });
-
-    $("#autorefresh").on("click", function (e) {
-      var btn = $(this),
-        checked = btn.is(":checked");
-
-      if (checked) {
-        trafficLayer.startAutoRefresh();
-      } else {
-        trafficLayer.endAutoRefresh();
-      }
     });
 
     $("#toggleRouteBtn").on("click", function (e) {
@@ -971,7 +1020,6 @@ document.addEventListener("DOMContentLoaded", function () {
   initialize();
 
   // ---------  지도 끝 ---------
-
   /**
    * Autocomplete 클래스 정의
    */
@@ -979,7 +1027,7 @@ document.addEventListener("DOMContentLoaded", function () {
     /**
      * 생성자
      * @param {jQuery} $wrapper - 자동완성을 적용할 wrapper 요소
-     * @param {Array} dataList - 자동완성에 사용할 데이터 목록
+     * @param {Array} dataList - 자동완성에 사용할 데이터 목록 (객체 배열)
      */
     constructor($wrapper, dataList) {
       this.$wrapper = $wrapper;
@@ -1007,9 +1055,24 @@ document.addEventListener("DOMContentLoaded", function () {
     renderOptions(selectedItem = null) {
       this.$options.empty();
       console.log("Rendering options with selectedItem:", selectedItem);
+
+      // storeNm을 기준으로 중복 제거
+      const uniqueStoreNames = [];
+      const storeNameSet = new Set();
+
       this.dataList.forEach((item) => {
-        const isSelected = item === selectedItem ? "selected" : "";
-        const li = `<li onclick="window.updateName(this)" class="${isSelected} autocomplete-item list-group-item list-group-item-action">${item}</li>`;
+        if (!storeNameSet.has(item.storeNm)) {
+          storeNameSet.add(item.storeNm);
+          uniqueStoreNames.push(item.storeNm);
+        }
+      });
+
+      // 정렬 (옵션)
+      uniqueStoreNames.sort((a, b) => a.localeCompare(b, "ko-KR"));
+
+      uniqueStoreNames.forEach((storeNm) => {
+        const isSelected = storeNm === selectedItem ? "selected" : "";
+        const li = `<li onclick="window.updateName(this)" class="${isSelected} autocomplete-item list-group-item list-group-item-action">${storeNm}</li>`;
         this.$options.append(li);
       });
     }
@@ -1020,18 +1083,25 @@ document.addEventListener("DOMContentLoaded", function () {
      */
     filterOptions(query) {
       console.log("Filtering options with query:", query);
-      const filtered = this.dataList.filter((item) =>
-        item.toLowerCase().includes(query.toLowerCase()),
-      );
+
+      // 검색어에 따라 필터링된 storeNm을 기준으로 중복 제거
+      const filtered = this.dataList
+        .filter((item) =>
+          item.storeNm.toLowerCase().includes(query.toLowerCase()),
+        )
+        .map((item) => item.storeNm);
+
+      const uniqueFiltered = [...new Set(filtered)];
 
       this.$options.empty();
-      if (filtered.length > 0) {
-        filtered.forEach((item) => {
+      if (uniqueFiltered.length > 0) {
+        uniqueFiltered.sort((a, b) => a.localeCompare(b, "ko-KR"));
+        uniqueFiltered.forEach((storeNm) => {
           const isSelected =
-            item === this.$searchBtn.children().first().text()
+            storeNm === this.$searchBtn.children().first().text()
               ? "selected"
               : "";
-          const li = `<li onclick="window.updateName(this)" class="${isSelected} autocomplete-item list-group-item list-group-item-action">${item}</li>`;
+          const li = `<li onclick="window.updateName(this)" class="${isSelected} autocomplete-item list-group-item list-group-item-action">${storeNm}</li>`;
           this.$options.append(li);
         });
       } else {
@@ -1096,6 +1166,7 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log("Selected item:", selectedText);
     const $wrapper = $(selectedLi).closest(".wrapper");
     const instance = $wrapper.data("autocompleteInstance");
+
     if (instance) {
       console.log("Updating Autocomplete instance for wrapper:", $wrapper);
       instance.updateSelected(selectedText);
@@ -1105,20 +1176,38 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // 'store' 타입인 경우 지도 포커스 이동
       if (type === "store") {
-        // 선택된 매장 찾기
-        const selectedStore = allStores.find(
+        // 선택된 매장들 찾기 (여러 매장일 수 있음)
+        const selectedStores = allStores.filter(
           (store) => store.storeNm === selectedText,
         );
 
         if (
-          selectedStore &&
-          selectedStore.latitude &&
-          selectedStore.longitude
+          selectedStores.length > 0 &&
+          selectedStores[0].latitude &&
+          selectedStores[0].longitude
         ) {
+          const selectedStore = selectedStores[0]; // 첫 번째 매장 위치로 지도 이동
           const selectedPosition = new naver.maps.LatLng(
             selectedStore.latitude,
             selectedStore.longitude,
           );
+
+          // 입력 필드 업데이트 (첫 번째 매장 정보 사용)
+          $("#selectStore").val(selectedStore.storeNm);
+          $("#selectBrand").val(selectedStore.brandNm);
+          $("#selectInspector").val(selectedStore.inspectorName);
+          $("#selectSV").val(selectedStore.supervisorName);
+          $("#selectComplTm").val(selectedStore.inspComplTm);
+
+          // inspPlanDt 기준 내림차순
+          // selectedStores.sort((a, b) => {
+          //   const dateA = new Date(a.inspPlanDt);
+          //   const dateB = new Date(b.inspPlanDt);
+          //   return dateB - dateA; // 내림차순 정렬
+          // });
+
+          // 중복되지 않은 모든 매장 정보를 추가
+          addStoreInfoSideTable(selectedStores);
 
           // 지도 중심 이동
           map.setCenter(selectedPosition);
@@ -1136,7 +1225,10 @@ document.addEventListener("DOMContentLoaded", function () {
             activeInfoWindow = marker.infoWindow;
           }
         } else {
-          console.error("선택된 매장의 좌표 정보가 부족합니다:", selectedStore);
+          console.error(
+            "선택된 매장의 좌표 정보가 부족합니다:",
+            selectedStores,
+          );
         }
       }
     } else {
@@ -1148,9 +1240,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const autocompleteData = {
     store: () =>
       Promise.resolve(
-        allStores
-          .map((store) => store.storeNm)
-          .sort((a, b) => a.localeCompare(b, "ko-KR")),
+        allStores.sort((a, b) => a.storeNm.localeCompare(b.storeNm, "ko-KR")),
       ),
     inspector: () =>
       $.ajax({
@@ -1206,7 +1296,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (type === "INSP") {
               dataList = response;
             } else if (type === "store") {
-              dataList = response;
+              dataList = response; // store 타입은 객체 배열을 반환
             } else {
               dataList = response.data || response;
             }

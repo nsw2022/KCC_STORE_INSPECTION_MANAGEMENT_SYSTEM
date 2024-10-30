@@ -118,7 +118,6 @@ $(function () {
    */
   window.updateName = function (selectedLi) {
     const selectedText = $(selectedLi).text();
-    // 해당 li가 속한 wrapper를 찾습니다.
     const $wrapper = $(selectedLi).closest(".wrapper");
     const instance = $wrapper.data("autocompleteInstance");
     if (instance) {
@@ -158,8 +157,7 @@ $(function () {
     async: false,
     dataType: 'json',
     success: function (data) {
-		console.log(data);
-        data.forEach((x, index) => {
+		    data.forEach((x, index) => {
             x.inspComplTm = x.inspComplTm.substr(0, 8).replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3'); 
             
             // 인덱스를 rowData에 추가
@@ -232,7 +230,7 @@ $(function () {
       },
       { field: "index", headerName: "순서", width: 80, minWidth: 60 },
       { field: `data.storeNm`, headerName: "가맹점", width: 150, minWidth: 160 },
-      { field: "data.brandNm", headerName: "브랜드", width: 150, minWidth: 120 },
+      { field: "data.brandCd", headerName: "브랜드", width: 150, minWidth: 120 },
       {
         field: "data.chklstNm",
         headerName: "체크리스트명",
@@ -240,7 +238,7 @@ $(function () {
         minWidth: 130,
       },
       {
-        field: "data.inspTypeNm",
+        field: "data.inspTypeCd",
         headerName: "점검유형",
         width: 150,
         minWidth: 110,
@@ -264,7 +262,7 @@ $(function () {
             class: "edit-container",
             css: { position: "relative", cursor: "pointer" },
           });
-				
+				$('#input').prop('checked')
           // SVG 요소 생성
           const $svg = $(`
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 15 15">
@@ -350,7 +348,7 @@ $(function () {
 
 function openPopup(content) {
   // 팝업 페이지 URL 설정
-  const popupUrl = "/qsc/popup_inspection_result"; // 팝업 페이지로 보낼 URL 설정
+  const popupUrl = "/qsc/popup/inspection/result"; // 팝업 페이지로 보낼 URL 설정
 
   // 현재 화면 크기 확인
   const screenWidth =
@@ -386,6 +384,7 @@ function openPopup(content) {
     form.method = "POST";
     form.action = popupUrl; // 팝업 창에서 처리할 URL
 
+	
     // 필요한 데이터를 form에 추가 (필요에 따라 수정 가능)
     const input = popupWindow.document.createElement("input");
     input.type = "hidden";
@@ -446,28 +445,78 @@ document.addEventListener('DOMContentLoaded', () => {
   toggleSearchBox(); // 함수 호출
 });
 
-
 $(function () {
-	$('#search-btn-top').click(function (){
-		function selectOptionsChild(arr, wrapper) {
-			let storeNm = wrapper.eq(0).find('.selected').text();
-			let brandNm = wrapper.eq(1).find('.selected').text();
-			let inspComplDt = wrapper.eq(2).find('input').val();
-			let chklstNm = wrapper.eq(3).find('.selected').text();
-			let inspTypeNm = wrapper.eq(4).find('.selected').text();
-			let inspectorNm = wrapper.eq(5).find('.selected').text();
-			
-			arr = [storeNm, brandNm, inspComplDt, chklstNm, inspTypeNm, inspectorNm];
-			console.log(arr);
-			return arr;
-			
-		}
-		
-		let wrapper = $('.wrapper');
-		let arr = [];
-		
-		selectOptionsChild(arr, wrapper);
-		
-	})	
+
+  /**
+   * 조회 버튼 누를 때 검색에 따라 내용이 변경
+   */
+  $('#search-btn-top').click(function() {
+
+    let storeName = $('.hide-list').eq(0).find('li.selected').text() || null;
+    if(storeName ==='전체') {
+      storeName = null;
+    }
+
+    let brandCode = $('.hide-list').eq(1).find('li.selected').text() || null;
+    if(brandCode ==='전체') {
+      brandCode = null;
+    } else if(brandCode ==='KCC 크라상') {
+      brandCode = 'B001';
+    } else if(brandCode ==='KCC 도넛') {
+      brandCode = 'B002';
+    } else if(brandCode ==='KCC 브레드') {
+      brandCode = 'B003';
+    } else if(brandCode ==='KCC 카페') {
+      brandCode = 'B004';
+    }
+
+    let inspComplTime = $('#topScheduleDate').val().replaceAll("-","") || null;
+
+    let chklstName = $('.hide-list').eq(2).find('li.selected').text() || null;
+    if(chklstName ==='전체') {
+      chklstName = null;
+    }
+
+    let inspTypeCode = $('.hide-list').eq(3).find('li.selected').text() || null;
+    if(inspTypeCode ==='전체') {
+      inspTypeCode = null;
+    } else if(inspTypeCode ==='제품점검') {
+      inspTypeCode = 'IT001';
+    } else if(inspTypeCode ==='위생점검') {
+      inspTypeCode = 'IT002';
+    } else if(inspTypeCode ==='정기점검') {
+      inspTypeCode = 'IT003';
+    } else if(inspTypeCode ==='비정기점검') {
+      inspTypeCode = 'IT004';
+    } else if(inspTypeCode ==='기획점검') {
+      inspTypeCode = 'IT005';
+    }
+
+    let mbrName = $('.hide-list').eq(4).find('li.selected').text() || null;
+    if(mbrName ==='전체') {
+      mbrName = null;
+    }
+
+    $.ajax({
+      url : '/qsc/inspection/result/list/search',
+      method : 'POST',
+      data : JSON.stringify({
+        storeNm : storeName,
+        brandCd : brandCode,
+        inspComplTm : inspComplTime,
+        chklstNm : chklstName,
+        inspTypeCd : inspTypeCode,
+        mbrNm : mbrName
+      }),
+      headers : {
+        'Content-Type' : 'application/json'
+      },
+      success : function (data) {
+
+      }
+    })
+
+  })
 
 })
+
