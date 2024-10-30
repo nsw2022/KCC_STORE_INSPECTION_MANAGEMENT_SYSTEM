@@ -16,12 +16,17 @@ function formatOpenHm(timeStr) {
   return `${hours}:${minutes}`;
 }
 
+// 전역 변수로 inspResultId 설정 (DOMContentLoaded 이벤트 내에서 설정)
+let globalInspResultId = null;
+
 document.addEventListener("DOMContentLoaded", function () {
   const urlParams = new URLSearchParams(window.location.search);
   const chklstId = urlParams.get("chklstId");
   const storeNm = urlParams.get("storeNm");
   const inspPlanDt = urlParams.get("inspPlanDt");
   const inspResultId = urlParams.get("inspResultId");
+
+  globalInspResultId = inspResultId; // 전역 변수에 설정
 
   if (chklstId && storeNm && inspPlanDt) {
     // 기본 데이터를 먼저 로드
@@ -43,36 +48,6 @@ document.addEventListener("DOMContentLoaded", function () {
  * @param {Long} inspResultId 점검 결과 ID
  * @return {StoreInspectionPopupRequest} 임시저장된 점검 결과 데이터
  */
-// function loadTemporaryInspection(inspResultId) {
-//   const temporaryDataUrl = `/filter/get_temporary_inspection?inspResultId=${inspResultId}`;
-//
-//   fetch(temporaryDataUrl)
-//       .then(response => {
-//         if (response.status === 204) {
-//           console.log("임시저장된 데이터가 없습니다.");
-//           return null;
-//         }
-//         if (!response.ok) {
-//           throw new Error(`네트워크 응답이 올바르지 않습니다. 상태 코드: ${response.status}`);
-//         }
-//         return response.json();
-//       })
-//       .then(temporaryData => {
-//         if (temporaryData && temporaryData.inspections && temporaryData.inspections.length > 0) {
-//           const userConfirmed = confirm("임시저장된 점검 결과가 있습니다. 불러오시겠습니까?");
-//           if (userConfirmed) {
-//             // 임시저장된 데이터를 화면에 반영
-//             applyTemporaryData(temporaryData);
-//           }
-//         } else {
-//           console.log("임시저장된 데이터가 없습니다.");
-//         }
-//       })
-//       .catch(error => {
-//         console.error("임시저장된 데이터 불러오기 실패:", error);
-//         alert("임시저장된 데이터를 불러오는 데 실패했습니다.");
-//       });
-// }
 function loadTemporaryInspection(inspResultId) {
   const temporaryDataUrl = `/filter/get_temporary_inspection?inspResultId=${inspResultId}`;
 
@@ -122,14 +97,18 @@ function loadTemporaryInspection(inspResultId) {
 
 
 function applyTemporaryData(temporaryData) {
-  // 임시저장된 데이터를 evitId를 키로 하는 맵으로 변환
+  // compositeKey에 evitId, inspResultId, creMbrId를 포함
   const tempDataMap = {};
   temporaryData.inspections.forEach((tempCategory) => {
     if (tempCategory.subcategories) {
       tempCategory.subcategories.forEach((tempSubcategory) => {
         const evitId = tempSubcategory.evitId;
-        if (evitId) {
-          tempDataMap[evitId] = tempSubcategory;
+        const inspResultId = temporaryData.inspResultId;
+        const creMbrId = tempSubcategory.creMbrId;
+
+        if (evitId && inspResultId && creMbrId) {
+          const compositeKey = `${evitId}-${inspResultId}-${creMbrId}`;
+          tempDataMap[compositeKey] = tempSubcategory;
         }
       });
     }
@@ -137,12 +116,16 @@ function applyTemporaryData(temporaryData) {
 
   // 화면에 표시된 모든 문항을 순회하며 임시데이터를 반영
   document.querySelectorAll('.inspection-content-detail').forEach(detail => {
-    const evitId = parseInt(detail.getAttribute('data-evit-id'), 10);
-    if (isNaN(evitId)) {
+    const evitId = detail.getAttribute('data-evit-id');
+    const inspResultId = detail.getAttribute('data-insp-result-id');
+    const creMbrId = detail.getAttribute('data-cre-mbr-id');
+
+    if (!evitId || !inspResultId || !creMbrId) {
       return;
     }
 
-    const tempData = tempDataMap[evitId];
+    const compositeKey = `${evitId}-${inspResultId}-${creMbrId}`;
+    const tempData = tempDataMap[compositeKey];
     if (tempData) {
       // 해당 문항의 wrapper 요소를 찾음
       const inspectionContentWrapper = detail.nextElementSibling;
@@ -150,7 +133,7 @@ function applyTemporaryData(temporaryData) {
       // 답변 반영
       applyAnswerContent(inspectionContentWrapper, tempData.answerContent);
 
-      // 기타 필드들 반영
+      // 상세 입력 필드 반영
       applyDetailContent(inspectionContentWrapper, tempData);
     }
   });
@@ -166,7 +149,7 @@ function applyAnswerContent(wrapper, answerContent) {
     answerButtons.forEach(btn => {
       if (btn.getAttribute('data-option-value') === answerContent) {
         btn.classList.add('active');
-        // 이벤트 리스너를 호출하거나 이벤트를 트리거
+        // 이벤트 트리거를 통해 필드 활성화
         btn.click();
       } else {
         btn.classList.remove('active');
@@ -180,7 +163,7 @@ function applyAnswerContent(wrapper, answerContent) {
   radios.forEach(radio => {
     if (radio.value === answerContent) {
       radio.checked = true;
-      // 이벤트 리스너를 호출하거나 이벤트를 트리거
+      // 이벤트 트리거를 통해 필드 활성화
       radio.dispatchEvent(new Event('change'));
     } else {
       radio.checked = false;
@@ -211,11 +194,18 @@ function setResponsibility(detailContent, tempData) {
   });
 
   // 기타일 경우 입력 필드 활성화 및 값 설정
-  if (responsibilityValue === "기타" && tempData.caupvdCd && tempData.caupvdCd !== "C004") {
+  if (responsibilityValue === "기타") {
     const caupvdInput = detailContent.querySelector('.caupvd');
     if (caupvdInput) {
-      caupvdInput.value = tempData.caupvdCd;
+      caupvdInput.value = tempData.caupvdCdValue || ''; // 필요한 경우 추가 데이터 사용
       caupvdInput.disabled = false;
+    }
+  } else {
+    // 기타가 아닐 경우 입력 필드 비활성화 및 초기화
+    const caupvdInput = detailContent.querySelector('.caupvd');
+    if (caupvdInput) {
+      caupvdInput.value = '';
+      caupvdInput.disabled = true;
     }
   }
 }
@@ -242,11 +232,18 @@ function setLocation(locationContent, tempData) {
   });
 
   // 기타일 경우 입력 필드 활성화 및 값 설정
-  if (locationValue === "기타" && tempData.vltPlcCd && !vltPlcCdValueMap[tempData.vltPlcCd]) {
+  if (locationValue === "기타") {
     const etcInput = locationContent.querySelector('.etc-input');
     if (etcInput) {
-      etcInput.value = tempData.vltPlcCd;
+      etcInput.value = tempData.vltPlcCdValue || ''; // 필요한 경우 추가 데이터 사용
       etcInput.disabled = false;
+    }
+  } else {
+    // 기타가 아닐 경우 입력 필드 비활성화 및 초기화
+    const etcInput = locationContent.querySelector('.etc-input');
+    if (etcInput) {
+      etcInput.value = '';
+      etcInput.disabled = true;
     }
   }
 }
@@ -326,86 +323,101 @@ function setPhotoPaths(inspectionContentWrapper, photoPaths) {
 
   const photoBoxes = inspectionContentWrapper.querySelectorAll('.photo-box');
 
-  photoBoxes.forEach((box, index) => {
-    const path = photoPaths[index];
-    console.log(`Processing photo box ${index} with path: ${path}`); // 디버깅 로그
+  // 모든 photoBox를 초기화
+  photoBoxes.forEach((box) => {
+    box.style.backgroundImage = "";
+    box.textContent = "사진 미등록";
+    box.removeAttribute('data-path');
 
+    // 기존의 delete 버튼 제거
+    const deleteButton = box.querySelector('.delete-btn');
+    if (deleteButton) {
+      deleteButton.remove();
+    }
+  });
+
+  // 사진 경로에 따라 사진 설정
+  photoPaths.forEach((path, index) => {
     if (path && !path.startsWith('/')) {
-      // S3 경로인 경우에만 처리
       const s3Key = 'inspection_img/' + path;
-      console.log(`Path ${s3Key} is recognized as an S3 key.`);
-      fetch('/download', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ path: s3Key })
-      })
-          .then(response => {
-            console.log("Download response status:", response.status); // 디버깅 로그
-            if (!response.ok) {
-              throw new Error(`파일 다운로드 실패: ${response.statusText}`);
-            }
-            return response.blob();
-          })
-          .then(blob => {
-            const imageUrl = URL.createObjectURL(blob);
-            console.log("Image URL created:", imageUrl); // 디버깅 로그
+      const box = photoBoxes[index];
+      if (box) {
+        console.log(`Path ${s3Key} is recognized as an S3 key.`);
+        fetch('/download', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ path: s3Key })
+        })
+            .then(response => {
+              console.log("Download response status:", response.status); // 디버깅 로그
+              if (!response.ok) {
+                throw new Error(`파일 다운로드 실패: ${response.statusText}`);
+              }
+              return response.blob();
+            })
+            .then(blob => {
+              const imageUrl = URL.createObjectURL(blob);
+              console.log("Image URL created:", imageUrl); // 디버깅 로그
 
-            // 이미지 표시
-            box.style.backgroundImage = `url(${imageUrl})`;
-            box.style.backgroundSize = "cover";
-            box.style.backgroundPosition = "center";
-            box.style.backgroundRepeat = "no-repeat";
-            box.textContent = "";
+              // 이미지 표시
+              box.style.backgroundImage = `url(${imageUrl})`;
+              box.style.backgroundSize = "cover";
+              box.style.backgroundPosition = "center";
+              box.style.backgroundRepeat = "no-repeat";
+              box.textContent = "";
 
-            // S3 경로 저장 (접두사 없이 원본 path만 저장)
-            box.setAttribute('data-path', path);
+              // S3 경로 저장 (접두사 없이 원본 path만 저장)
+              box.setAttribute('data-path', path);
 
-            // X 버튼 추가 (이미 존재하지 않을 경우)
-            if (!box.querySelector(".delete-btn")) {
-              const deleteButton = document.createElement("button");
-              deleteButton.classList.add("delete-btn");
-              deleteButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
-              box.appendChild(deleteButton);
+              // X 버튼 추가 (이미 존재하지 않을 경우)
+              if (!box.querySelector(".delete-btn")) {
+                const deleteButton = document.createElement("button");
+                deleteButton.classList.add("delete-btn");
+                deleteButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                box.appendChild(deleteButton);
 
-              // 이미지 삭제 기능
-              deleteButton.addEventListener("click", function () {
-                fetch('/delete', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({ path: s3Key })
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                      if (data.error) {
-                        throw new Error(data.error);
-                      }
-                      // 이미지 제거
-                      box.style.backgroundImage = "";
-                      box.textContent = "사진 미등록";
-                      box.removeAttribute('data-path');
-                      deleteButton.remove();
-                      // photoCount 감소 (필요한 경우 변수 선언 및 관리)
-                    })
-                    .catch(error => {
-                      console.error("파일 삭제 실패:", error);
-                      alert("파일 삭제에 실패했습니다.");
-                    });
-              });
-            }
-          })
-          .catch(error => {
-            console.error(`이미지 로드 실패 (path: ${s3Key}):`, error);
-            box.textContent = "이미지 로드 실패";
-          });
+                // 이미지 삭제 기능
+                deleteButton.addEventListener("click", function () {
+                  fetch('/delete', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ path: s3Key })
+                  })
+                      .then(response => response.json())
+                      .then(data => {
+                        if (data.error) {
+                          throw new Error(data.error);
+                        }
+                        // 이미지 제거
+                        box.style.backgroundImage = "";
+                        box.textContent = "사진 미등록";
+                        box.removeAttribute('data-path');
+                        deleteButton.remove();
+                      })
+                      .catch(error => {
+                        console.error("파일 삭제 실패:", error);
+                        alert("파일 삭제에 실패했습니다.");
+                      });
+                });
+              }
+            })
+            .catch(error => {
+              console.error(`이미지 로드 실패 (path: ${s3Key}):`, error);
+              box.textContent = "이미지 로드 실패";
+            });
+      }
     } else {
       // path가 없거나 로컬 경로인 경우 처리
       console.warn(`Photo box ${index}에 대한 유효한 S3 path가 없습니다.`);
-      box.style.backgroundImage = "";
-      box.textContent = "사진 미등록";
+      const box = photoBoxes[index];
+      if (box) {
+        box.style.backgroundImage = "";
+        box.textContent = "사진 미등록";
+      }
     }
   });
 }
@@ -494,6 +506,7 @@ function processFetchedData(data) {
   data.forEach((item) => {
     const ctgId = item.ctgId;
     const masterCtgId = item.masterCtgId;
+    console.log(item);
 
     // 대분류 판단 (masterCtgId가 null 또는 0인 경우)
     if (masterCtgId == null || masterCtgId === 0) {
@@ -521,7 +534,7 @@ function processFetchedData(data) {
 
       // 중분류 찾기 또는 생성
       let subcategory = category.subcategories.find(
-        (sub) => sub.subcategoryId === ctgId,
+          (sub) => sub.subcategoryId === ctgId,
       );
       if (!subcategory) {
         subcategory = {
@@ -536,7 +549,7 @@ function processFetchedData(data) {
       if (item.evitContent) {
         // 문항 찾기 또는 생성
         let question = subcategory.questions.find(
-          (q) => q.questionId === item.evitId,
+            (q) => q.questionId === item.evitId,
         );
         if (!question) {
           let questionType = "";
@@ -551,6 +564,7 @@ function processFetchedData(data) {
             questionText: item.evitContent,
             questionType: questionType,
             options: [],
+            creMbrId: item.mbrId || "defaultCreMbrId" // creMbrId 추가 (데이터에 존재해야 함)
           };
           subcategory.questions.push(question);
         }
@@ -567,9 +581,9 @@ function processFetchedData(data) {
   Object.values(categoryMap).forEach((category) => {
     if (!category.categoryName) {
       const item = data.find(
-        (d) =>
-          d.ctgId == category.categoryId &&
-          (d.masterCtgId == null || d.masterCtgId === 0),
+          (d) =>
+              d.ctgId == category.categoryId &&
+              (d.masterCtgId == null || d.masterCtgId === 0),
       );
       category.categoryName = item ? item.ctgNm : "Unknown Category";
     }
@@ -651,11 +665,9 @@ function populateInspectionDetail(data) {
 
 // 콘텐츠를 동적으로 생성하는 함수
 function generateContent(data) {
-  // 탭 버튼들을 생성
   const tabContainer = document.querySelector(".inspection-tabs");
   const contentContainer = document.querySelector(".inspection-section");
 
-  // 총점 초기화
   let totalScoreValue = 0;
 
   data.forEach((category, index) => {
@@ -677,7 +689,7 @@ function generateContent(data) {
 
     // 중분류와 문항들 생성
     category.subcategories.forEach((subcategory) => {
-      console.log(`  Subcategory: ${subcategory.subcategoryName}`); // 디버깅 로그
+      console.log(`  Subcategory: ${subcategory.subcategoryName}`);
 
       const inspectionBox = document.createElement("div");
       inspectionBox.classList.add("inspection-box");
@@ -696,14 +708,18 @@ function generateContent(data) {
       inspectionContent.classList.add("inspection-content");
 
       subcategory.questions.forEach((question) => {
-        console.log(`    Question: ${question.questionText}`); // 디버깅 로그
+        console.log(`    Question: ${question.questionText}`);
 
         // 문항 상세 내용 생성
         const inspectionContentDetail = document.createElement("div");
         inspectionContentDetail.classList.add("inspection-content-detail");
 
-        // data-evit-id 속성 추가
+        // 데이터 속성 설정 및 로그 추가
         inspectionContentDetail.setAttribute('data-evit-id', question.questionId);
+        inspectionContentDetail.setAttribute('data-cre-mbr-id', question.creMbrId);
+        inspectionContentDetail.setAttribute('data-insp-result-id', globalInspResultId);
+
+        console.log(`Set data-evit-id: ${question.questionId}, data-cre-mbr-id: ${question.creMbrId}, data-insp-result-id: ${globalInspResultId}`);
 
         const questionText = document.createElement("p");
         questionText.textContent = question.questionText;
@@ -739,21 +755,21 @@ function generateContent(data) {
             btn.addEventListener("click", function () {
               // 같은 문항의 다른 버튼들 비활성화
               document
-                .querySelectorAll(
-                  `.answer-btn[data-question-id="${question.questionId}"]`,
-                )
-                .forEach((b) => {
-                  b.classList.remove("active");
-                });
+                  .querySelectorAll(
+                      `.answer-btn[data-question-id="${question.questionId}"]`,
+                  )
+                  .forEach((b) => {
+                    b.classList.remove("active");
+                  });
               this.classList.add("active");
 
               // 해당 질문의 하위 입력 필드 찾기
               const detailContent =
-                inspectionContentWrapper.querySelector(".detail-content");
+                  inspectionContentWrapper.querySelector(".detail-content");
               const storeInfo =
-                inspectionContentWrapper.querySelector(".store-info");
+                  inspectionContentWrapper.querySelector(".store-info");
               const locationInputs = storeInfo.querySelectorAll(
-                `input[name^='location_${question.questionId}']`,
+                  `input[name='location_${question.questionId}']`,
               );
               const locationContent =
                   inspectionContentWrapper.querySelector(".location-content");
@@ -761,15 +777,15 @@ function generateContent(data) {
               if (option === "부적합") {
                 // "부적합" 선택 시 하위 입력 필드 활성화 (etc-input과 caupvd 제외)
                 detailContent
-                  .querySelectorAll("input, textarea, select")
-                  .forEach((input) => {
-                    if (
-                      !input.classList.contains("caupvd") &&
-                      !input.name.startsWith("etc_")
-                    ) {
-                      input.disabled = false;
-                    }
-                  });
+                    .querySelectorAll("input, textarea, select")
+                    .forEach((input) => {
+                      if (
+                          !input.classList.contains("caupvd") &&
+                          !input.name.startsWith("etc_")
+                      ) {
+                        input.disabled = false;
+                      }
+                    });
 
                 // 위치정보 라디오 버튼 활성화
                 locationInputs.forEach((input) => {
@@ -778,23 +794,23 @@ function generateContent(data) {
               } else {
                 // "적합" 선택 시 하위 입력 필드 비활성화 및 초기화 (etc-input과 caupvd 제외)
                 detailContent
-                  .querySelectorAll("input, textarea, select")
-                  .forEach((input) => {
-                    if (
-                      !input.classList.contains("caupvd") &&
-                      !input.name.startsWith("etc_")
-                    ) {
-                      input.disabled = true;
-                      if (input.tagName.toLowerCase() === "textarea") {
-                        input.value = "";
-                      } else if (
-                        input.tagName.toLowerCase() === "input" &&
-                        input.type === "radio"
+                    .querySelectorAll("input, textarea, select")
+                    .forEach((input) => {
+                      if (
+                          !input.classList.contains("caupvd") &&
+                          !input.name.startsWith("etc_")
                       ) {
-                        input.checked = false;
+                        input.disabled = true;
+                        if (input.tagName.toLowerCase() === "textarea") {
+                          input.value = "";
+                        } else if (
+                            input.tagName.toLowerCase() === "input" &&
+                            input.type === "radio"
+                        ) {
+                          input.checked = false;
+                        }
                       }
-                    }
-                  });
+                    });
 
                 // 위치정보 라디오 버튼 비활성화 및 초기화
                 locationInputs.forEach((input) => {
@@ -806,7 +822,7 @@ function generateContent(data) {
 
                 // 기타사항 입력 초기화
                 const etcInput = storeInfo.querySelector(
-                  `textarea[name='etc_${question.questionId}']`,
+                    `textarea[name='etc_${question.questionId}']`,
                 );
                 if (etcInput) {
                   etcInput.disabled = true;
@@ -832,25 +848,25 @@ function generateContent(data) {
             // 라디오 버튼 변경 시 하위 입력 필드 활성화
             input.addEventListener("change", function () {
               const detailContent =
-                inspectionContentWrapper.querySelector(".detail-content");
+                  inspectionContentWrapper.querySelector(".detail-content");
               const storeInfo =
-                inspectionContentWrapper.querySelector(".store-info");
+                  inspectionContentWrapper.querySelector(".store-info");
               const locationInputs = storeInfo.querySelectorAll(
-                `input[name^='location_${question.questionId}']`,
+                  `input[name='location_${question.questionId}']`,
               );
 
               if (option === "매우나쁨" || option === "나쁨") {
                 // "매우나쁨" 또는 "나쁨" 선택 시 하위 입력 필드 활성화 (etc-input과 caupvd 제외)
                 detailContent
-                  .querySelectorAll("input, textarea, select")
-                  .forEach((input) => {
-                    if (
-                      !input.classList.contains("caupvd") &&
-                      !input.name.startsWith("etc_")
-                    ) {
-                      input.disabled = false;
-                    }
-                  });
+                    .querySelectorAll("input, textarea, select")
+                    .forEach((input) => {
+                      if (
+                          !input.classList.contains("caupvd") &&
+                          !input.name.startsWith("etc_")
+                      ) {
+                        input.disabled = false;
+                      }
+                    });
 
                 // 위치정보 라디오 버튼 활성화
                 locationInputs.forEach((input) => {
@@ -859,23 +875,23 @@ function generateContent(data) {
               } else {
                 // 그 외 선택 시 하위 입력 필드 비활성화 및 초기화 (etc-input과 caupvd 제외)
                 detailContent
-                  .querySelectorAll("input, textarea, select")
-                  .forEach((input) => {
-                    if (
-                      !input.classList.contains("caupvd") &&
-                      !input.name.startsWith("etc_")
-                    ) {
-                      input.disabled = true;
-                      if (input.tagName.toLowerCase() === "textarea") {
-                        input.value = "";
-                      } else if (
-                        input.tagName.toLowerCase() === "input" &&
-                        input.type === "radio"
+                    .querySelectorAll("input, textarea, select")
+                    .forEach((input) => {
+                      if (
+                          !input.classList.contains("caupvd") &&
+                          !input.name.startsWith("etc_")
                       ) {
-                        input.checked = false;
+                        input.disabled = true;
+                        if (input.tagName.toLowerCase() === "textarea") {
+                          input.value = "";
+                        } else if (
+                            input.tagName.toLowerCase() === "input" &&
+                            input.type === "radio"
+                        ) {
+                          input.checked = false;
+                        }
                       }
-                    }
-                  });
+                    });
 
                 // 위치정보 라디오 버튼 비활성화 및 초기화
                 locationInputs.forEach((input) => {
@@ -887,7 +903,7 @@ function generateContent(data) {
 
                 // 기타사항 입력 초기화
                 const etcInput = storeInfo.querySelector(
-                  `textarea[name='etc_${question.questionId}']`,
+                    `textarea[name='etc_${question.questionId}']`,
                 );
                 if (etcInput) {
                   etcInput.disabled = true;
@@ -899,26 +915,15 @@ function generateContent(data) {
             label.appendChild(input);
             label.appendChild(document.createTextNode(option));
 
-            // 비활성화된 상태에서 클릭 시 경고 메시지 표시 (현재 주석 처리됨)
-            /*
-            label.addEventListener('click', function(e) {
-              const inputElem = this.querySelector("input");
-              if (inputElem.disabled) {
-                e.preventDefault();
-                alert("입력할 수 없습니다.");
-              }
-            });
-            */
-
             answerSection.appendChild(label);
           });
 
-          // 비활성화된 상태에서 클릭 시 경고 메시지 표시는 제거하여 활성화 상태로 만듦
+          // 비활성화된 상태에서 클릭 시 경고 메시지 표시는 제거
         }
 
         inspectionContentWrapper.appendChild(answerSection);
 
-        // 사진 업로드 섹션
+        // 사진 업로드 섹션 생성
         const photoSection = document.createElement("div");
         photoSection.classList.add("photo-section");
 
@@ -959,7 +964,7 @@ function generateContent(data) {
 
         inspectionContentWrapper.appendChild(photoSection);
 
-        // 매장 정보 라디오 버튼 리스트
+        // 매장 정보 라디오 버튼 리스트 생성
         const storeInfo = document.createElement("div");
         storeInfo.classList.add("store-info");
 
@@ -1223,7 +1228,12 @@ function generateContent(data) {
 
 
 // -----------------사진 업로드 및 촬영 기능 설정--------------
-// function setupPhotoUpload(photoBoxes, cameraBtn, galleryBtn) {
+
+
+// 전역 변수로 삭제할 이미지 목록을 관리
+let deletedImages = [];
+
+// function setupPhotoUpload(photoBoxes, cameraBtn, galleryBtn, inspectionContentWrapper) {
 //   let photoCount = 0;
 //
 //   // 카메라 버튼 클릭 시
@@ -1242,8 +1252,7 @@ function generateContent(data) {
 //     fileInput.addEventListener("change", function (event) {
 //       const file = event.target.files[0];
 //       if (file) {
-//         displayImage(file, photoBoxes);
-//         photoCount++;
+//         uploadAndDisplayImage(file, photoBoxes, inspectionContentWrapper);
 //       }
 //     });
 //
@@ -1265,62 +1274,142 @@ function generateContent(data) {
 //     fileInput.addEventListener("change", function (event) {
 //       const file = event.target.files[0];
 //       if (file) {
-//         displayImage(file, photoBoxes);
-//         photoCount++;
+//         uploadAndDisplayImage(file, photoBoxes, inspectionContentWrapper);
 //       }
 //     });
 //
 //     fileInput.click();
 //   });
 //
-//   // 이미지 삭제 처리
-//   function removeImage(imageBox) {
-//     imageBox.style.backgroundImage = ""; // 배경 이미지 제거
-//     imageBox.textContent = "사진 미등록"; // 기본 텍스트로 복원
-//     const deleteButton = imageBox.querySelector(".delete-btn");
-//     if (deleteButton) {
-//       deleteButton.remove(); // 삭제 버튼 제거
-//     }
-//     photoCount--; // 사진 개수 감소
-//   }
+//   // 이미지 업로드 및 표시 처리 함수
+//   function uploadAndDisplayImage(file, photoBoxes, inspectionContentWrapper) {
+//     const formData = new FormData();
+//     formData.append("file", file);
 //
-//   // 이미지 파일을 표시하는 함수
-//   function displayImage(file, photoBoxes) {
-//     const reader = new FileReader();
-//     reader.onload = function (e) {
-//       const emptyBox = Array.from(photoBoxes.children).find(
-//         (box) => !box.style.backgroundImage,
-//       );
-//       if (emptyBox) {
-//         // 이미지 표시
-//         emptyBox.style.backgroundImage = `url(${e.target.result})`;
-//         emptyBox.style.backgroundSize = "cover";
-//         emptyBox.style.backgroundPosition = "center";
-//         emptyBox.style.backgroundRepeat = "no-repeat";
-//         emptyBox.textContent = "";
+//     fetch('/upload', {
+//       method: 'POST',
+//       body: formData
+//     })
+//         .then(response => response.json())
+//         .then(data => {
+//           console.log("Upload response data:", data); // 디버깅 로그
+//           if (data.error) {
+//             throw new Error(data.error);
+//           }
 //
-//         // X 버튼 추가
-//         const deleteButton = document.createElement("button");
-//         deleteButton.classList.add("delete-btn");
-//         deleteButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+//           // S3 키 생성 (업로드 시에는 접두사를 붙이지 않음)
+//           const s3Key = 'inspection_img/' + data.path;
 //
-//         // 이미지 삭제 기능
-//         deleteButton.addEventListener("click", function () {
-//           removeImage(emptyBox);
+//           const emptyBox = Array.from(photoBoxes.children).find(
+//               (box) => !box.style.backgroundImage
+//           );
+//           if (emptyBox) {
+//             console.log("Fetching image from path:", s3Key); // 추가된 로그
+//             fetch('/download', {
+//               method: 'POST',
+//               headers: {
+//                 'Content-Type': 'application/json'
+//               },
+//               body: JSON.stringify({ path: s3Key })
+//             })
+//                 .then(response => {
+//                   console.log("Download response status:", response.status); // 디버깅 로그
+//                   if (!response.ok) {
+//                     throw new Error(`파일 다운로드 실패: ${response.statusText}`);
+//                   }
+//                   return response.blob();
+//                 })
+//                 .then(blob => {
+//                   const imageUrl = URL.createObjectURL(blob);
+//                   console.log("Image URL created:", imageUrl); // 디버깅 로그
+//
+//                   // 이미지 표시
+//                   emptyBox.style.backgroundImage = `url(${imageUrl})`;
+//                   emptyBox.style.backgroundSize = "cover";
+//                   emptyBox.style.backgroundPosition = "center";
+//                   emptyBox.style.backgroundRepeat = "no-repeat";
+//                   emptyBox.textContent = "";
+//
+//                   // S3 경로 저장 (접두사 없이 원본 path만 저장)
+//                   emptyBox.setAttribute('data-path', data.path);
+//
+//                   // X 버튼 추가
+//                   const deleteButton = document.createElement("button");
+//                   deleteButton.classList.add("delete-btn");
+//                   deleteButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+//
+//                   // 이미지 삭제 기능
+//                   deleteButton.addEventListener("click", function () {
+//                     fetch('/delete', {
+//                       method: 'POST',
+//                       headers: {
+//                         'Content-Type': 'application/json'
+//                       },
+//                       body: JSON.stringify({ path: s3Key })
+//                     })
+//                         .then(response => response.json())
+//                         .then(data => {
+//                           if (data.error) {
+//                             throw new Error(data.error);
+//                           }
+//                           // 이미지 제거
+//                           emptyBox.style.backgroundImage = "";
+//                           emptyBox.textContent = "사진 미등록";
+//                           emptyBox.removeAttribute('data-path');
+//                           deleteButton.remove();
+//                           photoCount--;
+//                         })
+//                         .catch(error => {
+//                           console.error("파일 삭제 실패:", error);
+//                           alert("파일 삭제에 실패했습니다.");
+//                         });
+//                   });
+//
+//                   emptyBox.appendChild(deleteButton);
+//                   photoCount++;
+//                 })
+//                 .catch(error => {
+//                   console.error(`이미지 로드 실패 (path: ${s3Key}):`, error);
+//                   alert("파일 다운로드에 실패했습니다.");
+//                 });
+//           }
+//         })
+//         .catch(error => {
+//           console.error("파일 업로드 실패:", error);
+//           alert("파일 업로드에 실패했습니다.");
 //         });
-//
-//         emptyBox.appendChild(deleteButton);
-//       }
-//     };
-//     reader.readAsDataURL(file);
 //   }
+//
+//
+//
+//
+//   // 이미지 삭제 시 S3에서도 삭제하는 함수 (옵션)
+//   /*
+//   function deleteImageFromS3(path) {
+//       fetch('/delete', {
+//           method: 'POST',
+//           headers: {
+//               'Content-Type': 'application/json'
+//           },
+//           body: JSON.stringify({ path: path })
+//       })
+//           .then(response => response.json())
+//           .then(data => {
+//               if (data.success) {
+//                   console.log("S3에서 파일 삭제 성공");
+//               } else {
+//                   console.error("S3에서 파일 삭제 실패:", data.error);
+//               }
+//           })
+//           .catch(error => {
+//               console.error("S3에서 파일 삭제 실패:", error);
+//           });
+//   }
+//   */
 // }
-
-// 전역 변수로 삭제할 이미지 목록을 관리
-let deletedImages = [];
-
 function setupPhotoUpload(photoBoxes, cameraBtn, galleryBtn, inspectionContentWrapper) {
-  let photoCount = 0;
+  // 기존 photoCount 제거하고 현재 사진 수를 기반으로 설정
+  let photoCount = Array.from(photoBoxes).filter(box => box.getAttribute('data-path')).length;
 
   // 카메라 버튼 클릭 시
   cameraBtn.addEventListener("click", function () {
@@ -1465,33 +1554,6 @@ function setupPhotoUpload(photoBoxes, cameraBtn, galleryBtn, inspectionContentWr
           alert("파일 업로드에 실패했습니다.");
         });
   }
-
-
-
-
-  // 이미지 삭제 시 S3에서도 삭제하는 함수 (옵션)
-  /*
-  function deleteImageFromS3(path) {
-      fetch('/delete', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ path: path })
-      })
-          .then(response => response.json())
-          .then(data => {
-              if (data.success) {
-                  console.log("S3에서 파일 삭제 성공");
-              } else {
-                  console.error("S3에서 파일 삭제 실패:", data.error);
-              }
-          })
-          .catch(error => {
-              console.error("S3에서 파일 삭제 실패:", error);
-          });
-  }
-  */
 }
 
 
@@ -2046,9 +2108,20 @@ function checkInspection() {
   });
 
   if (!allInputsValid) {
-    alert('모든 항목을 응답해주십시오.');
+    // alert('모든 항목을 응답해주십시오.');
+    warningMessage();
     return; // 검증 실패 시 함수 종료
   }
+
+  function warningMessage() {
+    Swal.fire({
+      title: "경고",
+      text: "모든 항목을 응답해주십시오.",
+      icon: "warning",
+      confirmButtonText: "알겠습니다",
+    });
+  }
+
 
   // 폼 데이터를 수집하고 제출합니다.
   const textareaData = {};
