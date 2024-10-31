@@ -270,7 +270,7 @@
                                     <label for="inspectionType" class="form-label">점검 유형</label>
                                     <div class="wrapper" data-autocomplete="BottomINSP" data-include-all="false">
                                         <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                                            <span id="bottom-INSP">정검 유형</span>
+                                            <span id="bottom-INSP">점검 유형</span>
                                             <i class="uil uil-angle-down"></i>
                                         </div>
                                         <div class="hide-list">

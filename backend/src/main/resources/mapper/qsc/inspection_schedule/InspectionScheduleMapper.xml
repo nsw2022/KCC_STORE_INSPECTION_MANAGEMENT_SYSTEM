@@ -7,61 +7,77 @@
 
     <select id="selectFilteredInspectionScheduleList" resultType="com.sims.qsc.inspection_schedule.vo.InspectionScheduleRequest">
         SELECT  /* InspectionScheduleMapper.getInspectionScheduleList 노승우 */
-            STO.STORE_NM
-            , STO.STORE_ID
-            , CASE
-                WHEN STO.BRAND_CD = 'B001' THEN 'KCC 크라상'
-                WHEN STO.BRAND_CD = 'B002' THEN 'KCC 도넛'
-                WHEN STO.BRAND_CD = 'B003' THEN 'KCC 브레드'
-                WHEN STO.BRAND_CD = 'B004' THEN 'KCC 카페'
-            END AS BRAND_NM
-            , CHK.CHKLST_NM
-            , ISC.INSP_PLAN_DT
-            , MBR.MBR_NM
-            , INP.CNT_CD
-            , INP.FRQ_CD
-            , CASE
-                WHEN CHK.INSP_TYPE_CD = 'IT001' THEN '제품점검'
-                WHEN CHK.INSP_TYPE_CD = 'IT002' THEN '위생점검'
-                WHEN CHK.INSP_TYPE_CD = 'IT003' THEN '정기점검'
-                WHEN CHK.INSP_TYPE_CD = 'IT004' THEN '비정기점검'
-                WHEN CHK.INSP_TYPE_CD = 'IT005' THEN '기획점검'
-            END AS INSP_TYPE_CD
-            , INP.WEEK
-            , INP.SLCT_DT
+        STO.STORE_NM
+        , STO.STORE_ID
+        , CASE
+        WHEN STO.BRAND_CD = 'B001' THEN 'KCC 크라상'
+        WHEN STO.BRAND_CD = 'B002' THEN 'KCC 도넛'
+        WHEN STO.BRAND_CD = 'B003' THEN 'KCC 브레드'
+        WHEN STO.BRAND_CD = 'B004' THEN 'KCC 카페'
+        END AS BRAND_NM
+        , CHK.CHKLST_NM
+        , ISC.INSP_PLAN_DT
+        , MBR.MBR_NM
+        , INP.CNT_CD
+        , INP.FRQ_CD
+        , CASE
+        WHEN CHK.INSP_TYPE_CD = 'IT001' THEN '제품점검'
+        WHEN CHK.INSP_TYPE_CD = 'IT002' THEN '위생점검'
+        WHEN CHK.INSP_TYPE_CD = 'IT003' THEN '정기점검'
+        WHEN CHK.INSP_TYPE_CD = 'IT004' THEN '비정기점검'
+        WHEN CHK.INSP_TYPE_CD = 'IT005' THEN '기획점검'
+        END AS INSP_TYPE_CD
+        , INP.WEEK
+        , INP.SLCT_DT
 
         FROM INSP_SCHD ISC
-            INNER JOIN STORE STO
-                ON STO.STORE_ID = ISC.STORE_ID
-            INNER JOIN INSP_PLAN INP
-                ON INP.INSP_PLAN_ID = ISC.INSP_PLAN_ID
-            INNER JOIN CHKLST CHK
-                ON CHK.CHKLST_ID = INP.CHKLST_ID
-            INNER JOIN MBR
-                ON MBR.MBR_ID = STO.INSP_MBR_ID
-            WHERE INP.INSP_PLAN_USE_W = 'Y'
+        INNER JOIN STORE STO
+        ON STO.STORE_ID = ISC.STORE_ID
+        INNER JOIN INSP_PLAN INP
+        ON INP.INSP_PLAN_ID = ISC.INSP_PLAN_ID
+        INNER JOIN CHKLST CHK
+        ON CHK.CHKLST_ID = INP.CHKLST_ID
+        INNER JOIN MBR
+        ON MBR.MBR_ID = STO.INSP_MBR_ID
+        WHERE INP.INSP_PLAN_USE_W = 'Y'
+
+
+        <choose>
+            <when test="currentMbrNo != null and currentMbrNo.startsWith('S')">
+                AND STO.SV_MBR_ID = (SELECT MBR_ID FROM MBR WHERE MBR_NO = #{currentMbrNo})
+            </when>
+            <when test="currentMbrNo != null and currentMbrNo.startsWith('C')">
+                AND STO.INSP_MBR_ID = (SELECT MBR_ID FROM MBR WHERE MBR_NO = #{currentMbrNo})
+            </when>
+        </choose>
+
+
         <if test="storeNm != null and storeNm != ''">
             AND STO.STORE_NM LIKE '%' || #{storeNm} || '%'
         </if>
+
+
         <if test="brandNm != null and brandNm != ''">
-        <choose>
-            <when test="brandNm == 'KCC 크라상'">
-                AND STO.BRAND_CD = 'B001'
-            </when>
-            <when test="brandNm == 'KCC 도넛'">
-                AND STO.BRAND_CD = 'B002'
-            </when>
-            <when test="brandNm == 'KCC 브레드'">
-                AND STO.BRAND_CD = 'B003'
-            </when>
-            <when test="brandNm == 'KCC 카페'">
-                AND STO.BRAND_CD = 'B004'
-            </when>
-            <otherwise>
-                AND STO.BRAND_CD IS NOT NULL
-            </otherwise>
-        </choose>
+            <choose>
+                <when test="brandNm == 'KCC 크라상'">
+                    AND STO.BRAND_CD = 'B001'
+                </when>
+                <when test="brandNm == 'KCC 도넛'">
+                    AND STO.BRAND_CD = 'B002'
+                </when>
+                <when test="brandNm == 'KCC 브레드'">
+                    AND STO.BRAND_CD = 'B003'
+                </when>
+                <when test="brandNm == 'KCC 카페'">
+                    AND STO.BRAND_CD = 'B004'
+                </when>
+                <otherwise>
+                    AND STO.BRAND_CD IS NOT NULL
+                </otherwise>
+            </choose>
         </if>
+
+
         <if test="scheduleDate != null and scheduleDate != ''">
             AND ISC.INSP_PLAN_DT LIKE '%' || #{scheduleDate} || '%'
         </if>
@@ -72,20 +88,21 @@
             AND MBR.MBR_NM LIKE '%' || #{inspector} || '%'
         </if>
         <if test="cntCd != null and cntCd !=''" >
-            AND INP.CNT_CD LIKE '%' || #{cntCd} || '%'
+            AND INP.CNT_CD = #{cntCd}
         </if>
         <if test="frqCd != null and frqCd !=''" >
-            AND INP.FRQ_CD LIKE '%' || #{frqCd} || '%'
+            AND INP.FRQ_CD = #{frqCd}
         </if>
         ORDER BY ISC.INSP_PLAN_DT DESC
     </select>
 
 
 
+
     <select id="selectAllStores" resultType="String">
         SELECT  /* InspectionScheduleMapper.selectAllStores 노승우 */
             DISTINCT
-                STO.STORE_NM
+            STO.STORE_NM
         FROM STORE STO
                  INNER JOIN INSP_SCHD ISC
                             ON STO.STORE_ID = ISC.STORE_ID
@@ -97,11 +114,11 @@
     <select id="selectAllBrands" resultType="String">
         SELECT  /* InspectionScheduleMapper.selectAllBrands 노승우 */
             DISTINCT
-                CASE
-                    WHEN STO.BRAND_CD = 'B001' THEN 'KCC 크라상'
-                    WHEN STO.BRAND_CD = 'B002' THEN 'KCC 도넛'
-                    WHEN STO.BRAND_CD = 'B003' THEN 'KCC 브레드'
-                    WHEN STO.BRAND_CD = 'B004' THEN 'KCC 카페'
+            CASE
+                WHEN STO.BRAND_CD = 'B001' THEN 'KCC 크라상'
+                WHEN STO.BRAND_CD = 'B002' THEN 'KCC 도넛'
+                WHEN STO.BRAND_CD = 'B003' THEN 'KCC 브레드'
+                WHEN STO.BRAND_CD = 'B004' THEN 'KCC 카페'
                 END AS BRAND_NM
         FROM STORE STO
         WHERE
@@ -114,13 +131,13 @@
     <select id="selectAllChecklists" resultType="String">
         SELECT /* InspectionScheduleMapper.selectAllChecklists 노승우 */
             DISTINCT
-                CHK.CHKLST_NM
+            CHK.CHKLST_NM
         FROM
             INSP_SCHD ISC
-        INNER JOIN INSP_PLAN INP
-           ON INP.INSP_PLAN_ID = ISC.INSP_PLAN_ID
-        INNER JOIN CHKLST CHK
-           ON CHK.CHKLST_ID = INP.CHKLST_ID
+                INNER JOIN INSP_PLAN INP
+                           ON INP.INSP_PLAN_ID = ISC.INSP_PLAN_ID
+                INNER JOIN CHKLST CHK
+                           ON CHK.CHKLST_ID = INP.CHKLST_ID
         WHERE
             INP.INSP_PLAN_USE_W = 'Y'
         ORDER BY
@@ -146,32 +163,32 @@
     <select id="selectInspectionDetails"
             resultType="com.sims.qsc.inspection_schedule.vo.InspectionDetailsResponse">
         SELECT /* InspectionScheduleMapper.getInspectionDetails 노승우 */
-              S.STORE_ID
-            , S.STORE_NM
-            , IP.INSP_PLAN_ID
-            , IP.FRQ_CD
-            , C.CHKLST_ID
-            , C.CHKLST_NM
-            , CC.CTG_ID
-            , CC.CTG_NM
-            , CE.EVIT_ID
-            , CE.EVIT_CONTENT
-            , CE.SCORE
+            S.STORE_ID
+             , S.STORE_NM
+             , IP.INSP_PLAN_ID
+             , IP.FRQ_CD
+             , C.CHKLST_ID
+             , C.CHKLST_NM
+             , CC.CTG_ID
+             , CC.CTG_NM
+             , CE.EVIT_ID
+             , CE.EVIT_CONTENT
+             , CE.SCORE
         FROM
             STORE S
-        JOIN INSP_SCHD ISCH
-            ON S.STORE_ID = ISCH.STORE_ID
-        JOIN INSP_PLAN IP
-            ON ISCH.INSP_PLAN_ID = IP.INSP_PLAN_ID
-        JOIN CHKLST C
-            ON IP.CHKLST_ID = C.CHKLST_ID
-        JOIN CHKLST_CTG CC
-            ON C.CHKLST_ID = CC.CHKLST_ID
-        JOIN CHKLST_EVIT CE
-            ON CC.CTG_ID = CE.CTG_ID
+                JOIN INSP_SCHD ISCH
+                     ON S.STORE_ID = ISCH.STORE_ID
+                JOIN INSP_PLAN IP
+                     ON ISCH.INSP_PLAN_ID = IP.INSP_PLAN_ID
+                JOIN CHKLST C
+                     ON IP.CHKLST_ID = C.CHKLST_ID
+                JOIN CHKLST_CTG CC
+                     ON C.CHKLST_ID = CC.CHKLST_ID
+                JOIN CHKLST_EVIT CE
+                     ON CC.CTG_ID = CE.CTG_ID
         WHERE
             S.STORE_ID = #{storeId}
-        AND
+          AND
             inp.insp_plan_use_w = 'Y'
         ORDER BY
             CC.SEQ, CE.EVIT_SEQ
@@ -181,10 +198,10 @@
     <select id="selectBottomChkLst" resultType="String">
         SELECT /* InspectionScheduleMapper.selectBottomChkLst  노승우 */
             DISTINCT
-                CHK.CHKLST_NM
+            CHK.CHKLST_NM
         FROM CHKLST CHK
         WHERE CHK.CHKLST_STTS_W = '1'
-            AND CHK.CHKLST_USE_W = 'Y'
+          AND CHK.CHKLST_USE_W = 'Y'
         ORDER BY CHK.CHKLST_NM
     </select>
 

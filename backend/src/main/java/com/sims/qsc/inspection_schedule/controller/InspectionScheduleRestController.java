@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,10 +38,15 @@ public class InspectionScheduleRestController {
             @RequestParam(value = "inspector", required = false) String inspector,
             @RequestParam(value = "cntCd", required = false) String cntCd,
             @RequestParam(value = "frqCd" , required = false) String frqCd
+
+
     ) {
         try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String currentMbrNo = auth.getName();
+
             List<InspectionScheduleRequest> filteredSchedules = inspectionScheduleService.selectFilteredInspectionScheduleList(
-                    storeNm,  brandNm, scheduleDate, chklstNm, inspector, cntCd, frqCd
+                    storeNm,  brandNm, scheduleDate, chklstNm, inspector, cntCd, frqCd, currentMbrNo
             );
             return ResponseEntity.ok(filteredSchedules);
         } catch (Exception e) {

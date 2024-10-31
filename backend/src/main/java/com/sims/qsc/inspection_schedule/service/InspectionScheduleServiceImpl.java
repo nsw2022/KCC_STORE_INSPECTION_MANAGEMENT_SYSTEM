@@ -17,7 +17,7 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
     private final InspectionScheduleMapper scheduleMapper;
 
     public List<InspectionScheduleRequest> selectFilteredInspectionScheduleList(
-            String storeNm, String brandNm, String scheduleDate, String chklstNm, String inspector, String frqCd,  String cntCd) {
+            String storeNm, String brandNm, String scheduleDate, String chklstNm, String inspector, String frqCd,  String cntCd,  String currentMbrNo) {
         log.info("storeNm {}", storeNm);
         log.info("brandNm {}", brandNm);
         log.info("scheduleDate {}", scheduleDate);
@@ -25,11 +25,13 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
         log.info("inspector {}", inspector);
         log.info("cntCd {}", cntCd);
         log.info("frqCd {}", frqCd);
+        log.info("currentMbrNo {}", currentMbrNo);
 
         return scheduleMapper.selectFilteredInspectionScheduleList(
-                storeNm, brandNm, scheduleDate, chklstNm, inspector, frqCd, cntCd
+                storeNm, brandNm, scheduleDate, chklstNm, inspector, frqCd, cntCd, currentMbrNo
         );
     }
+
 
     @Override
     public List<String> selectAllStores() {
