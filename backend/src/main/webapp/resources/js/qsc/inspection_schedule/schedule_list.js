@@ -1,4 +1,9 @@
 $(function () {
+  // ===========================
+  // 선언부 (Declarations)
+  // ===========================
+
+  // 전역 데이터 배열
   let alldata = [];
 
   /**
@@ -128,7 +133,7 @@ $(function () {
     }
   };
 
-  // 각 자동완성 필드에 대한 데이터 목록 정의
+  // Autocomplete 인스턴스를 초기화할 때 데이터 로드 후 생성
   const autocompleteData = {
     store: (includeAll = true) =>
       $.ajax({
@@ -178,45 +183,11 @@ $(function () {
       }),
   };
 
-  // Autocomplete 인스턴스를 초기화할 때 데이터 로드 후 생성
-  $(".wrapper").each(function () {
-    const $wrapper = $(this);
-    const type = $wrapper.data("autocomplete");
-    const includeAllAttr = $wrapper.data("include-all");
-    const includeAll = includeAllAttr !== undefined ? includeAllAttr : true; // 기본값은 true
-
-    if (type && autocompleteData[type]) {
-      // dataList 가져오기 (함수 호출)
-      autocompleteData[type](includeAll)
-        .then((response) => {
-          let dataList;
-          if (type === "INSP") {
-            dataList = response;
-          } else {
-            // AJAX 응답 구조에 따라 적절히 수정
-            // 예를 들어, 응답이 { data: [...] } 형태라면:
-            dataList = response.data || response; // 실제 응답 구조에 맞게 수정 필요
-          }
-          // Autocomplete 인스턴스 생성
-          const autocomplete = new Autocomplete($wrapper, dataList);
-          $wrapper.data("autocompleteInstance", autocomplete);
-        })
-        .catch((error) => {
-          console.error(
-            `Error fetching autocomplete data for type ${type}:`,
-            error,
-          );
-        });
-    }
-  });
-
-  /**
-   * 빈도 관련 데이터 및 함수
-   */
+  // 빈도 관련 데이터 및 함수
   const frequencyOptions = {
-    daily: generateOptions("매일마다", 31, "일마다"),
-    weekly: generateOptions("매주마다", 5, "주마다"),
-    monthly: generateOptions("매달마다", 12, "개월마다"),
+    daily: generateOptions("매일마다", 31, "일마다", false),
+    weekly: generateOptions("매주마다", 5, "주마다", false),
+    monthly: generateOptions("매달마다", 12, "개월마다", false),
     none: ["없음"],
   };
 
@@ -225,10 +196,14 @@ $(function () {
    * @param {string} prefix - 빈도별 횟수의 맨처음 들어갈 말 e.g) '일마다', '주마다', '개월마다'
    * @param {number} max - 생성할 조건의 최대 숫자
    * @param {string} suffix - 횟수의 숫자 뒤에 붙을 말들 e.g) 빈도가 월이면 '개월마다'
+   * @param {boolean} [includeAll=true] - "전체" 옵션 포함 여부
    * @returns {Array} - 생성된 옵션 배열
    */
-  function generateOptions(prefix, max, suffix) {
+  function generateOptions(prefix, max, suffix, includeAll = true) {
     const options = [];
+    if (includeAll) {
+      options.push("전체");
+    }
     for (let i = 1; i <= max; i++) {
       if (i === 1) {
         options.push(`${prefix}`);
@@ -251,6 +226,9 @@ $(function () {
       frequencyOptions[frequency].forEach((option) => {
         countSelect.append(`<option value="${option}">${option}</option>`);
       });
+      if (frequency === "daily") {
+        countSelect.append(`<option value="매월말일">매월말일</option>`);
+      }
     } else {
       countSelect.append(`<option value="없음">없음</option>`);
     }
@@ -285,7 +263,7 @@ $(function () {
                 <!-- 버튼들 생성 -->
                 ${generateMonthButtons(31)}
                 <div class="col-12 mt-2">
-                  <button class="btn btn-outline-secondary w-100" type="button" value="32" aria-pressed="false">
+                  <button class="btn btn-outline-secondary w-100" type="button" value="32"  data-month-day = "99"  aria-pressed="false" data-bs-toggle="button">
                     매월 마지막 일
                   </button>
                 </div>
@@ -318,12 +296,19 @@ $(function () {
       if (i <= 31) {
         // 일수에 맞게 버튼 생성
         buttonsHTML += `
-              <div class="col-2 col-sm-3 col-md-2 col-lg-1 mb-2">
-                <button class="btn btn-outline-primary w-100 d-flex justify-content-center" type="button" value="${i}" aria-pressed="false">
-                  ${i}
-                </button>
-              </div>
-            `;
+        <div class="col-2 col-sm-3 col-md-2 col-lg-1 mb-2">
+          <button 
+            class="btn btn-outline-primary btn-toggle w-100 d-flex justify-content-center" 
+            type="button"
+            value="${i}"
+            data-month-day="${i}" 
+            aria-pressed="false"
+            data-bs-toggle="button"
+          >
+            ${i}
+          </button>
+        </div>
+      `;
       }
     }
 
@@ -336,15 +321,23 @@ $(function () {
    */
   function generateWeekdayButtons() {
     const weekdays = ["월", "화", "수", "목", "금"];
+    const serverWeekdays = ["MO", "TU", "WE", "TH", "FR"];
     let buttonsHTML = "";
     weekdays.forEach((day, index) => {
       buttonsHTML += `
-            <div class="col-6 col-sm-4 col-md-3 col-lg-1 mb-2">
-              <button class="btn btn-outline-secondary w-100" type="button" value="${index + 1}" aria-pressed="false">
-                ${day}
-              </button>
-            </div>
-          `;
+      <div class="col-6 col-sm-4 col-md-3 col-lg-1 mb-2">
+        <button 
+          class="btn btn-outline-secondary btn-toggle w-100" 
+          type="button" 
+          value="${index + 1}"  
+          data-weekdays="${serverWeekdays[index]}" 
+          aria-pressed="false"
+          data-bs-toggle="button"
+        >
+          ${day}
+        </button>
+      </div>
+    `;
     });
     return buttonsHTML;
   }
@@ -357,49 +350,6 @@ $(function () {
 
   // 커스텀 달력 관련 변수(빈도없음)
   let selectedCalendarDates = [];
-
-  // 버튼 클릭 시 active 클래스 및 aria-pressed 속성 토글 부트스트랩 색깔 변경
-  $(document).on("click", "#dynamic-buttons button", function () {
-    // 현재 빈도에 따라 동작
-    const frequency = $("#frequency").val();
-
-    if (frequency === "monthly") {
-      const day = $(this).val();
-      const isPressed = $(this).attr("aria-pressed") === "true";
-
-      if (isPressed) {
-        // 이미 선택된 경우 배열에서 제거
-        selectedDays = selectedDays.filter(
-          (selectedDay) => selectedDay !== day,
-        );
-      } else {
-        // 선택되지 않은 경우 배열에 추가
-        selectedDays.push(day);
-      }
-
-      // 버튼의 aria-pressed 상태 및 active 클래스 토글
-      $(this).attr("aria-pressed", !isPressed);
-      $(this).toggleClass("active");
-    } else if (frequency === "weekly") {
-      // 매주
-      const weekday = $(this).val();
-      const isPressed = $(this).attr("aria-pressed") === "true";
-
-      if (isPressed) {
-        // 이미 선택된 경우 배열에서 제거
-        selectedWeekdays = selectedWeekdays.filter(
-          (selectedDay) => selectedDay !== weekday,
-        );
-      } else {
-        // 선택되지 않은 경우 배열에 추가
-        selectedWeekdays.push(weekday);
-      }
-
-      // 버튼의 aria-pressed 상태 및 active 클래스 토글
-      $(this).attr("aria-pressed", !isPressed);
-      $(this).toggleClass("active");
-    }
-  });
 
   /**
    * 달력 함수 정의
@@ -464,7 +414,9 @@ $(function () {
         $selectedDatesContainer.append(cardHTML);
       });
     }
+
     window.addDateCard = addDateCard;
+
     /**
      * 날짜 카드를 제거하는 함수
      * @param {string} date - 'YYYY-MM-DD' 형식의 날짜
@@ -642,15 +594,15 @@ $(function () {
 
       // 연도 선택 시 현재 연도 이전을 비활성화하려면 아래 주석 해제
       /*
-              $("#year-select-calendar option").each(function () {
-                const optionYear = parseInt($(this).val());
-                if (optionYear < todayYear) {
-                  $(this).attr("disabled", true);
-                } else {
-                  $(this).removeAttr("disabled");
-                }
-              });
-            */
+                          $("#year-select-calendar option").each(function () {
+                            const optionYear = parseInt($(this).val());
+                            if (optionYear < todayYear) {
+                              $(this).attr("disabled", true);
+                            } else {
+                              $(this).removeAttr("disabled");
+                            }
+                          });
+                        */
     }
 
     // 초기 달력 생성 (현재 월과 연도)
@@ -659,94 +611,187 @@ $(function () {
     disablePastMonthsAndYears();
   }
 
-  // 달력 함수 호출
-  calender();
+  // AG Grid 관련 상수 및 함수 선언
+  const FRQ_CD_MAP = {
+    ED: "일별",
+    EW: "주별",
+    EM: "월별",
+    NF: "빈도없음",
+  };
 
-  // 상단 초기화
-  $("#reset-selection-top").on("click", function () {
-    // 점검 예정일
-    $("#topScheduleDate").val("none");
+  const FRQ_MAP = {
+    ED: "daily",
+    EW: "weekly",
+    EM: "monthly",
+    NF: "none",
+  };
 
-    // 빈도 회수
-    $("#top-frequency").val("all").trigger("change");
+  const CNT_CD_MAP = {
+    MO: "월",
+    TU: "화",
+    WE: "수",
+    TH: "목",
+    FR: "금",
+    SA: "토",
+    SU: "일",
+    LD: "매월말일",
+    D1: "매일마다",
+    W1: "매주마다",
+    M1: "매달마다",
+    ...Object.fromEntries(
+      Array.from({ length: 4 }, (_, i) => [`W${i + 2}`, `${i + 2}주마다`]),
+    ),
+    ...Object.fromEntries(
+      Array.from({ length: 11 }, (_, i) => [`M${i + 2}`, `${i + 2}개월마다`]),
+    ),
+    ...Object.fromEntries(
+      Array.from({ length: 30 }, (_, i) => [`D${i + 2}`, `${i + 2}일마다`]),
+    ),
+  };
 
-    // #top-count의 instance 가져오기
-    const countInstance = $("#top-count").data("autocompleteInstance");
-    if (countInstance) {
-      countInstance.updateSelected("전체");
-    } else {
-      // instance가 없으면 기본 방법으로 설정
-      $("#top-count").val("전체"); // 또는 적절한 기본값
+  function createReverseMap(map) {
+    return Object.fromEntries(
+      Object.entries(map).map(([key, value]) => [value, key]),
+    );
+  }
+
+  const FRQ_CD_REVERSE_MAP = createReverseMap(FRQ_MAP);
+  const CNT_CD_REVERSE_MAP = createReverseMap(CNT_CD_MAP);
+
+  /**
+   * 선택된 데이터로 <span> 요소들을 업데이트하는 함수
+   * @param {Object} data - 선택된 데이터 객체
+   */
+  function updateSpanElements(data) {
+    // 매핑 객체를 사용하여 코드 값을 사람이 읽을 수 있는 텍스트로 변환
+    const frqText = FRQ_CD_MAP[data.frqCd] || data.frqCd || "알 수 없음";
+    const cntText = CNT_CD_MAP[data.cntCd] || data.cntCd || "없음";
+    const inspTypeText =
+      FRQ_CD_MAP[data.inspTypeCd] || data.inspTypeCd || "알 수 없음";
+
+    $("#bottom-INSP").text(inspTypeText);
+    $("#bottom-CHKLST").text(data.chklstNm || "체크리스트 없음");
+    $("#bottom-STORE").text(data.storeNm || "가맹점 없음");
+    $("#bottom-BRAND").text(data.brandNm || "브랜드 없음");
+    $("#bottom-INSPECTOR").text(data.mbrNm || "점검자 없음");
+
+    const frequencyValue = FRQ_MAP[data.frqCd] || "none";
+    $("#frequency").val(frequencyValue).trigger("change");
+
+    if (data.frqCd === "NF" && data.inspPlanDt) {
+      // 날짜 형식 검증 (예: YYYYMMDD)
+      const datePattern = /^\d{8}$/;
+      if (datePattern.test(data.inspPlanDt)) {
+        const formattedDate = data.inspPlanDt.replace(
+          /(\d{4})(\d{2})(\d{2})/,
+          "$1-$2-$3",
+        );
+        // addDateCard 함수를 호출하여 날짜 추가 및 UI 업데이트
+        window.addDateCard(formattedDate);
+        markDateAsSelected(data.inspPlanDt);
+      } else {
+        console.warn("Invalid inspPlanDt format:", data.inspPlanDt);
+      }
     }
 
-    // 상단 Autocomplete 필드 초기화
-    $(".top-box-content .wrapper").each(function () {
-      const $wrapper = $(this);
-      const instance = $wrapper.data("autocompleteInstance");
-      if (instance) {
-        instance.updateSelected("전체");
+    if (data.frqCd === "EW") {
+      // 1. 모든 요일 버튼에서 active 클래스 제거 및 aria-pressed 속성 초기화
+      $("#dynamic-buttons button")
+        .removeClass("active")
+        .attr("aria-pressed", "false");
+
+      // 2. 선택된 요일 가져오기 (예: "WE")
+      var selectedWeek = data.week;
+
+      if (selectedWeek) {
+        // 3. 해당 data-weekdays 속성을 가진 버튼에 active 클래스 추가 및 aria-pressed 속성 설정
+        $('#dynamic-buttons button[data-weekdays="' + selectedWeek + '"]')
+          .addClass("active")
+          .attr("aria-pressed", "true");
+      } else {
+        console.warn("선택된 요일 정보가 없습니다.");
       }
-    });
+    }
 
-    // 초기 데이터 다시 로드 (필터 없이 전체 데이터 로드)
-    loadInitialData();
-  });
+    if (data.frqCd === "EM") {
+      // 1. 모든 요일 버튼에서 active 클래스 제거 및 aria-pressed 속성 초기화
+      $("#dynamic-buttons button")
+        .removeClass("active")
+        .attr("aria-pressed", "false");
 
-  /**
-   * bottom wrapper 비활성화
-   */
-  function disabledBottomWrapper() {
-    $(".bottom-box-filter .wrapper").each(function () {
-      const $wrapper = $(this);
-      $wrapper.addClass("disabled");
-    });
-    $(".bottom-box-filter select").each(function () {
-      const $wrapper = $(this);
-      $wrapper.addClass("disabled");
-    });
+      // 2. 선택된 요일 가져오기 (예: "WE")
+      var selectedWeek = data.slctDt;
+
+      if (selectedWeek) {
+        // 3. 해당 data-month-day 속성을 가진 버튼에 active 클래스 추가 및 aria-pressed 속성 설정
+        $('#dynamic-buttons button[data-month-day="' + selectedWeek + '"]')
+          .addClass("active")
+          .attr("aria-pressed", "true");
+      } else {
+        console.warn("선택된 요일 정보가 없습니다.");
+      }
+    }
+
+    // 횟수 값 설정
+    const count = CNT_CD_MAP[data.cntCd] || "없음";
+    $("#count").val(count);
+
+    // 점검 예정일 업데이트
+    $("#bottomScheduleDate").val(
+      data.inspPlanDt
+        ? data.inspPlanDt.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")
+        : "",
+    );
+
+    console.log("빈도 코드:", data.frqCd, "횟수 코드:", data.cntCd);
+    console.log("설정된 빈도:", frequencyValue);
+    console.log("설정된 횟수:", count);
   }
 
-  disabledBottomWrapper();
-
   /**
-   * bottom wrapper 활성화
+   * 특정 날짜를 선택된 상태로 표시하는 함수
+   * @param {string} date - 'YYYYMMDD' 형식의 날짜
    */
-  function enableElementBottomWrapper() {
-    $(".bottom-box-filter .wrapper").each(function () {
-      const $wrapper = $(this);
-      $wrapper.removeClass("disabled");
-    });
-    $(".bottom-box-filter select").each(function () {
-      const $wrapper = $(this);
-      $wrapper.removeClass("disabled");
-    });
-  }
+  function markDateAsSelected(date) {
+    // 'YYYYMMDD'를 'YYYY-MM-DD'로 변환
+    const formattedDate = date.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3");
 
-  // 하단 초기화
-  $("#reset-selection-bottom").on("click", function () {
-    // 빈도 초기화
-    $("#frequency").val("none");
-    updateCountOptions("none");
-    initializeUI();
+    // Extract year and month
+    const year = formattedDate.substring(0, 4);
+    const month = parseInt(formattedDate.substring(5, 7)) - 1; // 0-based month
 
-    // 점검 예정일
-    $("#bottomScheduleDate").val("all");
+    // 현재 달력의 월과 연도 가져오기
+    const currentYear = parseInt($("#year-select-calendar").val());
+    const currentMonth = parseInt($("#month-select-calendar").val());
 
-    // 하단 Autocomplete 필드 초기화
-    $(".bottom-box-filter .wrapper").each(function () {
-      const $wrapper = $(this);
-      const instance = $wrapper.data("autocompleteInstance");
-      if (instance) {
-        instance.updateSelected("선택해 주세요.");
+    // 선택된 날짜의 월과 연도가 현재 달력과 다르면 달력을 이동
+    if (year !== currentYear || month !== currentMonth) {
+      $("#year-select-calendar").val(year);
+      $("#month-select-calendar").val(month);
+      $("#year-select-calendar, #month-select-calendar").trigger("change");
+
+      // 달력이 갱신된 후 선택된 날짜를 마크
+      // setTimeout을 사용하여 달력이 갱신된 후 실행되도록 함
+      setTimeout(function () {
+        const $cell = $(`.calendar-body td[data-date="${formattedDate}"]`);
+        if ($cell.length > 0) {
+          $cell.addClass("selected");
+          console.log(`Date ${formattedDate} marked as selected.`);
+        } else {
+          console.warn("해당 날짜 셀을 찾을 수 없습니다:", formattedDate);
+        }
+      }, 300); // generateCalendar의 실행 시간을 고려하여 적절히 설정
+    } else {
+      // 현재 달력에 이미 해당 월과 연도가 표시되고 있다면 바로 마크
+      const $cell = $(`.calendar-body td[data-date="${formattedDate}"]`);
+      if ($cell.length > 0) {
+        $cell.addClass("selected");
+        console.log(`Date ${formattedDate} marked as selected.`);
+      } else {
+        console.warn("해당 날짜 셀을 찾을 수 없습니다:", formattedDate);
       }
-    });
-
-    // 커스텀 달력 선택 초기화
-    resetDateCards();
-
-    // 횟수 초기화
-    $("#count").val("없음");
-  });
+    }
+  }
 
   /**
    * 초기화 시 점검 예정일 및 커스텀 달력 표시 상태 설정
@@ -774,136 +819,58 @@ $(function () {
   }
 
   /**
-   * 페이지 로드 시 초기 UI 설정
+   * 초기화 함수
    */
-  initializeUI();
-
-  /**
-   * 빈도 선택 변경 시 UI 업데이트
-   */
-  $("#frequency").change(function () {
-    const selectedFrequency = $(this).val();
-    updateCountOptions(selectedFrequency);
-    resetDateCards();
-    if (selectedFrequency === "none") {
-      $("#schedule-date-container").hide();
-      $("#input-schedule").hide();
-      $("#custom-calendar-container").show();
-    } else {
-      $("#schedule-date-container").show();
-      $("#input-schedule").show();
-      $("#custom-calendar-container").hide();
-    }
-  });
-
-  let topFrequencyOptions = {
-    all: ["전체"],
-    daily: generateOptions("매일마다", 31, "일마다"),
-    weekly: generateOptions("매주마다", 5, "주마다"),
-    monthly: generateOptions("매달마다", 12, "개월마다"),
-    none: ["없음"],
-  };
-  $("#top-frequency").change(function () {
-    const selectedFrequency = $(this).val();
-    const countSelect = $("#top-count");
-    countSelect.empty(); // 먼저 select 요소를 비웁니다.
-    //countSelect.append('<option value="none">전체</option>');
-    if (topFrequencyOptions[selectedFrequency]) {
-      topFrequencyOptions[selectedFrequency].forEach((option) => {
-        countSelect.append(`<option value="${option}">${option}</option>`); // 옵션 태그를 정확하게 닫습니다.
-      });
-    }
-  });
-
-  // '전체 선택' 체크박스 클릭 시
-  $("#checkAll").click(function () {
-    // 모든 'checkItem' 체크박스에 대해 체크 상태를 'checkAll'과 동일하게 설정
-    $(".checkItem").prop("checked", this.checked);
-  });
-
-  // 개별 체크박스가 클릭될 때
-  $(".checkItem").click(function () {
-    // 'checkItem' 체크박스 중 하나라도 해제되면 'checkAll' 체크박스 해제
-    if ($(".checkItem:checked").length === $(".checkItem").length) {
-      $("#checkAll").prop("checked", true);
-    } else {
-      $("#checkAll").prop("checked", false);
-    }
-  });
-
-  // 모달 영역 시작
-
-  // 모달 내 li 들 이벤트 클릭
-  $(document).on("click", ".list-group-item .item-info", function () {
-    // 클릭된 요소가 이미 'highlighted' 클래스를 가지고 있는지 확인
-    if ($(this).hasClass("highlighted")) {
-      // 'highlighted' 클래스가 있다면 제거
-      $(this).removeClass("highlighted");
-    } else {
-      // 'highlighted' 클래스가 없다면,
-      // 다른 모든 요소에서 'highlighted' 클래스 제거 후
-      $(".item-info").removeClass("highlighted");
-      // 현재 클릭된 요소에만 'highlighted' 클래스 추가
-      $(this).addClass("highlighted");
-    }
-  });
-
-  // 모달 영역 끝
-
-  /**
-   * 검색 박스 토글 함수 정의
-   */
-  function toggleSearchBox() {
-    const toggleButton = document.querySelector(".top-drop-down button"); // 버튼 선택
-    const icon = toggleButton.querySelector("i"); // 아이콘 선택
-    const searchSection = document.querySelector(
-      ".top-box .bottom-box-content",
-    ); // 검색 섹션 선택 --> 해당 부분은 접을 부분(custom)할 것
-
-    // 초기 상태: 검색 섹션 닫힘
-    let isOpen = false;
-
-    // 초기 스타일 설정
-    searchSection.style.maxHeight = "0";
-    searchSection.style.overflow = "hidden"; // 내용 숨김
-
-    // CSS 트랜지션을 추가하여 부드러운 애니메이션 효과
-    searchSection.style.transition = "0.3s ease, transform 0.3s ease";
-
-    // 버튼 클릭 이벤트 리스너
-    toggleButton.addEventListener("click", () => {
-      isOpen = !isOpen; // 상태 토글
-
-      if (isOpen) {
-        searchSection.style.maxHeight = `${searchSection.scrollHeight + 5}px`; // 자연스럽게 열기
-        icon.style.transform = "rotate(-90deg)"; // 아이콘 180도 회전
-      } else {
-        searchSection.style.maxHeight = "0"; // 높이를 0으로 줄여서 닫기
-        icon.style.transform = "rotate(0deg)"; // 아이콘 원래 상태로
-
-        // 애니메이션이 끝나면 overflow를 hidden으로 설정
-        searchSection.addEventListener(
-          "transitionend",
-          () => {
-            if (!isOpen) searchSection.style.overflow = "hidden";
-          },
-          { once: true }, // 이벤트가 한 번만 실행되도록 설정
-        );
-      }
+  function loadInitialData(filters = {}) {
+    $.ajax({
+      url: "/qsc/inspection-schedule/schedule-list/filter", // 필터 엔드포인트 사용
+      method: "GET",
+      data: filters, // 필터 파라미터 전달
+      success: function (response) {
+        if (response) {
+          console.log("서버 응답 데이터:", response); // 데이터 정상 수신 확인
+          alldata = response;
+          alldata = alldata.map((item, index) => ({
+            ...item,
+            no: index + 1,
+          }));
+        }
+        // 서버 응답을 grid에 맞게 변환
+        const dataArray = Array.isArray(response) ? response : response.data;
+        const formattedData = dataArray.map((item, index) => ({
+          no: index + 1,
+          storeNm: item.storeNm || "",
+          brandNm: item.brandNm || "",
+          chklstNm: item.chklstNm || "",
+          inspPlanDt: item.inspPlanDt || "",
+          mbrNm: item.mbrNm || "",
+          storeId: item.storeId || "",
+          cntCd: CNT_CD_MAP[item.cntCd?.toUpperCase()] || item.cntCd || "",
+          frqCd: FRQ_CD_MAP[item.frqCd] || item.frqCd || "",
+        }));
+        console.log(formattedData);
+        if (gridOptions.api) {
+          gridOptions.api.setGridOption("rowData", formattedData);
+          updateChecklistCount();
+        } else {
+          console.error("AG Grid API가 초기화되지 않았습니다.");
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error("Error fetching data:", error);
+        Swal.fire({
+          title: "오류!",
+          text: "데이터를 불러오는 중 오류가 발생했습니다.",
+          icon: "error",
+          confirmButtonText: "확인",
+        });
+      },
     });
   }
 
-  // 함수 호출
-  toggleSearchBox();
-
-  /**
-   * AG Grid 초기화 및 데이터 로드
-   */
-
-  // 초기 rowData를 빈 배열로 설정
+  // 그리드 관련 변수 및 설정
   const rowData = [];
 
-  // 통합 설정 객체
   const gridOptions = {
     rowData: rowData, // 초기에는 빈 배열
     columnDefs: [
@@ -1072,102 +1039,28 @@ $(function () {
   };
 
   /**
-   * 선택된 데이터로 <span> 요소들을 업데이트하는 함수
-   * @param {Object} data - 선택된 데이터 객체
+   * 체크리스트 개수를 업데이트하는 함수
    */
-  function updateSpanElements(data) {
-    // 매핑 객체를 사용하여 코드 값을 사람이 읽을 수 있는 텍스트로 변환
-    const frqText = FRQ_CD_MAP[data.frqCd] || data.frqCd || "알 수 없음";
-    const cntText = CNT_CD_MAP[data.cntCd] || data.cntCd || "없음";
-    const inspTypeText =
-      FRQ_CD_MAP[data.inspTypeCd] || data.inspTypeCd || "알 수 없음";
-
-    $("#bottom-INSP").text(inspTypeText);
-    $("#bottom-CHKLST").text(data.chklstNm || "체크리스트 없음");
-    $("#bottom-STORE").text(data.storeNm || "가맹점 없음");
-    $("#bottom-BRAND").text(data.brandNm || "브랜드 없음");
-    $("#bottom-INSPECTOR").text(data.mbrNm || "점검자 없음");
-
-    const frequencyValue = FRQ_MAP[data.frqCd] || "none";
-    $("#frequency").val(frequencyValue).trigger("change");
-
-    if (data.frqCd === "NF" && data.inspPlanDt) {
-      // 날짜 형식 검증 (예: YYYYMMDD)
-      const datePattern = /^\d{8}$/;
-      if (datePattern.test(data.inspPlanDt)) {
-        const formattedDate = data.inspPlanDt.replace(
-          /(\d{4})(\d{2})(\d{2})/,
-          "$1-$2-$3",
-        );
-        // addDateCard 함수를 호출하여 날짜 추가 및 UI 업데이트
-        window.addDateCard(formattedDate);
-        markDateAsSelected(data.inspPlanDt);
-      } else {
-        console.warn("Invalid inspPlanDt format:", data.inspPlanDt);
-      }
+  function updateChecklistCount() {
+    const checklistCount = document.getElementById("checklist_count");
+    if (checklistCount && gridOptions.api) {
+      // AG Grid API를 사용하여 현재 표시된 row 수 가져오기
+      checklistCount.innerText = gridOptions.api.getDisplayedRowCount();
+    } else {
+      console.warn(
+        "checklist_count 요소가 없거나 gridOptions.api가 초기화되지 않았습니다.",
+      );
     }
-
-    // 횟수 값 설정
-    const count = CNT_CD_MAP[data.cntCd] || "없음";
-    $("#count").val(count);
-
-    // 점검 예정일 업데이트
-    $("#bottomScheduleDate").val(
-      data.inspPlanDt
-        ? data.inspPlanDt.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3")
-        : "",
-    );
-
-    console.log("빈도 코드:", data.frqCd, "횟수 코드:", data.cntCd);
-    console.log("설정된 빈도:", frequencyValue);
-    console.log("설정된 횟수:", count);
   }
 
   /**
-   * 특정 날짜를 선택된 상태로 표시하는 함수
-   * @param {string} date - 'YYYYMMDD' 형식의 날짜
+   * 총 개수 업데이트 함수
    */
-  function markDateAsSelected(date) {
-    // 'YYYYMMDD'를 'YYYY-MM-DD'로 변환
-    const formattedDate = date.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3");
-
-    // Extract year and month
-    const year = formattedDate.substring(0, 4);
-    const month = parseInt(formattedDate.substring(5, 7)) - 1; // 0-based month
-
-    // 현재 달력의 월과 연도 가져오기
-    const currentYear = parseInt($("#year-select-calendar").val());
-    const currentMonth = parseInt($("#month-select-calendar").val());
-
-    // 선택된 날짜의 월과 연도가 현재 달력과 다르면 달력을 이동
-    if (year !== currentYear || month !== currentMonth) {
-      $("#year-select-calendar").val(year);
-      $("#month-select-calendar").val(month);
-      $("#year-select-calendar, #month-select-calendar").trigger("change");
-
-      // 달력이 갱신된 후 선택된 날짜를 마크
-      // setTimeout을 사용하여 달력이 갱신된 후 실행되도록 함
-      setTimeout(function () {
-        const $cell = $(`.calendar-body td[data-date="${formattedDate}"]`);
-        if ($cell.length > 0) {
-          $cell.addClass("selected");
-          console.log(`Date ${formattedDate} marked as selected.`);
-        } else {
-          console.warn("해당 날짜 셀을 찾을 수 없습니다:", formattedDate);
-        }
-      }, 300); // generateCalendar의 실행 시간을 고려하여 적절히 설정
-    } else {
-      // 현재 달력에 이미 해당 월과 연도가 표시되고 있다면 바로 마크
-      const $cell = $(`.calendar-body td[data-date="${formattedDate}"]`);
-      if ($cell.length > 0) {
-        $cell.addClass("selected");
-        console.log(`Date ${formattedDate} marked as selected.`);
-      } else {
-        console.warn("해당 날짜 셀을 찾을 수 없습니다:", formattedDate);
-      }
-    }
+  function updateTotalCount() {
+    $("#totalCount").text(gridOptions.api.getDisplayedRowCount());
   }
 
+  // 모달 관련 함수 선언
   $("#masterChecklistModal").on("show.bs.modal", function (e) {
     const storeId = $(this).attr("data-store-id");
     //console.log("모달에 전달된 storeId:", storeId);
@@ -1230,6 +1123,7 @@ $(function () {
   $(document).on("click", function () {
     $(".edit-options").removeClass("show");
   });
+
   // 그리드 컨테이너 선택
   const gridDiv = document.querySelector("#myGrid");
 
@@ -1237,122 +1131,307 @@ $(function () {
   new agGrid.Grid(gridDiv, gridOptions);
 
   /**
-   * 체크리스트 개수를 업데이트하는 함수
+   * Autocomplete 인스턴스를 초기화할 때 데이터 로드 후 생성
    */
-  function updateChecklistCount() {
-    const checklistCount = document.getElementById("checklist_count");
-    if (checklistCount && gridOptions.api) {
-      // AG Grid API를 사용하여 현재 표시된 row 수 가져오기
-      checklistCount.innerText = gridOptions.api.getDisplayedRowCount();
+  $(".wrapper").each(function () {
+    const $wrapper = $(this);
+    const type = $wrapper.data("autocomplete");
+    const includeAllAttr = $wrapper.data("include-all");
+    const includeAll = includeAllAttr !== undefined ? includeAllAttr : true; // 기본값은 true
+
+    if (type && autocompleteData[type]) {
+      // dataList 가져오기 (함수 호출)
+      autocompleteData[type](includeAll)
+        .then((response) => {
+          let dataList;
+          if (type === "INSP") {
+            dataList = response;
+          } else {
+            // AJAX 응답 구조에 따라 적절히 수정
+            // 예를 들어, 응답이 { data: [...] } 형태라면:
+            dataList = response.data || response; // 실제 응답 구조에 맞게 수정 필요
+          }
+          // Autocomplete 인스턴스 생성
+          const autocomplete = new Autocomplete($wrapper, dataList);
+          $wrapper.data("autocompleteInstance", autocomplete);
+        })
+        .catch((error) => {
+          console.error(
+            `Error fetching autocomplete data for type ${type}:`,
+            error,
+          );
+        });
+    }
+  });
+
+  /**
+   * 빈도 관련 데이터 및 함수
+   */
+
+  /**
+   * 행 추가 함수
+   */
+  function onAddRow() {
+    const newItem = {
+      no: gridOptions.api.getDisplayedRowCount() + 1,
+      storeNm: "",
+      brandNm: "",
+      inspPlanDt: "",
+      creTm: "",
+      mbrNm: "",
+    };
+    gridOptions.api.applyTransaction({ add: [newItem], addIndex: 0 });
+    updateChecklistCount();
+  }
+
+  /**
+   * 행 삭제 함수
+   */
+  function onDeleteRow() {
+    const selectedRows = gridOptions.api.getSelectedRows();
+    if (selectedRows.length > 0) {
+      gridOptions.api.applyTransaction({ remove: selectedRows });
+      updateChecklistCount();
     } else {
-      console.warn(
-        "checklist_count 요소가 없거나 gridOptions.api가 초기화되지 않았습니다.",
-      );
+      Swal.fire({
+        title: "경고!",
+        text: "삭제할 항목을 선택해주세요.",
+        icon: "warning",
+        confirmButtonText: "확인",
+      });
     }
   }
 
-  /**
-   * 총 개수 업데이트 함수
-   */
-  function updateTotalCount() {
-    $("#totalCount").text(gridOptions.api.getDisplayedRowCount());
-  }
+  // ===========================
+  // 구현부 (Implementations)
+  // ===========================
+
+  // 각 자동완성 필드에 대한 데이터 목록 정의 후 초기화
+  // (이미 선언부에서 수행됨)
+
+  // 선택된 날짜를 저장할 배열 (월별)
+  // (이미 선언부에서 수행됨)
+
+  // 선택된 요일을 저장할 배열 (주별)
+  // (이미 선언부에서 수행됨)
+
+  // 커스텀 달력 관련 변수(빈도없음)
+  // (이미 선언부에서 수행됨)
+
+  // 상단 초기화
+  $("#reset-selection-top").on("click", function () {
+    // 점검 예정일
+    $("#topScheduleDate").val("none");
+
+    // 빈도 회수
+    $("#top-frequency").val("all").trigger("change");
+
+    // #top-count의 instance 가져오기
+    const countInstance = $("#top-count").data("autocompleteInstance");
+    if (countInstance) {
+      countInstance.updateSelected("전체");
+    } else {
+      // instance가 없으면 기본 방법으로 설정
+      $("#top-count").val("전체"); // 또는 적절한 기본값
+    }
+
+    // 상단 Autocomplete 필드 초기화
+    $(".top-box-content .wrapper").each(function () {
+      const $wrapper = $(this);
+      const instance = $wrapper.data("autocompleteInstance");
+      if (instance) {
+        instance.updateSelected("전체");
+      }
+    });
+
+    // 초기 데이터 다시 로드 (필터 없이 전체 데이터 로드)
+    loadInitialData();
+  });
 
   /**
-   * 데이터 로드 함수
+   * bottom wrapper 비활성화
    */
-  const FRQ_CD_MAP = {
-    ED: "일별",
-    EW: "주별",
-    EM: "월별",
-    NF: "빈도없음",
-  };
+  function disabledBottomWrapper() {
+    $(".bottom-box-filter .wrapper").each(function () {
+      const $wrapper = $(this);
+      $wrapper.addClass("disabled");
+    });
+    $(".bottom-box-filter select").each(function () {
+      const $wrapper = $(this);
+      $wrapper.addClass("disabled");
+    });
 
-  const FRQ_MAP = {
-    ED: "daily",
-    EW: "weekly",
-    EM: "monthly",
-    NF: "none",
-  };
-
-  const CNT_CD_MAP = {
-    MO: "월",
-    TU: "화",
-    WE: "수",
-    TH: "목",
-    FR: "금",
-    SA: "토",
-    SU: "일",
-    LD: "매월말일",
-    D1: "매일마다",
-    W1: "매주마다",
-    M1: "매달마다",
-    ...Object.fromEntries(
-      Array.from({ length: 4 }, (_, i) => [`W${i + 2}`, `${i + 2}주마다`]),
-    ),
-    ...Object.fromEntries(
-      Array.from({ length: 11 }, (_, i) => [`M${i + 2}`, `${i + 2}개월마다`]),
-    ),
-    ...Object.fromEntries(
-      Array.from({ length: 30 }, (_, i) => [`D${i + 2}`, `${i + 2}일마다`]),
-    ),
-  };
-  function createReverseMap(map) {
-    return Object.fromEntries(
-      Object.entries(map).map(([key, value]) => [value, key]),
-    );
-  }
-
-  const FRQ_CD_REVERSE_MAP = createReverseMap(FRQ_MAP);
-  const CNT_CD_REVERSE_MAP = createReverseMap(CNT_CD_MAP);
-
-  function loadInitialData(filters = {}) {
-    $.ajax({
-      url: "/qsc/inspection-schedule/schedule-list/filter", // 필터 엔드포인트 사용
-      method: "GET",
-      data: filters, // 필터 파라미터 전달
-      success: function (response) {
-        if (response) {
-          console.log("서버 응답 데이터:", response); // 데이터 정상 수신 확인
-          alldata = response;
-          alldata = alldata.map((item, index) => ({
-            ...item,
-            no: index + 1,
-          }));
-        }
-        // 서버 응답을 grid에 맞게 변환
-        const dataArray = Array.isArray(response) ? response : response.data;
-        const formattedData = dataArray.map((item, index) => ({
-          no: index + 1,
-          storeNm: item.storeNm || "",
-          brandNm: item.brandNm || "",
-          chklstNm: item.chklstNm || "",
-          inspPlanDt: item.inspPlanDt || "",
-          mbrNm: item.mbrNm || "",
-          storeId: item.storeId || "",
-          cntCd: CNT_CD_MAP[item.cntCd?.toUpperCase()] || item.cntCd || "",
-          frqCd: FRQ_CD_MAP[item.frqCd] || item.frqCd || "",
-        }));
-
-        if (gridOptions.api) {
-          gridOptions.api.setGridOption("rowData", formattedData);
-          updateChecklistCount();
-        } else {
-          console.error("AG Grid API가 초기화되지 않았습니다.");
-        }
-      },
-      error: function (xhr, status, error) {
-        console.error("Error fetching data:", error);
-        Swal.fire({
-          title: "오류!",
-          text: "데이터를 불러오는 중 오류가 발생했습니다.",
-          icon: "error",
-          confirmButtonText: "확인",
-        });
-      },
+    $(".bottom-box-filter input").each(function () {
+      const $wrapper = $(this);
+      $wrapper.addClass("disabled");
     });
   }
 
+  /**
+   * bottom wrapper 활성화
+   */
+  function enableElementBottomWrapper() {
+    $(".bottom-box-filter .wrapper").each(function () {
+      const $wrapper = $(this);
+      $wrapper.removeClass("disabled");
+    });
+    $(".bottom-box-filter select").each(function () {
+      const $wrapper = $(this);
+      $wrapper.removeClass("disabled");
+    });
+
+    $(".bottom-box-filter input").each(function () {
+      const $wrapper = $(this);
+      $wrapper.removeClass("disabled");
+    });
+  }
+
+  // 하단 초기화
+  $("#reset-selection-bottom").on("click", function () {
+    // 빈도 초기화
+    $("#frequency").val("none");
+    updateCountOptions("none");
+    initializeUI();
+
+    // 점검 예정일
+    $("#bottomScheduleDate").val("all");
+
+    // 하단 Autocomplete 필드 초기화
+    $(".bottom-box-filter .wrapper").each(function () {
+      const $wrapper = $(this);
+      const instance = $wrapper.data("autocompleteInstance");
+      if (instance) {
+        instance.updateSelected("선택해 주세요.");
+      }
+    });
+
+    // 커스텀 달력 선택 초기화
+    resetDateCards();
+
+    // 횟수 초기화
+    $("#count").val("없음");
+  });
+
+  /**
+   * 검색 박스 토글 함수 정의
+   */
+  function toggleSearchBox() {
+    const toggleButton = document.querySelector(".top-drop-down button"); // 버튼 선택
+    const icon = toggleButton.querySelector("i"); // 아이콘 선택
+    const searchSection = document.querySelector(
+      ".top-box .bottom-box-content",
+    ); // 검색 섹션 선택 --> 해당 부분은 접을 부분(custom)할 것
+
+    // 초기 상태: 검색 섹션 닫힘
+    let isOpen = false;
+
+    // 초기 스타일 설정
+    searchSection.style.maxHeight = "0";
+    searchSection.style.overflow = "hidden"; // 내용 숨김
+
+    // CSS 트랜지션을 추가하여 부드러운 애니메이션 효과
+    searchSection.style.transition = "0.3s ease, transform 0.3s ease";
+
+    // 버튼 클릭 이벤트 리스너
+    toggleButton.addEventListener("click", () => {
+      isOpen = !isOpen; // 상태 토글
+
+      if (isOpen) {
+        searchSection.style.maxHeight = `${searchSection.scrollHeight + 5}px`; // 자연스럽게 열기
+        icon.style.transform = "rotate(-90deg)"; // 아이콘 180도 회전
+      } else {
+        searchSection.style.maxHeight = "0"; // 높이를 0으로 줄여서 닫기
+        icon.style.transform = "rotate(0deg)"; // 아이콘 원래 상태로
+
+        // 애니메이션이 끝나면 overflow를 hidden으로 설정
+        searchSection.addEventListener(
+          "transitionend",
+          () => {
+            if (!isOpen) searchSection.style.overflow = "hidden";
+          },
+          { once: true }, // 이벤트가 한 번만 실행되도록 설정
+        );
+      }
+    });
+  }
+
+  // 선택된 데이터로 <span> 요소들을 업데이트하는 함수 (이미 선언됨)
+  // (이미 선언부에서 수행됨)
+
+  /**
+   * 빈도 선택 변경 시 UI 업데이트
+   */
+  $("#frequency").change(function () {
+    const selectedFrequency = $(this).val();
+    updateCountOptions(selectedFrequency);
+    resetDateCards();
+    if (selectedFrequency === "none") {
+      $("#schedule-date-container").hide();
+      $("#input-schedule").hide();
+      $("#custom-calendar-container").show();
+    } else {
+      $("#schedule-date-container").show();
+      $("#input-schedule").show();
+      $("#custom-calendar-container").hide();
+    }
+  });
+
+  let topFrequencyOptions = {
+    all: ["전체"],
+    daily: generateOptions("매일마다", 31, "일마다"),
+    weekly: generateOptions("매주마다", 5, "주마다"),
+    monthly: generateOptions("매달마다", 12, "개월마다"),
+    none: ["없음"],
+  };
+
+  $("#top-frequency").change(function () {
+    const selectedFrequency = $(this).val();
+    const countSelect = $("#top-count");
+    countSelect.empty(); // 먼저 select 요소를 비웁니다.
+
+    if (topFrequencyOptions[selectedFrequency]) {
+      topFrequencyOptions[selectedFrequency].forEach((option) => {
+        countSelect.append(`<option value="${option}">${option}</option>`); // 옵션 태그를 정확하게 닫습니다.
+      });
+
+      if (selectedFrequency === "daily") {
+        countSelect.append(`<option value="매월말일">매월말일</option>`);
+      }
+    }
+  });
+
+  // '전체 선택' 체크박스 클릭 시
+  $("#checkAll").click(function () {
+    // 모든 'checkItem' 체크박스에 대해 체크 상태를 'checkAll'과 동일하게 설정
+    $(".checkItem").prop("checked", this.checked);
+  });
+
+  // 개별 체크박스가 클릭될 때
+  $(".checkItem").click(function () {
+    // 'checkItem' 체크박스 중 하나라도 해제되면 'checkAll' 체크박스 해제
+    if ($(".checkItem:checked").length === $(".checkItem").length) {
+      $("#checkAll").prop("checked", true);
+    } else {
+      $("#checkAll").prop("checked", false);
+    }
+  });
+
+  // 모달 내 li 들 이벤트 클릭
+  $(document).on("click", ".list-group-item .item-info", function () {
+    // 클릭된 요소가 이미 'highlighted' 클래스를 가지고 있는지 확인
+    if ($(this).hasClass("highlighted")) {
+      // 'highlighted' 클래스가 있다면 제거
+      $(this).removeClass("highlighted");
+    } else {
+      // 'highlighted' 클래스가 없다면,
+      // 다른 모든 요소에서 'highlighted' 클래스 제거 후
+      $(".item-info").removeClass("highlighted");
+      // 현재 클릭된 요소에만 'highlighted' 클래스 추가
+      $(this).addClass("highlighted");
+    }
+  });
+
+  // AG Grid API를 사용하여 초기 데이터 로드 및 업데이트
   /**
    * 조회 버튼 클릭 시 필터링된 데이터 로드
    */
@@ -1415,40 +1494,8 @@ $(function () {
   });
 
   /**
-   * 행 추가 함수
+   * 행 추가 및 삭제 버튼 이벤트 바인딩
    */
-  function onAddRow() {
-    const newItem = {
-      no: gridOptions.api.getDisplayedRowCount() + 1,
-      storeNm: "",
-      brandNm: "",
-      inspPlanDt: "",
-      creTm: "",
-      mbrNm: "",
-    };
-    gridOptions.api.applyTransaction({ add: [newItem], addIndex: 0 });
-    updateChecklistCount();
-  }
-
-  /**
-   * 행 삭제 함수
-   */
-  function onDeleteRow() {
-    const selectedRows = gridOptions.api.getSelectedRows();
-    if (selectedRows.length > 0) {
-      gridOptions.api.applyTransaction({ remove: selectedRows });
-      updateChecklistCount();
-    } else {
-      Swal.fire({
-        title: "경고!",
-        text: "삭제할 항목을 선택해주세요.",
-        icon: "warning",
-        confirmButtonText: "확인",
-      });
-    }
-  }
-
-  // 행 추가 및 삭제 버튼 이벤트 바인딩
   $("#addRowButton").on("click", function () {
     onAddRow();
   });
@@ -1457,4 +1504,23 @@ $(function () {
     onDeleteRow();
     disabledBottomWrapper(); // 검색 버튼 활성화
   });
+
+  // ------
+  // 로드시 실행해야 하는 함수 모음
+
+  // 초기비활성화
+  disabledBottomWrapper();
+
+  // 함수 호출
+  toggleSearchBox();
+
+  // 검색 박스 토글 함수 정의
+  toggleSearchBox();
+
+  // 페이지 로드 시 초기 UI 설정
+  initializeUI();
+
+  // 커스텀 달력 함수 호출
+  calender();
+  //------
 });

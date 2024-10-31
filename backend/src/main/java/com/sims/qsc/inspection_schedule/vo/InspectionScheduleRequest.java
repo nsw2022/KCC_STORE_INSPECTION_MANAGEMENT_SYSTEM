@@ -8,6 +8,7 @@ import lombok.*;
  * @Date 2024.10.21
  */
 @Getter
+@Setter
 @ToString
 @Builder
 @AllArgsConstructor
@@ -24,4 +25,5 @@ public class InspectionScheduleRequest {
     private String inspTypeCd;//점검유형
     private String week;// 요일
     private String slctDt;// 월에 일자
+    private String currentMbrNo;//로그인한사람
 }

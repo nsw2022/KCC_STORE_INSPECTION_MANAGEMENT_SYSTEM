@@ -17,6 +17,7 @@ public interface InspectionScheduleMapper {
      * @param scheduleDate 점검예정일
      * @param chklstNm 체크리스트명
      * @param inspector 점검자
+     * @param currentMbrNo 로그인사람의 회원고유번호
      * @return 필터 요소가 적용된 점검일정 목록
      */
     List<InspectionScheduleRequest> selectFilteredInspectionScheduleList(
@@ -26,7 +27,8 @@ public interface InspectionScheduleMapper {
             @Param("chklstNm") String chklstNm,
             @Param("inspector") String inspector,
             @Param("cntCd") String cntCd,
-            @Param("frqCd")String frqCd
+            @Param("frqCd")String frqCd,
+            @Param("currentMbrNo")String currentMbrNo
     );
 
     /** @return 자동완성 가맹점 리스트 */
