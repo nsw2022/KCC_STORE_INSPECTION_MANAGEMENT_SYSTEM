@@ -1,5 +1,190 @@
+// ROW 데이터 정의
+let rowData = [];
+let defaultRowData = [];
+let gridApi = null;
+let gridOptions = null;
+let firstRowLength;
+
+async function getProductAll(searchCriteria = {}) {
+  try {
+    const response = await fetch("/master/product/list", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(searchCriteria)
+    });
+
+    let data = await response.json();
+    data = data.map((item, index) => ({
+      ...item,
+      no : index+1
+    }));
+
+
+    rowData = data.map((item) => {
+      item.expDaynum = item.expDaynum + '일';
+      item.pdtPrice = parseInt(item.pdtPrice).toLocaleString("ko-KR") + ' 원';
+      firstRowLength++;
+
+      return item;
+    })
+
+    if(defaultRowData.length === 0){
+      defaultRowData = data;
+    }
+
+    // gridApi가 존재할 경우 데이터 설정
+    if (gridApi) {
+      gridApi.setGridOption("rowData", rowData); // 데이터 설정
+      updateProductCount();
+    } else {
+      console.error("gridApi is not initialized.");
+    }
+
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+
+
+function initializeGrid() {
+  // 그리드 옵션 설정
+  gridOptions = {
+    rowData: rowData,
+    columnDefs: [
+      { field: "no", headerName: "No", width: 80, minWidth: 60 },
+      { field: `pdtNm`, headerName: "제품명", width: 200, minWidth: 180 },
+      { field: "brandNm", headerName: "브랜드", width: 180, minWidth: 120 },
+      {
+        field: "expDaynum",
+        headerName: "소비기한",
+        width: 150,
+        minWidth: 130,
+      },
+      {
+        field: "pdtPrice",
+        headerName: "가격",
+        width: 150,
+        minWidth: 110,
+      },
+      {
+        field: "pdtSellSttsNm",
+        headerName: "판매상태",
+        width: 150,
+        minWidth: 110,
+      },
+
+      {
+        headerName: "자세히보기",
+        field: "more",
+        width: 150,
+        minWidth: 120,
+        cellRenderer: function (params) {
+          // jQuery를 사용하여 컨테이너 div 생성
+          const $container = $("<div>", {
+            class: "edit-container",
+            css: { position: "relative", cursor: "pointer" },
+          });
+          $('#input').prop('checked')
+          // SVG 요소 생성
+          const $svg = $(`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 15 15">
+                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+                        </svg>
+                    `);
+
+          // '자세히보기' 옵션 div 생성
+          let pdtId = params.data.pdtId;
+          const $editDiv = $(`<div class="edit-options" data-no="${pdtId}" data-bs-toggle="modal" data-bs-target="#productManagementModal">자세히보기</div>`);
+          // SVG 클릭 시 '수정' 옵션 표시
+          $svg.on("click", function (e) {
+            e.stopPropagation(); // 이벤트 버블링 방지
+
+            // 모든 다른 'edit-options' 숨기기
+            $(".edit-options").not($editDiv).removeClass("show");
+
+            // SVG의 위치 계산
+            const offset = $svg.offset();
+            const svgHeight = $svg.outerHeight();
+
+            // 'edit-options' 위치 설정 (SVG 아래에 표시)
+            $editDiv.css({
+              top: offset.top + svgHeight + 2, // SVG 바로 아래에 2px 간격
+              left: offset.left + $svg.outerWidth() / 2 - 43, // SVG의 중앙에 왼쪽으로 이동
+              transform: "translateX(-50%)", // 가로 중앙 정3
+            });
+
+            // 'show' 클래스 토글
+            $editDiv.toggleClass("show");
+          });
+
+          // '수정' 옵션 클릭 시 모달 열기
+          $editDiv.on("click", function (e) {
+            e.stopPropagation(); // 이벤트 버블링 방지
+
+            // 모달 열기
+            openPopup(params.data.data.inspResultId); // 팝업으로 데이터 전송 - 다른페이지에서는  $("#masterChecklistModal").modal("show");
+
+            // 'edit-options' 숨기기
+            $editDiv.removeClass("show");
+          });
+
+          // 컨테이너에 SVG 추가
+          $container.append($svg);
+
+          // 'edit-options'를 body에 추가
+          $("body").append($editDiv);
+
+          return $container[0]; // DOM 요소 반환
+        },
+        pinned: "right",
+      },
+    ],
+    autoSizeStrategy: {
+      type: "fitGridWidth",
+      defaultMinWidth: 10,
+    },
+    rowHeight: 45,
+    pagination: true,
+    paginationAutoPageSize: true,
+  };
+
+  // 그리드 초기화
+  const gridDiv = document.querySelector("#myGrid");
+  gridApi = agGrid.createGrid(gridDiv, gridOptions);
+
+  getProductAll();
+  updateProductCount();
+
+}
+
+document.addEventListener("DOMContentLoaded", initializeGrid);
+
+// 체크리스트 카운트 업데이트 함수
+function updateProductCount() {
+  const productCount = document.querySelector(".product_count");
+  productCount.textContent = gridApi.getDisplayedRowCount();
+}
+
 /* 본문 헤더 영역 */
 $(function () {
+  /**
+   * 초기화 버튼 클릭 시 모든 선택 초기화
+   */
+  $("#reset-selection-top").on("click", function () {
+
+    // 자동완성 필드 초기화
+    $(".container-fluid .wrapper").each(function () {
+      const $wrapper = $(this);
+      const instance = $wrapper.data("autocompleteInstance");
+      if (instance) {
+        let text = $(this).siblings('label').text() + ' 검색';
+        instance.updateSelected(text);
+      }
+    });
+  });
+
   /**
    * Autocomplete 클래스 정의
    */
@@ -136,18 +321,36 @@ $(function () {
    *
    */
   const autocompleteData = {
-    store: [
-      "혜화점",
-      "종로점",
-      "청량리점",
-      "안산점",
-      "부평점",
-      "용산점",
-      "답십리점",
+    brandNm: [
+      "전체"
     ],
-    inspector: ["노승우", "이지훈", "유재원", "원승언", "노승수"],
-    sv: ["홍길동", "이순신", "신사임당", "최강록", "박성호"],
+    pdtNm: [
+      "전체"
+    ],
+    pdtSellSttsNm: [
+      "전체"
+    ],
   };
+
+  /**
+   * autocompleteData에 옵션 목록 넣어두기
+   */
+  $.ajax({
+    url : '/master/product/options',
+    method : 'GET',
+    async : false,
+    success : function(data) {
+      data.brandNmList.filter(x => {
+        autocompleteData.brandNm.push(x);
+      })
+      data.pdtNmList.filter(x => {
+        autocompleteData.pdtNm.push(x);
+      })
+      data.pdtSellSttsNmList.filter(x => {
+        autocompleteData.pdtSellSttsNm.push(x)
+      })
+    }
+  })
 
   // 자동완성 인스턴스를 초기화하고 wrapper 요소에 저장
   $(".wrapper").each(function () {
@@ -210,208 +413,81 @@ $(function () {
 
 /* 본문 헤더 영역 끝 */
 
-/* 본문 표 영역 */
 
-// 아이콘이 포함된 셀 렌더러 정의
-function BtnCellRenderer() {}
 
-BtnCellRenderer.prototype.init = function () {
-  // div를 생성하고 클릭 이벤트 추가
-  this.eGui = document.createElement("div");
-  this.eGui.innerHTML = `
-    <button class="edit_btn" data-bs-toggle="modal" data-bs-target="#productManagementModal">
-      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 15 15">
-        <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
-      </svg>
-    </button>
-    `;
-  this.eGui.className = "icon-container d-inline-flex"; // 필요한 경우 스타일 추가
-};
 
-BtnCellRenderer.prototype.getGui = function () {
-  return this.eGui;
-};
 
-// ROW 데이타 정의
-const rowData = [
-  {
-    No: 1,
-    productName: "소보로빵",
-    brand: "KCC베이커리",
-    expiration_daynum: "30",
-    product_price: "1800",
-    product_sell_status: "판매중",
-  },
-  {
-    No: 2,
-    productName: "크림빵",
-    brand: "KCC베이커리",
-    expiration_daynum: "21",
-    product_price: "2000",
-    product_sell_status: "판매중",
-  },
-  {
-    No: 3,
-    productName: "소금빵",
-    brand: "KCC베이커리",
-    expiration_daynum: "15",
-    product_price: "2200",
-    product_sell_status: "판매중",
-  },
-  {
-    No: 4,
-    productName: "카스테라",
-    brand: "KCC베이커리",
-    expiration_daynum: "45",
-    product_price: "2500",
-    product_sell_status: "판매중",
-  },
-  {
-    No: 5,
-    productName: "두바이 초콜릿 쿠키",
-    brand: "KCC베이커리",
-    expiration_daynum: "7",
-    product_price: "4000",
-    product_sell_status: "품절(재고없음)",
-  },
-];
-
-// 통합 설정 객체
-const gridOptions = {
-  rowData: rowData,
-  columnDefs: [
-    // 컬럼 정의
-    {
-      minWidth: 45,
-      width: 70,
-      headerCheckboxSelection: true,
-      checkboxSelection: true,
-      resizable: true,
-      cellStyle: { backgroundColor: "#ffffff" },
-    },
-    { field: "No", headerName: "No", width: 120, minWidth: 60 },
-    { field: "productName", headerName: "제품명", minWidth: 150 },
-    { field: "brand", headerName: "브랜드", minWidth: 120 },
-    { field: "expiration_daynum", headerName: "소비기한", minWidth: 110 },
-    { field: "product_price", headerName: "가격", minWidth: 110 },
-    { field: "product_sell_status", headerName: "판매상태", minWidth: 110 },
-    {
-      field: "action",
-      headerName: "관리",
-      width: 110,
-      minWidth: 60,
-      pinned: "right",
-      cellRenderer: function (params) {
-        // jQuery를 사용하여 컨테이너 div 생성
-        const $container = $("<div>", {
-          class: "edit-container",
-          css: { position: "relative", cursor: "pointer" },
-        });
-
-        // SVG 요소 생성
-        const $svg = $(`
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 15 15">
-                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
-                        </svg>
-                    `);
-
-        // '수정' 옵션 div 생성
-        const $editDiv = $('<div class="edit-options">수정</div>');
-
-        // SVG 클릭 시 '수정' 옵션 표시
-        $svg.on("click", function (e) {
-          e.stopPropagation(); // 이벤트 버블링 방지
-
-          // 모든 다른 'edit-options' 숨기기
-          $(".edit-options").not($editDiv).removeClass("show");
-
-          // SVG의 위치 계산
-          const offset = $svg.offset();
-          const svgHeight = $svg.outerHeight();
-
-          // 'edit-options' 위치 설정 (SVG 아래에 표시)
-          $editDiv.css({
-            top: offset.top + svgHeight + 2, // SVG 바로 아래에 2px 간격
-            left: offset.left + $svg.outerWidth() / 2 - 35, // SVG의 중앙에 왼쪽으로 이동
-            transform: "translateX(-50%)", // 가로 중앙 정3
-          });
-
-          // 'show' 클래스 토글
-          $editDiv.toggleClass("show");
-        });
-
-        // '수정' 옵션 클릭 시 모달 열기
-        $editDiv.on("click", function (e) {
-          e.stopPropagation(); // 이벤트 버블링 방지
-
-          // 모달 열기
-          $("#productManagementModal").modal("show");
-
-          // 'edit-options' 숨기기
-          $editDiv.removeClass("show");
-        });
-
-        // 컨테이너에 SVG 추가
-        $container.append($svg);
-
-        // 'edit-options'를 body에 추가
-        $("body").append($editDiv);
-
-        return $container[0]; // DOM 요소 반환
-      },
-      autoHeight: true,
-    },
-  ],
-
-  autoSizeStrategy: {
-    // 자동사이즈정책
-    type: "fitGridWidth", // 그리드넓이기준으로
-    defaultMinWidth: 10, // 컬럼 최소사이즈
-  },
-  rowHeight: 45, // row 높이지정
-  rowSelection: "multiple",
-  // 페이지 설정
-  pagination: true,
-  paginationAutoPageSize: true, // 요게 열려있으면 아래껀 무시당함!
-  // paginationPageSizeSelector: [5, 10, 20, 30],  // 원하는 페이지 수 나열
-  // paginationPageSize: 10,    // 디폴트 사이즈 선택, 위에 selector 중 하나를 선택
-  onCellClicked: (params) => {
-    console.log("cell was clicked", params);
-  },
-};
-
-const gridDiv = document.querySelector("#myGrid");
-//  new agGrid.Grid(gridDiv, gridOptions);  // deprecated
-const gridApi = agGrid.createGrid(gridDiv, gridOptions);
-
+// 새로운 Row 생성 함수
 function createNewRowData() {
-  var newData = {
-    No: rowData.length + 1,
-    productName: "",
-    brand: "",
-    expiration_daynum: "",
-    product_price: "",
-    product_sell_status: "",
-    status: "",
+  return {
+    no: rowData.length+1,
+    pdtNm: "",
+    brandNm: "",
+    expDaynum: "",
+    pdtPrice: "",
+    pdtSellSttsNm: ""
   };
-  return newData;
 }
 
-function onAddRow() {
-  var newItem = createNewRowData();
-  rowData.push(newItem);
-  gridApi.applyTransaction({ add: [newItem] });
+
+// Row 추가 함수
+function onProductAddRow() {
+  checkUnload = true;
+  const newItem = createNewRowData();
+  rowData.unshift(newItem);
+  gridApi.applyTransaction({
+    add: [newItem],
+    addIndex: 0
+  });
+  updateProductCount();
 }
 
-function onDeleteRow() {
-  var selectedRows = gridApi.getSelectedRows();
+function warningMessage() {
+  return Swal.fire({
+    title: "경고!",
+    text: "이 작업은 되돌릴 수 없습니다.",
+    icon: "warning",
+    showCancelButton: true, // 취소 버튼 표시
+    cancelButtonText: "취소",
+    confirmButtonText: "삭제",
+  });
+}
+
+// Row 삭제 함수
+function onProductDeleteRow() {
+  const selectedRows = gridApi.getSelectedRows();
+
   if (selectedRows.length > 0) {
-    gridApi.applyTransaction({ remove: selectedRows });
+    // 경고 메시지 표시
+    warningMessage().then((result) => {
+      if (result.isConfirmed) { // 사용자가 삭제를 확인한 경우
+        fetch(`/master/checklist/delete`, {
+          method: 'DELETE',
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(selectedRows.map(row => ({ chklstId: row.chklstId })))
+        }).then(response => {
+          // 응답 상태 코드 확인
+          if (!response.ok) {
+            if (response.status === 403) {
+              Swal.fire("실패!", "권한이 없습니다.", "error");
+            }else if(response.status === 409){
+              Swal.fire("실패!", "사용중인 점검계획이 있습니다.", "error");
+            }
+          } else {
+            // 그리드에서도 해당 행 삭제
+            gridApi.applyTransaction({ remove: selectedRows });
 
-    selectedRows.forEach((row) => {
-      const index = rowData.findIndex((data) => data.No === row.No);
-      if (index > -1) {
-        rowData.splice(index, 1);
+            selectedRows.forEach((row) => {
+              const index = rowData.findIndex((data) => data.chklstId === row.chklstId);
+              if (index > -1) {
+                rowData.splice(index, 1);
+              }
+            });
+            updateProductCount();
+          }
+        })
       }
     });
   } else {
@@ -419,37 +495,8 @@ function onDeleteRow() {
   }
 }
 
-/** 본문의 표에서 소비기한 뒤에는 '일'을 가격 뒤에는 '원'을 붙여주고 가격에서 세자리마다 ',' 붙여주는 function */
-function updateCellValues() {
-  // 소비기한 뒤에 '일' 추가
-  const elements5n = document.querySelectorAll(
-    ".ag-cell-value.ag-cell:nth-child(5n)",
-  );
-  elements5n.forEach(function (element) {
-    element.innerHTML += "일";
-  });
-
-  // 가격 뒤에 '원' 붙여주고 세자리마다 ',' 추가
-  const elements6n = document.querySelectorAll(
-    ".ag-cell-value.ag-cell:nth-child(6n)",
-  );
-  elements6n.forEach(function (element) {
-    // 현재 요소의 텍스트를 숫자로 변환
-    let amount = parseInt(element.innerHTML, 10);
-
-    // 숫자를 세 자리마다 쉼표를 추가하여 포맷하는 함수
-    let formattedAmount = amount
-      .toString()
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-    // 포맷된 금액에 '원'을 추가
-    element.innerHTML = formattedAmount + "원";
-  });
-}
 
 $(function () {
-  // 표에서 가격이나 소비기한을 뒤에 '일' '원' 붙여주기
-  updateCellValues();
 
   // 동적으로 page-wrapper 클래스에 toggled 클래스명의 유무에 따라 position 변경
   // => 사이드바가 열리면 다른 요소가 보이지 않게끔 해줌
@@ -462,19 +509,50 @@ $(function () {
     }
   }, 10);
 });
-
 /* 본문 표 영역 끝 */
-
-/** 모달 영역 */
-$(function () {
-  $(".radio_input_area input").change(function () {
-    $(this).attr("");
-  });
-});
 
 // 문서 전체에 클릭 이벤트 바인딩하여 Popover 숨기기
 $(document).on("click", function () {
   $(".edit-options").removeClass("show");
 });
 
-/** 모달 영역 끝 */
+function toggleSearchBox() {
+  const toggleButton = document.querySelector('.top-drop-down button'); // 버튼 선택
+  const icon = toggleButton.querySelector('i'); // 아이콘 선택
+  const searchSection = document.querySelector('.top-box .bottom-box-content'); // 검색 섹션 선택 --> 해당 부분은 접을 부분(custom)할 것
+
+  // 초기 상태: 검색 섹션 닫힘
+  let isOpen = false;
+
+  // 초기 스타일 설정
+  searchSection.style.maxHeight = '0';
+  searchSection.style.overflow = 'hidden'; // 내용 숨김
+
+  // 버튼 클릭 이벤트 리스너
+  toggleButton.addEventListener('click', () => {
+    isOpen = !isOpen; // 상태 토글
+
+    if (isOpen) {
+      searchSection.style.overflow = 'hidden'; // 열리는 동안 내용이 넘치지 않도록 설정
+      searchSection.style.maxHeight = `${searchSection.scrollHeight}px`; // 자연스럽게 열기
+      icon.style.transform = 'rotate(-90deg)'; // 아이콘 180도 회전
+    } else {
+      searchSection.style.maxHeight = '0'; // 높이를 0으로 줄여서 닫기
+      icon.style.transform = 'rotate(0deg)'; // 아이콘 원래 상태로
+
+      // 애니메이션이 끝나면 overflow를 hidden으로 설정
+      searchSection.addEventListener(
+          'transitionend',
+          () => {
+            if (!isOpen) searchSection.style.overflow = 'hidden';
+          },
+          { once: true } // 이벤트가 한 번만 실행되도록 설정
+      );
+    }
+  });
+}
+// 페이지 로딩 후 함수 실행
+document.addEventListener('DOMContentLoaded', () => {
+  toggleSearchBox(); // 함수 호출
+});
+

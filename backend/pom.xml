@@ -192,6 +192,13 @@
 			<version>2.3.1</version>
 		</dependency>
 
+		<!-- Apache Commons Lang Mybatis Null 혹은 빈 값 체크해주는 Dependency -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.12.0</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>

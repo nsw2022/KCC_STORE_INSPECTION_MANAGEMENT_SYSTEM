@@ -63,8 +63,11 @@ public class StoreInspectionScheduleController {
 	   Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 	   String username = auth.getName();
 	   String usernameCode = username.substring(0,1);
-	   
+
+
+
 	   if(usernameCode.equals("S")) {
+		   // "S : SV
 		   List<StoreInspectionScheduleRequest> list = storeInspectionScheduleService.selectScheduleListByMbrNoAndInspTypeCd(null, null, username);
 		   if(list.isEmpty()) {
 			   return new ResponseEntity<>(HttpStatus.NOT_FOUND);		   

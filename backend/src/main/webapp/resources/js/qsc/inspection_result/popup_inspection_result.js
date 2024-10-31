@@ -547,7 +547,7 @@ $(function () {
         method: 'GET',
         success: function (data){
             let chklstNm = data.chklstNm + '(' + data.inspTypeNm + ')';
-            let inspComplTm = '점검완료일 : ' + data.inspComplTm.substr(0,8).replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3');
+            let inspComplTm = '점검완료일 : ' + data.inspComplTm.slice(0, 8).replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3');
             let inspectorNm = '점검자 : ' + data.mbrNm;
             $('.info-title').text(chklstNm);
             $('.store-name').text(data.brandNm);
