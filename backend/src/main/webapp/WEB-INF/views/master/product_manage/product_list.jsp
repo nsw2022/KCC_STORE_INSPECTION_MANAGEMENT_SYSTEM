@@ -59,55 +59,126 @@
 
 <div class="page-wrapper2">
     <main class="page-content">
-        <div class="content">
-
-            <!-- 본문 -->
-            <div class="row middle-box mb-3">
-                <div class="col">
-                    <div class="middle-content">
-                        <div class="header_area mb-5 d-flex align-items-center justify-content-between row mx-0">
-                            <div class="header_text mb-4">제품 관리</div>
-                            <div class="header_input_area border border-1 px-0 d-flex align-items-center justify-content-between col-6">
-                                <!-- 자동 완성 Wrapper -->
-                                <div class="wrapper" data-autocomplete="inspector">
-                                    <!-- Search Button -->
-                                    <div class="search-btn top-search">
-                                        <span class="ms-4">찾으시려는 제품명을 선택해주세요</span>
-                                        <i class="fa-solid fa-angle-down me-4 fa-lg"></i>
-                                    </div>
-
-                                    <!-- 검색 입력 및 옵션이 포함된 숨겨진 목록 -->
-                                    <div class="hide-list border border-1">
-                                        <div class="search">
-                                            <div class="search_input_area d-flex align-items-center justify-content-between py-2 px-3 border border-1">
-                                                <input type="text" class="top-search" placeholder="제품명을 입력해주세요."/>
-                                            </div>
-                                            <ul class="options"></ul>
-                                        </div>
-                                    </div>
+        <div class="container content">
+            <%-- top box start--%>
+            <div class="row top-box mb-3" style="margin-bottom: 40px !important;">
+                <div class="col ">
+                    <div class="top-content">
+                        <div class="button-box" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div class="d-flex justify-content-start">
+                                <span class="m-3" style="font: 700 20px Noto Sans KR; margin: 0 !important;">제품 관리</span>
+                                <div class="top-drop-down">
+                                    <button>
+                                        <i class="fa-solid fa-angle-right"></i>
+                                    </button>
                                 </div>
-
                             </div>
-                            <div class="header_btn_area d-flex align-items-center justify-content-end p-0 col-4">
-                                <button type="button"
-                                        class="btn btn-light me-3 d-flex justify-content-center align-items-center p-0"
-                                        onclick="onAddRow()">추가
-                                </button>
-                                <button type="button"
-                                        class="btn btn-light d-flex justify-content-center align-items-center p-0"
-                                        onclick="onDeleteRow()">삭제
-                                </button>
+
+                            <div class="my-3" style="margin: 0 !important;">
+                                <button type="button" class="btn btn-light me-3 select-btn p-0" onclick="onSearchRow()" >조회</button>
+                                <button type="button" class="btn btn-light init-btn p-0" id="reset-selection-top" onclick="onSearchInit()">초기화</button>
                             </div>
                         </div>
 
-                        <div>
-                            <div id="myGrid" style="height: 60vh; width:100%" class="ag-theme-quartz"></div>
+                        <div class="bottom-box-content my-4">
+                            <!-- 검색 필드 섹션 -->
+                            <div class="container-fluid px-0">
+                                <div class="row g-3 align-items-center">
+
+                                    <!-- 가맹점 라벨과 검색 필드 -->
+                                    <div class="col-12 col-md-4">
+                                        <label for="storeSearch" class="form-label">브랜드</label>
+                                        <div class="wrapper" data-autocomplete="brandNm">
+                                            <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
+                                                <span>브랜드 검색</span>
+                                                <i class="uil uil-angle-down"></i>
+                                            </div>
+                                            <div class="hide-list">
+                                                <div class="search">
+                                                    <input
+                                                            type="text"
+                                                            class="form-control top-search"
+                                                            id="storeSearch"
+                                                            placeholder="브랜드명을 입력해주세요"
+                                                            aria-label="브랜드 검색"
+                                                    />
+                                                    <ul class="options"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 브랜드 라벨과 검색 필드 -->
+                                    <div class="col-12 col-md-4">
+                                        <label for="pdtNmForSearch" class="form-label">제품명</label>
+                                        <div class="wrapper" data-autocomplete="pdtNm">
+                                            <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
+                                                <span>제품명 검색</span>
+                                                <i class="uil uil-angle-down"></i>
+                                            </div>
+                                            <div class="hide-list">
+                                                <div class="search">
+                                                    <input
+                                                            type="text"
+                                                            class="form-control top-search"
+                                                            id="pdtNmForSearch"
+                                                            placeholder="제품명을 입력해주세요"
+                                                            aria-label="제품명 검색"
+                                                    />
+                                                    <ul class="options"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 점검자 라벨과 검색 필드 -->
+                                    <div class="col-12 col-md-4">
+                                        <label for="pdtSellSttsNmForSearch" class="form-label">판매상태</label>
+                                        <div class="wrapper" data-autocomplete="pdtSellSttsNm">
+                                            <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
+                                                <span>판매상태 검색</span>
+                                                <i class="uil uil-angle-down"></i>
+                                            </div>
+                                            <div class="hide-list">
+                                                <div class="search">
+                                                    <input
+                                                            type="text"
+                                                            class="form-control top-search"
+                                                            id="pdtSellSttsNmForSearch"
+                                                            placeholder="판매상태를 입력해주세요"
+                                                            aria-label="판매상태 검색"
+                                                    />
+                                                    <ul class="options"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- 본문 끝 -->
+            <%-- top box end--%>
 
+            <%-- middle box start--%>
+            <div class="row middle-box">
+                <div class="col px-0">
+                    <div class="middle-content">
+                        <div class="button-box" style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="ms-3" style="font: 350 20px Noto Sans KR;">총 <span class="product_count" style="color: #0035BE"></span>개</span>
+                            <div class="my-0">
+                                <button type="button" class="btn btn-light me-3" onclick="onProductAddRow()" >추가</button>
+                                <button type="button" class="btn btn-light" onclick="onProductDeleteRow()">삭제</button>
+                            </div>
+                        </div>
+                        <div>
+                            <div id="myGrid" style="height: 60vh; width:100%" class="ag-theme-quartz mb-3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <%-- middle box end--%>
         </div>
     </main>
 </div>
@@ -128,7 +199,7 @@
                     </div>
                     <div class="brandName_input_area col-md-6 row p-0 m-0">
                         <label for="brandName" class="py-2 mb-2">브랜드</label>
-                        <div class="wrapper p-0" data-autocomplete="store">
+                        <div class="wrapper p-0" data-autocomplete="brandNm" id="brandName">
                             <!-- Search Button -->
                             <div class="search-btn top-search py-2">
                                 <span class="ps-3">브랜드 선택</span>
@@ -186,6 +257,7 @@
 
 <!-- 해당 JSP의 SCRIPT 경로 -->
 <script src="/resources/js/master/product_manage/product_list.js"></script>
+<script src="/resources/js/master/product_manage/product_filter.js"></script>
 
 </body>
 </html>

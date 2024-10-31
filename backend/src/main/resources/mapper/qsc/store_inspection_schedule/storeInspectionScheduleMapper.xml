@@ -173,7 +173,7 @@
 				                 )
     		</if>
     		
-    		<if test="inspMbrNo != null">
+    		<if test="inspMbrNo != null and inspMbrNo != ''">
     		    AND MB2.MBR_ID = (SELECT 
 				                      DISTINCT 
 				                          SV_MBR_ID

@@ -96,8 +96,8 @@
 
             <div class="d-flex justify-content-between">
               <div class="my-3" style="margin: 0 !important;">
-                <button type="button" id="search-btn-top" class="btn btn-light me-3 select-btn p-0">조회</button>
-                <button type="button" id="reset-selection-top" class="btn btn-light init-btn p-0">초기화</button>
+                <button type="button" id="search-btn-top" class="btn btn-light me-3 select-btn p-0" onclick="onSearchRow()">조회</button>
+                <button type="button" id="reset-selection-top" class="btn btn-light init-btn p-0" onclick="onSearchInit()">초기화</button>
               </div>
             </div>
           </div>
@@ -261,6 +261,7 @@
 
 
 <script src="/resources/js/qsc/inspection_result/result.js"></script>
+<script src="/resources/js/qsc/inspection_result/result_filter.js"></script>
 <!-- SweetAlert2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>

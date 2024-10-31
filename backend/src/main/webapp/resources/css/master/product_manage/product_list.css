@@ -1,136 +1,115 @@
-/** 본문 */
-
-.page-wrapper {
-	z-index : 1000;
+body {
+  font-family: "Noto Sans KR" !important;
+}
+.content {
+  flex-grow: 1; /* 남은 공간을 모두 사용 */
+  background-color: #f4f7ff;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.container,
+.container-sm,
+.container-md,
+.container-lg,
+.container-xl,
+.container-xxl {
+  max-width: 100% !important; /* 모든 화면에서 100%로 설정 */
+  width: 100% !important; /* 컨테이너 너비를 100%로 설정 */
+}
+/* 미디어 쿼리 덮어쓰기: min-width 제한 제거 */
+@media (min-width: 0px) {
+  .container,
+  .container-sm,
+  .container-md,
+  .container-lg,
+  .container-xl,
+  .container-xxl {
+    max-width: 100% !important; /* 모든 조건에서 100%로 설정 */
+  }
 }
 
-/* ag-Grid의 z-index를 낮게 설정 */
-.ag-theme-quartz {
-  z-index: 1 !important; /* 그리드의 z-index 값을 사이드바보다 낮게 설정 */
-  position: relative !important; /* 위치 속성 설정 (필요 시 추가) */
-}
-.sidebar-content {
-  z-index: 1000; /* 사이드바의 z-index 값을 높게 설정 */
-  position: relative; /* 위치 속성 설정 (필요 시 추가) */
-}
+/************** top **************/
 
-.page-content .container-fluid {
-  margin: 60px 0px;
-  padding: 55px 40px;
+.top-box {
+  width: 100%;
+  height: 100%;
   background-color: #ffffff;
-}
-
-.page-content {
-  /*padding-left : 60px !important;*/
-  /*padding-right : 60px;*/
-}
-
-.page-content .container {
-  /*padding: 60px 0px;*/
-}
-
-/** 본문 헤더 */
-.middle-content {
   border-radius: 8px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  background-color: #ffffff;
-  padding : 30px;
+  padding: 30px 30px 10px 30px;
 }
-
-.header_text {
-  font: 800 20px "Noto Sans KR";
-  color: #000000;
-}
-
-.header_input_area {
-  border-radius: 10px;
-  background-color: #f4f4f4;
-  padding-top: 12px;
-  padding-bottom: 12px;
-  
-}
-
-.header_input_area i:hover {
-  cursor: pointer;
-}
-
-.product_search::placeholder {
-  font: 500 1rem "Noto Sans KR";
-  color: #cccccc;
-}
-
-.product_search {
-  font: 500 1rem "Noto Sans KR";
-  border: none;
-  outline: none;
-  background-color: #f4f4f4;
-}
-
-.header_btn_area button {
-  /*width: 85px;*/
-  /*height: 50px;*/
-  /*border-radius: 20px;*/
-  /*font: 500 1rem "Noto Sans KR";*/
-  text-align: center;
-  cursor: pointer;
+.top-box .select-btn {
   width: 80px;
-  border-radius: 30px;
+  background-color: #16dbcc;
   height: 35px;
-  line-height: 2;
-  color: #858d9d;
-  box-shadow:
-    rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
-    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
-}
-
-.header_btn_area button:first-child {
+  border-radius: 30px;
   color: #ffffff;
-  background-color: #4318ff;
-  border: 1px solid #4318ff;
+  border: none;
+}
+/*------------드롭다운 버튼-----------*/
+.top-drop-down {
+  width: 26px;
+  height: 26px;
+  margin-left: 15px;
+  margin-top: 2px;
 }
 
-.header_btn_area button:first-child:hover {
-  background-color: #2e0dbd;
-}
-
-.header_btn_area button:last-child {
-  color: #858d9d;
-  background-color: #ffffff;
-  border: 1px solid #d0d5dd;
-}
-
-.header_btn_area button:last-child:hover {
-  background-color: #eeeeee;
-}
-
-/** 본문 헤더 검색 영역 */
-
-.wrapper {
+.top-drop-down > button {
   width: 100%;
+  height: 100%;
+  border: solid 2px #858d9d;
+  border-radius: 50%;
+  color: #858d9d;
+  font-size: 12px;
+  background: none;
+}
+.top-drop-down > button:hover {
+  color: white;
+  border: none;
+  background-color: #4318ff;
+  transition: ease-out 0.3s;
 }
 
-.search-btn,
-.autocomplete-item {
-  display: flex !important;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  border-radius: 8px;
+.top-search-box {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
 }
 
-.search-btn i {
-  transition: transform 0.3s linear;
+.top-drop-down button i {
+  transition: transform 0.3s ease-in-out;
+}
+.select-btn:hover {
+  background-color: #3ab2a9 !important;
+  color: white !important;
 }
 
-.wrapper.active .search-btn i {
-  transform: rotate(-180deg);
+.top-box .init-btn {
+  width: 80px;
+  background-color: #ffffff;
+  height: 35px;
+  border-radius: 30px;
+  color: #858d9d !important;
+  border-color: #d0d5dd;
+}
+
+.init-btn:hover {
+  background-color: #e1e1e1 !important;
+  transition: 0.3s ease-out;
+}
+
+.button-box {
+  margin-bottom: 20px !important;
 }
 
 .hide-list {
   display: none;
-  padding: 15px 10px 10px 10px;
-  margin-top: 0px;
-  background: #fff !important;
+  padding: 20px;
+  margin-top: 4px;
+  background: #fff;
   border-radius: 7px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   position: absolute;
@@ -139,16 +118,25 @@
 
 .wrapper.active .hide-list {
   display: block;
-  margin-top : 13px !important;
 }
 
 .hide-list .search {
   position: relative;
 }
 
+.search i {
+  top: 50%;
+  left: 15px;
+  color: #999;
+  font-size: 20px;
+  pointer-events: none;
+  transform: translateY(-50%);
+  position: absolute;
+}
+
 .hide-list .options {
-  margin-top: 10px;
-  max-height: 150px;
+  margin-top: 15px;
+  max-height: 250px;
   overflow-y: auto;
   padding: 0px;
   list-style: none;
@@ -172,11 +160,10 @@
   background: #b3b3b3;
 }
 
-.options li,
-.options p {
-  height: 40px;
+.options li {
+  height: 50px;
   padding: 0px 13px;
-  font : 400 13px "Noto Sans KR";
+  font-size: 21px;
 }
 
 .options li:hover,
@@ -185,38 +172,71 @@
   background: #f2f2f2;
 }
 
-.fa-angle-down {
-  margin-top: 2px;
+.search-btn i {
+  transition: transform 0.3s linear;
 }
 
-.search_input_area .top-search {
-  outline: none;
-  border: none;
+.wrapper.active .search-btn i {
+  transform: rotate(-180deg);
+}
+.form-label {
+  font-size: 15px;
+  font-weight: 500;
+}
+.search-btn span,
+.search input {
+  font-size: 13px;
+  color: #858d9d;
 }
 
-.search_input_area {
-  border-radius: 10px;
+.search-btn,
+.autocomplete-item {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  line-height: 1.2 !important;
+}
+.search-btn,
+.search .form-control {
+  border-radius: 8px !important;
+}
+.options li {
+  height: 40px;
+  padding: 0px 13px;
+  font-size: 13px;
 }
 
-.search-btn .ms-4,
-.search_input_area .top-search,
-.options p {
-  color: #9ca3af;
-  width: 85%;
-  font: 400 13px "Noto Sans KR";
+/************** middle **************/
+.middle-box {
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  padding: 30px 20px 20px 20px;
+  box-sizing: border-box;
+  margin-bottom: 40px;
+}
+.middle-box .btn {
+  width: 80px;
+  background-color: #ffffff;
+  height: 35px;
+  border-radius: 30px;
+  color: #858d9d !important;
+  border-color: #d0d5dd;
+  line-height: 20px;
 }
 
-.wrapper {
-  position: relative;
+.middle-box .btn:hover {
+  background-color: #e1e1e1 !important;
+  transition: 0.3s ease-out;
 }
-
-
-/** 본문 헤더 검색 영역 끝*/
-
-/** 본문 헤더 끝 */
-
-/** 본문 내용 */
-
+/* header */
+.ag-header-row {
+  font: 600 14px "Noto Sans KR";
+  color: #718ebf !important;
+}
 /* 홀수 row */
 .ag-row-even {
   font: 350 13px "Noto Sans KR";
@@ -230,41 +250,20 @@
   overflow: auto;
 }
 
-/* header */
-.ag-header-row {
-  font: 600 14px "Noto Sans KR";
-  color: #718ebf !important;
-}
-
-.ag-cell-wrapper > .ag-cell-value > .btn-container {
-  width: 100%;
-}
-
-.ag-cell-wrapper {
-  margin: auto 0;
-  width: 100%;
-}
-
-.ag-cell-wrapper .ag-cell-value {
-  display: flex;
-}
-
-.ag-cell-first-right-pinned {
-  display: flex !important;
-}
-
-.edit_btn {
-  width: 100%;
-  background-color: transparent;
-  border: none;
+.cell-btn {
+  border: none !important;
+  color: #232323 !important;
+  font: 400 11px "Noto Sans KR" !important;
+  width: 40px !important;
 }
 
 /* 리스트 중간 더보기 */
 .edit-options {
   position: absolute; /* 뷰포트 기준으로 위치 고정 */
+  font: 400 13px "Noto Sans KR";
   background-color: #ffffff;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   padding: 5px 10px;
   cursor: pointer;
@@ -287,11 +286,43 @@
 
 /* 리스트 중간 더보기 끝 */
 
+/************** bottom **************/
+.bottom-box {
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+}
+
+.save-btn {
+  width: 80px;
+  background-color: #4318ff !important;
+  height: 35px;
+  border-radius: 30px !important;
+  color: #ffffff !important;
+  line-height: 15px !important;
+  border: none !important;
+}
+/* 수정 옵션이 활성화될 때 표시 */
+.edit-options.show {
+  display: block;
+  opacity: 1;
+}
+
+/* "수정" 옵션에 호버 효과 추가 */
+.edit-options:hover {
+  background-color: #f0f0f0;
+}
+
+/* 리스트 중간 더보기 끝 */
+
 /** 본문 내용 끝 */
 
 /** 최대 width가 1400일 때 */
 @media screen and (max-width: 1400px) {
-  .search-btn .ms-4 {
+  .search-btn .ms-3 {
     font: 500 0.85rem "Noto Sans KR";
     margin-left: 1rem !important;
   }

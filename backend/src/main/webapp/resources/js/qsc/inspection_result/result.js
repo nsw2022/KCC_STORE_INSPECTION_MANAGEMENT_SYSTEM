@@ -1,3 +1,165 @@
+// ROW 데이터 정의
+let rowData = [];
+let defaultRowData = [];
+let gridApi = null;
+let gridOptions = null;
+let firstRowLength;
+
+async function getInspResultAll(searchCriteria = {}) {
+  try {
+    const response = await fetch("/qsc/inspection/result/list/search", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(searchCriteria)
+    });
+
+    let data = await response.json();
+    data = data.map((item, index) => ({
+      ...item,
+         no : index+1
+    }));
+
+    if(defaultRowData.length === 0){
+      defaultRowData = data;
+      console.log(defaultRowData)
+    }
+
+    rowData = data.map((item) => {
+      item.inspComplTm = item.inspComplTm.slice(0, 8).replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3');
+
+      firstRowLength++;
+      return item;
+    })
+    console.log(rowData);
+    // gridApi가 존재할 경우 데이터 설정
+    if (gridApi) {
+      gridApi.setGridOption("rowData", rowData); // 데이터 설정
+    } else {
+      console.error("gridApi is not initialized.");
+    }
+
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+
+
+function initializeGrid() {
+  // 그리드 옵션 설정
+  gridOptions = {
+    rowData: rowData,
+    columnDefs: [
+      { field: "no", headerName: "순서", width: 80, minWidth: 60 },
+      { field: `storeNm`, headerName: "가맹점", width: 150, minWidth: 160 },
+      { field: "brandCd", headerName: "브랜드", width: 150, minWidth: 120 },
+      {
+        field: "chklstNm",
+        headerName: "체크리스트명",
+        width: 150,
+        minWidth: 130,
+      },
+      {
+        field: "inspTypeCd",
+        headerName: "점검유형",
+        width: 150,
+        minWidth: 110,
+      },
+      {
+        field: "inspComplTm",
+        headerName: "점검완료일",
+        width: 150,
+        minWidth: 110,
+      },
+
+      { field: "mbrNm", headerName: "점검자", width: 150, minWidth: 110 },
+      {
+        headerName: "자세히보기",
+        field: "more",
+        width: 150,
+        minWidth: 80,
+        cellRenderer: function (params) {
+          // jQuery를 사용하여 컨테이너 div 생성
+          const $container = $("<div>", {
+            class: "edit-container",
+            css: { position: "relative", cursor: "pointer" },
+          });
+          $('#input').prop('checked')
+          // SVG 요소 생성
+          const $svg = $(`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 15 15">
+                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+                        </svg>
+                    `);
+
+          // '자세히보기' 옵션 div 생성
+          let insp_result_id = params.data.inspResultId;
+          const $editDiv = $(`<div class="edit-options" data-no="${insp_result_id}">자세히보기</div>`);
+          // SVG 클릭 시 '수정' 옵션 표시
+          $svg.on("click", function (e) {
+            e.stopPropagation(); // 이벤트 버블링 방지
+
+            // 모든 다른 'edit-options' 숨기기
+            $(".edit-options").not($editDiv).removeClass("show");
+
+            // SVG의 위치 계산
+            const offset = $svg.offset();
+            const svgHeight = $svg.outerHeight();
+
+            // 'edit-options' 위치 설정 (SVG 아래에 표시)
+            $editDiv.css({
+              top: offset.top + svgHeight + 2, // SVG 바로 아래에 2px 간격
+              left: offset.left + $svg.outerWidth() / 2 - 43, // SVG의 중앙에 왼쪽으로 이동
+              transform: "translateX(-50%)", // 가로 중앙 정3
+            });
+
+            // 'show' 클래스 토글
+            $editDiv.toggleClass("show");
+          });
+
+          // '수정' 옵션 클릭 시 모달 열기
+          $editDiv.on("click", function (e) {
+            e.stopPropagation(); // 이벤트 버블링 방지
+
+            // 모달 열기
+            openPopup(params.data.data.inspResultId); // 팝업으로 데이터 전송 - 다른페이지에서는  $("#masterChecklistModal").modal("show");
+
+            // 'edit-options' 숨기기
+            $editDiv.removeClass("show");
+          });
+
+          // 컨테이너에 SVG 추가
+          $container.append($svg);
+
+          // 'edit-options'를 body에 추가
+          $("body").append($editDiv);
+
+          return $container[0]; // DOM 요소 반환
+        },
+        pinned: "right",
+      },
+    ],
+    autoSizeStrategy: {
+      type: "fitGridWidth",
+      defaultMinWidth: 10,
+    },
+    rowHeight: 45,
+    pagination: true,
+    paginationAutoPageSize: true,
+  };
+
+  // 그리드 초기화
+  const gridDiv = document.querySelector("#myGrid");
+  gridApi = agGrid.createGrid(gridDiv, gridOptions);
+
+  getInspResultAll();
+
+}
+
+document.addEventListener("DOMContentLoaded", initializeGrid);
+
+
 $(function () {
   /**
    * Autocomplete 클래스 정의
@@ -144,42 +306,31 @@ $(function () {
     BRAND: ['전체']
   };
   
-  // ROW 데이터 정의
-  const rowData = [];
-  
-  
-	/**
-	 * @return 가맹점 / 점검자 / 체크리스트 / 브랜드 검색 목록
-	 */
+
+
 	$.ajax({
-    url: "/qsc/inspection/result/list",
-    method: 'GET',
-    async: false,
-    dataType: 'json',
-    success: function (data) {
-		    data.forEach((x, index) => {
-            x.inspComplTm = x.inspComplTm.substr(0, 8).replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3'); 
-            
-            // 인덱스를 rowData에 추가
-            rowData.push({ index: index+1, data: x });
+        url: "/qsc/inspection/result/list",
+        method: 'GET',
+        async: false,
+        dataType: 'json',
+        success: function (data) {
+            data.forEach((x, index) => {
+              deleteDuplication(autocompleteData.store, x.storeNm);
+              deleteDuplication(autocompleteData.inspector, x.mbrNm);
+              deleteDuplication(autocompleteData.CHKLST, x.chklstNm);
+              deleteDuplication(autocompleteData.INSPTYPENM, x.inspTypeCd);
+              deleteDuplication(autocompleteData.BRAND, x.brandCd);
+            });
 
             // 중복된 단어 배열에서 넣지 않게 해주기
             function deleteDuplication(arr, unit) {
-                if (!arr.includes(unit)) {
-                    arr.push(unit);
-                }
+              if (!arr.includes(unit)) {
+                arr.push(unit);
+              }
             }
-            
-            deleteDuplication(autocompleteData.store, x.storeNm);
-            deleteDuplication(autocompleteData.inspector, x.mbrNm);
-            deleteDuplication(autocompleteData.CHKLST, x.chklstNm);
-            deleteDuplication(autocompleteData.INSPTYPENM, x.inspTypeCd);
-            deleteDuplication(autocompleteData.BRAND, x.brandCd);
-        });
-    }
-});
+          }
+    });
 
-	
 
   // 자동완성 인스턴스를 초기화하고 wrapper 요소에 저장
   $(".wrapper").each(function () {
@@ -210,140 +361,6 @@ $(function () {
     });
   });
 
-  
-  
-  
- 
-	
-  // 그리드 옵션 설정
-  const gridOptions = {
-    rowData: rowData,
-    columnDefs: [
-      {
-        headerName: "",
-        checkboxSelection: true,
-        headerCheckboxSelection: true,
-        minWidth: 45,
-        width: 70,
-        resizable: true,
-        cellStyle: { backgroundColor: "#ffffff" },
-      },
-      { field: "index", headerName: "순서", width: 80, minWidth: 60 },
-      { field: `data.storeNm`, headerName: "가맹점", width: 150, minWidth: 160 },
-      { field: "data.brandCd", headerName: "브랜드", width: 150, minWidth: 120 },
-      {
-        field: "data.chklstNm",
-        headerName: "체크리스트명",
-        width: 150,
-        minWidth: 130,
-      },
-      {
-        field: "data.inspTypeCd",
-        headerName: "점검유형",
-        width: 150,
-        minWidth: 110,
-      },
-      {
-        field: "data.inspComplTm",
-        headerName: "점검완료일",
-        width: 150,
-        minWidth: 110,
-      },
-      
-      { field: "data.mbrNm", headerName: "점검자", width: 150, minWidth: 110 },
-      {
-        headerName: "자세히보기",
-        field: "more",
-        width: 150,
-        minWidth: 80,
-        cellRenderer: function (params) {
-          // jQuery를 사용하여 컨테이너 div 생성
-          const $container = $("<div>", {
-            class: "edit-container",
-            css: { position: "relative", cursor: "pointer" },
-          });
-				$('#input').prop('checked')
-          // SVG 요소 생성
-          const $svg = $(`
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 15 15">
-                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
-                        </svg>
-                    `);
-
-          // '자세히보기' 옵션 div 생성
-          let insp_result_id = params.data.data.inspResultId;
-          const $editDiv = $(`<div class="edit-options" data-no="${insp_result_id}">자세히보기</div>`);
-          // SVG 클릭 시 '수정' 옵션 표시
-          $svg.on("click", function (e) {
-            e.stopPropagation(); // 이벤트 버블링 방지
-
-            // 모든 다른 'edit-options' 숨기기
-            $(".edit-options").not($editDiv).removeClass("show");
-
-            // SVG의 위치 계산
-            const offset = $svg.offset();
-            const svgHeight = $svg.outerHeight();
-
-            // 'edit-options' 위치 설정 (SVG 아래에 표시)
-            $editDiv.css({
-              top: offset.top + svgHeight + 2, // SVG 바로 아래에 2px 간격
-              left: offset.left + $svg.outerWidth() / 2 - 43, // SVG의 중앙에 왼쪽으로 이동
-              transform: "translateX(-50%)", // 가로 중앙 정3
-            });
-
-            // 'show' 클래스 토글
-            $editDiv.toggleClass("show");
-          });
-
-          // '수정' 옵션 클릭 시 모달 열기
-          $editDiv.on("click", function (e) {
-            e.stopPropagation(); // 이벤트 버블링 방지
-
-            // 모달 열기
-            openPopup(params.data.data.inspResultId); // 팝업으로 데이터 전송 - 다른페이지에서는  $("#masterChecklistModal").modal("show");
-
-            // 'edit-options' 숨기기
-            $editDiv.removeClass("show");
-          });
-
-          // 컨테이너에 SVG 추가
-          $container.append($svg);
-
-          // 'edit-options'를 body에 추가
-          $("body").append($editDiv);
-
-          return $container[0]; // DOM 요소 반환
-        },
-        pinned: "right",
-      },
-    ],
-    autoSizeStrategy: {
-      type: "fitGridWidth",
-      defaultMinWidth: 10,
-    },
-    rowHeight: 45,
-    rowSelection: "multiple",
-    pagination: true,
-    paginationAutoPageSize: true,
-    onCellClicked: (params) => {},
-  };
-
-  // 그리드 초기화
-  const gridDiv = document.querySelector("#myGrid");
-  new agGrid.Grid(gridDiv, gridOptions);
-
-  // 체크리스트 개수를 업데이트하는 함수
-  function updateChecklistCount() {
-    const checklistCount = document.querySelector(".checklist_count");
-    if (checklistCount) {
-      checklistCount.textContent = rowData.length; // 현재 rowData 길이를 업데이트
-    }
-  }
-
-  // 처음 페이지 로드 시 checklist_count 값 설정
-  updateChecklistCount();
-
-  
 });
 
 function openPopup(content) {
@@ -445,78 +462,7 @@ document.addEventListener('DOMContentLoaded', () => {
   toggleSearchBox(); // 함수 호출
 });
 
-$(function () {
 
-  /**
-   * 조회 버튼 누를 때 검색에 따라 내용이 변경
-   */
-  $('#search-btn-top').click(function() {
 
-    let storeName = $('.hide-list').eq(0).find('li.selected').text() || null;
-    if(storeName ==='전체') {
-      storeName = null;
-    }
 
-    let brandCode = $('.hide-list').eq(1).find('li.selected').text() || null;
-    if(brandCode ==='전체') {
-      brandCode = null;
-    } else if(brandCode ==='KCC 크라상') {
-      brandCode = 'B001';
-    } else if(brandCode ==='KCC 도넛') {
-      brandCode = 'B002';
-    } else if(brandCode ==='KCC 브레드') {
-      brandCode = 'B003';
-    } else if(brandCode ==='KCC 카페') {
-      brandCode = 'B004';
-    }
-
-    let inspComplTime = $('#topScheduleDate').val().replaceAll("-","") || null;
-
-    let chklstName = $('.hide-list').eq(2).find('li.selected').text() || null;
-    if(chklstName ==='전체') {
-      chklstName = null;
-    }
-
-    let inspTypeCode = $('.hide-list').eq(3).find('li.selected').text() || null;
-    if(inspTypeCode ==='전체') {
-      inspTypeCode = null;
-    } else if(inspTypeCode ==='제품점검') {
-      inspTypeCode = 'IT001';
-    } else if(inspTypeCode ==='위생점검') {
-      inspTypeCode = 'IT002';
-    } else if(inspTypeCode ==='정기점검') {
-      inspTypeCode = 'IT003';
-    } else if(inspTypeCode ==='비정기점검') {
-      inspTypeCode = 'IT004';
-    } else if(inspTypeCode ==='기획점검') {
-      inspTypeCode = 'IT005';
-    }
-
-    let mbrName = $('.hide-list').eq(4).find('li.selected').text() || null;
-    if(mbrName ==='전체') {
-      mbrName = null;
-    }
-
-    $.ajax({
-      url : '/qsc/inspection/result/list/search',
-      method : 'POST',
-      data : JSON.stringify({
-        storeNm : storeName,
-        brandCd : brandCode,
-        inspComplTm : inspComplTime,
-        chklstNm : chklstName,
-        inspTypeCd : inspTypeCode,
-        mbrNm : mbrName
-      }),
-      headers : {
-        'Content-Type' : 'application/json'
-      },
-      success : function (data) {
-
-      }
-    })
-
-  })
-
-})
 
