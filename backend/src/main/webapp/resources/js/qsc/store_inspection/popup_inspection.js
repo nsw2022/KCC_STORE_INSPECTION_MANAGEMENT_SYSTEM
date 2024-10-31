@@ -94,22 +94,18 @@ function loadTemporaryInspection(inspResultId) {
       });
 }
 
-
-
 function applyTemporaryData(temporaryData) {
-  // compositeKey에 evitId, inspResultId, creMbrId를 포함
+  // evitId, inspResultId, creMbrId를 키로 사용하여 tempDataMap 생성
   const tempDataMap = {};
   temporaryData.inspections.forEach((tempCategory) => {
     if (tempCategory.subcategories) {
       tempCategory.subcategories.forEach((tempSubcategory) => {
         const evitId = tempSubcategory.evitId;
-        const inspResultId = temporaryData.inspResultId;
+        const inspResultId = tempSubcategory.inspResultId;
         const creMbrId = tempSubcategory.creMbrId;
 
-        if (evitId && inspResultId && creMbrId) {
-          const compositeKey = `${evitId}-${inspResultId}-${creMbrId}`;
-          tempDataMap[compositeKey] = tempSubcategory;
-        }
+        const key = `${evitId}-${inspResultId}-${creMbrId}`;
+        tempDataMap[key] = tempSubcategory;
       });
     }
   });
@@ -124,8 +120,8 @@ function applyTemporaryData(temporaryData) {
       return;
     }
 
-    const compositeKey = `${evitId}-${inspResultId}-${creMbrId}`;
-    const tempData = tempDataMap[compositeKey];
+    const key = `${evitId}-${inspResultId}-${creMbrId}`;
+    const tempData = tempDataMap[key];
     if (tempData) {
       // 해당 문항의 wrapper 요소를 찾음
       const inspectionContentWrapper = detail.nextElementSibling;
@@ -138,6 +134,8 @@ function applyTemporaryData(temporaryData) {
     }
   });
 }
+
+
 
 
 function applyAnswerContent(wrapper, answerContent) {
@@ -180,24 +178,26 @@ function setResponsibility(detailContent, tempData) {
     "C004": "기타"
   };
 
-  let responsibilityValue = caupvdCdValueMap[tempData.caupvdCd] || "기타";
+  // caupvdCd가 정의된 값인지 확인, 아니면 "기타"로 설정
+  let responsibilityValue = tempData.caupvdCd && caupvdCdValueMap[tempData.caupvdCd]
+      ? caupvdCdValueMap[tempData.caupvdCd]
+      : "기타";
 
   const responsibilityRadios = detailContent.querySelectorAll('input[name^="responsibility_"]');
   responsibilityRadios.forEach(radio => {
     if (radio.value === responsibilityValue) {
       radio.checked = true;
-      // 이벤트 트리거
       radio.dispatchEvent(new Event('change'));
     } else {
       radio.checked = false;
     }
   });
 
-  // 기타일 경우 입력 필드 활성화 및 값 설정
+  // responsibilityValue가 "기타"인 경우에만 기타 입력 필드 활성화
   if (responsibilityValue === "기타") {
     const caupvdInput = detailContent.querySelector('.caupvd');
     if (caupvdInput) {
-      caupvdInput.value = tempData.caupvdCdValue || ''; // 필요한 경우 추가 데이터 사용
+      caupvdInput.value = tempData.caupvdCd || ''; // 실제 값 설정
       caupvdInput.disabled = false;
     }
   } else {
@@ -210,6 +210,7 @@ function setResponsibility(detailContent, tempData) {
   }
 }
 
+
 function setLocation(locationContent, tempData) {
   const vltPlcCdValueMap = {
     "VP001": "매장",
@@ -218,24 +219,26 @@ function setLocation(locationContent, tempData) {
     "VP004": "기타"
   };
 
-  let locationValue = vltPlcCdValueMap[tempData.vltPlcCd] || "기타";
+  // vltPlcCd가 정의된 값인지 확인, 아니면 "기타"로 설정
+  let locationValue = tempData.vltPlcCd && vltPlcCdValueMap[tempData.vltPlcCd]
+      ? vltPlcCdValueMap[tempData.vltPlcCd]
+      : "기타";
 
   const locationRadios = locationContent.querySelectorAll('input[name^="location_"]');
   locationRadios.forEach(radio => {
     if (radio.value === locationValue) {
       radio.checked = true;
-      // 이벤트 트리거
       radio.dispatchEvent(new Event('change'));
     } else {
       radio.checked = false;
     }
   });
 
-  // 기타일 경우 입력 필드 활성화 및 값 설정
+  // locationValue가 "기타"인 경우에만 기타 입력 필드 활성화
   if (locationValue === "기타") {
     const etcInput = locationContent.querySelector('.etc-input');
     if (etcInput) {
-      etcInput.value = tempData.vltPlcCdValue || ''; // 필요한 경우 추가 데이터 사용
+      etcInput.value = tempData.vltPlcCd || ''; // 실제 값 설정
       etcInput.disabled = false;
     }
   } else {
@@ -247,6 +250,7 @@ function setLocation(locationContent, tempData) {
     }
   }
 }
+
 
 
 function applyDetailContent(wrapper, tempData) {
@@ -262,6 +266,19 @@ function applyDetailContent(wrapper, tempData) {
     // 긍정적인 답변인 경우 하위 필드 비활성화 및 값 초기화
     disableAndClearFields(detailContent);
     disableAndClearFields(locationContent);
+
+    // "기타" 필드 비활성화 및 초기화
+    const caupvdInput = detailContent.querySelector('.caupvd');
+    if (caupvdInput) {
+      caupvdInput.value = '';
+      caupvdInput.disabled = true;
+    }
+
+    const etcInput = locationContent.querySelector('.etc-input');
+    if (etcInput) {
+      etcInput.value = '';
+      etcInput.disabled = true;
+    }
   } else {
     // 부정적인 답변인 경우 하위 필드 활성화 및 값 적용
     enableFields(detailContent);
@@ -302,7 +319,6 @@ function applyDetailContent(wrapper, tempData) {
 
     // 위치정보 설정
     setLocation(locationContent, tempData);
-
   }
 
   // 사진 설정
@@ -445,13 +461,6 @@ function enableFields(container) {
 }
 
 
-
-
-
-
-
-
-
 // REST API에서 inspection-detail 섹션 데이터를 가져오는 함수
 function fetchPopupData(chklstId, storeNm, inspPlanDt) {
   const url = `/filter/store_inspection_popup?chklstId=${chklstId}&storeNm=${encodeURIComponent(storeNm)}&inspPlanDt=${inspPlanDt}`;
@@ -565,6 +574,7 @@ function processFetchedData(data) {
             questionType: questionType,
             options: [],
             creMbrId: item.mbrId || "defaultCreMbrId" // creMbrId 추가 (데이터에 존재해야 함)
+
           };
           subcategory.questions.push(question);
         }
@@ -658,8 +668,6 @@ function populateInspectionDetail(data) {
   inspectionInfo.appendChild(table);
   inspectionDetailSection.appendChild(inspectionInfo);
 }
-
-
 
 
 
@@ -1063,12 +1071,12 @@ function generateContent(data) {
         label1.textContent = "제품명 (또는 상세위치)";
         inputGroup1.appendChild(label1);
 
-        const productName = document.createElement("input");
-        productName.type = "text";
-        productName.classList.add("product-name");
-        productName.placeholder = "제품명 입력";
-        productName.disabled = true; // 초기에는 비활성화
-        inputGroup1.appendChild(productName);
+        const pdtNmDtplc = document.createElement("input");
+        pdtNmDtplc.type = "text";
+        pdtNmDtplc.classList.add("product-name");
+        pdtNmDtplc.placeholder = "제품명 입력";
+        pdtNmDtplc.disabled = true; // 초기에는 비활성화
+        inputGroup1.appendChild(pdtNmDtplc);
 
         inputGroupCover.appendChild(inputGroup1);
 
@@ -1232,181 +1240,6 @@ function generateContent(data) {
 
 // 전역 변수로 삭제할 이미지 목록을 관리
 let deletedImages = [];
-
-// function setupPhotoUpload(photoBoxes, cameraBtn, galleryBtn, inspectionContentWrapper) {
-//   let photoCount = 0;
-//
-//   // 카메라 버튼 클릭 시
-//   cameraBtn.addEventListener("click", function () {
-//     if (photoCount >= 2) {
-//       alert("이미지는 최대 2개까지만 업로드할 수 있습니다.");
-//       return;
-//     }
-//
-//     const fileInput = document.createElement("input");
-//     fileInput.type = "file";
-//     fileInput.accept = "image/*";
-//     fileInput.capture = "camera"; // 카메라만 호출
-//     fileInput.style.display = "none";
-//
-//     fileInput.addEventListener("change", function (event) {
-//       const file = event.target.files[0];
-//       if (file) {
-//         uploadAndDisplayImage(file, photoBoxes, inspectionContentWrapper);
-//       }
-//     });
-//
-//     fileInput.click();
-//   });
-//
-//   // 갤러리 버튼 클릭 시
-//   galleryBtn.addEventListener("click", function () {
-//     if (photoCount >= 2) {
-//       alert("이미지는 최대 2개까지만 업로드할 수 있습니다.");
-//       return;
-//     }
-//
-//     const fileInput = document.createElement("input");
-//     fileInput.type = "file";
-//     fileInput.accept = "image/*";
-//     fileInput.style.display = "none";
-//
-//     fileInput.addEventListener("change", function (event) {
-//       const file = event.target.files[0];
-//       if (file) {
-//         uploadAndDisplayImage(file, photoBoxes, inspectionContentWrapper);
-//       }
-//     });
-//
-//     fileInput.click();
-//   });
-//
-//   // 이미지 업로드 및 표시 처리 함수
-//   function uploadAndDisplayImage(file, photoBoxes, inspectionContentWrapper) {
-//     const formData = new FormData();
-//     formData.append("file", file);
-//
-//     fetch('/upload', {
-//       method: 'POST',
-//       body: formData
-//     })
-//         .then(response => response.json())
-//         .then(data => {
-//           console.log("Upload response data:", data); // 디버깅 로그
-//           if (data.error) {
-//             throw new Error(data.error);
-//           }
-//
-//           // S3 키 생성 (업로드 시에는 접두사를 붙이지 않음)
-//           const s3Key = 'inspection_img/' + data.path;
-//
-//           const emptyBox = Array.from(photoBoxes.children).find(
-//               (box) => !box.style.backgroundImage
-//           );
-//           if (emptyBox) {
-//             console.log("Fetching image from path:", s3Key); // 추가된 로그
-//             fetch('/download', {
-//               method: 'POST',
-//               headers: {
-//                 'Content-Type': 'application/json'
-//               },
-//               body: JSON.stringify({ path: s3Key })
-//             })
-//                 .then(response => {
-//                   console.log("Download response status:", response.status); // 디버깅 로그
-//                   if (!response.ok) {
-//                     throw new Error(`파일 다운로드 실패: ${response.statusText}`);
-//                   }
-//                   return response.blob();
-//                 })
-//                 .then(blob => {
-//                   const imageUrl = URL.createObjectURL(blob);
-//                   console.log("Image URL created:", imageUrl); // 디버깅 로그
-//
-//                   // 이미지 표시
-//                   emptyBox.style.backgroundImage = `url(${imageUrl})`;
-//                   emptyBox.style.backgroundSize = "cover";
-//                   emptyBox.style.backgroundPosition = "center";
-//                   emptyBox.style.backgroundRepeat = "no-repeat";
-//                   emptyBox.textContent = "";
-//
-//                   // S3 경로 저장 (접두사 없이 원본 path만 저장)
-//                   emptyBox.setAttribute('data-path', data.path);
-//
-//                   // X 버튼 추가
-//                   const deleteButton = document.createElement("button");
-//                   deleteButton.classList.add("delete-btn");
-//                   deleteButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
-//
-//                   // 이미지 삭제 기능
-//                   deleteButton.addEventListener("click", function () {
-//                     fetch('/delete', {
-//                       method: 'POST',
-//                       headers: {
-//                         'Content-Type': 'application/json'
-//                       },
-//                       body: JSON.stringify({ path: s3Key })
-//                     })
-//                         .then(response => response.json())
-//                         .then(data => {
-//                           if (data.error) {
-//                             throw new Error(data.error);
-//                           }
-//                           // 이미지 제거
-//                           emptyBox.style.backgroundImage = "";
-//                           emptyBox.textContent = "사진 미등록";
-//                           emptyBox.removeAttribute('data-path');
-//                           deleteButton.remove();
-//                           photoCount--;
-//                         })
-//                         .catch(error => {
-//                           console.error("파일 삭제 실패:", error);
-//                           alert("파일 삭제에 실패했습니다.");
-//                         });
-//                   });
-//
-//                   emptyBox.appendChild(deleteButton);
-//                   photoCount++;
-//                 })
-//                 .catch(error => {
-//                   console.error(`이미지 로드 실패 (path: ${s3Key}):`, error);
-//                   alert("파일 다운로드에 실패했습니다.");
-//                 });
-//           }
-//         })
-//         .catch(error => {
-//           console.error("파일 업로드 실패:", error);
-//           alert("파일 업로드에 실패했습니다.");
-//         });
-//   }
-//
-//
-//
-//
-//   // 이미지 삭제 시 S3에서도 삭제하는 함수 (옵션)
-//   /*
-//   function deleteImageFromS3(path) {
-//       fetch('/delete', {
-//           method: 'POST',
-//           headers: {
-//               'Content-Type': 'application/json'
-//           },
-//           body: JSON.stringify({ path: path })
-//       })
-//           .then(response => response.json())
-//           .then(data => {
-//               if (data.success) {
-//                   console.log("S3에서 파일 삭제 성공");
-//               } else {
-//                   console.error("S3에서 파일 삭제 실패:", data.error);
-//               }
-//           })
-//           .catch(error => {
-//               console.error("S3에서 파일 삭제 실패:", error);
-//           });
-//   }
-//   */
-// }
 function setupPhotoUpload(photoBoxes, cameraBtn, galleryBtn, inspectionContentWrapper) {
   // 기존 photoCount 제거하고 현재 사진 수를 기반으로 설정
   let photoCount = Array.from(photoBoxes).filter(box => box.getAttribute('data-path')).length;
@@ -1472,8 +1305,8 @@ function setupPhotoUpload(photoBoxes, cameraBtn, galleryBtn, inspectionContentWr
             throw new Error(data.error);
           }
 
-          // S3 키 생성 (업로드 시에는 접두사를 붙이지 않음)
-          const s3Key = 'inspection_img/' + data.path;
+          // S3 키 생성: data.path에 'inspection_img/'가 포함되어 있지 않은지 확인
+          const s3Key = data.path.startsWith('inspection_img/') ? data.path : 'inspection_img/' + data.path;
 
           const emptyBox = Array.from(photoBoxes.children).find(
               (box) => !box.style.backgroundImage
@@ -1555,6 +1388,7 @@ function setupPhotoUpload(photoBoxes, cameraBtn, galleryBtn, inspectionContentWr
         });
   }
 }
+
 
 
 
@@ -1700,7 +1534,6 @@ function addEventListeners() {
     });
   });
 
-  // 추가적인 이벤트 리스너를 여기서 추가하세요...
 }
 
 // 높이 재조정 함수 (리사이즈 시 호출)
@@ -1720,132 +1553,120 @@ function getParameterByName(name) {
   return urlParams.get(name);
 }
 
-function tenpoirySave() {
-  console.log("tenpoirySave() 함수가 호출");
+function temporarySave() {
+  console.log("temporarySave() 함수가 호출됨");
 
+  // 1. URL 파라미터에서 필요한 값 가져오기
   const inspResultId = getParameterByName('inspResultId');
-
-  console.log("inspResultId:", inspResultId); // 디버깅용 로그
-
   if (!inspResultId) {
     alert('inspResultId가 누락되었습니다.');
     return;
   }
 
-  // 2. URL 파라미터에서 필요한 값 가져오기
   const chklstId = getParameterByName('chklstId');
   const storeNm = getParameterByName('storeNm');
   const inspPlanDt = getParameterByName('inspPlanDt');
+  const inspSchdId = getParameterByName('inspSchdId'); // 추가된 부분
 
-  if (!chklstId || !storeNm || !inspPlanDt) {
-    alert('필수 파라미터(chklstId, storeNm, inspPlanDt)가 누락되었습니다.');
+  // 필수 파라미터 누락 시 경고
+  if (!chklstId || !storeNm || !inspPlanDt || !inspSchdId) { // inspSchdId 추가
+    alert('필수 파라미터(chklstId, storeNm, inspPlanDt, inspSchdId)가 누락되었습니다.');
     return;
   }
 
-  // 3. inspections 배열 초기화
-  const inspections = [];
+  const inspections = []; // 각 카테고리의 데이터를 저장할 배열
 
-  // 각 카테고리 탭을 순회
+  // 2. 각 카테고리 순회
   document.querySelectorAll('.inspection-tab').forEach(tab => {
     const categoryId = tab.getAttribute('data-tab');
     const categoryName = tab.textContent.trim();
-
     const subcategories = [];
 
-    // 해당 카테고리에 속한 inspection-list 섹션을 찾기
+    // 3. 해당 카테고리의 문항들 순회
     const inspectionList = document.getElementById(categoryId);
     if (inspectionList) {
-      // 각 inspection-box (중분류) 순회
       inspectionList.querySelectorAll('.inspection-box').forEach(box => {
         const subcategoryHeader = box.querySelector('.inspection-header');
-        const subcategoryName = subcategoryHeader ? subcategoryHeader.textContent.trim().replace('▼', '') : "Unknown Subcategory";
+        const subcategoryName = subcategoryHeader
+            ? subcategoryHeader.textContent.trim().replace('▼', '').trim()
+            : "알 수 없는 서브카테고리";
 
         console.log(`Processing Subcategory: ${subcategoryName}`); // 디버깅 로그
 
-        // 각 서브카테고리의 inspection-content-detail 순회
         box.querySelectorAll('.inspection-content-detail').forEach(detail => {
           const evitId = parseInt(detail.getAttribute('data-evit-id'), 10);
+          const creMbrId = detail.getAttribute('data-cre-mbr-id'); // 추가된 부분
+          const wrapper = detail.nextElementSibling;
+
           if (isNaN(evitId)) {
             console.warn('유효하지 않은 evitId:', detail);
             return;
           }
 
-          // inspection-content-wrapper 참조
-          const inspectionContentWrapper = detail.nextElementSibling;
-          if (!inspectionContentWrapper) {
-            console.warn('inspection-content-wrapper를 찾을 수 없습니다:', detail);
-            return;
-          }
+          // 4. 각 문항의 상세 내용 추출
+          const answerContent = getAnswerContent(wrapper);
+          const pdtNmDtplc = getProductName(wrapper) || "";
+          const vltContent = getViolationContent(wrapper) || "";
+          const vltCnt = getViolationCount(wrapper) || 0;
+          const caupvdCd = getCaupvdCd(wrapper) || "";
+          const vltCause = getVltCause(wrapper) || "";
+          const instruction = getInstruction(wrapper) || "";
+          const vltPlcCd = getVltPlcCd(wrapper) || "";
+          let photoPaths = getPhotoPaths(wrapper) || [];
 
-          const detailContent = inspectionContentWrapper.querySelector(".detail-content");
-          const locationContent = inspectionContentWrapper.querySelector(".location-content");
-          if (!detailContent) {
-            console.warn('detail-content를 찾을 수 없습니다:', inspectionContentWrapper);
-            return;
-          }
+          // 사진 경로에서 null 값 제거
+          photoPaths = photoPaths.filter(path => path);
 
-          const answerContent = getAnswerContent(inspectionContentWrapper);
-          console.log(`Answer Content for evitId ${evitId}:`, answerContent); // 디버깅 로그
+          // 필수 데이터 검증
           if (!answerContent) {
-            // 답변이 없는 경우 건너뜁니다.
-            console.log(`No answer content for evitId: ${evitId}`);
+            console.warn(`답변이 누락됨. evitId: ${evitId}`);
             return;
           }
 
-          const pdtNmDtplc = getProductName(detailContent); // detailContent 기반
-          const vltContent = getViolationContent(detailContent);
-          const vltCnt = getViolationCount(detailContent);
-          let caupvdCd = getCaupvdCd(detailContent); // 수정된 부분
-          const vltCause = getVltCause(detailContent);
-          const instruction = getInstruction(detailContent);
-          const vltPlcCd = getVltPlcCd(locationContent);
-          // const photoPaths = getPhotoPaths(detailContent);
-          const photoPaths = getPhotoPaths(inspectionContentWrapper);
-
+          // 5. 서브카테고리 데이터 객체 생성
           const subcategoryInspection = {
-            subcategoryName: subcategoryName,
-            evitId: evitId,
-            answerContent: answerContent,
-            pdtNmDtplc: pdtNmDtplc,
-            vltContent: vltContent,
-            vltCnt: vltCnt,
-            caupvdCd: caupvdCd,
-            vltCause: vltCause,
-            instruction: instruction,
-            vltPlcCd: vltPlcCd,
-            photoPaths: photoPaths,
-            inspResultId: parseInt(inspResultId, 10)
+            evitId,
+            answerContent,
+            pdtNmDtplc,
+            vltContent,
+            vltCnt,
+            caupvdCd,
+            vltCause,
+            instruction,
+            vltPlcCd,
+            photoPaths,
+            inspResultId: parseInt(inspResultId, 10),
+            creMbrId: creMbrId || "defaultCreMbrId", // creMbrId 추가
           };
 
-          console.log(`Collected data for evitId ${evitId}:`, subcategoryInspection); // 디버깅 로그 추가
-
+          console.log(`Collected data for evitId ${evitId}:`, subcategoryInspection);
           subcategories.push(subcategoryInspection);
-          console.log(`Subcategories array now:`, subcategories); // 디버깅 로그
         });
       });
     }
 
-    const categoryInspection = {
-      categoryName: categoryName,
-      subcategories: subcategories
-    };
-
-    console.log(`Category Inspection:`, categoryInspection); // 디버깅 로그
-    inspections.push(categoryInspection);
-    console.log(`Inspections array now:`, inspections); // 디버깅 로그
+    inspections.push({ categoryName, subcategories });
   });
 
-  // 최종 requestData 객체 구성
+  // 6. 최종 데이터 객체 생성
   const requestData = {
+    chklstId: parseInt(chklstId, 10),
+    storeNm: storeNm,
+    inspPlanDt: inspPlanDt,
     inspResultId: parseInt(inspResultId, 10),
-    inspSchdId: parseInt(chklstId, 10),
+    inspSchdId: parseInt(inspSchdId, 10), // 기존 함수에서 가져온 스케줄 ID 추가
     inspComplW: "N", // 임시저장 상태
-    inspections: inspections
+    inspections,
   };
 
-  console.log('임시저장 요청 데이터:', requestData); // 디버깅용 로그
+  console.log("Sending data to server:", JSON.stringify(requestData, null, 2));
 
-  // 4. POST 요청 전송
+  // 7. 서버로 데이터 전송
+  sendDataToServer(requestData);
+}
+
+// 서버로 데이터 전송 함수
+function sendDataToServer(requestData) {
   fetch('/filter/store_inspection_save', {
     method: 'POST',
     headers: {
@@ -1857,16 +1678,18 @@ function tenpoirySave() {
         if (!response.ok) {
           throw new Error(`서버 응답이 올바르지 않습니다. 상태 코드: ${response.status}`);
         }
-        return response.text();
+        return response.text(); // JSON 대신 텍스트로 응답 받기
       })
       .then(data => {
         alert("임시저장이 완료되었습니다.");
+        console.log("저장 성공:", data);
       })
       .catch(error => {
         console.error('임시저장 실패:', error);
         alert("임시저장에 실패했습니다.");
       });
 }
+
 
 
 
@@ -1902,8 +1725,8 @@ function getProductName(detailContent) {
 }
 
 function getViolationContent(detailContent) {
-  const violationContent = detailContent.querySelector('.violation');
-  return violationContent ? violationContent.value.trim() : null;
+  const vltContent = detailContent.querySelector('.violation');
+  return vltContent ? vltContent.value.trim() : null;
 }
 
 function getViolationCount(detailContent) {
@@ -1943,7 +1766,10 @@ function getInstruction(detailContent) {
 }
 
 function getVltPlcCd(locationContent) {
-  const selectedLocation = locationContent.querySelector('input[name^="location_"]:checked');
+  console.log("getVltPlcCd 함수 호출됨");
+  console.log("locationContent:", locationContent);
+
+  const selectedLoc = locationContent.querySelector('input[name^="location_"]:checked');
   const plcValueMap = {
     "매장": "VP001",
     "주방": "VP002",
@@ -1951,8 +1777,8 @@ function getVltPlcCd(locationContent) {
     "기타": "VP004"
   };
 
-  if (selectedLocation) {
-    if (selectedLocation.value === "기타") {
+  if (selectedLoc) {
+    if (selectedLoc.value === "기타") {
       const etcInput = locationContent.querySelector('.etc-input');
       console.log("ETC Input Found:", etcInput); // 디버깅 로그
       if (etcInput && etcInput.value.trim() !== "") {
@@ -1963,7 +1789,7 @@ function getVltPlcCd(locationContent) {
         return ""; // 빈 문자열 반환
       }
     } else {
-      const mappedValue = plcValueMap[selectedLocation.value] || "";
+      const mappedValue = plcValueMap[selectedLoc.value] || "";
       console.log("Mapped Value:", mappedValue); // 디버깅 로그
       return mappedValue;
     }
@@ -1995,65 +1821,75 @@ function getPhotoPaths(inspectionContentWrapper) {
 
 
 // -------------------------데이터 전달 함수-------------------------
-// function checkInspection() {
-//   // 모든 textarea 데이터를 가져옴
-//   const textareaData = {};
-//   document.querySelectorAll("textarea").forEach((textarea) => {
-//     textareaData[textarea.name] = textarea.value;
-//   });
-//
-//   // 폼을 생성하여 데이터를 전송
-//   const form = document.createElement("form");
-//   form.method = "POST";
-//   form.action = "/qsc/popup_middleCheck";
-//
-//   // textarea 데이터를 숨겨진 input 필드로 추가
-//   const input = document.createElement("input");
-//   input.type = "hidden";
-//   input.name = "textareaData";
-//   input.value = JSON.stringify(textareaData);
-//   form.appendChild(input);
-//
-//   // 폼을 문서에 추가한 뒤 제출
-//   document.body.appendChild(form);
-//   form.submit();
-// }
+
 
 function checkInspection() {
-  // 모든 inspection-content-wrapper 요소를 가져옵니다.
+  // 모든 .inspection-content-wrapper 요소를 가져옵니다.
   const inspectionWrappers = document.querySelectorAll('.inspection-content-wrapper');
   let allInputsValid = true; // 모든 입력이 유효한지 확인하기 위한 플래그
 
   // 각 문항을 순회하며 검증합니다.
   inspectionWrappers.forEach(wrapper => {
     let answer = null;
+    let isNegative = false; // 부정적인 답변 여부
 
-    // 2지선다형 답변 가져오기
-    const activeBtn = wrapper.querySelector('.answer-btn.active');
-    if (activeBtn) {
-      answer = activeBtn.getAttribute('data-option-value');
-    } else {
-      // 5지선다형 답변 가져오기
-      const selectedRadio = wrapper.querySelector('input[type="radio"]:checked');
+    // .answer-section과 .answer-section2 중 어떤 섹션인지 확인
+    const answerSection = wrapper.querySelector('.answer-section');
+    const answerSection2 = wrapper.querySelector('.answer-section2');
+
+    if (answerSection) {
+      // 2-choice 질문
+      const activeBtn = answerSection.querySelector('.answer-btn.active');
+      if (activeBtn) {
+        answer = activeBtn.getAttribute('data-option-value');
+      }
+
+      // 2-choice의 부정적인 답변 정의
+      const negativeAnswers = ['부적합'];
+
+      // 답변이 선택되지 않은 경우
+      if (!answer) {
+        allInputsValid = false;
+        return; // 다음 문항으로 넘어감
+      }
+
+      // 부정적인 답변인지 확인
+      if (negativeAnswers.includes(answer)) {
+        isNegative = true;
+      }
+    } else if (answerSection2) {
+      // 5-choice 질문
+      const selectedRadio = answerSection2.querySelector('input[type="radio"]:checked');
       if (selectedRadio) {
         answer = selectedRadio.value;
       }
-    }
 
-    if (!answer) {
+      // 5-choice의 부정적인 답변 정의
+      const negativeAnswers = ['나쁨', '매우나쁨'];
+
       // 답변이 선택되지 않은 경우
+      if (!answer) {
+        allInputsValid = false;
+        return; // 다음 문항으로 넘어감
+      }
+
+      // 부정적인 답변인지 확인
+      if (negativeAnswers.includes(answer)) {
+        isNegative = true;
+      }
+    } else {
+      // .answer-section 또는 .answer-section2가 없는 경우
+      console.warn("Unknown answer section type.");
       allInputsValid = false;
-      return; // 다음 문항으로 넘어감
+      return;
     }
 
-    // 부정적인 답변인지 확인
-    const negativeAnswers = ['부적합', '나쁨', '매우나쁨'];
-    if (negativeAnswers.includes(answer)) {
-      // 위치정보와 상세입력 필드 검증
+    // 부정적인 답변인 경우에만 추가 입력 필드 검증
+    if (isNegative) {
       const locationContent = wrapper.querySelector('.location-content');
       const detailContent = wrapper.querySelector('.detail-content');
 
-      // 위치정보 라디오 버튼 확인
+      // 1. 위치정보 라디오 버튼 확인
       const locationRadios = locationContent.querySelectorAll('input[name^="location_"]');
       const locationChecked = Array.from(locationRadios).some(radio => radio.checked);
       if (!locationChecked) {
@@ -2061,7 +1897,7 @@ function checkInspection() {
         return;
       }
 
-      // "기타"가 선택된 경우 추가 입력 확인
+      // 2. "기타"가 선택된 경우 추가 입력 필드 확인
       const locationEtcRadio = locationContent.querySelector('input[name^="location_"][value="기타"]');
       if (locationEtcRadio && locationEtcRadio.checked) {
         const etcInput = locationContent.querySelector('.etc-input');
@@ -2071,7 +1907,7 @@ function checkInspection() {
         }
       }
 
-      // 상세입력 필드 확인
+      // 3. 상세입력 필드 확인
       const requiredDetailFields = [
         '.product-name',
         '.violation-quantity',
@@ -2087,7 +1923,7 @@ function checkInspection() {
         }
       }
 
-      // 귀책사유 라디오 버튼 확인
+      // 4. 귀책사유 라디오 버튼 확인
       const responsibilityRadios = detailContent.querySelectorAll('input[name^="responsibility_"]');
       const responsibilityChecked = Array.from(responsibilityRadios).some(radio => radio.checked);
       if (!responsibilityChecked) {
@@ -2095,7 +1931,7 @@ function checkInspection() {
         return;
       }
 
-      // 귀책사유 "기타" 선택 시 추가 입력 확인
+      // 5. 귀책사유 "기타" 선택 시 추가 입력 필드 확인
       const responsibilityEtcRadio = detailContent.querySelector('input[name^="responsibility_"][value="기타"]');
       if (responsibilityEtcRadio && responsibilityEtcRadio.checked) {
         const caupvdInput = detailContent.querySelector('.caupvd');
@@ -2108,7 +1944,6 @@ function checkInspection() {
   });
 
   if (!allInputsValid) {
-    // alert('모든 항목을 응답해주십시오.');
     warningMessage();
     return; // 검증 실패 시 함수 종료
   }
@@ -2122,23 +1957,178 @@ function checkInspection() {
     });
   }
 
+  // URL 파라미터 가져오기
+  const urlParams = new URLSearchParams(window.location.search);
+  const chklstId = urlParams.get("chklstId");
+  const storeNm = urlParams.get("storeNm");
+  const inspPlanDt = urlParams.get("inspPlanDt");
+  const inspSchdId = urlParams.get("inspSchdId");
+  const inspResultId = urlParams.get("inspResultId");
 
-  // 폼 데이터를 수집하고 제출합니다.
-  const textareaData = {};
-  document.querySelectorAll("textarea").forEach((textarea) => {
-    textareaData[textarea.name] = textarea.value;
+  // 필수 파라미터 검증
+  if (!chklstId || !storeNm || !inspPlanDt || !inspSchdId || !inspResultId) {
+    alert('필수 파라미터(chklstId, storeNm, inspPlanDt, inspSchdId, inspResultId)가 누락되었습니다.');
+    return;
+  }
+
+  // 데이터 수집 로직 (temporarySave와 유사)
+  const inspections = []; // 각 카테고리의 데이터를 저장할 배열
+
+  // 1. 각 카테고리 순회
+  document.querySelectorAll('.inspection-tab').forEach(tab => {
+    const categoryId = tab.getAttribute('data-tab');
+    const categoryName = tab.textContent.trim();
+    const subcategories = [];
+
+    // 2. 해당 카테고리의 문항들 순회
+    const inspectionList = document.getElementById(categoryId);
+    if (inspectionList) {
+      inspectionList.querySelectorAll('.inspection-box').forEach(box => {
+        const subcategoryHeader = box.querySelector('.inspection-header');
+        const subcategoryName = subcategoryHeader
+            ? subcategoryHeader.textContent.trim().replace('▼', '').trim()
+            : "알 수 없는 서브카테고리";
+
+        console.log(`Processing Subcategory: ${subcategoryName}`); // 디버깅 로그
+
+        box.querySelectorAll('.inspection-content-detail').forEach(detail => {
+          const evitId = parseInt(detail.getAttribute('data-evit-id'), 10);
+          const creMbrId = detail.getAttribute('data-cre-mbr-id'); // 추가된 부분
+          const wrapper = detail.nextElementSibling;
+
+          if (isNaN(evitId)) {
+            console.warn('유효하지 않은 evitId:', detail);
+            return;
+          }
+
+          // 각 문항의 상세 내용 추출
+          const answerContent = getAnswerContent(wrapper);
+          const pdtNmDtplc = getProductName(wrapper) || "";
+          const vltContent = getViolationContent(wrapper) || "";
+          const vltCnt = getViolationCount(wrapper) || 0;
+          const caupvdCd = getCaupvdCd(wrapper) || "";
+          const vltCause = getVltCause(wrapper) || "";
+          const instruction = getInstruction(wrapper) || "";
+          const vltPlcCd = getVltPlcCd(wrapper) || "";
+          let photoPaths = getPhotoPaths(wrapper) || [];
+
+          // 사진 경로에서 null 값 제거
+          photoPaths = photoPaths.filter(path => path);
+
+          // 필수 데이터 검증
+          if (!answerContent) {
+            console.warn(`답변이 누락됨. evitId: ${evitId}`);
+            return;
+          }
+
+          // 서브카테고리 데이터 객체 생성
+          const subcategoryInspection = {
+            evitId,
+            answerContent,
+            pdtNmDtplc,
+            vltContent,
+            vltCnt,
+            caupvdCd,
+            vltCause,
+            instruction,
+            vltPlcCd,
+            photoPaths,
+            inspResultId: parseInt(inspResultId, 10),
+            creMbrId: creMbrId || "defaultCreMbrId", // creMbrId 추가
+          };
+
+          console.log(`Collected data for evitId ${evitId}:`, subcategoryInspection);
+          subcategories.push(subcategoryInspection);
+        });
+      });
+    }
+
+    inspections.push({ categoryName, subcategories });
   });
 
-  const form = document.createElement("form");
-  form.method = "POST";
-  form.action = "/qsc/popup_middleCheck";
+  // 최종 데이터 객체 생성
+  const requestData = {
+    chklstId: parseInt(chklstId, 10),
+    storeNm: storeNm,
+    inspPlanDt: inspPlanDt,
+    inspResultId: parseInt(inspResultId, 10),
+    inspSchdId: parseInt(inspSchdId, 10), // 기존 함수에서 가져온 스케줄 ID 추가
+    inspComplW: "N", // 임시저장 상태
+    inspections,
+  };
 
-  const input = document.createElement("input");
-  input.type = "hidden";
-  input.name = "textareaData";
-  input.value = JSON.stringify(textareaData);
-  form.appendChild(input);
+  console.log("Sending data to server:", JSON.stringify(requestData, null, 2));
 
-  document.body.appendChild(form);
-  form.submit();
+  // 서버로 데이터 전송 (temporarySave 로직)
+  fetch('/filter/store_inspection_save', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(requestData),
+  })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`서버 응답이 올바르지 않습니다. 상태 코드: ${response.status}`);
+        }
+        return response.text(); // JSON 대신 텍스트로 응답 받기
+      })
+      .then(data => {
+        // "점검결과가 저장되었습니다." 알림 표시
+        Swal.fire({
+          title: "완료",
+          text: "점검결과가 저장되었습니다.",
+          icon: "success",
+          confirmButtonText: "확인",
+        }).then(() => {
+          // 알림 확인 후 페이지 이동
+          const form = document.createElement("form");
+          form.method = "GET"; // GET 방식 사용 (필요 시 "POST"로 변경 가능)
+          form.action = "/qsc/popup_middleCheck";
+
+          // 숨겨진 입력 필드 생성 및 추가
+          const input1 = document.createElement("input");
+          input1.type = "hidden";
+          input1.name = "chklstId";
+          input1.value = chklstId;
+          form.appendChild(input1);
+
+          const input2 = document.createElement("input");
+          input2.type = "hidden";
+          input2.name = "storeNm";
+          input2.value = storeNm;
+          form.appendChild(input2);
+
+          const input3 = document.createElement("input");
+          input3.type = "hidden";
+          input3.name = "inspPlanDt";
+          input3.value = inspPlanDt.replace(/\//g, ''); // '/' 제거
+          form.appendChild(input3);
+
+          const input4 = document.createElement("input");
+          input4.type = "hidden";
+          input4.name = "inspSchdId";
+          input4.value = inspSchdId;
+          form.appendChild(input4);
+
+          const input5 = document.createElement("input");
+          input5.type = "hidden";
+          input5.name = "inspResultId";
+          input5.value = inspResultId;
+          form.appendChild(input5);
+
+          // 폼을 문서에 추가하고 제출
+          document.body.appendChild(form);
+          form.submit();
+        });
+      })
+      .catch(error => {
+        console.error('점검결과 저장 실패:', error);
+        Swal.fire("오류", "점검결과를 저장하는 데 실패했습니다.", "error");
+      });
 }
+
+
+
+
+

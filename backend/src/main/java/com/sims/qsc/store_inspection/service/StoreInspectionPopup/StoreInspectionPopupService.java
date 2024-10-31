@@ -52,4 +52,5 @@ public interface StoreInspectionPopupService {
      */
     StoreInspectionPopupRequest getTemporaryInspection(Long inspResultId);
 
+
 }

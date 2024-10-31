@@ -59,16 +59,19 @@ public interface StoreInspectionPopupMapper {
 
 
 
-    // 임시저장된 EVIT_ANSW 및 EVIT_ANSW_IMG 조회
-    List<StoreInspectionPopupResponse.EvitAnswImgVO> selectTemporaryAnswImg(
-            @Param("inspResultId") Long inspResultId,
-            @Param("creMbrId") Long creMbrId
-    );
+//    // 임시저장된 EVIT_ANSW 및 EVIT_ANSW_IMG 조회
+//    List<StoreInspectionPopupResponse.EvitAnswImgVO> selectTemporaryAnswImg(
+//            @Param("inspResultId") Long inspResultId,
+//            @Param("creMbrId") Long creMbrId
+//    );
+//
+//    // 임시저장된 EVIT_VLT, EVIT_ANSW, EVIT_ANSW_IMG 조회
+//    List<StoreInspectionPopupResponse.EvitVltVO> selectTemporaryVlt(
+//            @Param("inspResultId") Long inspResultId,
+//            @Param("creMbrId") Long creMbrId
+//    );
+    List<StoreInspectionPopupResponse.TemporaryInspectionDetailsVO> selectTemporaryInspectionDetails(Map<String, Object> params);
 
-    // 임시저장된 EVIT_VLT, EVIT_ANSW, EVIT_ANSW_IMG 조회
-    List<StoreInspectionPopupResponse.EvitVltVO> selectTemporaryVlt(
-            @Param("inspResultId") Long inspResultId,
-            @Param("creMbrId") Long creMbrId
-    );
+
 
 }

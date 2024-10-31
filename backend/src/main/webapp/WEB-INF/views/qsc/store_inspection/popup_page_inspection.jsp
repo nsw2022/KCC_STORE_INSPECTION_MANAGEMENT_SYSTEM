@@ -85,7 +85,7 @@
 
 <div id="go-inspection-wrap">
     <button class="go-inspection" onclick="checkInspection()">점검확인</button>
-    <button class="go-inspection" onclick="tenpoirySave()">임시저장</button>
+    <button class="go-inspection" onclick="temporarySave()">임시저장</button>
 </div>
 
 

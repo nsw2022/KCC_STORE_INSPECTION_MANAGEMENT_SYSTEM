@@ -106,13 +106,8 @@ public class StoreInspectionController {
         return "qsc/store_inspection/popup_page_inspection"; // JSP 경로
     }
 
-    @PostMapping("/popup_middleCheck")
-    public String middleCheck(Model model, @RequestParam("textareaData") String textareaData) {
-        // 받은 textarea 데이터를 로그로 출력하거나 필요한 로직을 처리
-        log.info("Received textarea data: " + textareaData);
-
-        // model에 데이터를 담아 다음 페이지로 전달
-        model.addAttribute("textareaData", textareaData);
+    @GetMapping("/popup_middleCheck")
+    public String middleCheck(Model model) {
 
         // popup_middleCheck.jsp로 이동
         return "qsc/store_inspection/popup_middleCheck";
