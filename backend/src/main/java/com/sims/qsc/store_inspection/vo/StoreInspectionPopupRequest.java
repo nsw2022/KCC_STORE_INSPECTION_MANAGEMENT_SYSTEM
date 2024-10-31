@@ -69,6 +69,9 @@ public class StoreInspectionPopupRequest {
         private Long creMbrId; // 추가된 필드
         private Long inspResultId;
 
+        private boolean shouldMergeVLT;
+        private boolean shouldMergeAnswImg;
+
         @Builder
         public SubcategoryInspection(String subcategoryName, List<String> photoPaths,
                                      Long evitId, String answerContent, String pdtNmDtplc, String vltContent,
@@ -87,6 +90,9 @@ public class StoreInspectionPopupRequest {
             this.vltPlcCd = vltPlcCd;
             this.creMbrId = creMbrId;
             this.inspResultId = inspResultId;
+
+
+
         }
     }
 
