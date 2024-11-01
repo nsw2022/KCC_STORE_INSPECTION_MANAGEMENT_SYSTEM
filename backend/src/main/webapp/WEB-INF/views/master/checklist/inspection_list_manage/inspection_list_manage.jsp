@@ -91,12 +91,6 @@
                     <input type="text" class="form-control chklstTitlePlaceholder" placeholder="${chklstNm}" data-bs-target="#checklistModal" data-bs-toggle="modal" readonly>
                   </div>
                 </div>
-                <div class="row first-input-box mb-3">
-                  <div class="col-12 d-flex align-items-center justify-content-between p-0">
-                    <label class="col-form-label" style="width: 100px">마스터</br>체크리스트</label>
-                    <input type="text" class="form-control masterChklstTitlePlaceholder" placeholder="${masterChklstNm}" data-bs-target="#masterChecklistModal" data-bs-toggle="modal" readonly>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -398,78 +392,6 @@
         </div>
         <%--  checklist second modal end     --%>
 
-
-        <%------------- master checklist modal -------------%>
-        <div class="modal fade" id="masterChecklistModal" aria-hidden="true" aria-labelledby="masterChecklistList" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-          <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-              <%-------------- header --------------%>
-              <div class="modal-header">
-              <span class="modal-title fs-5" id="masterChecklistList" style="font: 450 16px 'Noto Sans KR'">
-                마스터 체크리스트 선택
-              </span>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <%-------------- header --------------%>
-              <%-------------- body --------------%>
-              <div class="modal-body">
-                <div class="input-group mb-3 modal-search-box" style="padding: .5rem 1rem;">
-                  <input type="text" class="form-control me-2 master-chklst-search-box" placeholder="체크리스트 검색" aria-label="Recipient's username" aria-describedby="button-addon3">
-                  <button class="btn btn-outline-secondary master-chklst-search-btn" type="button" id="button-addon2">검색</button>
-                </div>
-                <ol class="master-list-group list-group"></ol>
-              </div>
-              <%-------------- modal body --------------%>
-              <%-------------- modal footer --------------%>
-              <div class="modal-footer">
-                <button class="btn btn-primary masterChklstSelectBtn" data-bs-dismiss="modal">선택</button>
-              </div>
-              <%-------------- modal footer --------------%>
-            </div>
-          </div>
-        </div>
-        <%-- master checklist modal end --%>
-
-          <%--  master checklist second modal start     --%>
-          <div class="modal fade" id="masterChecklistPreviewBtn" aria-hidden="false" aria-labelledby="details" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
-              <div class="modal-content">
-                <%--------------          header       ----------------------%>
-                <div class="modal-header">
-                  <div class="large-category-group">
-                  </div>
-                  <button class="btn back-btn" data-bs-target="#masterChecklistModal" data-bs-toggle="modal">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
-                      <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
-                    </svg>
-                  </button>
-                </div>
-                <%--------------           header       ----------------------%>
-                <%--------------           body       ----------------------%>
-                <div class="modal-body subCategory">
-                  <div class="row row-cols-2 d-flex justify-content-between category">
-                  </div>
-                  <div class="d-flex flex-row justify-content-end align-items-center score">
-                    <span class="me-2">총</span>
-                    <span style="color: #D90D0D">100</span>
-                    <span class="me-2">점</span>
-                  </div>
-                </div>
-                <%--------------           body       ----------------------%>
-              </div>
-            </div>
-          </div>
-          <%-- master checklist second modal end     --%>
-
-
-
-
-
-
-
-
-
-
     </div>
   </main>
 </div>
@@ -496,10 +418,6 @@
 <script defer
         type="application/javascript"
         src="../../../../../resources/js/master/checklist/inspection_list_manage/modal.js"
-></script>
-<script defer
-        type="application/javascript"
-        src="../../../../../resources/js/master/checklist/inspection_list_manage/master-modal.js"
 ></script>
   <script defer
           type="application/javascript"

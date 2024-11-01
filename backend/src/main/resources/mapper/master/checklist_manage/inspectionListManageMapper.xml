@@ -110,7 +110,8 @@
         MERGE INTO CHKLST_CTG /* InspectionListManageMapper.insertOrUpdateCtg 유재원 */
         USING (
         <foreach collection="list" item="item" separator="UNION ALL">
-            SELECT #{item.ctgId} AS CTG_ID,
+            SELECT
+            #{item.ctgId} AS CTG_ID,
             #{item.ctgNm} AS CTG_NM,
             #{item.chklstId} AS CHKLST_ID,
             #{item.stndScore} AS STND_SCORE,
@@ -120,7 +121,7 @@
             FROM DUAL
         </foreach>
         ) temp
-        ON (CHKLST_CTG.CTG_ID = temp.CTG_ID)
+        ON (CHKLST_CTG.CTG_ID = temp.CTG_ID AND CHKLST_CTG.CHKLST_ID = temp.CHKLST_ID AND CHKLST_CTG.MASTER_CTG_ID IS NULL)
         WHEN MATCHED THEN
         UPDATE SET
         CTG_NM = temp.CTG_NM,
@@ -141,7 +142,7 @@
         CRE_TM
         )
         VALUES (
-        temp.CTG_ID,
+        CHKLST_CTG_SEQ.NEXTVAL,
         temp.CTG_NM,
         temp.CHKLST_ID,
         temp.STND_SCORE,
@@ -152,26 +153,14 @@
         )
     </update>
 
-
-
-
-
-
-
-
-    <delete id="deleteCtg">
-        <foreach collection="list" item="item" open="" close="" index="index">
-            DELETE
-                FROM
-                    CHKLST_CTG
-                WHERE
-                    CTG_ID = #{item}
-                OR
-                    MASTER_CTG_ID = #{item}
-        </foreach>
+    <delete id="deleteCtg" parameterType="java.util.List">
+        DELETE FROM CHKLST_CTG
+        <where>
+            <foreach collection="list" item="item" separator=" OR ">
+                (CTG_ID = #{item} OR MASTER_CTG_ID = #{item})
+            </foreach>
+        </where>
     </delete>
-
-
 
 
 
