@@ -38,5 +38,10 @@ public interface ChecklistService {
     public int insertOrUpdateChecklist(List<ChecklistRequest> checklistRequests);
 
 
+    /**
+     * 체크리스트 미리보기 조회
+     * @param chklstNm
+     * @return 체크리스트 미리보기
+     */
     public ChecklistPreviewResponse getComplianceData(String chklstNm);
 }

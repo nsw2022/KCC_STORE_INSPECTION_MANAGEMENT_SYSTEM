@@ -61,6 +61,11 @@ public interface ChecklistMapper {
      */
     public int insertOrUpdateChecklist(List<ChecklistRequest> checklistRequests);
 
+    /**
+     * 체크리스트 미리보기
+     * @param chklstNm 체크리스트 이름
+     * @return 체크리스트 미리보기 데이터
+     */
     public List<Map<String, Object>> selectChecklistPreview(String chklstNm);
 
 }

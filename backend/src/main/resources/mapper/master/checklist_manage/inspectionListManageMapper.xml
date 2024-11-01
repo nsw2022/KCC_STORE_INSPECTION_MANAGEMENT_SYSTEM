@@ -5,7 +5,7 @@
 
 <mapper namespace="com.sims.master.inspection_list_manage.mapper.InspectionListManageMapper">
     <select id="selectChklstNmByChklstId">
-        SELECT
+        SELECT /* InspectionListManageMapper.selectChklstNmByChklstId 유재원 */
             c.CHKLST_NM AS chklstNm
             , m.CHKLST_NM AS masterChklstNm
         FROM
@@ -17,4 +17,227 @@
           AND c.CHKLST_ID = #{chklstId}
     </select>
 
+    <select id="selectCtgByChklstId" resultType="CtgResponse">
+        SELECT /* InspectionListManageMapper.selectCtgByChklstId 유재원 */
+            CC.CTG_ID AS ctgId
+            , CC.CTG_NM AS ctgNm
+            , CC.STND_SCORE AS stndScore
+            , CC.CTG_USE_W AS ctgUseW
+            , CC.SEQ AS seq
+        FROM
+            CHKLST C
+           , CHKLST_CTG CC
+        WHERE
+            C.CHKLST_ID = CC.CHKLST_ID
+        AND
+            MASTER_CTG_ID IS NULL
+        AND
+            C.CHKLST_ID = #{chklstId}
+        ORDER BY
+            CC.SEQ
+    </select>
+
+    <select id="selectSubCtgByChklstIdAndCtgNm" resultType="SubCtgResponse">
+        SELECT /* InspectionListManageMapper.selectSubCtgByChklstIdAndCtgNm 유재원 */
+            cc2.CTG_ID AS CTG_ID
+            , cc2.CTG_NM AS CTG_NM
+            , cc2.STND_SCORE AS STND_SCORE
+            , cc2.CTG_USE_W AS CTG_USE_W
+            , cc2.SEQ AS SEQ
+        FROM
+            CHKLST c
+           , CHKLST_CTG cc
+           , CHKLST_CTG cc2
+        WHERE
+            c.CHKLST_ID = cc.CHKLST_ID
+        AND
+            cc.CTG_ID = cc2.MASTER_CTG_ID
+        AND
+            cc2.MASTER_CTG_ID IS NOT NULL
+        AND
+            c.CHKLST_ID = #{chklstId}
+        AND
+            cc.CTG_NM = #{ctgNm}
+        ORDER BY
+            cc2.SEQ
+    </select>
+
+    <select id="selectEvitByCtgNmAndCtgId" resultType="EvitResponse">
+    <![CDATA[ /* InspectionListManageMapper.selectEvitByCtgNmAndCtgId 유재원 */
+        SELECT
+            ce.EVIT_ID,
+            ce.EVIT_CONTENT AS evitNm,
+            (SELECT dtl_cd_nm FROM COMM_CD_DTL ccd WHERE dtl_cd = EVIT_TYPE_CD) AS EVIT_TYPE_NM,
+            ce.SCORE,
+            ce.CHKLST_EVIT_USE_W,
+            ce.EVIT_SEQ AS seq
+        FROM CHKLST_CTG cc
+                 JOIN CHKLST_EVIT ce ON cc.CTG_ID = ce.CTG_ID
+                 JOIN CHKLST_CTG cc2 ON cc.MASTER_CTG_ID = cc2.CTG_ID
+        WHERE cc.MASTER_CTG_ID IS NOT NULL
+          AND cc.CTG_NM = #{ctgNm, jdbcType=VARCHAR}
+          AND cc2.CTG_ID = #{ctgId, jdbcType=INTEGER}
+        ]]>
+    </select>
+
+    <select id="selectEvitChclstByCtgIdAndEvitNm" resultType="ChclstResponse">
+        SELECT /* InspectionListManageMapper.selectEvitChclstByCtgIdAndEvitNm 유재원 */
+            ec.CHCLST_ID
+            , ec.CHCLST_CONTENT
+            , ec.NPRFS_CD
+            , ec.PRF_W
+            , ec.SCORE
+            , ec.PENALTY
+            , ec.BSN_SSPN_DAYNUM
+            , ec.EVIT_CHCLST_USE_W
+            , ec.CHCLST_SEQ
+        FROM
+            CHKLST_CTG cc
+           , CHKLST_EVIT ce
+           , EVIT_CHCLST ec
+        WHERE
+            cc.MASTER_CTG_ID IS NOT NULL
+          AND
+            cc.CTG_ID = ce.CTG_ID
+          AND
+            cc.CTG_ID = #{ctgId}
+          AND
+            ce.EVIT_ID = ec.EVIT_ID
+          AND
+            ce.EVIT_CONTENT = #{evitNm}
+    </select>
+
+    <update id="insertOrUpdateCtg">
+        MERGE INTO  /* InspectionListManageMapper.insertOrUpdateCtg 유재원 */
+            CHKLST_CTG
+        USING (
+            <foreach collection="list" item="item" separator="UNION ALL">
+                SELECT
+                    #{item.ctgId} AS CTG_ID
+                    , #{item.ctgNm} AS CTG_NM
+                    , #{item.chklstId} AS CHKLST_ID
+                    , #{item.stndScore} AS STND_SCORE
+                    , #{item.ctgUseW} AS CTG_USE_W
+                    , #{item.seq} AS SEQ
+                    , (SELECT MBR_ID FROM MBR WHERE MBR_NO = #{item.creMbrId}) AS CRE_MBR_ID
+                FROM
+                    DUAL
+            </foreach>
+        ) temp
+        ON (
+            CHKLST_CTG.CTG_ID = temp.CTG_ID
+        AND
+            CHKLST_CTG.CHKLST_ID = temp.CHKLST_ID
+        AND
+            CHKLST_CTG.MASTER_CTG_ID IS NULL)
+        WHEN MATCHED THEN
+        UPDATE
+            SET
+                CTG_NM = temp.CTG_NM
+                , STND_SCORE = temp.STND_SCORE
+                , CTG_USE_W = temp.CTG_USE_W
+                , SEQ = temp.SEQ
+                , UPD_MBR_ID = temp.CRE_MBR_ID
+                , UPD_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+        WHEN NOT MATCHED THEN
+        INSERT (
+            CTG_ID
+            , CTG_NM
+            , CHKLST_ID
+            , STND_SCORE
+            , CTG_USE_W
+            , SEQ
+            , CRE_MBR_ID
+            , CRE_TM
+        )
+        VALUES (
+            CHKLST_CTG_SEQ.NEXTVAL
+            , temp.CTG_NM
+            , temp.CHKLST_ID
+            , temp.STND_SCORE
+            , temp.CTG_USE_W
+            , temp.SEQ
+            , temp.CRE_MBR_ID
+            , TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+        )
+    </update>
+
+    <delete id="deleteCtg" parameterType="java.util.List">
+        DELETE /* InspectionListManageMapper.deleteCtg 유재원 */
+        FROM
+            CHKLST_CTG
+        <where>
+            <foreach collection="list" item="item" separator=" OR ">
+                (CTG_ID = #{item} OR MASTER_CTG_ID = #{item})
+            </foreach>
+        </where>
+    </delete>
+
+    <update id="insertOrUpdateSubCtg">
+        MERGE INTO /* InspectionListManageMapper.insertOrUpdateSubCtg 유재원 */
+            CHKLST_CTG
+        USING (
+            <foreach collection="list" item="item" separator="UNION ALL">
+                SELECT
+                    #{item.ctgId} AS CTG_ID
+                    , #{item.ctgNm} AS CTG_NM
+                    , #{item.chklstId} AS CHKLST_ID
+                    , #{item.masterCtgId} AS MASTER_CTG_ID
+                    , #{item.stndScore} AS STND_SCORE
+                    , #{item.ctgUseW} AS CTG_USE_W
+                    , #{item.seq} AS SEQ
+                    , (SELECT MBR_ID FROM MBR WHERE MBR_NO = #{item.creMbrId}) AS CRE_MBR_ID
+                FROM
+                    DUAL
+            </foreach>
+        ) temp
+        ON (
+            CHKLST_CTG.CTG_ID = temp.CTG_ID
+            AND CHKLST_CTG.CHKLST_ID = temp.CHKLST_ID
+            AND CHKLST_CTG.MASTER_CTG_ID IS NOT NULL
+        )
+        WHEN MATCHED THEN
+        UPDATE
+            SET
+                CTG_NM = temp.CTG_NM
+                , STND_SCORE = temp.STND_SCORE
+                , CTG_USE_W = temp.CTG_USE_W
+                , SEQ = temp.SEQ
+                , UPD_MBR_ID = temp.CRE_MBR_ID
+                , UPD_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+        WHEN NOT MATCHED THEN
+        INSERT (
+            CTG_ID
+            , CTG_NM
+            , CHKLST_ID
+            , MASTER_CTG_ID
+            , STND_SCORE
+            , CTG_USE_W
+            , SEQ
+            , CRE_MBR_ID
+            , CRE_TM
+        )
+        VALUES (
+            CHKLST_CTG_SEQ.NEXTVAL
+            , temp.CTG_NM
+            , temp.CHKLST_ID
+            , temp.MASTER_CTG_ID
+            , temp.STND_SCORE
+            , temp.CTG_USE_W
+            , temp.SEQ
+            , temp.CRE_MBR_ID
+            , TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+        )
+    </update>
+
+    <delete id="deleteSubCtg">
+        DELETE /* InspectionListManageMapper.deleteCtg 유재원 */
+        FROM
+            CHKLST_CTG
+        <where>
+            <foreach collection="list" item="item">
+                CTG_ID = #{item}
+            </foreach>
+        </where>
+    </delete>
 </mapper>
