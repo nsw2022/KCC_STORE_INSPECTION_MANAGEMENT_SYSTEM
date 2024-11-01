@@ -230,7 +230,14 @@
         )
     </update>
 
-
-
-
+    <delete id="deleteSubCtg">
+        DELETE /* InspectionListManageMapper.deleteCtg 유재원 */
+        FROM
+            CHKLST_CTG
+        <where>
+            <foreach collection="list" item="item">
+                CTG_ID = #{item}
+            </foreach>
+        </where>
+    </delete>
 </mapper>

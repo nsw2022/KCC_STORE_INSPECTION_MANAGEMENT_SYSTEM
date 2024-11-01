@@ -112,14 +112,53 @@ function onAddSubCategoryRow() {
     gridApi2.applyTransaction({ add: [newItem2] });
 }
 
-// 행 삭제 함수
 function onDeleteSubCategoryRow() {
-    var selectedRows = gridApi2.getSelectedRows();
-    if (selectedRows.length > 0) {
-        gridApi2.applyTransaction({ remove: selectedRows });
-    } else {
-        alert('삭제할 항목을 선택하세요.');
-    }
+    const selectedRows = gridApi2.getSelectedRows();
+    Swal.fire({
+        title: "확인",
+        html: "선택된 중분류를 삭제하시겠습니까?<br><b>이 작업은 되돌릴 수 없습니다.</b>",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "확인",
+        cancelButtonText: "취소",
+    }).then((result) => {
+        if (selectedRows.length > 0) {
+            // 경고 메시지 표시
+            if (result.isConfirmed) { // 사용자가 삭제를 확인한 경우
+                // ctgId 배열 생성
+                const ctgIds = selectedRows.map(row => row.ctgId).join(',');
+
+                fetch(`/master/inspection-list-manage/ctg/delete?ctg-id=${ctgIds}`, {
+                    method: 'DELETE',
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    // body: JSON.stringify(selectedRows.map(row => ({ chklstId: row.chklstId })))
+                }).then(response => {
+                    // 응답 상태 코드 확인
+                    if (!response.ok) {
+                        if (response.status === 403) {
+                            Swal.fire("실패!", "권한이 없습니다.", "error");
+                        }
+                    } else {
+                        // 그리드에서도 해당 행 삭제
+                        gridApi2.applyTransaction({ remove: selectedRows });
+
+                        selectedRows.forEach((row) => {
+                            const index = rowData2.findIndex((data) => data.chklstId === row.chklstId);
+                            if (index > -1) {
+                                rowData2.splice(index, 1);
+                            }
+                        });
+                    }
+                });
+            }
+        } else {
+            Swal.fire("실패!", "삭제 할 항목을 선택해주세요.", "error");
+        }
+    });
 }
 
 // 드래그 완료 후 seq 값을 업데이트하고 rowData 순서도 변경하는 함수

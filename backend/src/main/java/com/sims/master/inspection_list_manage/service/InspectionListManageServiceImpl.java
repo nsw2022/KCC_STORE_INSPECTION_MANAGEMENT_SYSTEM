@@ -75,6 +75,7 @@ public class InspectionListManageServiceImpl implements InspectionListManageServ
     }
 
     @Override
+    @PRoleCheck
     @Transactional(rollbackFor = Exception.class)
     public int insertOrUpdateSubCtg(List<SubCtgRequest> subCtgRequest) {
         String auth  = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -83,5 +84,11 @@ public class InspectionListManageServiceImpl implements InspectionListManageServ
             subCtg.setCtgId(subCtg.getCtgId().replace("new", ""));
         });
         return inspectionListManageMapper.insertOrUpdateSubCtg(subCtgRequest);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int deleteSubCtg(List<String> subCtgId) {
+        return inspectionListManageMapper.deleteSubCtg(subCtgId);
     }
 }

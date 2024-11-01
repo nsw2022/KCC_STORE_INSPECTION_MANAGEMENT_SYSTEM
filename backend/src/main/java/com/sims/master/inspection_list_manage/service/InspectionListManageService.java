@@ -68,4 +68,11 @@ public interface InspectionListManageService {
      */
     public int insertOrUpdateSubCtg(List<SubCtgRequest> subCtgRequest);
 
+    /**
+     * 중분류 삭제
+     * @param subCtgId
+     * @return 삭제된 중분류 수
+     */
+    public int deleteSubCtg(List<String> subCtgId);
+
 }

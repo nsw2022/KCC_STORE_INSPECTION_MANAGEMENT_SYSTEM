@@ -148,4 +148,19 @@ public class InspectionListController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    /**
+     * 중분류 삭제
+     * @param ctgId
+     * @return 중분류 삭제 결과
+     */
+    @DeleteMapping("/inspection-list-manage/sub-ctg/delete")
+    public ResponseEntity<?> deleteSubCtg(@RequestParam (value = "ctg-id") List<String> ctgId){
+        log.info("ctgId : {}", ctgId);
+        if(inspectionListService.deleteSubCtg(ctgId) > 0) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else{
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
