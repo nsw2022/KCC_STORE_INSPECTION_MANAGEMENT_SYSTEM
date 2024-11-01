@@ -85,12 +85,6 @@ public class ChecklistServiceImpl implements ChecklistService{
             throw new CustomException(ErrorCode.SAVE_FAIL);
     }
 
-//    @Override
-//    public ChecklistPreviewResponse selectChecklistPreview(String chklstNm) {
-//
-//        return checklistMapper.selectChecklistPreview(chklstNm);
-//    }
-
     @Override
     public ChecklistPreviewResponse getComplianceData(String chklstNm) {
         List<Map<String, Object>> results = checklistMapper.selectChecklistPreview(chklstNm);
@@ -101,6 +95,7 @@ public class ChecklistServiceImpl implements ChecklistService{
             System.out.println("No results found for checklist name: " + chklstNm);
             return complianceData; // 빈 데이터 반환
         }
+        log.info("results = {}", results.toString());
 
         for (Map<String, Object> row : results) {
             Object categoryObj = row.get("CATEGORY");
@@ -109,8 +104,7 @@ public class ChecklistServiceImpl implements ChecklistService{
             Object checkListContentObj = row.get("CHECKLISTCONTENT");
 
             if (categoryObj == null || subCategoryObj == null || evitContentObj == null || checkListContentObj == null) {
-                System.out.println("Row contains null values: " + row);
-                continue; // null 값이 있는 경우 해당 행을 건너뜀
+                continue;
             }
 
             String category = categoryObj.toString();
@@ -127,14 +121,7 @@ public class ChecklistServiceImpl implements ChecklistService{
         }
 
         complianceData.setData(dataMap);
-        System.out.println("Current dataMap state: " + dataMap);
-        System.out.println(complianceData);
 
         return complianceData;
     }
-
-
-
-
-
 }

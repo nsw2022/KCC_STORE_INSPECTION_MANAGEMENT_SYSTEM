@@ -99,8 +99,8 @@ function initializeGrid() {
 
           $editDiv.on("click", function (e) {
             e.stopPropagation();
-
-            location.href = `/master/inspection-list-manage/${gridApi.getSelectedRows()[0].chklstId}`;
+            console.log(gridApi.getSelectedRows()[0].chklstId);
+            location.href = `/master/inspection-list-manage?chklst-id=${gridApi.getSelectedRows()[0].chklstId}`;
             $editDiv.removeClass("show");
           });
 
@@ -604,9 +604,4 @@ observeChanges(".inspectionTypePlaceholder", function(newText) {
 // 페이지를 벗어날 때 알림을 띄움
 $(window).on("beforeunload", function() {
   if (checkUnload) return '이 페이지를 벗어나면 작성된 내용은 저장되지 않습니다.';
-});
-
-
-$('.edit-container').click(function(e) {
-  console.log("clicked");
 });

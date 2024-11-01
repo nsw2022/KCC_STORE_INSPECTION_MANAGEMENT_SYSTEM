@@ -1,8 +1,5 @@
 // ROW 데이터 정의
-const rowData4 = [
-    { no: 1, choice_list: "적합", strength: "정상", suitable: "Y", score: 100, status: "Y", seq: "1" },
-    { no: 2, choice_list: "부적합", strength: "크리티컬", suitable: "N", score: 0, status: "Y", seq: "2" },
-];
+let rowData4 = [];
 
 // 통합 설정 객체
 const gridOptions4 = {
@@ -17,12 +14,12 @@ const gridOptions4 = {
             resizable: true,
             cellStyle: { backgroundColor: "#ffffff" },
         },
-        { field: "no", headerName: "no", width: 50, minWidth: 50, tooltipField: "no" },
-        { field: "choice_list", headerName: "선택지 내용", width: 200, minWidth: 90, tooltipField: "choice_list" },
-        { field: "strength", headerName: "부적합 강도", width: 40, minWidth: 90, tooltipField: "strength" },
-        { field: "suitable", headerName: "적합", width: 40, minWidth: 90, tooltipField: "score" },
-        { field: "status", headerName: "사용여부", width: 40, minWidth: 90, tooltipField: "status" },
-        { field: "seq", headerName: "정렬순서", width: 40, minWidth: 90, tooltipField: "seq"},
+        { field: "chclstId", headerName: "no", width: 50, minWidth: 50, tooltipField: "ID" },
+        { field: "chclstContent", headerName: "선택지 내용", width: 100, minWidth: 90, tooltipField: "chclstContent" },
+        { field: "nprfsCd", headerName: "부적합 강도", width: 40, minWidth: 90, tooltipField: "nprfsCd" },
+        { field: "prfW", headerName: "적합여부", width: 40, minWidth: 50, tooltipField: "prfW" },
+        { field: "evitChclstUseW", headerName: "사용여부", width: 40, minWidth: 90, tooltipField: "status" },
+        { field: "chclstSeq", headerName: "정렬순서", width: 40, minWidth: 90, tooltipField: "seq"},
     ],
 
     autoSizeStrategy: {
@@ -43,9 +40,36 @@ const gridOptions4 = {
         console.log('cell was clicked', params);
     },
 
+    onCellClicked: params => {
+        $('.chclst-nm').next().val(params.data.chclstContent);
+        $('.chclst-score').next().val(params.data.score);
+
+        $('.chclst-nprfsCd').next().val(params.data.nprfsCd);
+        $('.chclst-penalty').next().val(params.data.penalty);
+
+        $('.chclst-bsnSspnDaynum').next().val(params.data.bsnSspnDaynum);
+        if(chklstEvitUseW === 'Y'){
+            $('.chclst-use-w').next().prop('checked', true);
+        }else if (chklstEvitUseW === 'N'){
+            $('.chclst-use-w').next().prop('checked', false);
+        }
+    },
+
     // 드래그 종료 후 seq 업데이트
     onRowDragEnd: params => {
         updateChoiceListRowDataSeq();
+    },
+    // 체크박스 해제 시 인풋박스와 grid3 초기화
+    onSelectionChanged: () => {
+        const selectedRows = gridApi4.getSelectedRows();
+        if(selectedRows.length === 0){
+            $('.chclst-nm').next().val("");
+            $('.chclst-score').next().val("");
+            $('.chclst-nprfsCd').next().val("");
+            $('.chclst-penalty').next().val("");
+            $('.chclst-bsnSspnDaynum').next().val("");
+            $('.chclst-use-w').next().prop('checked', false);
+        }
     },
 };
 

@@ -5,7 +5,7 @@
 
 <mapper namespace="com.sims.master.inspection_list_manage.mapper.InspectionListManageMapper">
     <select id="selectChklstNmByChklstId">
-        SELECT
+        SELECT /* InspectionListManageMapper.selectChklstNmByChklstId 유재원 */
             c.CHKLST_NM AS chklstNm
             , m.CHKLST_NM AS masterChklstNm
         FROM
@@ -16,5 +16,95 @@
             c.CHKLST_STTS_W = '1'
           AND c.CHKLST_ID = #{chklstId}
     </select>
+
+    <select id="selectCtgByChklstId" resultType="CtgResponse">
+        SELECT /* InspectionListManageMapper.selectCtgByChklstId 유재원 */
+            CC.CTG_ID AS ctgId
+            , CC.CTG_NM AS ctgNm
+            , CC.STND_SCORE AS stndScore
+            , CC.CTG_USE_W AS ctgUseW
+            , CC.SEQ AS seq
+        FROM
+            CHKLST C
+           , CHKLST_CTG CC
+        WHERE
+            C.CHKLST_ID = CC.CHKLST_ID
+        AND
+            MASTER_CTG_ID IS NULL
+        AND
+            C.CHKLST_ID = #{chklstId}
+        ORDER BY
+            CC.SEQ
+    </select>
+
+    <select id="selectSubCtgByChklstIdAndCtgNm" resultType="SubCtgResponse">
+        SELECT /* InspectionListManageMapper.selectSubCtgByChklstIdAndCtgNm 유재원 */
+            cc2.CTG_ID AS CTG_ID
+            , cc2.CTG_NM AS CTG_NM
+            , cc2.CTG_USE_W AS CTG_USE_W
+            , cc2.SEQ AS SEQ
+        FROM
+            CHKLST c
+           , CHKLST_CTG cc
+           , CHKLST_CTG cc2
+        WHERE
+            c.CHKLST_ID = cc.CHKLST_ID
+        AND
+            cc.CTG_ID = cc2.MASTER_CTG_ID
+        AND
+            cc2.MASTER_CTG_ID IS NOT NULL
+        AND
+            c.CHKLST_ID = #{chklstId}
+        AND
+            cc.CTG_NM = #{ctgNm}
+        ORDER BY
+            cc2.SEQ
+    </select>
+
+    <select id="selectEvitByCtgNmAndCtgId" resultType="EvitResponse">
+    <![CDATA[ /* InspectionListManageMapper.selectEvitByCtgNmAndCtgId 유재원 */
+        SELECT
+            ce.EVIT_ID,
+            ce.EVIT_CONTENT AS evitNm,
+            (SELECT dtl_cd_nm FROM COMM_CD_DTL ccd WHERE dtl_cd = EVIT_TYPE_CD) AS EVIT_TYPE_NM,
+            ce.SCORE,
+            ce.CHKLST_EVIT_USE_W,
+            ce.EVIT_SEQ AS seq
+        FROM CHKLST_CTG cc
+                 JOIN CHKLST_EVIT ce ON cc.CTG_ID = ce.CTG_ID
+                 JOIN CHKLST_CTG cc2 ON cc.MASTER_CTG_ID = cc2.CTG_ID
+        WHERE cc.MASTER_CTG_ID IS NOT NULL
+          AND cc.CTG_NM = #{ctgNm, jdbcType=VARCHAR}
+          AND cc2.CTG_ID = #{ctgId, jdbcType=INTEGER}
+        ]]>
+    </select>
+
+    <select id="selectEvitChclstByCtgIdAndEvitNm" resultType="ChclstResponse">
+        SELECT /* InspectionListManageMapper.selectEvitChclstByCtgIdAndEvitNm 유재원 */
+            ec.CHCLST_ID
+            , ec.CHCLST_CONTENT
+            , ec.NPRFS_CD
+            , ec.PRF_W
+            , ec.SCORE
+            , ec.PENALTY
+            , ec.BSN_SSPN_DAYNUM
+            , ec.EVIT_CHCLST_USE_W
+            , ec.CHCLST_SEQ
+        FROM
+            CHKLST_CTG cc
+           , CHKLST_EVIT ce
+           , EVIT_CHCLST ec
+        WHERE
+            cc.MASTER_CTG_ID IS NOT NULL
+          AND
+            cc.CTG_ID = ce.CTG_ID
+          AND
+            cc.CTG_ID = #{ctgId}
+          AND
+            ce.EVIT_ID = ec.EVIT_ID
+          AND
+            ce.EVIT_CONTENT = #{evitNm}
+    </select>
+
 
 </mapper>

@@ -1,9 +1,5 @@
 // ROW 데이터 정의
-const rowData3 = [
-    { no: 1, evaluation_item: "소비기한 변조 및 삭제", evaluation_item_type: "선택지형", score: 100, status: "Y", seq: "1" },
-    { no: 2, evaluation_item: "시설물 위생 관리", evaluation_item_type: "선택지형", score: 100, status: "Y", seq: "2" },
-    { no: 3, evaluation_item: "식품보관법", evaluation_item_type: "선택지형", score: 100, status: "Y", seq: "3" },
-];
+let rowData3 = [];
 
 // 통합 설정 객체
 const gridOptions3 = {
@@ -18,11 +14,11 @@ const gridOptions3 = {
             resizable: true,
             cellStyle: { backgroundColor: "#ffffff" },
         },
-        { field: "no", headerName: "no", width: 50, minWidth: 50, tooltipField: "no" },
-        { field: "evaluation_item", headerName: "평가항목", width: 200, minWidth: 90, tooltipField: "evaluation_item" },
-        { field: "evaluation_item_type", headerName: "평가항목 유형", width: 40, minWidth: 90, tooltipField: "status" },
+        { field: "evitId", headerName: "no", width: 50, minWidth: 50, tooltipField: "no" },
+        { field: "evitNm", headerName: "평가항목", width: 200, minWidth: 90, tooltipField: "evaluation_item" },
+        { field: "evitTypeNm", headerName: "평가항목 유형", width: 40, minWidth: 90, tooltipField: "status" },
         { field: "score", headerName: "점수", width: 40, minWidth: 90, tooltipField: "score" },
-        { field: "status", headerName: "사용여부", width: 40, minWidth: 90, tooltipField: "status" },
+        { field: "chklstEvitUseW", headerName: "사용여부", width: 40, minWidth: 90, tooltipField: "status" },
         { field: "seq", headerName: "정렬순서", width: 40, minWidth: 90, tooltipField: "seq"},
     ],
 
@@ -39,22 +35,50 @@ const gridOptions3 = {
 
     tooltipShowDelay: 500,
 
-
     onCellClicked: params => {
-        console.log('cell was clicked', params);
-    },
-    onGridReady: (params) => {
-        // 그리드가 로드된 후 첫 번째 행 선택
-        params.api.forEachNode((node, index) => {
-            if (index === 0) {
-                node.setSelected(true);
-            }
-        });
+
+        const evitNm = params.data.evitNm;
+        const evitTypeNm = params.data.evitTypeNm;
+        const score = params.data.score;
+        const chklstEvitUseW = params.data.chklstEvitUseW;
+        const encodedEvitNm = encodeURIComponent(evitNm);
+
+        fetch(`/master/inspection-list-manage/evit-chclst?ctg-id=${subCtgId}&evit-nm=${encodedEvitNm}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                console.log("subCtgId", subCtgId);
+                const rowData4 = [];
+                for (let i = 0; i < data.length; i++) {
+                    rowData4.push(data[i]);
+                }
+                gridApi4.setGridOption("rowData", rowData4);  // Initialize gridApi2 with rowData2
+            });
+        $('.evit-nm').next().val(evitNm);
+        $('.evit-type-nm').next().val(evitTypeNm);
+        $('.evit-score').next().val(score);
+        if(chklstEvitUseW === 'Y'){
+            $('.evit-use-w').next().prop('checked', true);
+        }else if (chklstEvitUseW === 'N'){
+            $('.evit-use-w').next().prop('checked', false);
+        }
     },
 
     // 드래그 종료 후 seq 업데이트
     onRowDragEnd: params => {
         updateEvaluationRowDataSeq();
+    },
+
+    // 체크박스 해제 시 인풋박스와 grid3 초기화
+    onSelectionChanged: () => {
+        const selectedRows = gridApi3.getSelectedRows();
+        if(selectedRows.length === 0){
+            gridApi4.setGridOption("rowData", []);
+            $('.evit-nm').next().val("");
+            $('.evit-type-nm').next().val("");
+            $('.evit-score').next().val("");
+            $('.evit-use-w').next().prop('checked', false);
+        }
     },
 };
 

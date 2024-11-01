@@ -1,81 +1,134 @@
 // ROW 데이터 정의
-const rowData = [
-    { no: 1, category_name: "중대법규", reference_score: "100", status: "Y", seq: "1" },
-    { no: 2, category_name: "기타법규", reference_score: "100", status: "Y", seq: "2" },
-    { no: 3, category_name: "위생관리", reference_score: "100", status: "Y", seq: "3" },
-];
+let rowData = [];
+let ctgId = "";
+let checkUnload = false;
+let selectedRowNo;
+let gridApi;
 
-// 통합 설정 객체
-const gridOptions = {
-    rowData: rowData,
+$(document).ready(async function() {
+    try {
+        const response = await fetch(`/master/inspection-list-manage/ctg/${chklstId}`);
+        const data = await response.json();
+        console.log(data);
 
-    columnDefs: [
-        {
-            minWidth: 45,
-            width: 45,
-            headerCheckboxSelection: true,
-            checkboxSelection: true,
-            resizable: true,
-            cellStyle: { backgroundColor: "#ffffff" },
-        },
-        { field: "no", headerName: "no", width: 50, minWidth: 50, tooltipField: "no"  },
-        { field: "category_name", headerName: "대분류명", width: 90, minWidth: 90, tooltipField: "category_name"  },
-        { field: "reference_score", headerName: "기준점수", width: 90, minWidth: 90, tooltipField: "reference_score" },
-        { field: "status", headerName: "사용여부", width: 90, minWidth: 90, tooltipField: "status"},
-        { field: "seq", headerName: "정렬순서", width: 90, minWidth: 90, tooltipField: "seq"},
-    ],
+        for (let i = 0; i < data.length; i++) {
+            rowData.push(data[i]);
+        }
+        console.log(rowData);
 
-    autoSizeStrategy: {
-        type: 'fitGridWidth',              // 그리드 넓이 기준으로
-        defaultMinWidth: 10               // 컬럼 최소사이즈
-    },
-    rowHeight: 45,
+        // 통합 설정 객체
+        const gridOptions = {
+            rowData: rowData,
 
-    rowSelection: 'multiple',
-    rowDragManaged: true,
-    rowDragEntireRow: true,
-    rowDragMultiRow: true,
+            columnDefs: [
+                {
+                    minWidth: 45,
+                    width: 45,
+                    headerCheckboxSelection: true,
+                    checkboxSelection: true,
+                    resizable: true,
+                    cellStyle: { backgroundColor: "#ffffff" },
+                },
+                { field: "ctgId", headerName: "no", width: 50, minWidth: 50, tooltipField: "no"  },
+                { field: "ctgNm", headerName: "대분류명", width: 90, minWidth: 90, tooltipField: "category_name"  },
+                { field: "stndScore", headerName: "기준점수", width: 90, minWidth: 90, tooltipField: "reference_score" },
+                { field: "ctgUseW", headerName: "사용여부", width: 90, minWidth: 90, tooltipField: "status"},
+                { field: "seq", headerName: "정렬순서", width: 90, minWidth: 90, tooltipField: "seq"},
+            ],
 
-    tooltipShowDelay: 500,
+            getRowId: params => params.data.ctgId, // 각 행의 고유 ID로 ctgId를 사용
 
-    onCellClicked: params => {
-        console.log('cell was clicked', params);
-    },
-    onGridReady: (params) => {
-        // 그리드가 로드된 후 첫 번째 행 선택
-        params.api.forEachNode((node, index) => {
-            if (index === 0) {
-                node.setSelected(true);
-            }
-        });
-    },
+            autoSizeStrategy: {
+                type: 'fitGridWidth',
+                defaultMinWidth: 10
+            },
+            rowHeight: 45,
 
-    // 드래그 종료 후 seq 업데이트
-    onRowDragEnd: params => {
-        updateCategoryRowDataSeq();
-    },
-};
+            rowSelection: 'multiple',
+            rowDragManaged: true,
+            rowDragEntireRow: true,
+            rowDragMultiRow: true,
 
-const gridDiv = document.querySelector('#categoryGrid');
-const gridApi = agGrid.createGrid(gridDiv, gridOptions);
+            tooltipShowDelay: 500,
+
+            onCellClicked: params => {
+                const encodedCtgNm = encodeURIComponent(params.data.ctgNm);
+                const ctgNm = params.data.ctgNm;
+                const stndScore = params.data.stndScore;
+                const ctgUseW = params.data.ctgUseW;
+
+                ctgId = params.data.ctgId;
+                fetch(`/master/inspection-list-manage/sub-ctg/${chklstId}?ctg-nm=${encodedCtgNm}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const rowData2 = [];
+                        for (let i = 0; i < data.length; i++) {
+                            rowData2.push(data[i]);
+                        }
+                        gridApi2.setGridOption("rowData", rowData2);  // Initialize gridApi2 with rowData2
+                    });
+                $('.ctg-nm').next().val(ctgNm);
+                $('.stnd-score').next().val(stndScore);
+                if(ctgUseW === 'Y'){
+                    $('.ctg-use-w').next().prop('checked', true);
+                }else if (ctgUseW === 'N'){
+                    $('.ctg-use-w').next().prop('checked', false);
+                }
+            },
+
+            onRowDragEnd: params => {
+                updateCategoryRowDataSeq();
+            },
+
+            onSelectionChanged: () => {
+                const selectedRows = gridApi.getSelectedRows();
+                if(selectedRows.length === 0){
+                    gridApi2.setGridOption("rowData", []);
+                    $('.ctg-nm').next().val("");
+                    $('.stnd-score').next().val("");
+                    $('.ctg-use-w').next().prop('checked', false);
+                }
+            },
+
+            onRowSelected: (event) => {
+                const selectedRows = gridApi.getSelectedRows();
+
+                if (selectedRows.length === 1 && event.node.isSelected()) {
+                    const selectedNode = event.node;
+                    selectedRowNo = selectedNode.rowIndex;
+                    console.log("선택된 행 번호: ", selectedRowNo);
+
+                } else if (!event.node.isSelected() && event.node.rowIndex === selectedRowNo) {
+                    selectedRowNo = null;
+                }
+            },
+        };
+
+
+        const gridDiv = document.querySelector('#categoryGrid');
+        gridApi = agGrid.createGrid(gridDiv, gridOptions);
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
+});
 
 
 // 새로운 rowData 생성 함수
 function createNewCategoryRowData() {
-    var newData = {
-        no: (gridApi.getDisplayedRowCount() + 1),
-        category_name: "",
-        reference_score: "",
-        status: "",
-        seq: (gridApi.getDisplayedRowCount() + 1).toString()  // seq 값도 생성 시 자동 할당
+    return {
+        ctgId: "n" + (gridApi.getDisplayedRowCount() + 1), // 임시 고유 ID 생성
+        ctgNm: "",
+        stndScore: "",
+        ctgUseW: "",
+        seq: (gridApi.getDisplayedRowCount() + 1).toString()
     };
-    return newData;
 }
 
 // 행 추가 함수
 function onAddCategoryRow() {
-    var newItem = createNewCategoryRowData();
-    gridApi.applyTransaction({ add: [newItem] });
+    const newItem = createNewCategoryRowData();
+    rowData.push(newItem); // rowData에 새 항목 추가
+    gridApi.applyTransaction({ add: [newItem] }); // 그리드에 항목 추가
 }
 
 // 행 삭제 함수
@@ -88,19 +141,25 @@ function onDeleteCategoryRow() {
     }
 }
 
-// 드래그 완료 후 seq 값을 업데이트하는 함수
+// 드래그 완료 후 seq 값을 업데이트하고 rowData 순서도 변경하는 함수
 function updateCategoryRowDataSeq() {
+    checkUnload = true;
+    $('.ctg-save-btn').removeAttr("disabled");
+
+    const updatedRowData = [];
+
+    // 각 행의 seq를 1부터 순차적으로 업데이트하고 업데이트된 데이터를 updatedRowData에 추가
     gridApi.forEachNode((node, index) => {
-        // 각 행의 seq를 1부터 순차적으로 할당
         node.data.seq = (index + 1).toString();
+        updatedRowData.push({ ...node.data });
     });
 
-    // 그리드에 변경된 seq 값을 반영
-    gridApi.refreshCells({ force: true });
+    // rowData를 새로 정렬된 updatedRowData로 설정
+    rowData = updatedRowData;
+
+    // 변경 사항을 그리드에 적용
+    gridApi.applyTransaction({ update: rowData });
 }
-
-
-
 
 function toggleSearchBox() {
     const toggleButton = document.querySelector('.top-drop-down button'); // 버튼 선택
@@ -141,3 +200,109 @@ function toggleSearchBox() {
 document.addEventListener('DOMContentLoaded', () => {
     toggleSearchBox(); // 함수 호출
 });
+
+// 대분류명 수정 시 이벤트
+$('.ctg-input').keyup(function(){
+    if (selectedRowNo !== null) {
+        checkUnload = true;
+        $('.ctg-save-btn').removeAttr("disabled");
+        rowData[selectedRowNo].ctgNm = $('.ctg-input').val();
+        gridApi.applyTransaction({
+            update: [rowData[selectedRowNo]]
+        });
+    }
+})
+// 기준점수 수정 시 이벤트
+$('.ctg-stnd-score').keyup(function(){
+    if (selectedRowNo !== null) {
+        checkUnload = true;
+        $('.ctg-save-btn').removeAttr("disabled");
+        rowData[selectedRowNo].stndScore = $('.ctg-stnd-score').val();
+        gridApi.applyTransaction({
+            update: [rowData[selectedRowNo]]
+        });
+    }
+})
+// 사용어부 수정(체크) 시 이벤트
+$('.ctg-use-w-check').change(function(){
+    console.log("checked");
+    if (selectedRowNo !== null) {
+        checkUnload = true;
+        $('.ctg-save-btn').removeAttr("disabled");
+
+        if($('.ctg-use-w-check').is(":checked")){
+            rowData[selectedRowNo].ctgUseW = 'Y';
+        }else{
+            rowData[selectedRowNo].ctgUseW = 'N';
+        }
+        gridApi.applyTransaction({
+            update: [rowData[selectedRowNo]]
+        });
+        $('.ctg-use-w-check').removeAttr("disabled");
+    }
+})
+
+// 페이지를 벗어날 때 알림을 띄움
+$(window).on("beforeunload", function() {
+    if (checkUnload) return '이 페이지를 벗어나면 작성된 내용은 저장되지 않습니다.';
+});
+
+function ctgSaveOrUpdate() {
+    Swal.fire({
+        title: "확인",
+        html: "선택된 체크리스트를 저장하시겠습니까?<br><b>선택하지 않은 체크리스트는 저장되지 않습니다.</b>",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "확인",
+        cancelButtonText: "취소",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const selectedRows = gridApi.getSelectedRows();
+            if (selectedRows.length === 0) {
+                Swal.fire("실패!", "체크리스트를 선택해주세요.", "error");
+                return;
+            }
+
+            // 체크리스트를 서버에 저장하는 fetch 요청
+            fetch("/master/inspection-list-manage/ctg/submit", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(selectedRows.map((row) => ({
+                    ctgNm: row.ctgNm,
+                    stndScore: row.stndScore,
+                    ctgUseW: row.ctgUseW,
+                    seq: row.seq,
+                }))),
+            })
+            .then((response) => {
+                if (!response.ok) {
+                    // 응답 상태 코드에 따른 에러 처리
+                    if (response.status === 403) {
+                        Swal.fire("실패!", "권한이 없습니다.", "error");
+                    } else if (response.status === 500) {
+                        Swal.fire("실패!", "저장에 실패했습니다. 관리자에게 문의하세요.", "error");
+                    }
+                    return Promise.reject();
+                }
+            })
+            .then((data) => {
+                // 서버 저장이 성공하면 완료 알림 표시
+                Swal.fire({
+                    title: "완료!",
+                    text: "완료되었습니다.",
+                    icon: "success",
+                    confirmButtonText: "OK",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        checkUnload = false;
+                        $('.ctg-save-btn').attr("disabled", "disabled");
+                    }
+                });
+            })
+        }
+    });
+}

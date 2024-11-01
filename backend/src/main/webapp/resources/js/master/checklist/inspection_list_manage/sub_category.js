@@ -1,12 +1,6 @@
 // ROW 데이터 정의
-const rowData2 = [
-    { no: 1, sub_category_name: "영엽취소", status: "Y", seq: "1" },
-    { no: 2, sub_category_name: "영업정지 1개월 이상", status: "Y", seq: "2" },
-    { no: 3, sub_category_name: "영업정지 15일 이상", status: "Y", seq: "3" },
-    { no: 4, sub_category_name: "시정명령", status: "Y", seq: "4" },
-    { no: 5, sub_category_name: "과태료", status: "Y", seq: "5" },
-];
-
+let rowData2 = [];
+let subCtgId = "";
 // 통합 설정 객체
 const gridOptions2 = {
     rowData: rowData2,
@@ -20,9 +14,9 @@ const gridOptions2 = {
             resizable: true,
             cellStyle: { backgroundColor: "#ffffff" },
         },
-        { field: "no", headerName: "no", width: 50, minWidth: 50, tooltipField: "no" },
-        { field: "sub_category_name", headerName: "중분류명", width: 200, minWidth: 90, tooltipField: "sub_category_name" },
-        { field: "status", headerName: "사용여부", width: 40, minWidth: 90, tooltipField: "status" },
+        { field: "ctgId", headerName: "no", width: 50, minWidth: 50, tooltipField: "no" },
+        { field: "ctgNm", headerName: "중분류명", width: 200, minWidth: 90, tooltipField: "sub_category_name" },
+        { field: "ctgUseW", headerName: "사용여부", width: 40, minWidth: 90, tooltipField: "status" },
         { field: "seq", headerName: "정렬순서", width: 40, minWidth: 90, tooltipField: "seq"},
     ],
 
@@ -41,20 +35,42 @@ const gridOptions2 = {
 
     onCellClicked: params => {
         console.log('cell was clicked', params);
-    },
-
-    onGridReady: (params) => {
-        // 그리드가 로드된 후 첫 번째 행 선택
-        params.api.forEachNode((node, index) => {
-            if (index === 0) {
-                node.setSelected(true);
-            }
-        });
+        const encodedCtgNm = encodeURIComponent(params.data.ctgNm);
+        const ctgNm = params.data.ctgNm;
+        const ctgUseW = params.data.ctgUseW;
+        console.log(ctgNm, ctgId);
+        subCtgId = params.data.ctgId;
+        fetch(`/master/inspection-list-manage/chklst-evit?ctg-id=${ctgId}&ctg-nm=${encodedCtgNm}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                const rowData3 = [];
+                for (let i = 0; i < data.length; i++) {
+                    rowData3.push(data[i]);
+                }
+                gridApi3.setGridOption("rowData", rowData3);  // Initialize gridApi2 with rowData2
+            });
+        $('.sub-ctg-nm').next().val(ctgNm);
+        if(ctgUseW === 'Y'){
+            $('.sub-ctg-use-w').next().prop('checked', true);
+        }else if (ctgUseW === 'N'){
+            $('.sub-ctg-use-w').next().prop('checked', false);
+        }
     },
 
     // 드래그 종료 후 seq 업데이트
     onRowDragEnd: params => {
         updateSubCategoryRowDataSeq();
+    },
+
+    // 체크박스 해제 시 인풋박스와 grid3 초기화
+    onSelectionChanged: () => {
+        const selectedRows = gridApi2.getSelectedRows();
+        if(selectedRows.length === 0){
+            gridApi3.setGridOption("rowData", []);
+            $('.sub-ctg-nm').next().val("");
+            $('.sub-ctg-use-w').next().prop('checked', false);
+        }
     },
 };
 

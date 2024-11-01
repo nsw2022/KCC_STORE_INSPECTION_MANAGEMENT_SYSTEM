@@ -192,11 +192,11 @@
 
     <select id="selectChecklistPreview" resultType="Map" parameterType="String">
         SELECT
-            CTG.CTG_NM AS category,                    -- 대분류 이름
-            SUBCTG.CTG_NM AS subCategory,              -- 중분류 이름
-            EVIT.EVIT_CONTENT AS evitContent,          -- 평가항목 내용
-            CHCLST.CHCLST_CONTENT AS checkListContent,  -- 선택지 내용
-            CHCLST.CHCLST_ID AS checkListId             -- 선택지 ID
+            CTG.CTG_NM AS category,
+            SUBCTG.CTG_NM AS subCategory,
+            EVIT.EVIT_CONTENT AS evitContent,
+            CHCLST.CHCLST_CONTENT AS checkListContent,
+            CHCLST.CHCLST_ID AS checkListId
         FROM
             CHKLST_CTG CTG
                 LEFT JOIN
