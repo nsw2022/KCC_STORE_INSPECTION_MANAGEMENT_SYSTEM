@@ -112,7 +112,6 @@ public class InspectionListController {
      */
     @PostMapping("/inspection-list-manage/ctg/submit")
     public ResponseEntity<?> insertOrUpdateCtg(@RequestBody List<CtgRequest> request){
-        log.info("@@@@@@@@@@@@@@@@@@@@@@@@@request : {}", request.toString());
 
         if(inspectionListService.insertOrUpdateCtg(request) > 0) {
             return new ResponseEntity<>(HttpStatus.OK);
@@ -132,6 +131,20 @@ public class InspectionListController {
         if(inspectionListService.deleteCtg(ctgId) > 0) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else{
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 중분류 저장 / 수정
+     * @param request
+     * @return 중분류 저장 / 수정 결과
+     */
+    @PostMapping("/inspection-list-manage/sub-ctg/submit")
+    public ResponseEntity<?> insertOrUpdateSubCtg(@RequestBody List<SubCtgRequest> request){
+        if(inspectionListService.insertOrUpdateSubCtg(request) > 0) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }else{
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

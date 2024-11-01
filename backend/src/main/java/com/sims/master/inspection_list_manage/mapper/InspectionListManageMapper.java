@@ -67,4 +67,11 @@ public interface InspectionListManageMapper {
      */
     public int deleteCtg(List<String> ctgId);
 
+    /**
+     * 중분류 저장 / 수정
+     * @param subCtgRequest
+     * @return 중분류 저장 / 수정 결과
+     */
+    public int insertOrUpdateSubCtg(List<SubCtgRequest> subCtgRequest);
+
 }

@@ -41,6 +41,7 @@
         SELECT /* InspectionListManageMapper.selectSubCtgByChklstIdAndCtgNm 유재원 */
             cc2.CTG_ID AS CTG_ID
             , cc2.CTG_NM AS CTG_NM
+            , cc2.STND_SCORE AS STND_SCORE
             , cc2.CTG_USE_W AS CTG_USE_W
             , cc2.SEQ AS SEQ
         FROM
@@ -107,60 +108,127 @@
     </select>
 
     <update id="insertOrUpdateCtg">
-        MERGE INTO CHKLST_CTG /* InspectionListManageMapper.insertOrUpdateCtg 유재원 */
+        MERGE INTO  /* InspectionListManageMapper.insertOrUpdateCtg 유재원 */
+            CHKLST_CTG
         USING (
-        <foreach collection="list" item="item" separator="UNION ALL">
-            SELECT
-            #{item.ctgId} AS CTG_ID,
-            #{item.ctgNm} AS CTG_NM,
-            #{item.chklstId} AS CHKLST_ID,
-            #{item.stndScore} AS STND_SCORE,
-            #{item.ctgUseW} AS CTG_USE_W,
-            #{item.seq} AS SEQ,
-            (SELECT MBR_ID FROM MBR WHERE MBR_NO = #{item.creMbrId}) AS CRE_MBR_ID
-            FROM DUAL
-        </foreach>
+            <foreach collection="list" item="item" separator="UNION ALL">
+                SELECT
+                    #{item.ctgId} AS CTG_ID
+                    , #{item.ctgNm} AS CTG_NM
+                    , #{item.chklstId} AS CHKLST_ID
+                    , #{item.stndScore} AS STND_SCORE
+                    , #{item.ctgUseW} AS CTG_USE_W
+                    , #{item.seq} AS SEQ
+                    , (SELECT MBR_ID FROM MBR WHERE MBR_NO = #{item.creMbrId}) AS CRE_MBR_ID
+                FROM
+                    DUAL
+            </foreach>
         ) temp
-        ON (CHKLST_CTG.CTG_ID = temp.CTG_ID AND CHKLST_CTG.CHKLST_ID = temp.CHKLST_ID AND CHKLST_CTG.MASTER_CTG_ID IS NULL)
+        ON (
+            CHKLST_CTG.CTG_ID = temp.CTG_ID
+        AND
+            CHKLST_CTG.CHKLST_ID = temp.CHKLST_ID
+        AND
+            CHKLST_CTG.MASTER_CTG_ID IS NULL)
         WHEN MATCHED THEN
-        UPDATE SET
-        CTG_NM = temp.CTG_NM,
-        STND_SCORE = temp.STND_SCORE,
-        CTG_USE_W = temp.CTG_USE_W,
-        SEQ = temp.SEQ,
-        UPD_MBR_ID = temp.CRE_MBR_ID,
-        UPD_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+        UPDATE
+            SET
+                CTG_NM = temp.CTG_NM
+                , STND_SCORE = temp.STND_SCORE
+                , CTG_USE_W = temp.CTG_USE_W
+                , SEQ = temp.SEQ
+                , UPD_MBR_ID = temp.CRE_MBR_ID
+                , UPD_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
         WHEN NOT MATCHED THEN
         INSERT (
-        CTG_ID,
-        CTG_NM,
-        CHKLST_ID,
-        STND_SCORE,
-        CTG_USE_W,
-        SEQ,
-        CRE_MBR_ID,
-        CRE_TM
+            CTG_ID
+            , CTG_NM
+            , CHKLST_ID
+            , STND_SCORE
+            , CTG_USE_W
+            , SEQ
+            , CRE_MBR_ID
+            , CRE_TM
         )
         VALUES (
-        CHKLST_CTG_SEQ.NEXTVAL,
-        temp.CTG_NM,
-        temp.CHKLST_ID,
-        temp.STND_SCORE,
-        temp.CTG_USE_W,
-        temp.SEQ,
-        temp.CRE_MBR_ID,
-        TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+            CHKLST_CTG_SEQ.NEXTVAL
+            , temp.CTG_NM
+            , temp.CHKLST_ID
+            , temp.STND_SCORE
+            , temp.CTG_USE_W
+            , temp.SEQ
+            , temp.CRE_MBR_ID
+            , TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
         )
     </update>
 
     <delete id="deleteCtg" parameterType="java.util.List">
-        DELETE FROM CHKLST_CTG
+        DELETE /* InspectionListManageMapper.deleteCtg 유재원 */
+        FROM
+            CHKLST_CTG
         <where>
             <foreach collection="list" item="item" separator=" OR ">
                 (CTG_ID = #{item} OR MASTER_CTG_ID = #{item})
             </foreach>
         </where>
     </delete>
+
+    <update id="insertOrUpdateSubCtg">
+        MERGE INTO /* InspectionListManageMapper.insertOrUpdateSubCtg 유재원 */
+            CHKLST_CTG
+        USING (
+            <foreach collection="list" item="item" separator="UNION ALL">
+                SELECT
+                    #{item.ctgId} AS CTG_ID
+                    , #{item.ctgNm} AS CTG_NM
+                    , #{item.chklstId} AS CHKLST_ID
+                    , #{item.masterCtgId} AS MASTER_CTG_ID
+                    , #{item.stndScore} AS STND_SCORE
+                    , #{item.ctgUseW} AS CTG_USE_W
+                    , #{item.seq} AS SEQ
+                    , (SELECT MBR_ID FROM MBR WHERE MBR_NO = #{item.creMbrId}) AS CRE_MBR_ID
+                FROM
+                    DUAL
+            </foreach>
+        ) temp
+        ON (
+            CHKLST_CTG.CTG_ID = temp.CTG_ID
+            AND CHKLST_CTG.CHKLST_ID = temp.CHKLST_ID
+            AND CHKLST_CTG.MASTER_CTG_ID IS NOT NULL
+        )
+        WHEN MATCHED THEN
+        UPDATE
+            SET
+                CTG_NM = temp.CTG_NM
+                , STND_SCORE = temp.STND_SCORE
+                , CTG_USE_W = temp.CTG_USE_W
+                , SEQ = temp.SEQ
+                , UPD_MBR_ID = temp.CRE_MBR_ID
+                , UPD_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+        WHEN NOT MATCHED THEN
+        INSERT (
+            CTG_ID
+            , CTG_NM
+            , CHKLST_ID
+            , MASTER_CTG_ID
+            , STND_SCORE
+            , CTG_USE_W
+            , SEQ
+            , CRE_MBR_ID
+            , CRE_TM
+        )
+        VALUES (
+            CHKLST_CTG_SEQ.NEXTVAL
+            , temp.CTG_NM
+            , temp.CHKLST_ID
+            , temp.MASTER_CTG_ID
+            , temp.STND_SCORE
+            , temp.CTG_USE_W
+            , temp.SEQ
+            , temp.CRE_MBR_ID
+            , TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+        )
+    </update>
 
 
 

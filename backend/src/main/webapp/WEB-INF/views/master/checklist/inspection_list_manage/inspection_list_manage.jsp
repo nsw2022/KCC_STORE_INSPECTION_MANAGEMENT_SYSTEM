@@ -173,7 +173,7 @@
                       <div class="title-box">
                         <span class="m-3" style="font: 400 15px Noto Sans KR;">중분류 등록 및 수정</span>
                         <div class="my-3">
-                          <button type="button" class="btn btn-primary me-3 sub-ctg-save-btn" disabled>저장</button>
+                          <button type="button" class="btn btn-primary me-3 sub-ctg-save-btn" onclick="subCtgSaveOrUpdate()" disabled>저장</button>
                         </div>
                       </div>
                       <div class="container">
@@ -181,11 +181,15 @@
                           <div class="row row-cols-2 first-input-box mb-3">
                             <div class="col-12 col-lg-6 d-flex align-items-center mb-2">
                               <label class="col-form-label me-2 sub-ctg-nm" style="min-width: 50px;">중분류명</label>
-                              <input type="text" class="form-control" placeholder="중분류명">
+                              <input type="text" class="form-control sub-ctg-input" placeholder="중분류명">
                             </div>
-                            <div class="col-12 col-lg-6 d-flex align-items-center mb-2">
+                            <div class="col-12 col-lg-3 d-flex align-items-center mb-2">
+                              <label class="col-form-label me-2 sub-ctg-stnd-score" style="min-width: 50px;">기준점수</label>
+                              <input type="text" class="form-control sub-ctg-stnd-score" placeholder="0">
+                            </div>
+                            <div class="col-12 col-lg-3 d-flex align-items-center mb-2">
                               <label class="col-form-label me-2 sub-ctg-use-w" style="min-width: 50px;">사용여부</label>
-                              <input type="checkbox" class="form-check-label">
+                              <input type="checkbox" class="form-check-label sub-ctg-use-w-input">
                             </div>
                           </div>
                         </div>

@@ -5,7 +5,6 @@ import com.sims.master.inspection_list_manage.mapper.InspectionListManageMapper;
 import com.sims.master.inspection_list_manage.vo.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,7 +60,7 @@ public class InspectionListManageServiceImpl implements InspectionListManageServ
         log.info("auth = {}", auth);
         ctgRequest.forEach(ctg -> {
             ctg.setCreMbrId(auth);
-            ctg.setCtgId(ctg.getCtgId().replace("n", ""));
+            ctg.setCtgId(ctg.getCtgId().replace("new", ""));
         });
 
         return inspectionListManageMapper.insertOrUpdateCtg(ctgRequest);
@@ -73,5 +72,16 @@ public class InspectionListManageServiceImpl implements InspectionListManageServ
     public int deleteCtg(List<String> ctgId) {
 
         return inspectionListManageMapper.deleteCtg(ctgId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int insertOrUpdateSubCtg(List<SubCtgRequest> subCtgRequest) {
+        String auth  = SecurityContextHolder.getContext().getAuthentication().getName();
+        subCtgRequest.forEach(subCtg -> {
+            subCtg.setCreMbrId(auth);
+            subCtg.setCtgId(subCtg.getCtgId().replace("new", ""));
+        });
+        return inspectionListManageMapper.insertOrUpdateSubCtg(subCtgRequest);
     }
 }

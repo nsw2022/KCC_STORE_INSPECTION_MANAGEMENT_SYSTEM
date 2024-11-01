@@ -61,6 +61,7 @@ $(document).ready(async function() {
                 fetch(`/master/inspection-list-manage/sub-ctg/${chklstId}?ctg-nm=${encodedCtgNm}`)
                     .then(response => response.json())
                     .then(data => {
+                        console.log(data);
                         const rowData2 = [];
                         for (let i = 0; i < data.length; i++) {
                             rowData2.push(data[i]);
@@ -116,7 +117,7 @@ $(document).ready(async function() {
 // 새로운 rowData 생성 함수
 function createNewCategoryRowData() {
     return {
-        ctgId: "n" + (gridApi.getDisplayedRowCount() + 1), // 임시 고유 ID 생성
+        ctgId: "new" + (gridApi.getDisplayedRowCount() + 1), // 임시 고유 ID 생성
         ctgNm: "",
         stndScore: "",
         ctgUseW: "",
@@ -269,7 +270,7 @@ $('.ctg-stnd-score').keyup(function(){
         });
     }
 })
-// 사용어부 수정(체크) 시 이벤트
+// 사용여부 수정(체크) 시 이벤트
 $('.ctg-use-w-check').change(function(){
     console.log("checked");
     if (selectedRowNo !== null) {
@@ -296,7 +297,7 @@ $(window).on("beforeunload", function() {
 function ctgSaveOrUpdate() {
     Swal.fire({
         title: "확인",
-        html: "선택된 체크리스트를 저장하시겠습니까?<br><b>선택하지 않은 체크리스트는 저장되지 않습니다.</b>",
+        html: "선택된 대분류를 저장하시겠습니까?<br><b>선택하지 않은 대분류는 저장되지 않습니다.</b>",
         icon: "question",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -307,7 +308,7 @@ function ctgSaveOrUpdate() {
         if (result.isConfirmed) {
             const selectedRows = gridApi.getSelectedRows();
             if (selectedRows.length === 0) {
-                Swal.fire("실패!", "체크리스트를 선택해주세요.", "error");
+                Swal.fire("실패!", "대분류를 선택해주세요.", "error");
                 return;
             }
 
