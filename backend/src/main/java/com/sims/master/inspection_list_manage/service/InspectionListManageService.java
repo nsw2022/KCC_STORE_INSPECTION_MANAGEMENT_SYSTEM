@@ -48,9 +48,17 @@ public interface InspectionListManageService {
     public List<ChclstResponse> selectEvitChclstByCtgIdAndEvitNm(String ctgId, String evitNm);
 
     /**
-     * 대분류 저장
+     * 대분류 저장 / 수정
      * @param ctgRequest
+     * @return 저장 / 수정된 대분류 수
      */
     public int insertOrUpdateCtg(List<CtgRequest> ctgRequest);
+
+    /**
+     * 대분류 삭제
+     * @param ctgId
+     * @return 삭제된 대분류 수
+     */
+    public int deleteCtg(List<String> ctgId);
 
 }

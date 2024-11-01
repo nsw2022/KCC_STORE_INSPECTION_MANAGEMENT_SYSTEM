@@ -108,40 +108,50 @@
 
     <insert id="insertOrUpdateCtg">
         <foreach collection="list" item="item" open="" close="" index="index">
-            MERGE INTO CHKLST_CTG
+            MERGE INTO CHKLST_CTG /* InspectionListManageMapper.insertOrUpdateCtg 유재원 */
             USING DUAL
             ON (CTG_ID = #{item.ctgId})
             WHEN MATCHED THEN
-            UPDATE SET
-            CTG_NM = #{item.ctgNm},
-            STND_SCORE = #{item.stndScore},
-            CTG_USE_W = #{item.ctgUseW},
-            SEQ = #{item.seq},
-            UPD_MBR_ID = (SELECT MBR_ID FROM MBR WHERE MBR_NO = #{item.creMbrId}),
-            UPD_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+                UPDATE SET
+                    CTG_NM = #{item.ctgNm}
+                    , STND_SCORE = #{item.stndScore}
+                    , CTG_USE_W = #{item.ctgUseW}
+                    , SEQ = #{item.seq
+                    , UPD_MBR_ID = (SELECT MBR_ID FROM MBR WHERE MBR_NO = #{item.creMbrId})
+                    , UPD_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
             WHEN NOT MATCHED THEN
-            INSERT (
-            CTG_ID,
-            CTG_NM,
-            CHKLST_ID,
-            STND_SCORE,
-            CTG_USE_W,
-            SEQ,
-            CRE_MBR_ID,
-            CRE_TM
-            )
-            VALUES (
-            CHKLST_CTG_SEQ.NEXTVAL,
-            #{item.ctgNm},
-            #{item.chklstId},
-            #{item.stndScore},
-            #{item.ctgUseW},
-            #{item.seq},
-            (SELECT MBR_ID FROM MBR WHERE MBR_NO = #{item.creMbrId}),
-            TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
-            )
+                INSERT (
+                    CTG_ID
+                    , CTG_NM
+                    , CHKLST_ID
+                    , STND_SCORE
+                    , CTG_USE_W
+                    , SEQ
+                    , CRE_MBR_ID
+                    , CRE_TM
+                )
+                VALUES (
+                    CHKLST_CTG_SEQ.NEXTVAL
+                    , #{item.ctgNm}
+                    , #{item.chklstId}
+                    , #{item.stndScore}
+                    , #{item.ctgUseW}
+                    , #{item.seq}
+                    , (SELECT MBR_ID FROM MBR WHERE MBR_NO = #{item.creMbrId})
+                    , TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+                )
         </foreach>
     </insert>
+
+    <delete id="deleteCtg">
+        <foreach collection="list" item="item" open="" close="" index="index">
+            DELETE
+                FROM
+                    CHKLST_CTG
+                WHERE
+                    CTG_ID = #{item}
+        </foreach>
+    </delete>
 
 
 

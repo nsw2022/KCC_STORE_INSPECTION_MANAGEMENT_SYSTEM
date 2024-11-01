@@ -133,12 +133,23 @@ function onAddCategoryRow() {
 
 function onDeleteCategoryRow() {
     const selectedRows = gridApi.getSelectedRows();
-
-    if (selectedRows.length > 0) {
-        // 경고 메시지 표시
-        warningMessage().then((result) => {
+    Swal.fire({
+        title: "확인",
+        html: "선택된 체크리스트를 삭제하시겠습니까?<br><b>이 작업은 되돌릴 수 없습니다.</b>",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "확인",
+        cancelButtonText: "취소",
+    }).then((result) => {
+        if (selectedRows.length > 0) {
+            // 경고 메시지 표시
             if (result.isConfirmed) { // 사용자가 삭제를 확인한 경우
-                fetch(`/master/checklist/delete`, {
+                // ctgId 배열 생성
+                const ctgIds = selectedRows.map(row => row.ctgId).join(',');
+
+                fetch(`/master/inspection-list-manage/ctg/delete?ctg-id=${ctgIds}`, {
                     method: 'DELETE',
                     headers: {
                         "Content-Type": "application/json",
@@ -149,8 +160,6 @@ function onDeleteCategoryRow() {
                     if (!response.ok) {
                         if (response.status === 403) {
                             Swal.fire("실패!", "권한이 없습니다.", "error");
-                        }else if(response.status === 409){
-                            Swal.fire("실패!", "사용중인 점검계획이 있습니다.", "error");
                         }
                     } else {
                         // 그리드에서도 해당 행 삭제
@@ -162,15 +171,15 @@ function onDeleteCategoryRow() {
                                 rowData.splice(index, 1);
                             }
                         });
-                        updateChecklistCount();
                     }
-                })
+                });
             }
-        });
-    } else {
-        Swal.fire("실패!", "삭제 할 항목을 선택해주세요.", "error");
-    }
+        } else {
+            Swal.fire("실패!", "삭제 할 항목을 선택해주세요.", "error");
+        }
+    });
 }
+
 
 
 

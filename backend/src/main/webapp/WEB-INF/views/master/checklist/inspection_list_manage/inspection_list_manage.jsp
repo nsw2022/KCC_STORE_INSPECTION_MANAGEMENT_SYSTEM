@@ -97,12 +97,6 @@
                     <input type="text" class="form-control masterChklstTitlePlaceholder" placeholder="${masterChklstNm}" data-bs-target="#masterChecklistModal" data-bs-toggle="modal" readonly>
                   </div>
                 </div>
-                <div class="row first-input-box">
-                  <div class="col-12 d-flex align-items-center justify-content-between p-0">
-                    <label class="col-form-label" style="width: 100px">모듈</br>선택</label>
-                    <input type="text" class="form-control" placeholder="모듈" readonly>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

@@ -59,4 +59,12 @@ public interface InspectionListManageMapper {
      * @return 대분류 저장 / 수정 결과
      */
     public int insertOrUpdateCtg(List<CtgRequest> ctgRequest);
+
+    /**
+     * 대분류 삭제
+     * @param ctgId
+     * @return 대분류 삭제 결과
+     */
+    public int deleteCtg(List<String> ctgId);
+
 }

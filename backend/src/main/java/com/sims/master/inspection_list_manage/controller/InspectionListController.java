@@ -5,6 +5,7 @@ import com.sims.master.inspection_list_manage.vo.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
+import org.apache.ibatis.annotations.Delete;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -105,14 +106,34 @@ public class InspectionListController {
     }
 
     /**
-     * 대분류 저장
+     * 대분류 저장 / 수정
+     * @param request
+     * @return 대분류 저장 / 수정 결과
      */
     @PostMapping("/inspection-list-manage/ctg/submit")
     public ResponseEntity<?> insertOrUpdateCtg(@RequestBody List<CtgRequest> request){
         log.info("@@@@@@@@@@@@@@@@@@@@@@@@@request : {}", request.toString());
 
-        inspectionListService.insertOrUpdateCtg(request);
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        if(inspectionListService.insertOrUpdateCtg(request) > 0) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
+    /**
+     * 대분류 삭제
+     * @param ctgId
+     * @return 대분류 삭제 결과
+     */
+    @DeleteMapping("/inspection-list-manage/ctg/delete")
+    public ResponseEntity<?> deleteCtg(@RequestParam (value = "ctg-id") List<String> ctgId){
+        log.info("ctgId : {}", ctgId);
+        if(inspectionListService.deleteCtg(ctgId) > 0) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else{
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

@@ -65,4 +65,10 @@ public class InspectionListManageServiceImpl implements InspectionListManageServ
 
         return inspectionListManageMapper.insertOrUpdateCtg(ctgRequest);
     }
+
+    @Override
+    public int deleteCtg(List<String> ctgId) {
+
+        return inspectionListManageMapper.deleteCtg(ctgId);
+    }
 }
