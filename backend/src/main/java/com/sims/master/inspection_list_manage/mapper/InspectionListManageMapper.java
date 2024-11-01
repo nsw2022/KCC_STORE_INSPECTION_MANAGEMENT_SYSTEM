@@ -51,4 +51,12 @@ public interface InspectionListManageMapper {
      * @return 선택지 목록
      */
     public List<ChclstResponse> selectEvitChclstByCtgIdAndEvitNm(String ctgId, String evitNm);
+
+
+    /**
+     * 대분류 저장 / 수정
+     * @param ctgRequest
+     * @return 대분류 저장 / 수정 결과
+     */
+    public int insertOrUpdateCtg(List<CtgRequest> ctgRequest);
 }

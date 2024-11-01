@@ -131,15 +131,52 @@ function onAddCategoryRow() {
     gridApi.applyTransaction({ add: [newItem] }); // 그리드에 항목 추가
 }
 
-// 행 삭제 함수
 function onDeleteCategoryRow() {
-    var selectedRows = gridApi.getSelectedRows();
+    const selectedRows = gridApi.getSelectedRows();
+
     if (selectedRows.length > 0) {
-        gridApi.applyTransaction({ remove: selectedRows });
+        // 경고 메시지 표시
+        warningMessage().then((result) => {
+            if (result.isConfirmed) { // 사용자가 삭제를 확인한 경우
+                fetch(`/master/checklist/delete`, {
+                    method: 'DELETE',
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(selectedRows.map(row => ({ chklstId: row.chklstId })))
+                }).then(response => {
+                    // 응답 상태 코드 확인
+                    if (!response.ok) {
+                        if (response.status === 403) {
+                            Swal.fire("실패!", "권한이 없습니다.", "error");
+                        }else if(response.status === 409){
+                            Swal.fire("실패!", "사용중인 점검계획이 있습니다.", "error");
+                        }
+                    } else {
+                        // 그리드에서도 해당 행 삭제
+                        gridApi.applyTransaction({ remove: selectedRows });
+
+                        selectedRows.forEach((row) => {
+                            const index = rowData.findIndex((data) => data.chklstId === row.chklstId);
+                            if (index > -1) {
+                                rowData.splice(index, 1);
+                            }
+                        });
+                        updateChecklistCount();
+                    }
+                })
+            }
+        });
     } else {
-        alert('삭제할 항목을 선택하세요.');
+        Swal.fire("실패!", "삭제 할 항목을 선택해주세요.", "error");
     }
 }
+
+
+
+
+
+
 
 // 드래그 완료 후 seq 값을 업데이트하고 rowData 순서도 변경하는 함수
 function updateCategoryRowDataSeq() {
@@ -272,7 +309,9 @@ function ctgSaveOrUpdate() {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(selectedRows.map((row) => ({
+                    ctgId: row.ctgId,
                     ctgNm: row.ctgNm,
+                    chklstId: chklstId,
                     stndScore: row.stndScore,
                     ctgUseW: row.ctgUseW,
                     seq: row.seq,

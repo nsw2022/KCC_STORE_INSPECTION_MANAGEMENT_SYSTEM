@@ -104,5 +104,15 @@ public class InspectionListController {
         return new ResponseEntity<List<ChclstResponse>>(inspectionListService.selectEvitChclstByCtgIdAndEvitNm(ctgId, evitNm), HttpStatus.OK);
     }
 
+    /**
+     * 대분류 저장
+     */
+    @PostMapping("/inspection-list-manage/ctg/submit")
+    public ResponseEntity<?> insertOrUpdateCtg(@RequestBody List<CtgRequest> request){
+        log.info("@@@@@@@@@@@@@@@@@@@@@@@@@request : {}", request.toString());
 
+        inspectionListService.insertOrUpdateCtg(request);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

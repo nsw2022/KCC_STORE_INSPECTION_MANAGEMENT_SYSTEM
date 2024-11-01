@@ -1,10 +1,14 @@
 package com.sims.master.inspection_list_manage.service;
 
+import com.sims.config.common.aop.PRoleCheck;
 import com.sims.master.inspection_list_manage.mapper.InspectionListManageMapper;
 import com.sims.master.inspection_list_manage.vo.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -47,5 +51,18 @@ public class InspectionListManageServiceImpl implements InspectionListManageServ
     @Override
     public List<ChclstResponse> selectEvitChclstByCtgIdAndEvitNm(String ctgId, String evitNm) {
         return inspectionListManageMapper.selectEvitChclstByCtgIdAndEvitNm(ctgId, evitNm);
+    }
+
+    @Override
+    @PRoleCheck
+    @Transactional(rollbackFor = Exception.class)
+    public int insertOrUpdateCtg(List<CtgRequest> ctgRequest) {
+        String auth  = SecurityContextHolder.getContext().getAuthentication().getName();
+        log.info("auto = {}", auth);
+        ctgRequest.forEach(ctg -> {
+            ctg.setCreMbrId(auth);
+        });
+
+        return inspectionListManageMapper.insertOrUpdateCtg(ctgRequest);
     }
 }

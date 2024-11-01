@@ -8,8 +8,11 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class CtgRequest {
+    private String ctgId;
     private String ctgNm;
+    private String chklstId;
     private String stndScore;
     private String ctgUseW;
     private int seq;
+    private String creMbrId;
 }
