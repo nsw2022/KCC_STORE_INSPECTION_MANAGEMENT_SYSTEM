@@ -58,15 +58,18 @@ public class InspectionListManageServiceImpl implements InspectionListManageServ
     @Transactional(rollbackFor = Exception.class)
     public int insertOrUpdateCtg(List<CtgRequest> ctgRequest) {
         String auth  = SecurityContextHolder.getContext().getAuthentication().getName();
-        log.info("auto = {}", auth);
+        log.info("auth = {}", auth);
         ctgRequest.forEach(ctg -> {
             ctg.setCreMbrId(auth);
+            ctg.setCtgId(ctg.getCtgId().replace("n", ""));
         });
 
         return inspectionListManageMapper.insertOrUpdateCtg(ctgRequest);
     }
 
     @Override
+    @PRoleCheck
+    @Transactional(rollbackFor = Exception.class)
     public int deleteCtg(List<String> ctgId) {
 
         return inspectionListManageMapper.deleteCtg(ctgId);
