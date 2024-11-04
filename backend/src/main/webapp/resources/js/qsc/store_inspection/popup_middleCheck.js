@@ -169,9 +169,13 @@ function applyTemporaryData(temporaryData) {
 
     // 화면에 표시된 모든 문항을 순회하며 임시데이터를 반영
     wrappers.forEach(wrapper => {
+        // const evitId = wrapper.getAttribute('data-evit-id');
+        // const inspResultId = wrapper.getAttribute('data-insp-result-id');
+        // const creMbrId = wrapper.getAttribute('data-cre-mbr-id');
         const evitId = wrapper.getAttribute('data-evit-id');
         const inspResultId = wrapper.getAttribute('data-insp-result-id');
         const creMbrId = wrapper.getAttribute('data-cre-mbr-id');
+
 
         if (!evitId || !inspResultId || !creMbrId) {
             console.warn("필수 data 속성이 누락되었습니다:", wrapper);
@@ -336,11 +340,14 @@ function applyDetailContent(wrapper, tempData) {
     }
 
     // 사진 설정
-    console.log("Setting photo paths:", tempData.photoPaths);
+    console.log("Setting photo paths:", tempData.photos);
 
-    const s3PhotoPaths = tempData.photoPaths.filter(path => path && !path.startsWith('/'));
-
-    setPhotoPaths(wrapper, s3PhotoPaths);
+    if (tempData.photos && Array.isArray(tempData.photos)) {
+        const s3PhotoPaths = tempData.photos.filter(photo => photo && photo.photoPath && !photo.photoPath.startsWith('/'));
+        setPhotoPaths(wrapper, s3PhotoPaths);
+    } else {
+        console.warn(`tempData.photos가 유효하지 않습니다:`, tempData.photos);
+    }
 }
 
 
@@ -686,7 +693,7 @@ function processFetchedData(data) {
                         questionText: item.evitContent,
                         questionType: questionType,
                         options: [], // 옵션과 점수를 함께 저장
-                        creMbrId: item.mbrId || "defaultCreMbrId",
+                        creMbrId: item.creMbrId || item.mbrId || 'defaultCreMbrId',
                         inspResultId: item.inspResultId || globalInspResultId,
                         penalty: item.penalty || 0, // 추가된 부분
                         bsnSspnDaynum: item.bsnSspnDaynum || 0, // 추가된 부분
@@ -1508,7 +1515,7 @@ function generateInspectionList(category) {
             contentWrapper.classList.add('inspection-content-wrapper');
             contentWrapper.setAttribute('data-evit-id', question.evitId);
             contentWrapper.setAttribute('data-insp-result-id', globalInspResultId);
-            contentWrapper.setAttribute('data-cre-mbr-id', question.creMbrId);
+            contentWrapper.setAttribute('data-cre-mbr-id', question.creMbrId || 'defaultCreMbrId');
             contentWrapper.style.height = '0px'; // 초기에는 숨김
 
             // 답변 섹션 생성
@@ -2217,7 +2224,7 @@ function temporarySave() {
         const photos = getPhotoPaths(contentWrapper) || [];
 
         // 사진 경로에서 null 값 제거
-        photoPaths = photoPaths.filter(path => path);
+        const filteredPhotos = photos.filter(photo => photo.photoPath);
 
         // 필수 데이터 검증
         if (!answerContent) {
@@ -2250,7 +2257,7 @@ function temporarySave() {
             vltCause,
             instruction,
             vltPlcCd,
-            photos,
+            photos: filteredPhotos,
             inspResultId: inspResultIdLocal,
             creMbrId: creMbrId || "defaultCreMbrId",
             categoryName: subcategoryName, // 카테고리 이름 추가
@@ -2416,20 +2423,21 @@ function getVltPlcCd(contentWrapper) {
     return null;
 }
 
-function getPhotoPaths(contentWrapper) {
-    const photoBoxes = contentWrapper.querySelectorAll('.photo-box');
-    const photos = [];
-    photoBoxes.forEach((box, index) => {
-        const path = box.getAttribute('data-path');
-        if (path) {
-            photos.push({
-                seq: index + 1,
-                photoPath: path
-            });
-        }
-    });
-    return photos;
-}
+// function getPhotoPaths(contentWrapper) {
+//     const photoBoxes = contentWrapper.querySelectorAll('.photo-box');
+//     const photos = [];
+//     photoBoxes.forEach((box, index) => {
+//         const path = box.getAttribute('data-path');
+//         if (path) {
+//             photos.push({
+//                 seq: index + 1,
+//                 photoPath: path
+//             });
+//         }
+//     });
+//     return photos;
+// }
+
 
 
 
@@ -2634,10 +2642,10 @@ function middleCheckInspection() {
         const vltCause = getVltCause(contentWrapper) || "";
         const instruction = getInstruction(contentWrapper) || "";
         const vltPlcCd = getVltPlcCd(contentWrapper) || "";
-        let photoPaths = getPhotoPaths(contentWrapper) || [];
+        const photos = getPhotoPaths(contentWrapper) || [];
 
         // 사진 경로에서 null 값 제거
-        photoPaths = photoPaths.filter(path => path);
+        const filteredPhotos = photos.filter(photo => photo.photoPath);
 
         // 필수 데이터 검증
         if (!answerContent) {
@@ -2670,7 +2678,7 @@ function middleCheckInspection() {
             vltCause,
             instruction,
             vltPlcCd,
-            photoPaths,
+            photos: filteredPhotos,
             inspResultId: inspResultIdLocal,
             creMbrId: creMbrId || "defaultCreMbrId",
             categoryName: subcategoryName, // 카테고리 이름 추가
@@ -2902,17 +2910,19 @@ function getVltPlcCd(contentWrapper) {
     return null;
 }
 
+// 전역 범위에서 정의된 getPhotoPaths 함수
 function getPhotoPaths(contentWrapper) {
     const photoBoxes = contentWrapper.querySelectorAll('.photo-box');
-    const paths = [];
-    photoBoxes.forEach(box => {
+    const photos = [];
+    photoBoxes.forEach((box, index) => {
         const path = box.getAttribute('data-path');
         if (path) {
-            paths.push(path);
-        } else {
-            paths.push(null); // undefined 대신 null 사용
+            photos.push({
+                seq: index + 1,
+                photoPath: path
+            });
         }
     });
-    return paths;
+    return photos;
 }
 
