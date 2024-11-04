@@ -171,5 +171,9 @@ $('.chklst-search-box').on('keyup', function(event) {
 
 // 선택 시 placeholder 내용 수정
 $('.chklstSelectBtn').click(function() {
+    // URL을 설정하는 부분
+    location.href = `/master/inspection-list-manage?chklst-nm=${clickedListText}`;
+
+    // placeholder 내용 수정
     $('.chklstTitlePlaceholder').attr('placeholder', clickedListText);
 });

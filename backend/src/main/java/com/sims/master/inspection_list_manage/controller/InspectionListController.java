@@ -35,18 +35,23 @@ public class InspectionListController {
      * @return 점검 항목 관리 페이지
      */
     @GetMapping("/inspection-list-manage")
-    public String getInspectionListManagePage(@RequestParam (value = "chklst-id", required = false)String chklstId, Model model){
-        if(chklstId != null){
+    public String getInspectionListManagePage(@RequestParam(value = "chklst-id", required = false) String chklstId,
+                                              @RequestParam(value = "chklst-nm", required = false) String chklstNm,
+                                              Model model) {
+        if (chklstId != null) {
+            // chklstId가 전달된 경우 처리
             model.addAttribute("chklstId", chklstId);
-
             InspectionPageResponse response = inspectionListService.selectChklstNmByChklstId(chklstId);
-
             model.addAttribute("chklstNm", response.getChklstNm());
-            model.addAttribute("masterChklstNm", response.getMasterChklstNm());
+        } else if (chklstNm != null) {
+            // chklstNm이 전달된 경우 처리
+            model.addAttribute("chklstId", inspectionListService.selectChklstIdByChklstNm(chklstNm));
+            model.addAttribute("chklstNm", chklstNm);
         }
 
         return "master/checklist/inspection_list_manage/inspection_list_manage";
     }
+
 
     /**
      * 대분류 목록 조회
@@ -160,6 +165,66 @@ public class InspectionListController {
         if(inspectionListService.deleteSubCtg(ctgId) > 0) {
             return new ResponseEntity<>(HttpStatus.OK);
         } else{
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 평가항목 저장 / 수정
+     * @param request
+     * @return 평가항목 저장 / 수정 결과
+     */
+    @PostMapping("/inspection-list-manage/chklst-evit/submit")
+    public ResponseEntity<?> insertOrUpdateEvit(@RequestBody List<EvitRequest> request){
+        log.info("request = {}", request.toString());
+        if(inspectionListService.insertOrUpdateEvit(request) > 0) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 평가항목 삭제
+     * @param evitId
+     * @return 평가항목 삭제 결과
+     */
+    @DeleteMapping("/inspection-list-manage/chklst-evit/delete")
+    public ResponseEntity<?> deleteEvit(@RequestParam (value = "evit-id") List<String> evitId){
+        log.info("evitId : {}", evitId);
+        if(inspectionListService.deleteChklstEvit(evitId) > 0) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else{
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 선택지 저장 / 수정
+     * @param request
+     * @return 선택지 저장 / 수정 결과
+     */
+    @PostMapping("/inspection-list-manage/evit-chclst/submit")
+    public ResponseEntity<?> insertOrUpdateChclst(@RequestBody List<ChclstRequest> request){
+        log.info("request = {}", request.toString());
+        if(inspectionListService.insertOrUpdateEvitChclst(request) > 0) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 선택지 삭제
+     * @param evitChclstId
+     * @return 선택지 삭제 결과
+     */
+    @DeleteMapping("/inspection-list-manage/evit-chclst/delete")
+    public ResponseEntity<?> deleteChclst(@RequestParam (value = "evit-chclst-id") List<String> evitChclstId){
+        log.info("evitChclstId : {}", evitChclstId);
+        if(inspectionListService.deleteEvitChclst(evitChclstId) > 0){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }else{
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

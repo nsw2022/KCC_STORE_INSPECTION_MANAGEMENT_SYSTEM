@@ -6,6 +6,19 @@ let selectedRowNo;
 let gridApi;
 
 $(document).ready(async function() {
+    $('.ctg-stnd-score').on('input', function() {
+        const value = parseFloat($(this).val());
+
+        if (!isNaN(value) && value > 100) {
+            Swal.fire({
+                title: "오류!",
+                text: "100점을 초과할 수 없습니다",
+                icon: "error",
+                confirmButtonText: "확인",
+            });
+            $(this).val(''); // 입력값 초기화
+        }
+    });
     try {
         const response = await fetch(`/master/inspection-list-manage/ctg/${chklstId}`);
         const data = await response.json();
@@ -117,7 +130,7 @@ $(document).ready(async function() {
 // 새로운 rowData 생성 함수
 function createNewCategoryRowData() {
     return {
-        ctgId: "new" + (gridApi.getDisplayedRowCount() + 1), // 임시 고유 ID 생성
+        ctgId: "new" + (gridApi.getDisplayedRowCount() + 1),
         ctgNm: "",
         stndScore: "",
         ctgUseW: "",
@@ -136,7 +149,7 @@ function onDeleteCategoryRow() {
     const selectedRows = gridApi.getSelectedRows();
     Swal.fire({
         title: "확인",
-        html: "선택된 체크리스트를 삭제하시겠습니까?<br><b>이 작업은 되돌릴 수 없습니다.</b>",
+        html: "선택한 항목을 삭제하시겠습니까?<br><b>이 작업은 되돌릴 수 없습니다.</b>",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -172,6 +185,12 @@ function onDeleteCategoryRow() {
                                 rowData.splice(index, 1);
                             }
                         });
+                        Swal.fire({
+                            title: "완료!",
+                            text: "삭제가 완료되었습니다.",
+                            icon: "success",
+                            confirmButtonText: "OK",
+                        })
                     }
                 });
             }
@@ -297,7 +316,7 @@ $(window).on("beforeunload", function() {
 function ctgSaveOrUpdate() {
     Swal.fire({
         title: "확인",
-        html: "선택된 대분류를 저장하시겠습니까?<br><b>선택하지 않은 대분류는 저장되지 않습니다.</b>",
+        html: "선택한 항목을 저장하시겠습니까?<br><b>선택하지 않은 항목은 저장되지 않습니다.</b>",
         icon: "question",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -308,7 +327,7 @@ function ctgSaveOrUpdate() {
         if (result.isConfirmed) {
             const selectedRows = gridApi.getSelectedRows();
             if (selectedRows.length === 0) {
-                Swal.fire("실패!", "대분류를 선택해주세요.", "error");
+                Swal.fire("실패!", "항목을 선택해주세요.", "error");
                 return;
             }
 

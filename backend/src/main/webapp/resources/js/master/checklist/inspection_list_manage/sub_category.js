@@ -99,7 +99,8 @@ function createNewSubCategoryRowData() {
     var newData2 = {
         ctgId: "new" + (gridApi2.getDisplayedRowCount() + 1),
         ctgNm: "",
-        ctgUseW: "",
+        stndScore: "",
+        ctgUseW: "Y",
         seq: (gridApi2.getDisplayedRowCount() + 1).toString()
     };
     return newData2;
@@ -116,7 +117,7 @@ function onDeleteSubCategoryRow() {
     const selectedRows = gridApi2.getSelectedRows();
     Swal.fire({
         title: "확인",
-        html: "선택된 중분류를 삭제하시겠습니까?<br><b>이 작업은 되돌릴 수 없습니다.</b>",
+        html: "선택한 항목을 삭제하시겠습니까?<br><b>이 작업은 되돌릴 수 없습니다.</b>",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -147,11 +148,17 @@ function onDeleteSubCategoryRow() {
                         gridApi2.applyTransaction({ remove: selectedRows });
 
                         selectedRows.forEach((row) => {
-                            const index = rowData2.findIndex((data) => data.chklstId === row.chklstId);
+                            const index = rowData2.findIndex((data) => data.evitId === row.evitId);
                             if (index > -1) {
                                 rowData2.splice(index, 1);
                             }
                         });
+                        Swal.fire({
+                            title: "완료!",
+                            text: "삭제가 완료되었습니다.",
+                            icon: "success",
+                            confirmButtonText: "OK",
+                        })
                     }
                 });
             }
@@ -180,11 +187,12 @@ function updateSubCategoryRowDataSeq() {
     // rowData를 새로 정렬된 updatedRowData로 설정
     rowData2 = updatedRowData;
 
+
     // 변경 사항을 그리드에 적용
-    gridApi2.applyTransaction({update: rowData2});
+    // gridApi2.applyTransaction({ update: updatedRowData});
+    gridApi2.redrawRows({ force: true});
+
 }
-
-
 
 // 중분류명 수정 시 이벤트
 $('.sub-ctg-input').keyup(function(){
@@ -205,7 +213,6 @@ $('.sub-ctg-input').keyup(function(){
 });
 // 중분류 기준점수 수정 시 이벤트
 $('.sub-ctg-stnd-score').keyup(function(){
-    console.log("zz");
     if (selectedRowNo2 !== null) {
         checkUnload = true;
         $('.sub-ctg-save-btn').removeAttr("disabled");
@@ -218,6 +225,16 @@ $('.sub-ctg-stnd-score').keyup(function(){
             gridApi2.applyTransaction({
                 update: [selectedRowNode.data]
             });
+        }
+        const selectedEvitRows = gridApi.getSelectedRows();
+        const ctgScore = selectedEvitRows.length > 0 && selectedEvitRows[0].stndScore !== undefined ? selectedEvitRows[0].stndScore : 0;
+
+        const totalScore = gridApi2.getGridOption("rowData").reduce((sum, row) => sum + (parseInt(row.stndScore, 10) || 0), 0);
+
+        if (totalScore > ctgScore) {
+            Swal.fire("실패!", `총 기준점수는 ${ctgScore}를 초과할 수 없습니다..`, "error");
+            $(this).val(''); // 입력값 초기화
+            return;
         }
     }
 });
@@ -241,12 +258,10 @@ $('.sub-ctg-use-w-input').change(function(){
     }
 });
 
-
-
 function subCtgSaveOrUpdate() {
     Swal.fire({
         title: "확인",
-        html: "선택된 중분류를 저장하시겠습니까?<br><b>선택하지 않은 중분류는 저장되지 않습니다.</b>",
+        html: "선택한 항목을 저장하시겠습니까?<br><b>선택하지 않은 항목은 저장되지 않습니다.</b>",
         icon: "question",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
@@ -258,6 +273,16 @@ function subCtgSaveOrUpdate() {
             const selectedRows = gridApi2.getSelectedRows();
             if (selectedRows.length === 0) {
                 Swal.fire("실패!", "중분류를 선택해주세요.", "error");
+                return;
+            }
+            const selectedEvitRows = gridApi.getSelectedRows();
+            const ctgScore = selectedEvitRows.length > 0 && selectedEvitRows[0].stndScore !== undefined ? selectedEvitRows[0].stndScore : 0;
+
+            const totalScore = gridApi2.getGridOption("rowData").reduce((sum, row) => sum + (parseInt(row.stndScore, 10) || 0), 0);
+
+            if (totalScore != ctgScore) {
+                Swal.fire("실패!", `총 기준점수는 ${ctgScore}점과 같이야 합니다.`, "error");
+                $(this).val(''); // 입력값 초기화
                 return;
             }
 

@@ -29,6 +29,11 @@ public class InspectionListManageServiceImpl implements InspectionListManageServ
     }
 
     @Override
+    public String selectChklstIdByChklstNm(String chklstNm) {
+        return inspectionListManageMapper.selectChklstIdByChklstNm(chklstNm);
+    }
+
+    @Override
     public List<CtgResponse> selectCtgByChklstId(String chklstId) {
         log.info("chklstId = {}", chklstId);
 
@@ -87,8 +92,49 @@ public class InspectionListManageServiceImpl implements InspectionListManageServ
     }
 
     @Override
+    @PRoleCheck
     @Transactional(rollbackFor = Exception.class)
     public int deleteSubCtg(List<String> subCtgId) {
         return inspectionListManageMapper.deleteSubCtg(subCtgId);
+    }
+
+    @Override
+    @PRoleCheck
+    @Transactional(rollbackFor = Exception.class)
+    public int insertOrUpdateEvit(List<EvitRequest> evitRequest) {
+        String auth = SecurityContextHolder.getContext().getAuthentication().getName();
+        evitRequest.forEach(evit -> {
+            evit.setCreMbrId(auth);
+            evit.setEvitId(evit.getEvitId().replace("new", ""));
+        });
+
+        return inspectionListManageMapper.insertOrUpdateEvit(evitRequest);
+    }
+
+    @Override
+    @PRoleCheck
+    @Transactional(rollbackFor = Exception.class)
+    public int deleteChklstEvit(List<String> evitId) {
+        return inspectionListManageMapper.deleteChklstEvit(evitId);
+    }
+
+    @Override
+    @PRoleCheck
+    @Transactional(rollbackFor = Exception.class)
+    public int insertOrUpdateEvitChclst(List<ChclstRequest> chclstRequest) {
+        String auth = SecurityContextHolder.getContext().getAuthentication().getName();
+        chclstRequest.forEach(chclst -> {
+            chclst.setCreMbrId(auth);
+            chclst.setChclstId(chclst.getChclstId().replace("new", ""));
+        });
+        log.info("chclstRequest = {}", chclstRequest);
+        return inspectionListManageMapper.insertOrUpdateEvitChclst(chclstRequest);
+    }
+
+    @Override
+    @PRoleCheck
+    @Transactional(rollbackFor = Exception.class)
+    public int deleteEvitChclst(List<String> chclstId) {
+        return inspectionListManageMapper.deleteEvitChclst(chclstId);
     }
 }
