@@ -267,30 +267,20 @@
 
                                 <!-- 점검유형 -->
                                 <div class="col-lg-3 col-md-6 col-12">
-                                    <label for="inspectionType" class="form-label">점검 유형</label>
+                                    <label  class="form-label">점검 유형</label>
                                     <div class="wrapper" data-autocomplete="BottomINSP" data-include-all="false">
                                         <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                                            <span id="bottom-INSP">점검 유형</span>
-                                            <i class="uil uil-angle-down"></i>
+                                            <span id="bottom-INSP"></span>
+                                            <i class="uil uil-angle-down" style="visibility: hidden;"></i>
                                         </div>
-                                        <div class="hide-list">
-                                            <div class="search">
-                                                <input
-                                                        type="text"
-                                                        class="form-control top-search"
-                                                        id="inspectionType"
-                                                        placeholder="점검유형을 입력해주세요"
-                                                />
-                                                <ul class="options"></ul>
-                                            </div>
-                                        </div>
+
                                     </div>
                                 </div>
 
                                 <!-- 체크리스트명 -->
                                 <div class="col-lg-3 col-md-6 col-12">
                                     <label for="checklistName" class="form-label">체크리스트</label>
-                                    <div class="wrapper" data-autocomplete="BottomCHKLST" data-include-all="false">
+                                    <div class="wrapper" data-autocomplete="BottomChkLst" data-include-all="false">
                                         <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
                                             <span id="bottom-CHKLST">체크리스트</span>
                                             <i class="uil uil-angle-down"></i>
@@ -332,12 +322,12 @@
                                 </div>
 
                                 <!-- 브랜드 -->
-                                <div class="col-lg-3 col-md-6 col-12">
-                                    <label for="brandSearch" class="form-label">브랜드</label>
-                                    <div class="wrapper" data-autocomplete="BRAND" data-include-all="false">
+                                <div class="col-lg-3 col-md-6 col-12"  title="가맹점 선택시 자동으로 입력됩니다.">
+                                    <label  class="form-label">브랜드</label>
+                                    <div class="wrapper" data-autocomplete="" data-include-all="false">
                                         <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                                            <span id="bottom-BRAND">브랜드</span>
-                                            <i class="uil uil-angle-down"></i>
+                                            <span id="bottom-BRAND"></span>
+                                            <i class="uil uil-angle-down" style="visibility: hidden;"></i>
                                         </div>
                                         <div class="hide-list">
                                             <div class="search">
@@ -354,12 +344,12 @@
                                 </div>
 
                                 <!-- 점검자 -->
-                                <div class="col-lg-3 col-md-6 col-12">
-                                    <label for="inspectorSearch" class="form-label">점검자</label>
-                                    <div class="wrapper" data-autocomplete="inspector" data-include-all="false">
+                                <div class="col-lg-3 col-md-6 col-12" title="가맹점 선택시 자동으로 입력됩니다.">
+                                    <label  class="form-label">점검자</label>
+                                    <div class="wrapper" data-autocomplete="ha" data-include-all="false">
                                         <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                                            <span id="bottom-INSPECTOR">점검자</span>
-                                            <i class="uil uil-angle-down"></i>
+                                            <span id="bottom-INSPECTOR"></span>
+                                            <i class="uil uil-angle-down" style="visibility: hidden;"></i>
                                         </div>
                                         <div class="hide-list">
                                             <div class="search">
