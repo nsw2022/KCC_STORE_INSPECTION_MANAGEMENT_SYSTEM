@@ -7,14 +7,16 @@
     <select id="selectAllInspectionSchedules" resultType="com.sims.qsc.store_inspection.vo.StoreInspectionResponse">
         SELECT
             m.MBR_ID
-            , m.MBR_NM
-            , m.MBR_NO
-            , c.CHKLST_NM
-            , c.CHKLST_ID
-            , st.STORE_NM
-            , s.INSP_PLAN_DT
-            , s.INSP_STTS_CD
+             , m.MBR_NM
+             , m.MBR_NO
+             , c.CHKLST_NM
+             , c.CHKLST_ID
+             , st.STORE_NM
+             , s.INSP_PLAN_DT
+             , s.INSP_STTS_CD
+             , ir.INSP_RESULT_ID
         FROM INSP_SCHD s
+                 LEFT JOIN INSP_RESULT ir ON s.INSP_SCHD_ID = ir.INSP_SCHD_ID
                  JOIN STORE st ON s.STORE_ID = st.STORE_ID
                  JOIN MBR m ON st.INSP_MBR_ID = m.MBR_ID
                  JOIN INSP_PLAN p ON s.INSP_PLAN_ID = p.INSP_PLAN_ID
@@ -44,23 +46,23 @@
 
     <select id="selectInspectionsByInspector" resultType="com.sims.qsc.store_inspection.vo.StoreAllLocationResponse">
         SELECT /* StoreInspectionMapper.selectInspectionsByInspector 노승우 */
-            st.STORE_NM AS storeNm,
-            st.STORE_ID AS storeId,
-            st.LATITUDE AS latitude,
-            st.LONGITUDE AS longitude,
-            m.MBR_NO AS mbrNo,
-            CASE
+            st.STORE_NM AS storeNm
+            , st.STORE_ID AS storeId
+            , st.LATITUDE AS latitude
+            , st.LONGITUDE AS longitude
+            , m.MBR_NO AS mbrNo
+            , CASE
                 WHEN st.BRAND_CD = 'B001' THEN 'KCC 크라상'
                 WHEN st.BRAND_CD = 'B002' THEN 'KCC 도넛'
                 WHEN st.BRAND_CD = 'B003' THEN 'KCC 브레드'
                 WHEN st.BRAND_CD = 'B004' THEN 'KCC 카페'
                 END AS brandNm,
-            m.MBR_NM AS inspectorName,
-            sv.MBR_NM AS supervisorName,
-            s.INSP_PLAN_DT,
-            s.INSP_STTS_CD,
-            c.CHKLST_NM,
-            c.CHKLST_ID
+            , m.MBR_NM AS inspectorName
+            , sv.MBR_NM AS supervisorName
+            , s.INSP_PLAN_DT
+            , s.INSP_STTS_CD
+            , c.CHKLST_NM
+            , c.CHKLST_ID
         FROM
             INSP_SCHD s
                 JOIN STORE st

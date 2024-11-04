@@ -105,10 +105,12 @@ body {
 }
 
 .no-inspection-message {
-  font-size: 1.4rem;
+  font-size: 1rem;
   text-align: center;
   color: black;
   font-weight: 600;
+  margin-right: 20px;
+  margin-bottom: 0;
 }
 
 /*---------------------------달력---------------------------*/
@@ -283,8 +285,14 @@ table.calendar td .incomplete {
   color: #5a5a5a;
 }
 
+/*#schedule-table-body{*/
+/*  position: relative;*/
+/*  z-index: 2;*/
+/*}*/
+
 .schedule-table tbody td {
-  position: relative;
+  /*position: relative;*/
+  /*z-index: 2;*/
   padding: 10px;
   box-sizing: border-box;
   border: 1px solid #ddd;
@@ -413,11 +421,12 @@ table.calendar td .incomplete {
   transition: ease-out 0.3s;
 }
 
+.btn-date-wrap{
+  margin-bottom: 15px;
+}
+
 /* '+n 더보기' 버튼 스타일 */
 .more-btn {
-  position: absolute;
-  left: 10px;
-  top: -2px;
   background-color: #eee;
   border: none;
   padding: 5px;
@@ -425,6 +434,8 @@ table.calendar td .incomplete {
   cursor: pointer;
   border-radius: 5px;
   color: #5a5a5a;
+  float: left;
+  margin-top: 0 !important;
 }
 
 /* 모달 닫기 버튼 스타일 */

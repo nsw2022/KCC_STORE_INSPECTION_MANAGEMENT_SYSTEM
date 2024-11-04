@@ -16,4 +16,5 @@ public class StoreInspectionResponse {
     private String storeNm;
     private String inspPlanDt;
     private String inspSttsCd;
+    private String inspResultId;
 }

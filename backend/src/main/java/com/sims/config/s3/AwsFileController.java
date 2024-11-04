@@ -30,17 +30,7 @@ public class AwsFileController {
         return "s3Test";
     }
 
-    //    @PostMapping("/upload")
-//    public void uploadFile(MultipartFile file) {
-//        log.info("파일 업로드 시작");
-//        log.info("파일 이름 : " + file.getOriginalFilename());
-//        try {
-//            String url = awsFileService.savePhoto(file);
-//            log.info("파일 업로드 성공 : " + url);
-//        } catch (Exception e) {
-//            log.error("파일 업로드 실패", e);
-//        }
-//    }
+
     @PostMapping("/upload")
     @ResponseBody
     public ResponseEntity<Map<String, String>> uploadFile(@RequestParam("file") MultipartFile file) {
@@ -83,34 +73,27 @@ public class AwsFileController {
 
 
     //    @PostMapping("/download")
+
+//    /**
+//     * 새로운 서명 이미지 업로드 엔드포인트 (sign_img 디렉토리)
+//     */
+//    @PostMapping("/sign_img")
 //    @ResponseBody
-//    public ResponseEntity<InputStreamResource> downloadFile(@RequestBody Map<String, String> request) {
-//        String path = request.get("path");
-//        log.info("파일 다운로드 시작");
-//        log.info("경로 : " + path);
+//    public ResponseEntity<String> uploadSignImg(@RequestParam("file") MultipartFile file) {
+//        log.info("서명 이미지 업로드 시작");
+//        log.info("파일 이름 : " + file.getOriginalFilename());
 //        try {
-//            // S3에서 파일 다운로드
-//            InputStream inputStream = awsFileService.downloadFileAsInputStream(path);
-//
-//            // Content-Type 설정
-//            String contentType = "image/png";
-//            HttpHeaders headers = new HttpHeaders();
-//            headers.setContentType(MediaType.parseMediaType(contentType));
-//
-//            // 파일 이름 설정
-//            String fileName = path.substring(path.lastIndexOf('/') + 1);
-//            headers.setContentDispositionFormData("attachment", fileName);
-//
-//            log.info("파일 다운로드 성공");
-//            return new ResponseEntity<>(new InputStreamResource(inputStream), headers, HttpStatus.OK);
-//        } catch (AmazonS3Exception e) {
-//            log.error("파일 다운로드 실패: S3에서 파일을 찾을 수 없습니다", e);
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // 404
+//            String s3Key = awsFileService.saveSignImage(file); // sign_img 디렉토리에 저장
+//            log.info("서명 이미지 업로드 성공 : " + s3Key);
+//            return ResponseEntity.ok(s3Key); // S3 키 반환 (단순 문자열)
 //        } catch (Exception e) {
-//            log.error("파일 다운로드 실패", e);
-//            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+//            log.error("서명 이미지 업로드 실패", e);
+//            return ResponseEntity.status(500).body("서명 이미지 업로드에 실패했습니다.");
 //        }
 //    }
+
+
+
     @PostMapping("/download")
     @ResponseBody
     public ResponseEntity<InputStreamResource> downloadFile(@RequestBody Map<String, String> request) {

@@ -59,18 +59,53 @@ public interface StoreInspectionPopupMapper {
 
 
 
-//    // 임시저장된 EVIT_ANSW 및 EVIT_ANSW_IMG 조회
-//    List<StoreInspectionPopupResponse.EvitAnswImgVO> selectTemporaryAnswImg(
-//            @Param("inspResultId") Long inspResultId,
-//            @Param("creMbrId") Long creMbrId
-//    );
-//
-//    // 임시저장된 EVIT_VLT, EVIT_ANSW, EVIT_ANSW_IMG 조회
-//    List<StoreInspectionPopupResponse.EvitVltVO> selectTemporaryVlt(
-//            @Param("inspResultId") Long inspResultId,
-//            @Param("creMbrId") Long creMbrId
-//    );
+   // 임시저장된 EVIT_ANSW 및 EVIT_ANSW_IMG 조회
     List<StoreInspectionPopupResponse.TemporaryInspectionDetailsVO> selectTemporaryInspectionDetails(Map<String, Object> params);
+
+    /**
+     * 점검 총점수, 과태료 총합, 영업정지 일수 총합 추가
+     *
+     * @return INSP_RESULT_ID
+     */
+    void updateINSP_RESULTTotals(StoreInspectionPopupRequest request);
+
+    /**
+     * INSP_RESULT 테이블 업데이트
+     *
+     * @param request StoreInspectionPopupRequest 객체
+     */
+    void updateInspResultCompletion(StoreInspectionPopupRequest request);
+
+    /**
+     * INSP_SCHD 테이블 업데이트
+     *
+     * @param request StoreInspectionPopupRequest 객체
+     */
+    void updateInspSchdStatus(StoreInspectionPopupRequest request);
+
+
+    /**
+     * EVIT_VLT 레코드 삭제
+     *
+     * @param evitId        EVIT_ID
+     * @param inspResultId  INSP_RESULT_ID
+     * @param creMbrId      CRE_MBR_ID
+     */
+    void deleteEVIT_VLT(@Param("evitId") Long evitId,
+                        @Param("inspResultId") Long inspResultId,
+                        @Param("creMbrId") Long creMbrId);
+
+    /**
+     * 기존 EVIT_VLT 레코드 조회
+     *
+     * @param evitId        EVIT_ID
+     * @param inspResultId  INSP_RESULT_ID
+     * @param creMbrId      CRE_MBR_ID
+     * @return 기존 EVIT_VLT 데이터 또는 null
+     */
+    StoreInspectionPopupRequest.SubcategoryInspection selectExistingEVIT_VLT(@Param("evitId") Long evitId,
+                                                                             @Param("inspResultId") Long inspResultId,
+                                                                             @Param("creMbrId") Long creMbrId);
 
 
 

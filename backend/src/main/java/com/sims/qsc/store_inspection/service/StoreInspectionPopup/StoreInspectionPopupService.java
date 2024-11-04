@@ -52,5 +52,21 @@ public interface StoreInspectionPopupService {
      */
     StoreInspectionPopupRequest getTemporaryInspection(Long inspResultId);
 
+    void updateTotalValues(StoreInspectionPopupRequest request);
+
+    /**
+     * 점검 완료 정보 저장 (서명 이미지 경로와 총평)
+     *
+     * @param inspResultId  점검 결과 ID
+     * @param signImgPath   서명 이미지 경로
+     * @param totalReview   총평
+     */
+    void completeInspection(Long inspResultId, String signImgPath, String totalReview);
+
+
+//    List<StoreInspectionPopupRequest.SubcategoryInspection> selectExistingEVIT_VLT(Long evitId, Long inspResultId, Long creMbrId);
+
+
+
 
 }
