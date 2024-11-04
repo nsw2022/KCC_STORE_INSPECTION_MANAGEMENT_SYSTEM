@@ -3,129 +3,139 @@ new Sortable(group, {
   ghostClass: "blue-bg",
 });
 
-var options1 = {
-  series: [7, 3],
-  chart: {
-    type: "donut",
-    toolbar: {
-      show: true,
-      tools: {
-        download: true,
+$(document).ready(function () {
+  fetch("/InspSchdAndResultResponse")
+      .then(response => response.json())
+      .then(data => {
+        var options1 = {
+          series: [data.completed, (data.total - data.completed)],
+          chart: {
+            type: "donut",
+            toolbar: {
+              show: true,
+              tools: {
+                download: true,
+              },
+            },
+            height: "80%", // 높이를 100%로 설정하여 반응형으로 만들기
+          },
+          labels: ["심사완료", "심사 미완료"],
+          colors: ["#3274F9", "#D0D5DD"],
+          legend: {
+            position: "bottom", // 범례를 하단에 표시
+          },
+          plotOptions: {
+            pie: {
+              donut: {
+                size: "70%",
+                labels: {
+                  show: true,
+                  total: {
+                    show: true,
+                    label: "심사완료 / 전체",
+                    formatter: function (w) {
+                      var completed = w.globals.series[0];
+                      var total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                      return `${completed} / ${total}`;
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responsive: [
+            {
+              breakpoint: 400, // 390픽셀 이하일 때
+              options: {
+                chart: {
+                  width: "100%", // 너비를 100%로 설정하여 전체 너비를 사용
+                  height: "300px", // 높이를 조정하여 차트 비율 유지
+                },
+                legend: {
+                  position: "bottom",
+                },
+                plotOptions: {
+                  pie: {
+                    donut: {
+                      size: "60%", // 도넛 크기를 줄여 비율 조정
+                    },
+                  },
+                },
+              },
+            },
+          ],
+        };
+        var chart1 = new ApexCharts(document.querySelector("#chart1"), options1);
+        chart1.render();
+      })
+});
+
+/**
+ * @Todo chart2 삭제
+ */
+$(document).ready(function () {
+  var options2 = {
+    series: [3, 1], // 데이터 배열
+    chart: {
+      type: "donut", // 도넛 차트로 설정
+      toolbar: {
+        show: true, // 기본 툴바 표시
+        tools: {
+          download: true, // 다운로드 버튼 표시
+        },
       },
+      height: "80%", // 차트 높이를 100%로 설정하여 반응형으로 만들기
     },
-    height: "80%", // 높이를 100%로 설정하여 반응형으로 만들기
-  },
-  labels: ["심사완료", "심사 미완료"],
-  colors: ["#3274F9", "#D0D5DD"],
-  legend: {
-    position: "bottom", // 범례를 하단에 표시
-  },
-  plotOptions: {
-    pie: {
-      donut: {
-        size: "70%",
-        labels: {
-          show: true,
-          total: {
+    labels: ["완료", "미완료"], // 각 데이터에 대한 라벨
+    colors: ["#3274F9", "#D0D5DD"],
+    legend: {
+      position: "bottom", // 범례를 하단에 표시
+    },
+    plotOptions: {
+      pie: {
+        donut: {
+          size: "70%", // 도넛 두께 설정
+          labels: {
             show: true,
-            label: "심사완료 / 전체",
-            formatter: function (w) {
-              var completed = w.globals.series[0];
-              var total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
-              return `${completed} / ${total}`;
+            total: {
+              show: true,
+              label: "완료 / 전체", // 중앙 텍스트
+              formatter: function (w) {
+                var completed = w.globals.series[0]; // 완료 (첫 번째 시리즈)
+                var total = w.globals.seriesTotals.reduce((a, b) => a + b, 0); // 전체 합계
+                return `${completed} / ${total}`; // "완료 / 전체" 형식으로 반환
+              },
             },
           },
         },
       },
     },
-  },
-  responsive: [
-    {
-      breakpoint: 400, // 390픽셀 이하일 때
-      options: {
-        chart: {
-          width: "100%", // 너비를 100%로 설정하여 전체 너비를 사용
-          height: "300px", // 높이를 조정하여 차트 비율 유지
-        },
-        legend: {
-          position: "bottom",
-        },
-        plotOptions: {
-          pie: {
-            donut: {
-              size: "60%", // 도넛 크기를 줄여 비율 조정
+    responsive: [
+      {
+        breakpoint: 400, // 390픽셀 이하일 때
+        options: {
+          chart: {
+            width: "100%", // 너비를 100%로 설정하여 전체 너비를 사용
+            height: "300px", // 높이를 조정하여 차트 비율 유지
+          },
+          legend: {
+            position: "bottom", // 작은 화면에서도 범례를 하단에 표시
+          },
+          plotOptions: {
+            pie: {
+              donut: {
+                size: "60%", // 도넛 크기를 줄여 비율 조정
+              },
             },
           },
         },
       },
-    },
-  ],
-};
+    ],
+  };
+  var chart2 = new ApexCharts(document.querySelector("#chart2"), options2);
+  chart2.render();
+});
 
-var chart1 = new ApexCharts(document.querySelector("#chart1"), options1);
-chart1.render();
-
-var options2 = {
-  series: [3, 1], // 데이터 배열
-  chart: {
-    type: "donut", // 도넛 차트로 설정
-    toolbar: {
-      show: true, // 기본 툴바 표시
-      tools: {
-        download: true, // 다운로드 버튼 표시
-      },
-    },
-    height: "80%", // 차트 높이를 100%로 설정하여 반응형으로 만들기
-  },
-  labels: ["완료", "미완료"], // 각 데이터에 대한 라벨
-  colors: ["#3274F9", "#D0D5DD"],
-  legend: {
-    position: "bottom", // 범례를 하단에 표시
-  },
-  plotOptions: {
-    pie: {
-      donut: {
-        size: "70%", // 도넛 두께 설정
-        labels: {
-          show: true,
-          total: {
-            show: true,
-            label: "완료 / 전체", // 중앙 텍스트
-            formatter: function (w) {
-              var completed = w.globals.series[0]; // 완료 (첫 번째 시리즈)
-              var total = w.globals.seriesTotals.reduce((a, b) => a + b, 0); // 전체 합계
-              return `${completed} / ${total}`; // "완료 / 전체" 형식으로 반환
-            },
-          },
-        },
-      },
-    },
-  },
-  responsive: [
-    {
-      breakpoint: 400, // 390픽셀 이하일 때
-      options: {
-        chart: {
-          width: "100%", // 너비를 100%로 설정하여 전체 너비를 사용
-          height: "300px", // 높이를 조정하여 차트 비율 유지
-        },
-        legend: {
-          position: "bottom", // 작은 화면에서도 범례를 하단에 표시
-        },
-        plotOptions: {
-          pie: {
-            donut: {
-              size: "60%", // 도넛 크기를 줄여 비율 조정
-            },
-          },
-        },
-      },
-    },
-  ],
-};
-
-var chart2 = new ApexCharts(document.querySelector("#chart2"), options2);
-chart2.render();
 
 var options3 = {
   series: [
@@ -315,14 +325,19 @@ chart6.render();
 var options7 = {
   series: [
     {
-      name: "전체 매장",
+      name: "전체",
       type: "column",
-      data: [70, 75, 70, 90, 95, 99, 100, 94, 98, 87, 86, 90], // 담당 매장 점수 데이터
+      data: [70, 75, 70, 90, 95, 99, 100, 94, 98, 87, 86, 90],
     },
     {
-      name: "담당 매장",
+      name: "위생 점검",
       type: "line",
-      data: [85, 80, 80, 85, 90, 92, 98, 88, 90, 86, 84, 89], // 전체 매장 점수 데이터 (예시)
+      data: [85, 80, 80, 85, 90, 92, 98, 88, 90, 86, 84, 89],
+    },
+    {
+      name: "기획 점검",
+      type: "line",
+      data: [80, 85, 50, 80, 93, 44, 55, 88, 99, 100, 75, 67],
     },
   ],
   chart: {
@@ -333,7 +348,7 @@ var options7 = {
       enabled: false, // 줌 기능 비활성화
     },
   },
-  colors: ["#D0D5DD", "#3274F9"],
+  colors: ["#D0D5DD", "#ffc700", "#729bff"],
   plotOptions: {
     bar: {
       borderRadius: 5,
@@ -350,14 +365,14 @@ var options7 = {
     },
   },
   stroke: {
-    width: [0, 4], // 첫 번째 시리즈는 선 너비가 0, 두 번째는 4
+    width: [0, 3, 3], // 첫 번째 시리즈는 선 너비가 0, 두 번째는 4
   },
   tooltip: {
     shared: false, // 각 시리즈별로 개별 정보 제공
   },
   dataLabels: {
     enabled: true,
-    enabledOnSeries: [1],
+    enabledOnSeries: [1, 2],
   },
   xaxis: {
     categories: [
