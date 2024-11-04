@@ -97,7 +97,7 @@ const gridApi2 = agGrid.createGrid(gridDiv2, gridOptions2);
 // 새로운 rowData 생성 함수
 function createNewSubCategoryRowData() {
     var newData2 = {
-        ctgId: "new" + (gridApi2.getDisplayedRowCount() + 1),
+        ctgId: "",
         ctgNm: "",
         stndScore: "",
         ctgUseW: "Y",
@@ -324,6 +324,7 @@ function subCtgSaveOrUpdate() {
                     if (result.isConfirmed) {
                         checkUnload = false;
                         $('.sub-ctg-save-btn').attr("disabled", "disabled");
+                        location.href = `/master/inspection-list-manage?chklst-id=${chklstId}`;
                     }
                 });
             })
