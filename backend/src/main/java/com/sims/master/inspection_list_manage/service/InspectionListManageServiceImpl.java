@@ -75,9 +75,14 @@ public class InspectionListManageServiceImpl implements InspectionListManageServ
     @PRoleCheck
     @Transactional(rollbackFor = Exception.class)
     public int deleteCtg(List<String> ctgId) {
-
+        ctgId.forEach(index -> {
+            log.info("id = {}", index);
+            index = index.replace("new", ""); // 변경된 값을 index에 할당
+            log.info("id = {}", index);
+        });
         return inspectionListManageMapper.deleteCtg(ctgId);
     }
+
 
     @Override
     @PRoleCheck
@@ -87,6 +92,9 @@ public class InspectionListManageServiceImpl implements InspectionListManageServ
         subCtgRequest.forEach(subCtg -> {
             subCtg.setCreMbrId(auth);
             subCtg.setCtgId(subCtg.getCtgId().replace("new", ""));
+            if(subCtg.getCtgId().equals("")){
+                subCtg.setCtgId("0");
+            }
         });
         return inspectionListManageMapper.insertOrUpdateSubCtg(subCtgRequest);
     }

@@ -297,16 +297,15 @@ function evitSaveOrUpdate() {
     }).then((result) => {
         if (result.isConfirmed) {
 
-            const selectedEvitRows = gridApi2.getSelectedRows();
+            const selectedEvitRows = gridApi3.getSelectedRows();
             if (selectedEvitRows.length === 0) {
-                Swal.fire("실패!", "중분류를 선택해주세요.", "error");
+                Swal.fire("실패!", "선택항목을 선택해주세요.", "error");
                 return;
             }
             const selectedRows = gridApi2.getSelectedRows();
             const subCtgScore = selectedRows.length > 0 && selectedRows[0].stndScore !== undefined ? selectedRows[0].stndScore : 0;
 
             const totalScore = gridApi3.getGridOption("rowData").reduce((sum, row) => sum + (parseInt(row.score, 10) || 0), 0);
-
             if (totalScore != subCtgScore) {
                 Swal.fire("실패!", `총 기준점수는 ${subCtgScore}점과 같아야 합니다.`, "error");
                 $(this).val(''); // 입력값 초기화
@@ -319,7 +318,7 @@ function evitSaveOrUpdate() {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(selectedRows.map((row) => ({
+                body: JSON.stringify(selectedEvitRows.map((row) => ({
                     subCtgId: subCtgId,
                     evitId: row.evitId,
                     evitNm: row.evitNm,
@@ -351,6 +350,7 @@ function evitSaveOrUpdate() {
                     if (result.isConfirmed) {
                         checkUnload = false;
                         $('.evit-save-btn').attr("disabled", "disabled");
+                        location.href = `/master/inspection-list-manage?chklst-id=${chklstId}`;
                     }
                 });
             })

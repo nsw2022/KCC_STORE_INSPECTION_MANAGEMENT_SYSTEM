@@ -130,7 +130,7 @@ $(document).ready(async function() {
 // 새로운 rowData 생성 함수
 function createNewCategoryRowData() {
     return {
-        ctgId: "new" + (gridApi.getDisplayedRowCount() + 1),
+        ctgId: "",
         ctgNm: "",
         stndScore: "",
         ctgUseW: "",
@@ -368,6 +368,7 @@ function ctgSaveOrUpdate() {
                     if (result.isConfirmed) {
                         checkUnload = false;
                         $('.ctg-save-btn').attr("disabled", "disabled");
+                        location.href = `/master/inspection-list-manage?chklst-id=${chklstId}`;
                     }
                 });
             })

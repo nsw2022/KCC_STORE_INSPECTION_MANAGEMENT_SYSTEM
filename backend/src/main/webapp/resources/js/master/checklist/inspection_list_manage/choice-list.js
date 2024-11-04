@@ -382,6 +382,7 @@ function onInsertOrUpdateChclst() {
                         if (result.isConfirmed) {
                             checkUnload = false;
                             $('.chclst-save-btn').attr("disabled", "disabled");
+                            location.href = `/master/inspection-list-manage?chklst-id=${chklstId}`;
                         }
                     });
                 })
