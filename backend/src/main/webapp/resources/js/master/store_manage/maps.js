@@ -1,6 +1,8 @@
 // 전역 변수 선언
 window.map = null;
 window.infoWindow = null;
+let latitudeText;
+let longitudeText;
 
 // 지도 및 관련 함수 초기화
 document.addEventListener("DOMContentLoaded", function () {
@@ -132,6 +134,8 @@ document.addEventListener("DOMContentLoaded", function () {
         var htmlAddresses = [],
           item = response.v2.addresses[0],
           point = new naver.maps.Point(item.x, item.y);
+        latitudeText = item.x;
+        longitudeText =  item.y
 
         if (item.roadAddress) {
           htmlAddresses.push("[도로명 주소] " + item.roadAddress);

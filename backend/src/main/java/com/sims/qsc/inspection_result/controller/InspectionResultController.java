@@ -65,6 +65,11 @@ public class InspectionResultController {
   	  
     }
 
+	/**
+	 * 검색에 따른 점검 결과 목록
+	 * @param request
+	 * @return 검색에 따라 점검 결과 목록 보여준다.
+	 */
 	@ResponseBody
 	@PostMapping("/inspection/result/list/search")
 	public ResponseEntity<List<InspectionResultResponse>> selectInspectionResultListSearch
@@ -79,8 +84,14 @@ public class InspectionResultController {
 			return new ResponseEntity<>(list, HttpStatus.OK);
 		}
 	}
-    
 
+
+	/**
+	 * 팝업 페이지
+	 * @param content 점검결과 ID
+	 * @param model
+	 * @return 팝업 페이지
+	 */
     @PostMapping("/popup/inspection/result")
     public String openInspectionPopup(@RequestParam("inspectionContent") String content, Model model) {
     	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -92,8 +103,13 @@ public class InspectionResultController {
         model.addAttribute("content", content);
         return "qsc/inspection_result/popup_inspection_result"; // 팝업 창으로 이동
     }
-    
-    @GetMapping("/popup/inspection/result/detail/{inspResultId}")
+
+	/**
+	 * 점검결과ID 에 따라 팝업 페이지에서 점검 결과를 다르게 보여줌
+	 * @param inspResultId
+	 * @return 점검 결과에 따라 팝업 페이지에서 다르게 보여줌
+	 */
+	@GetMapping("/popup/inspection/result/detail/{inspResultId}")
     public ResponseEntity<InspectionResultDetailResponse> selectInspectionResultDetail
 															(@PathVariable("inspResultId") int inspResultId) {
     	InspectionResultDetailResponse inspResult =
@@ -105,6 +121,11 @@ public class InspectionResultController {
     	}
     }
 
+	/**
+	 * 점검 결과의 분류별 정보를 보여준다.
+	 * @param inspResultId
+	 * @return 점결결과 카테고리별 정보 List로 반환
+	 */
 	@GetMapping("/popup/inspection/result/category/{inspResultId}")
 	public ResponseEntity<List<InspectionResultCategoryDetailResponse>> selectInspectionResultCategory
 															(@PathVariable("inspResultId") int inspResultId) {

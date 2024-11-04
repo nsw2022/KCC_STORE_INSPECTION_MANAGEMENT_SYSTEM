@@ -1,3 +1,350 @@
+// ROW 데이터 정의
+let rowData = [];
+let defaultRowData = [];
+let gridApi = null;
+let gridOptions = null;
+let firstRowLength;
+
+async function getStoreAll(searchCriteria = {}) {
+  try {
+    const response = await fetch("/master/store/list", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(searchCriteria)
+    });
+
+    let data = await response.json();
+    data = data.map((item, index) => ({
+      ...item,
+      no : index+1
+    }));
+
+    rowData = data.map((item) => {
+      item.openHm = item.openHm.slice(0,2) + ':' + item.openHm.slice(2);
+      item.brn = item.brn.replace(item.brn.split('-')[2],'*****');
+      item.ownNm = item.ownNm.replace(item.ownNm.split('')[1], '*');
+      firstRowLength++;
+
+      return item;
+    })
+
+    if(defaultRowData.length === 0){
+      defaultRowData = data;
+    }
+
+    // gridApi가 존재할 경우 데이터 설정
+    if (gridApi) {
+      gridApi.setGridOption("rowData", rowData); // 데이터 설정
+      updateStoreCount();
+    } else {
+      console.error("gridApi is not initialized.");
+    }
+
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+}
+
+
+function initializeGrid() {
+  // 그리드 옵션 설정
+  gridOptions = {
+    rowData: rowData,
+    columnDefs: [
+      {
+        headerName: "",
+        checkboxSelection: true,
+        headerCheckboxSelection: true,
+        minWidth: 45,
+        width: 70,
+        resizable: true,
+        cellStyle: { backgroundColor: "#ffffff" },
+      },
+      { field: "no", headerName: "No", width: 80, minWidth: 60 },
+      { field: `storeNm`, headerName: "가맹점", width: 150, minWidth: 130 },
+      { field: "brandNm", headerName: "브랜드", width: 180, minWidth: 120 },
+      {
+        field: "brn",
+        headerName: "사업자등록번호",
+        width: 200,
+        minWidth: 180,
+      },
+      {
+        field: "openHm",
+        headerName: "오픈 시간",
+        width: 150,
+        minWidth: 110,
+      },
+      {
+        field: "ownNm",
+        headerName: "점주명",
+        width: 130,
+        minWidth: 110,
+      },
+      {
+        field: "svMbrNm",
+        headerName: "SV",
+        width: 130,
+        minWidth: 110,
+      },
+      {
+        field: "inspMbrNm",
+        headerName: "점검자",
+        width: 130,
+        minWidth: 110,
+      },
+      {
+        headerName: "자세히보기",
+        field: "more",
+        width: 150,
+        minWidth: 110,
+        cellRenderer: function (params) {
+          // jQuery를 사용하여 컨테이너 div 생성
+          const $container = $("<div>", {
+            class: "edit-container",
+            css: { position: "relative", cursor: "pointer" },
+          });
+          $('#input').prop('checked')
+          // SVG 요소 생성
+          const $svg = $(`
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 15 15">
+                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
+                        </svg>
+                    `);
+
+          let storeId = params.data.storeId;
+
+          // '수정' 옵션 div 생성
+          const $editDiv = $(`<div class="edit-options" data-no="${storeId}">수정</div>`);
+
+          // SVG 클릭 시 '수정' 옵션 표시
+          $svg.on("click", function (e) {
+            e.stopPropagation(); // 이벤트 버블링 방지
+
+            // 모든 다른 'edit-options' 숨기기
+            $(".edit-options").not($editDiv).removeClass("show");
+
+            // SVG의 위치 계산
+            const offset = $svg.offset();
+            const svgHeight = $svg.outerHeight();
+
+            // 'edit-options' 위치 설정 (SVG 아래에 표시)
+            $editDiv.css({
+              top: offset.top + svgHeight + 2, // SVG 바로 아래에 2px 간격
+              left: offset.left + $svg.outerWidth() / 2 - 25, // SVG의 중앙에서 10px 왼쪽으로 이동
+              transform: "translateX(-50%)", // 가로 중앙 정렬
+            });
+
+            // 'show' 클래스 토글
+            $editDiv.toggleClass("show");
+          });
+
+          // '수정' 옵션 클릭 시 모달 열기
+          $editDiv.on("click", function (e) {
+            let storeId = $(this).attr('data-no');
+            e.stopPropagation(); // 이벤트 버블링 방지
+            // 모달 열기
+            $("#DetailStore").modal("show");
+            if(storeId === 'undefined') {
+              $('.modal-body #storeName').attr('placeholder', "매장명 입력");
+              $('.modal-body #brn').attr('placeholder', "사업자등록번호 입력 (e.g. 111-11-11111)");
+              $('.modal-body .wrapper span').eq(0).text("브랜드 검색");
+              $('#operationHours').val('');
+              $('#storeAddress').attr('placeholder', "주소찾기 버튼을 클릭해주세요");
+              $('#detailedAddress').attr('placeholder',"상세 주소 입력");
+              $('.file_name').text("파일을 선택해주세요");
+              $('#ownerName').attr('placeholder', "점주명 입력");
+              $('#ownerPhone').attr('placeholder', "휴대폰 번호 입력 (e.g. 010-1111-1111)");
+              $('.modal-body .wrapper span').eq(1).text("점검자 검색");
+              $('.modal-body .wrapper span').eq(2).text("SV 검색");
+              $('.modal-body').find('input[type="radio"]').prop("checked", false)
+
+
+              // 'edit-options' 숨기기
+              $editDiv.removeClass("show");
+            } else {
+              $.ajax({
+                url : `/master/store/${storeId}`,
+                method : 'POST',
+                success : function (data) {
+                  console.log(data);
+                  $('input[type="hidden"]').val(data.storeId)
+                  let openHm = data.openHm.slice(0,2) + ':' + data.openHm.slice(2);
+                  $('.modal-body #storeName').attr('placeholder', data.storeNm);
+                  $('.modal-body #brn').attr('placeholder', data.brn.replace(data.brn.split('-')[2],'*****'));
+                  $('.modal-body .wrapper span').eq(0).text(data.brandNm);
+                  $('#operationHours').val(openHm);
+                  let address = splitAddress(data.storeAddr);
+                  $('#storeAddress').attr('placeholder', address.address);
+                  $('#detailedAddress').attr('placeholder', address.detailAddress);
+                  $('.file_name').text(data.brdPath);
+                  $('#deleteFile').val(data.brdPath);
+                  $('#ownerName').attr('placeholder', data.ownNm.replace(data.ownNm.split('')[1],'*'));
+                  $('#ownerPhone').attr('placeholder', data.ownTel.replace(data.ownTel.split('-')[2],'****'));
+                  $('.modal-body .wrapper span').eq(1).text(data.inspMbrNm+'('+data.inspMbrNo+')');
+                  $('.modal-body .wrapper span').eq(2).text(data.svMbrNm+'('+data.svMbrNo+')');
+                  let status = $('.modal-body').find('input[type="radio"]');
+                  $.each(status, function (index, item) {
+                    if(item.value === data.storeBsnSttsNm) {
+                      item.checked = true;
+                    }
+                  })
+                  setTimeout(function () {
+                    searchAddressToCoordinate(address.address);
+                  }, 1000)
+                }
+              })
+            }
+
+
+
+
+          });
+
+          // 컨테이너에 SVG 추가
+          $container.append($svg);
+
+          // 'edit-options'를 body에 추가
+          $("body").append($editDiv);
+
+          return $container[0]; // DOM 요소 반환
+        },
+        pinned: "right",
+      },
+    ],
+    autoSizeStrategy: {
+      type: "fitGridWidth",
+      defaultMinWidth: 10,
+    },
+    rowHeight: 45,
+    rowSelection: "multiple",
+    pagination: true,
+    paginationAutoPageSize: true,
+  };
+
+  // 그리드 초기화
+  const gridDiv = document.querySelector("#myGrid");
+  gridApi = agGrid.createGrid(gridDiv, gridOptions);
+
+  getStoreAll();
+  updateStoreCount();
+
+}
+
+
+function splitAddress(address) {
+  const regex = /^([ㄱ-ㅎ가-힣]+)\s([ㄱ-ㅎ-가-힣]+)\s([ㄱ-ㅎ-가-힣-0-9]+)\s([ㄱ-ㅎ-가-힣-0-9]+(-[ㄱ-ㅎ가-힣0-9]+)?)\s*(.*)$/;
+
+  const match = address.match(regex);
+
+  if(match) {
+    let address = match.slice(1,5).join(' ');
+    let detailAddress = match[6]
+    if(detailAddress === 'undefined') {
+      detailAddress = null;
+    }
+    return {
+      address : address,
+      detailAddress :detailAddress
+    };
+  }
+}
+
+document.addEventListener("DOMContentLoaded", initializeGrid);
+
+// 체크리스트 카운트 업데이트 함수
+function updateStoreCount() {
+  const storeCount = document.querySelector(".store_count");
+  storeCount.textContent = gridApi.getDisplayedRowCount();
+}
+
+
+// 새로운 Row 생성 함수
+function createNewRowData() {
+  return {
+    no: rowData.length+1,
+    storeNm: "",
+    brandNm: "",
+    brn: "",
+    openHm : "",
+    ownNm : "",
+    svMbrNm : "",
+    inspMbrNm : ""
+  };
+}
+
+
+// Row 추가 함수
+function onStoreAddRow() {
+  checkUnload = true;
+  const newItem = createNewRowData();
+  rowData.unshift(newItem);
+  gridApi.applyTransaction({
+    add: [newItem],
+    addIndex: 0
+  });
+  updateStoreCount();
+}
+
+function warningMessage() {
+  return Swal.fire({
+    title: "경고!",
+    text: "이 작업은 되돌릴 수 없습니다.",
+    icon: "warning",
+    showCancelButton: true, // 취소 버튼 표시
+    cancelButtonText: "취소",
+    confirmButtonText: "삭제",
+  });
+}
+
+// Row 삭제 함수
+function onStoreDeleteRow() {
+  const selectedRows = gridApi.getSelectedRows();
+  console.log(selectedRows);
+  if (selectedRows.length > 0) {
+    // 경고 메시지 표시
+    warningMessage().then((result) => {
+      if (result.isConfirmed) { // 사용자가 삭제를 확인한 경우
+        fetch('/master/store/delete', {
+          method: 'PATCH',
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(selectedRows.map(row => ({ storeId: row.storeId })))
+        }).then(response => {
+          // 응답 상태 코드 확인
+          if (!response.ok) {
+            if (response.status === 403) {
+              Swal.fire("실패!", "권한이 없습니다.", "error");
+            }
+          } else {
+            Swal.fire({
+              title: "삭제 완료!",
+              text: "완료되었습니다.",
+              icon: "success",
+              confirmButtonText: "OK"
+            });
+            // 그리드에서도 해당 행 삭제
+            gridApi.applyTransaction({ remove: selectedRows });
+
+            selectedRows.forEach((row) => {
+              const index = rowData.findIndex((data) => data.storeId === row.storeId);
+              if (index > -1) {
+                rowData.splice(index, 1);
+              }
+            });
+            updateStoreCount();
+          }
+        })
+      }
+    });
+  } else {
+    alert("삭제할 항목을 선택하세요.");
+  }
+}
+
 $(function () {
   // https://www.youtube.com/watch?v=ORmnc-hLrYs
   // 알쓸신잡 느낌스 숨쉴거리 00:30~3:09 자스 쌈뽕하게 주석다는 법
@@ -168,15 +515,14 @@ $(function () {
    * 초기화 버튼 클릭 시 모든 선택 초기화
    */
   $("#reset-selection-top").on("click", function () {
-    // 점검 예정일
-    $("#topScheduleDate").val("none");
 
     // 자동완성 필드 초기화
-    $(".top-content .wrapper").each(function () {
+    $(".container-fluid .wrapper").each(function () {
       const $wrapper = $(this);
       const instance = $wrapper.data("autocompleteInstance");
       if (instance) {
-        instance.updateSelected("선택 해 주세요.");
+        let text = $(this).siblings('label').text() + ' 검색';
+        instance.updateSelected(text);
       }
     });
   });
@@ -187,18 +533,61 @@ $(function () {
    *
    */
   const autocompleteData = {
-    store: [
-      "혜화점",
-      "종로점",
-      "청량리점",
-      "안산점",
-      "부평점",
-      "용산점",
-      "답십리점",
+    storeNm: [
+      "전체"
     ],
-    inspector: ["노승우", "이지훈", "유재원", "원승언", "노승수"],
-    sv: ["홍길동", "이순신", "신사임당", "최강록", "박성호"],
+
+    brandNm: [
+        "전체"
+    ],
+
+    inspector : [
+        "전체"
+    ],
+
+    inspectorModal: [],
+
+    brandNmModal: [],
+
+    svModal: []
   };
+
+  /**
+   * autocompleteData에 옵션 목록 넣어두기
+   */
+  $.ajax({
+    url : '/master/store/options',
+    method : 'GET',
+    async : false,
+    success : function(data) {
+      data.storeNmList.filter(x => {
+        autocompleteData.storeNm.push(x)
+      })
+
+      data.brandNmList.filter(x => {
+        autocompleteData.brandNm.push(x);
+      })
+
+      data.brandNmList.filter(x => {
+        autocompleteData.brandNmModal.push(x);
+      })
+
+      data.inspectorNmList.filter(x => {
+        x = x.mbrNm + '(' + x.mbrNo + ')';
+        autocompleteData.inspector.push(x);
+      })
+
+      data.inspectorNmList.filter(x => {
+        x = x.mbrNm + '(' + x.mbrNo + ')';
+        autocompleteData.inspectorModal.push(x);
+      })
+
+      data.svNmList.filter(x => {
+        x = x.mbrNm + '(' + x.mbrNo + ')';
+        autocompleteData.svModal.push(x);
+      })
+    }
+  })
 
   // 자동완성 인스턴스를 초기화하고 wrapper 요소에 저장
   $(".wrapper").each(function () {
@@ -210,60 +599,10 @@ $(function () {
     }
   });
 
-  // '전체 선택' 체크박스 클릭 시
-  $("#checkAll").click(function () {
-    // 모든 'checkItem' 체크박스에 대해 체크 상태를 'checkAll'과 동일하게 설정
-    $(".checkItem").prop("checked", this.checked);
-  });
 
-  // 개별 체크박스가 클릭될 때
-  $(".checkItem").click(function () {
-    // 'checkItem' 체크박스 중 하나라도 해제되면 'checkAll' 체크박스 해제
-    if ($(".checkItem:checked").length === $(".checkItem").length) {
-      $("#checkAll").prop("checked", true);
-    } else {
-      $("#checkAll").prop("checked", false);
-    }
-  });
 
-  // 모달안의 사업자등록증 함수
-  // 모달안의 사업자등록증 함수
-  function fileCus() {
-    $(".file_cus input[type=file]").on("change", function () {
-      const fileName = $(this).val().split("\\").pop();
-      const fileDisplay = $(this).siblings(".file_display");
-      const fileNameDisplay = fileDisplay.find(".file_name");
-      const fileRemoveButton = fileDisplay.find(".file_remove");
 
-      fileNameDisplay.text(fileName || "파일을 선택해주세요.");
-
-      // 파일이 선택되면 'X' 버튼을 보여줍니다.
-      if (fileName) {
-        fileRemoveButton.show();
-      } else {
-        fileRemoveButton.hide();
-      }
-    });
-
-    // 'X' 버튼 클릭 시 파일 입력 초기화
-    $(".file_cus .file_remove").on("click", function (e) {
-      e.preventDefault(); // 기본 동작 방지
-      const fileDisplay = $(this).closest(".file_display");
-      const fileInput = $(this).closest("label").find("input[type=file]");
-      const fileNameDisplay = fileDisplay.find(".file_name");
-
-      // 파일 입력 초기화
-      fileInput.val("");
-      // 파일명 표시 영역 초기화
-      fileNameDisplay.text("파일을 선택해주세요.");
-      // 'X' 버튼 숨기기
-      $(this).hide();
-    });
-  }
-
-  fileCus();
-
-  // 최삳안 드롭 다운 버튼
+  // 최상단 드롭 다운 버튼
   function toggleSearchBox() {
     const toggleButton = document.querySelector(".top-drop-down button"); // 버튼 선택
     const icon = toggleButton.querySelector("i"); // 아이콘 선택
@@ -309,325 +648,6 @@ $(function () {
   // 함수 호출
   toggleSearchBox();
 
-  // 중간테이블 영역 시작
-  // ROW 데이터 정의
-  const rowData = [
-    {
-      no: "1",
-      store: "혜화점",
-      brand: "KCC 크라상",
-      BRN: "111-11-1234",
-      OPEN: "10:30",
-      OWN: "노승우",
-      SV: "노승우",
-      INSP: "노승우",
-      more: "수정",
-    },
-    {
-      no: "2",
-      store: "동대문점",
-      brand: "KCC 크라상",
-      BRN: "111-11-1234",
-      OPEN: "10:30",
-      OWN: "노승우",
-      SV: "노승우",
-      INSP: "노승우",
-      more: "수정",
-    },
-    {
-      no: "3",
-      store: "천호점",
-      brand: "KCC 크라상",
-      BRN: "111-11-1234",
-      OPEN: "10:30",
-      OWN: "이지훈",
-      SV: "이지훈",
-      INSP: "이지훈",
-      more: "수정",
-    },
-    {
-      no: "4",
-      store: "건대입구점",
-      brand: "KCC 카페",
-      BRN: "111-11-1234",
-      OPEN: "10:30",
-      OWN: "이지훈",
-      SV: "이지훈",
-      INSP: "이지훈",
-      more: "수정",
-    },
-    {
-      no: "5",
-      store: "명동점",
-      brand: "KCC 카페",
-      BRN: "111-11-1234",
-      OPEN: "10:30",
-      OWN: "유재원",
-      SV: "유재원",
-      INSP: "유재원",
-      more: "수정",
-    },
-    {
-      no: "6",
-      store: "수유점",
-      brand: "KCC 카페",
-      BRN: "111-11-1234",
-      OPEN: "10:30",
-      OWN: "유재원",
-      SV: "유재원",
-      INSP: "유재원",
-      more: "수정",
-    },
-    {
-      no: "7",
-      store: "청량리점",
-      brand: "KCC 카페",
-      BRN: "111-11-1234",
-      OPEN: "10:30",
-      OWN: "원승언",
-      SV: "원승언",
-      INSP: "원승언",
-      more: "수정",
-    },
-    {
-      no: "8",
-      store: "왕십리점",
-      brand: "KCC 디저트",
-      BRN: "111-11-1234",
-      OPEN: "10:30",
-      OWN: "원승언",
-      SV: "원승언",
-      INSP: "원승언",
-      more: "수정",
-    },
-  ];
-
-  // 통합 설정 객체
-  const gridOptions = {
-    rowData: rowData,
-    columnDefs: [
-      {
-        headerName: "",
-        checkboxSelection: true,
-        headerCheckboxSelection: true,
-        minWidth: 45,
-        width: 70,
-        resizable: true,
-        cellStyle: { backgroundColor: "#ffffff" },
-      },
-      { field: "no", headerName: "No", width: 80, minWidth: 50 },
-      { field: "store", headerName: "가맹점", width: 150, minWidth: 50 },
-      { field: "brand", headerName: "브랜드", width: 150, minWidth: 110 },
-      {
-        field: "BRN",
-        headerName: "사업자등록번호",
-        width: 150,
-        minWidth: 110,
-      },
-      {
-        field: "OPEN",
-        headerName: "오픈시간",
-        width: 150,
-        minWidth: 110,
-      },
-      { field: "OWN", headerName: "점주명", width: 150, minWidth: 110 },
-      { field: "SV", headerName: "SV", width: 150, minWidth: 110 },
-      { field: "INSP", headerName: "점검자", width: 150, minWidth: 110 },
-      {
-        headerName: "관리",
-        field: "more",
-        width: 100,
-        minWidth: 53,
-        cellRenderer: function (params) {
-          // jQuery를 사용하여 컨테이너 div 생성
-          const $container = $("<div>", {
-            class: "edit-container",
-            css: { position: "relative", cursor: "pointer" },
-          });
-
-          // SVG 요소 생성
-          const $svg = $(`
-                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 15 15">
-                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
-                        </svg>
-                    `);
-
-          // '수정' 옵션 div 생성
-          const $editDiv = $('<div class="edit-options">수정</div>');
-
-          // SVG 클릭 시 '수정' 옵션 표시
-          $svg.on("click", function (e) {
-            e.stopPropagation(); // 이벤트 버블링 방지
-
-            // 모든 다른 'edit-options' 숨기기
-            $(".edit-options").not($editDiv).removeClass("show");
-
-            // SVG의 위치 계산
-            const offset = $svg.offset();
-            const svgHeight = $svg.outerHeight();
-
-            // 'edit-options' 위치 설정 (SVG 아래에 표시)
-            $editDiv.css({
-              top: offset.top + svgHeight + 2, // SVG 바로 아래에 2px 간격
-              left: offset.left + $svg.outerWidth() / 2 - 25, // SVG의 중앙에서 10px 왼쪽으로 이동
-              transform: "translateX(-50%)", // 가로 중앙 정렬
-            });
-
-            // 'show' 클래스 토글
-            $editDiv.toggleClass("show");
-          });
-
-          // '수정' 옵션 클릭 시 모달 열기
-          $editDiv.on("click", function (e) {
-            e.stopPropagation(); // 이벤트 버블링 방지
-
-            // 모달 열기
-            $("#DetailStore").modal("show");
-
-            // 'edit-options' 숨기기
-            $editDiv.removeClass("show");
-          });
-
-          // 컨테이너에 SVG 추가
-          $container.append($svg);
-
-          // 'edit-options'를 body에 추가
-          $("body").append($editDiv);
-
-          return $container[0]; // DOM 요소 반환
-        },
-        pinned: "right",
-      },
-    ],
-    autoSizeStrategy: {
-      type: "fitGridWidth",
-      defaultMinWidth: 10,
-    },
-    rowHeight: 45,
-    rowSelection: "multiple",
-    pagination: true,
-    paginationAutoPageSize: true,
-    onCellClicked: (params) => {},
-  };
-
-  const gridDiv = document.querySelector("#myGrid");
-  const gridApi = agGrid.createGrid(gridDiv, gridOptions);
-
-  // 체크리스트 개수를 업데이트하는 함수
-  function updateChecklistCount() {
-    const checklistCount = document.querySelector(".checklist_count");
-    if (checklistCount) {
-      checklistCount.textContent = rowData.length; // 현재 rowData 길이를 업데이트
-    }
-  }
-
-  // 처음 페이지 로드 시 checklist_count 값 설정
-  updateChecklistCount();
-
-  function createNewRowData() {
-    var newData = {
-      no: rowData.length + 1,
-      store: "",
-      brand: "",
-      BRN: "",
-      OPEN: "",
-      OWN: "",
-      SV: "",
-      INSP: "",
-      more: "",
-    };
-    return newData;
-  }
-
-  async function onAddRow() {
-    var newItem = createNewRowData();
-    rowData.push(newItem);
-    gridApi.applyTransaction({ add: [newItem] });
-    updateChecklistCount();
-  }
-
-  // 삭제 버튼 클릭 시 호출되는 함수
-  async function onDeleteRow() {
-    const selectedRows = gridApi.getSelectedRows();
-
-    if (selectedRows.length === 0) {
-      Swal.fire({
-        title: "경고!",
-        text: "삭제할 항목을 선택해주세요.",
-        icon: "warning",
-        confirmButtonText: "확인",
-      });
-      return;
-    }
-
-    const result = await Swal.fire({
-      title: "글을 삭제하시겠습니까?",
-      text: "삭제하시면 다시 복구시킬 수 없습니다.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "삭제",
-      cancelButtonText: "취소",
-    });
-
-    if (result.isConfirmed) {
-      try {
-        // 삭제 중 표시
-        Swal.fire({
-          title: "삭제 중...",
-          allowOutsideClick: false,
-          didOpen: () => {
-            Swal.showLoading();
-          },
-        });
-
-        // 실제 삭제 요청 (예: 서버와 통신)
-        // 여기서는 시뮬레이션을 위해 setTimeout 사용 2초 답답하면 빼도 됨
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-
-        gridApi.applyTransaction({ remove: selectedRows });
-
-        selectedRows.forEach((row) => {
-          const index = rowData.findIndex((data) => data.no === row.no);
-          if (index > -1) {
-            rowData.splice(index, 1);
-          }
-        });
-
-        updateChecklistCount();
-
-        Swal.fire({
-          title: "삭제 완료!",
-          text: "글이 성공적으로 삭제되었습니다.",
-          icon: "success",
-        });
-
-        // 총 건수 업데이트
-        updateChecklistCount();
-      } catch (error) {
-        // 삭제 실패 처리
-        Swal.fire({
-          title: "실패!",
-          text: "글 삭제에 실패했습니다.",
-          icon: "error",
-        });
-        console.error("삭제 오류:", error);
-      }
-    }
-  }
-
-  $("#addRowButton").on("click", function () {
-    onAddRow();
-  });
-
-  $("#deleteRowButton").on("click", function () {
-    onDeleteRow();
-  });
-
-  // 총 몇건
-  $("#totalCount").text(rowData.length);
-
   // 문서 전체에 클릭 이벤트 바인딩하여 Popover 숨기기
   $(document).on("click", function () {
     $(".edit-options").removeClass("show");
@@ -635,3 +655,5 @@ $(function () {
 
   //  중간 테이블 영역 끝
 });
+
+

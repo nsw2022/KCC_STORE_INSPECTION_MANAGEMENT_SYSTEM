@@ -56,11 +56,11 @@
                         <div class="sidebar-submenu">
                             <ul>
                                 <li>
-                                    <form id="store_manage" action="/master/store_manage/store_list" method="get"></form>
+                                    <form id="store_manage" action="/master/store/manage" method="get"></form>
                                     <a href="#" onclick="document.getElementById('store_manage').submit()">가맹점 관리</a>
                                 </li>
                                 <li>
-                                    <form id="product_manage" action="/master/product_manage/product_list" method="get"></form>
+                                    <form id="product_manage" action="/master/product/manage" method="get"></form>
                                     <a href="#" onclick="document.getElementById('product_manage').submit()">제품 관리</a>
                                 </li>
                             </ul>

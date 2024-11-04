@@ -1,8 +1,10 @@
 package com.sims.master.product_manage.mapper;
 
+import com.sims.master.product_manage.vo.ProductDeleteRequest;
 import com.sims.master.product_manage.vo.ProductRequest;
 import com.sims.master.product_manage.vo.ProductResponse;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -37,4 +39,32 @@ public interface ProductMapper {
      * @return 제품판매상태 LIST
      */
     public List<String> selectAllPdtSellSttsNm();
+
+    /**
+     * 제품ID를 통해서 제품 정보를 가져온다
+     * @param pdtId 제품ID
+     * @return 제품ID를 통해 ProductResponse(제품) 정보 보여준다.
+     */
+    public ProductResponse selectProductByPdtId(@Param("pdtId") int pdtId);
+
+    /**
+     * 제품 저장
+     * @param request
+     * @return product 테이블 저장
+     */
+    public int saveProduct(ProductRequest request);
+
+    /**
+     * 제품 정보 변경
+     * @param request
+     * @return 제품 정보 변경
+     */
+    public int updateProduct(ProductRequest request);
+
+    /**
+     * 제품ID 를 통해 제품 삭제
+     * @param productDeleteRequests pdtID LIST
+     * @return 제품 삭제 (return 1)
+     */
+    public int deleteProductByPdtId(List<ProductDeleteRequest> productDeleteRequests);
 }

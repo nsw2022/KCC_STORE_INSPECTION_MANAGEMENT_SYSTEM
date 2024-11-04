@@ -22,6 +22,12 @@ public interface InspectionResultService {
 	 */
 	public List<InspectionResultResponse> selectInspectionResultList(String currentMbrNo);
 
+	/**
+	 * 검색에 따라 점검 결과 목록을 다르게 보여준다.
+	 * @param request
+	 * @param currentMbrNo
+	 * @return request(검색)에 따라 결과 목록 다르게 List로 보여줌
+	 */
 	public List<InspectionResultResponse> selectInspectionResultListBySearch(InspectionResultRequest request, String currentMbrNo);
 
 }

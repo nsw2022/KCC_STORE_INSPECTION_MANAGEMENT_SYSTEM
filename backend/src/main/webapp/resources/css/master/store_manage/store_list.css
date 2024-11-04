@@ -535,13 +535,6 @@ input[type="file"]:focus-visible ~ .file_btn,
 /*  모달 끝 */
 
 @media (max-width: 1000px) {
-  .wrapper {
-    z-index: 1 !important;
-  }
-  .wrapper.active {
-    position: relative;
-    z-index: 1000 !important;
-  }
 
   .hide-list {
     display: none;
@@ -552,19 +545,18 @@ input[type="file"]:focus-visible ~ .file_btn,
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     position: absolute;
     z-index: 3;
-    width: 100%;
+    width: 86%;
   }
 }
 
 @media (max-width: 600px) {
-  .top-content > .button-box {
-    margin-top: 10px;
-  }
   .top-box {
     padding: 15px 15px 10px 15px;
   }
   .top-box > .col {
-    margin-bottom: -30px !important;
+    margin-bottom: -40px !important;
+    padding-right : 0 !important;
+    padding-left: 0 !important;
   }
 
   .top-content div div span {
@@ -573,7 +565,15 @@ input[type="file"]:focus-visible ~ .file_btn,
   }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 500px) {
+  .col .top-content .col-12 {
+    margin : 10px 0px 0px 0px !important;
+  }
+
+  .col .top-content .col-12:last-child {
+    margin-bottom: 10px !important;
+  }
+
   .page-content > div {
     padding: 10px 20px !important;
   }
@@ -609,10 +609,10 @@ input[type="file"]:focus-visible ~ .file_btn,
     font-size: 0.7rem;
   }
   .middle-box {
-    padding: 1.5rem;
+    padding: 1.5rem 1rem;
   }
   .top-box {
-    padding: 1.5rem;
+    padding: 20px 10px 10px 20px;
   }
   .middle-box .btn {
     font-size: 0.7rem;
@@ -622,7 +622,7 @@ input[type="file"]:focus-visible ~ .file_btn,
   }
 
   .top-box .btn {
-    font-size: 0.7rem;
+    font-size: 13px;
     width: 15vw;
     margin-right: 0.1rem !important;
     border-radius: 15px;
@@ -633,6 +633,12 @@ input[type="file"]:focus-visible ~ .file_btn,
     border-radius: 10px !important;
     font: 350 10px "Noto Sans KR";
     color: #858d9d;
+  }
+
+  .wrapper .search-btn {
+    margin-bottom: 10px;
+    height: 35px;
+    font: 400 11px "Noto Sans KR";
   }
   .modal-search-box button {
     border-color: #d0d5dd;
@@ -692,6 +698,11 @@ input[type="file"]:focus-visible ~ .file_btn,
 .btn-close {
   outline: none !important;
   box-shadow: none !important;
+}
+
+.button-box .ms-3 {
+  margin-left: 5px !important;
+  font: 400 16px "Noto Sans KR" !important;
 }
 /*.btn:active, .btn:focus {*/
 /*  outline:none !important;*/

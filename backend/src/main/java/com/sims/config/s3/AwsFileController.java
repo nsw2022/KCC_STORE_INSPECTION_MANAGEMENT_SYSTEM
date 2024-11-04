@@ -60,6 +60,28 @@ public class AwsFileController {
         }
     }
 
+    @PostMapping("/upload/brdPath")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> uploadBrdFile(@RequestParam("file") MultipartFile file) {
+
+        log.info("파일 업로드 시작");
+        log.info("파일 이름 : " + file.getOriginalFilename());
+        try {
+            String s3Key = awsFileService.saveBrdFile(file); // S3 키 반환
+            log.info("파일 업로드 성공 : " + s3Key);
+            Map<String, String> response = new HashMap<>();
+            response.put("path", s3Key); // S3 키 반환
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("파일 업로드 실패", e);
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "파일 업로드에 실패했습니다.");
+            return ResponseEntity.status(500).body(errorResponse);
+        }
+    }
+
+
+
     //    @PostMapping("/download")
 //    @ResponseBody
 //    public ResponseEntity<InputStreamResource> downloadFile(@RequestBody Map<String, String> request) {
