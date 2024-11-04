@@ -5,11 +5,37 @@
 
 <mapper namespace="com.sims.home.dashboard.mapper.DashboardMapper">
     <select id="selectInspSchdAndResult">
-        SELECT /* */
-            (SELECT count(*) FROM INSP_SCHD) AS total
-             , (SELECT COUNT(*) FROM INSP_RESULT WHERE INSP_COMPL_W = 'Y') AS completed
+        SELECT /* DashboardMapper.selectInspSchdAndResult 유재원 */
+            (SELECT
+                 count(*)
+             FROM
+                 INSP_SCHD) AS total
+             , (SELECT
+                    COUNT(*)
+                FROM
+                    INSP_RESULT
+                WHERE
+                    INSP_COMPL_W = 'Y') AS completed
         FROM
             DUAL
+    </select>
+
+    <select id="selectPenalty">
+        SELECT /* DashboardMapper.selectPenalty 유재원 */
+            s.STORE_NM
+             , ir.TOTAL_PENALTY AS penalty
+        FROM
+            INSP_RESULT ir
+           , INSP_SCHD is2
+           , STORE s
+        WHERE
+            ir.INSP_SCHD_ID = is2.INSP_SCHD_ID
+          AND
+            is2.STORE_ID = s.STORE_ID
+          AND
+            ir.INSP_COMPL_W = 'Y'
+          AND
+            ir.TOTAL_PENALTY > 0
     </select>
 </mapper>
 

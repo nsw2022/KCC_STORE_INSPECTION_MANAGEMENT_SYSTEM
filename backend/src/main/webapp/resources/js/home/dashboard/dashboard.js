@@ -220,56 +220,69 @@ var options4 = {
 var chart4 = new ApexCharts(document.querySelector("#chart4"), options4);
 chart4.render();
 
-var options5 = {
-  series: [
-    {
-      name: "과태료", // 시리즈 이름 추가
-      data: [80, 50, 70],
-    },
-  ],
-  chart: {
-    type: "bar",
-    height: 350,
-  },
-  colors: ["#F95454"],
-  plotOptions: {
-    bar: {
-      borderRadius: 5,
-      columnWidth: "30%", // 차트 두께 줄이기 (30%로 설정)
-      dataLabels: {
-        position: "top", // top, center, bottom
-      },
-    },
-  },
-  dataLabels: {
-    enabled: true,
-    offsetY: -20,
-    style: {
-      fontSize: "12px",
-      colors: ["#304758"],
-    },
-  },
-  xaxis: {
-    categories: ["혜화", "동대문", "서울역"],
-    labels: {
-      style: {
-        fontSize: "13px", // X축 라벨 크기 조정
-        fontWeight: "bold", // 글자 두께 조정
-      },
-    },
-  },
-  yaxis: {
-    labels: {
-      show: false, // Y축 라벨 숨기기
-    },
-  },
-  grid: {
-    show: false, // 배경 그리드 없애기
-  },
-};
+$(document).ready(function () {
+  fetch("/penalty")
+      .then(response => response.json())
+      .then(data =>{
+        const store = data.map(item => item.storeNm);
+        const penalty = data.map(item => Number(item.penalty) || 0); // 문자열을 숫자로 변환하고, 값이 없을 경우 0으로 설정
 
-var chart5 = new ApexCharts(document.querySelector("#chart5"), options5);
-chart5.render();
+        const totalPenalty = penalty.reduce((sum, item) => sum + item, 0); // 모든 penalty 값 합산
+        $('.total-penalty').text(totalPenalty);
+        $('.avg-penalty').text(Math.floor(totalPenalty/penalty.length));
+
+        var options5 = {
+          series: [
+            {
+              name: "과태료", // 시리즈 이름 추가
+              data: penalty,
+            },
+          ],
+          chart: {
+            type: "bar",
+            height: 350,
+          },
+          colors: ["#F95454"],
+          plotOptions: {
+            bar: {
+              borderRadius: 5,
+              columnWidth: "30%", // 차트 두께 줄이기 (30%로 설정)
+              dataLabels: {
+                position: "top", // top, center, bottom
+              },
+            },
+          },
+          dataLabels: {
+            enabled: true,
+            offsetY: -20,
+            style: {
+              fontSize: "12px",
+              colors: ["#304758"],
+            },
+          },
+          xaxis: {
+            categories: store,
+            labels: {
+              style: {
+                fontSize: "0.8rem", // X축 라벨 크기 조정
+                fontWeight: "bold", // 글자 두께 조정
+              },
+            },
+          },
+          yaxis: {
+            labels: {
+              show: false, // Y축 라벨 숨기기
+            },
+          },
+          grid: {
+            show: false, // 배경 그리드 없애기
+          },
+        };
+        var chart5 = new ApexCharts(document.querySelector("#chart5"), options5);
+        chart5.render();
+      })
+});
+
 
 var options6 = {
   series: [

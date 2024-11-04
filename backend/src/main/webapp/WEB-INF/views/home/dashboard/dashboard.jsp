@@ -105,8 +105,8 @@
                                     <span style="font: 300 12px 'Noto Sans KR';">(단위 : 만원)</span>
                                 </div>
                                 <div>
-                                    <div style="font: 300 13px 'Noto Sans KR';">총 과태료 : <span style="font: 500 13px 'Noto Sans KR';">0</span>원</div>
-                                    <div style="font: 300 13px 'Noto Sans KR';">매장당 평균 : <span style="font: 500 13px 'Noto Sans KR';">0</span>원</div>
+                                    <div style="font: 300 13px 'Noto Sans KR';">총 과태료 : <span class="total-penalty" style="font: 500 13px 'Noto Sans KR';">0</span>원</div>
+                                    <div style="font: 300 13px 'Noto Sans KR';">매장당 평균 : <span class="avg-penalty" style="font: 500 13px 'Noto Sans KR';">0</span>원</div>
                                 </div>
                             </div>
                             <div id="chart5"></div>
