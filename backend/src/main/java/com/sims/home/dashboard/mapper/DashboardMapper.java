@@ -1,5 +1,6 @@
 package com.sims.home.dashboard.mapper;
 
+import com.sims.home.dashboard.vo.BsnSspnResponse;
 import com.sims.home.dashboard.vo.InspSchdAndResultResponse;
 import com.sims.home.dashboard.vo.PenaltyResponse;
 import org.apache.ibatis.annotations.Mapper;
@@ -19,4 +20,10 @@ public interface DashboardMapper {
      * @return 패널티 가맹점, 금액
      */
     public List<PenaltyResponse> selectPenalty();
+
+    /**
+     * 영업정지 가맹점 / 영업정지 일 조회
+     * @return 영업정지 가맹점, 영업정지 일
+     */
+    public List<BsnSspnResponse> selectBsnSspn();
 }

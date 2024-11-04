@@ -283,57 +283,72 @@ $(document).ready(function () {
       })
 });
 
+$(document).ready(function(){
+  fetch("bsnssnp")
+      .then(response => response.json())
+      .then(data => {
+        const store = data.map(item => item.storeNm);
+        const bsnSspn = data.map(item => Number(item.bsnSspn) || 0);
 
-var options6 = {
-  series: [
-    {
-      name: "영업정지", // 시리즈 이름 추가
-      data: [14, 14, 7, 21, 10],
-    },
-  ],
-  chart: {
-    type: "bar",
-    height: 350,
-  },
-  colors: ["#F95454"],
-  plotOptions: {
-    bar: {
-      borderRadius: 5,
-      columnWidth: "30%", // 차트 두께 줄이기 (30%로 설정)
-      dataLabels: {
-        position: "top", // top, center, bottom
-      },
-    },
-  },
-  dataLabels: {
-    enabled: true,
-    offsetY: -20,
-    style: {
-      fontSize: "12px",
-      colors: ["#304758"],
-    },
-  },
-  xaxis: {
-    categories: ["혜화", "동대문", "서울역", "성균관대", "대학로"],
-    labels: {
-      style: {
-        fontSize: "13px", // X축 라벨 크기 조정
-        fontWeight: "bold", // 글자 두께 조정
-      },
-    },
-  },
-  yaxis: {
-    labels: {
-      show: false, // Y축 라벨 숨기기
-    },
-  },
-  grid: {
-    show: false, // 배경 그리드 없애기
-  },
-};
+        const totalBsnSspn = bsnSspn.reduce((sum, item) => sum + item, 0);
+        $('.total-bnsSspn').text(totalBsnSspn);
 
-var chart6 = new ApexCharts(document.querySelector("#chart6"), options6);
-chart6.render();
+        const avgBsnSspn = bsnSspn.length > 0 ? Math.floor(totalBsnSspn / bsnSspn.length) : 0;
+        $('.avg-bnsSspn').text(avgBsnSspn);
+
+        var options6 = {
+          series: [
+            {
+              name: "영업정지", // 시리즈 이름 추가
+              data: bsnSspn,
+            },
+          ],
+          chart: {
+            type: "bar",
+            height: 350,
+          },
+          colors: ["#F95454"],
+          plotOptions: {
+            bar: {
+              borderRadius: 5,
+              columnWidth: "30%", // 차트 두께 줄이기 (30%로 설정)
+              dataLabels: {
+                position: "top", // top, center, bottom
+              },
+            },
+          },
+          dataLabels: {
+            enabled: true,
+            offsetY: -20,
+            style: {
+              fontSize: "12px",
+              colors: ["#304758"],
+            },
+          },
+          xaxis: {
+            categories: store,
+            labels: {
+              style: {
+                fontSize: "0.8rem", // X축 라벨 크기 조정
+                fontWeight: "bold", // 글자 두께 조정
+              },
+            },
+          },
+          yaxis: {
+            labels: {
+              show: false, // Y축 라벨 숨기기
+            },
+          },
+          grid: {
+            show: false, // 배경 그리드 없애기
+          },
+        };
+
+        var chart6 = new ApexCharts(document.querySelector("#chart6"), options6);
+        chart6.render();
+      })
+})
+
 
 var options7 = {
   series: [

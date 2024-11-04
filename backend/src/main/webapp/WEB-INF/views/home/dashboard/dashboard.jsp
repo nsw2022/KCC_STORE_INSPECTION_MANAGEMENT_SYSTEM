@@ -122,8 +122,8 @@
                                     <span style="font: 300 12px 'Noto Sans KR';">(단위 : 일)</span>
                                 </div>
                                 <div>
-                                    <div style="font: 300 13px 'Noto Sans KR';">총 영업정지일 : <span style="font: 500 13px 'Noto Sans KR';">0</span>일</div>
-                                    <div style="font: 300 13px 'Noto Sans KR';">매장당 평균 : <span style="font: 500 13px 'Noto Sans KR';">0</span>일</div>
+                                    <div style="font: 300 13px 'Noto Sans KR';">총 영업정지일 : <span class="total-bnsSspn" style="font: 500 13px 'Noto Sans KR';">0</span>일</div>
+                                    <div style="font: 300 13px 'Noto Sans KR';">매장당 평균 : <span class="avg-bnsSspn" style="font: 500 13px 'Noto Sans KR';">0</span>일</div>
                                 </div>
                             </div>
                             <div id="chart6"></div>

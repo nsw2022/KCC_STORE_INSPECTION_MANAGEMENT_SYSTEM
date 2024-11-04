@@ -1,6 +1,7 @@
 package com.sims.home.dashboard.controller;
 
 import com.sims.home.dashboard.service.DashboardService;
+import com.sims.home.dashboard.vo.BsnSspnResponse;
 import com.sims.home.dashboard.vo.InspSchdAndResultResponse;
 import com.sims.home.dashboard.vo.PenaltyResponse;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,16 @@ public class DashboardController {
     @ResponseBody
     public ResponseEntity<List<PenaltyResponse>> selectPenalty() {
         return new ResponseEntity<List<PenaltyResponse>>(dashboardService.selectPenalty(), HttpStatus.OK);
+    }
+
+    /**
+     * 영업정지 가맹점 / 영업정지 일 조회
+     * @return 영업정지 가맹점, 영업정지 일
+     */
+    @GetMapping("/bsnssnp")
+    @ResponseBody
+    public ResponseEntity<List<BsnSspnResponse>> selectBsnSspn() {
+        return new ResponseEntity<List<BsnSspnResponse>>(dashboardService.selectBsnSspn(), HttpStatus.OK);
     }
 
 

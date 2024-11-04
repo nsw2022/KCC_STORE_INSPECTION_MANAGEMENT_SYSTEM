@@ -36,6 +36,28 @@
             ir.INSP_COMPL_W = 'Y'
           AND
             ir.TOTAL_PENALTY > 0
+        ORDER BY
+            s.STORE_NM
+    </select>
+
+    <select id="selectBsnSspn">
+        SELECT /* DashboardMapper.selectBsnSspn 유재원 */
+            s.STORE_NM
+             , ir.TOTAL_BSN_SSPN AS bsnSspn
+        FROM
+            INSP_RESULT ir
+           , INSP_SCHD is2
+           , STORE s
+        WHERE
+            ir.INSP_SCHD_ID = is2.INSP_SCHD_ID
+          AND
+            is2.STORE_ID = s.STORE_ID
+          AND
+            ir.INSP_COMPL_W = 'Y'
+          AND
+            ir.TOTAL_BSN_SSPN > 0
+        ORDER BY
+            s.STORE_NM
     </select>
 </mapper>
 
