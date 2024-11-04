@@ -40,6 +40,7 @@
     <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/styles/ag-grid.css">
     <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/styles/ag-theme-alpine.css">
 
+
     <style>
         .page-content {
             min-height: 100vh;
@@ -49,7 +50,7 @@
         }
         @media (max-width: 1000px) {
             .page-content > div{
-                padding: 20px 20px!important;
+                padding: 20px 10px !important;
             }
         }
     </style>
@@ -72,7 +73,7 @@
     <main class="page-content">
         <div class="container content">
             <%-- top box start--%>
-            <div class="row top-box mb-3" style="margin-bottom: 40px !important;">
+            <div class="row top-box mb-3" >
                 <div class="col ">
                     <div class="top-content">
                         <div class="button-box" style="display: flex; justify-content: space-between; align-items: center;">
@@ -86,8 +87,8 @@
                             </div>
 
                             <div class="my-3" style="margin: 0 !important;">
-                                <button type="button" class="btn btn-light me-3 select-btn p-0" >조회</button>
-                                <button type="button" class="btn btn-light init-btn p-0" id="reset-selection-top">초기화</button>
+                                <button type="button" class="btn btn-light me-3 select-btn p-0" onclick="onSearchRow()" >조회</button>
+                                <button type="button" class="btn btn-light init-btn p-0" id="reset-selection-top" onclick="onSearchInit()">초기화</button>
                             </div>
                         </div>
 
@@ -99,7 +100,7 @@
                                     <!-- 가맹점 라벨과 검색 필드 -->
                                     <div class="col-12 col-md-4">
                                         <label for="storeSearch" class="form-label">가맹점</label>
-                                        <div class="wrapper" data-autocomplete="store">
+                                        <div class="wrapper" data-autocomplete="storeNm">
                                             <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
                                                 <span>가맹점 검색</span>
                                                 <i class="uil uil-angle-down"></i>
@@ -121,8 +122,8 @@
 
                                     <!-- 브랜드 라벨과 검색 필드 -->
                                     <div class="col-12 col-md-4">
-                                        <label for="inspectorSearch" class="form-label">브랜드</label>
-                                        <div class="wrapper" data-autocomplete="inspector">
+                                        <label for="brandNmSearch" class="form-label">브랜드</label>
+                                        <div class="wrapper" data-autocomplete="brandNm">
                                             <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
                                                 <span>브랜드 검색</span>
                                                 <i class="uil uil-angle-down"></i>
@@ -132,7 +133,7 @@
                                                     <input
                                                             type="text"
                                                             class="form-control top-search"
-                                                            id="inspectorSearch"
+                                                            id="brandNmSearch"
                                                             placeholder="브랜드명을 입력해주세요"
                                                             aria-label="브랜드 검색"
                                                     />
@@ -177,10 +178,10 @@
                 <div class="col px-0">
                     <div class="middle-content">
                         <div class="button-box" style="display: flex; justify-content: space-between; align-items: center;">
-                            <span class="ms-3" style="font: 350 20px Noto Sans KR;">총 <span class="checklist_count" style="color: #0035BE"></span>개</span>
+                            <span class="ms-3" style="font: 350 20px Noto Sans KR;">총 <span class="store_count" style="color: #0035BE"></span>개</span>
                             <div class="my-0">
-                                <button type="button" class="btn btn-light me-3" id="addRowButton" >추가</button>
-                                <button type="button" class="btn btn-light" id="deleteRowButton">삭제</button>
+                                <button type="button" class="btn btn-light me-3" id="addRowButton" onclick="onStoreAddRow()">추가</button>
+                                <button type="button" class="btn btn-light" id="deleteRowButton" onclick="onStoreDeleteRow()">삭제</button>
                             </div>
                         </div>
                         <div>
@@ -235,14 +236,14 @@
                                         <span class="file_btn">파일선택</span>
                                     </label>
                                 </div>
-                                <input type="text" class="form-control" id="brn" placeholder="사업자등록번호 입력 (ex: 111-11-1111)">
+                                <input type="text" class="form-control" id="brn" placeholder="사업자등록번호 입력 (ex: 111-11-11111)" maxlength="12">
                             </div>
 
 
                             <!-- 브랜드 선택 -->
                             <div class="col-12 col-md-6">
                                 <label for="inspectorSearch" class="form-label">브랜드</label>
-                                <div class="wrapper" data-autocomplete="inspector">
+                                <div class="wrapper" data-autocomplete="brandNmModal">
                                     <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
                                         <span>브랜드 검색</span>
                                         <i class="uil uil-angle-down"></i>
@@ -272,7 +273,8 @@
                             <div class="col-12 col-md-6">
                                 <label for="storeAddress" class="form-label">가맹점 주소</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="storeAddress" placeholder="가맹점 주소 입력">
+                                    <input type="text" class="form-control" id="storeAddress" placeholder="주소찾기 버튼을 클릭해주세요" readonly
+                                            style="background: #fff;">
                                     <button type="button" class="btn btn-primary" onclick="DaumPostcode()">주소 찾기
                                     </button>
                                 </div>
@@ -302,13 +304,13 @@
                             <div class="col-12 col-md-6">
                                 <label for="ownerPhone" class="form-label">점주 휴대폰 번호</label>
                                 <input type="text" class="form-control" id="ownerPhone"
-                                       placeholder="휴대폰 번호 입력 (ex: 010-1111-1111)">
+                                       placeholder="휴대폰 번호 입력 (ex: 010-1111-1111)" maxlength="13">
                             </div>
 
                             <!-- 점검자 선택 -->
                             <div class="col-12 col-md-6">
-                                <label for="inspector" class="form-label">점검자</label>
-                                <div class="wrapper" data-autocomplete="inspector">
+                                <label for="inspectorModal" class="form-label">점검자 (심사원)</label>
+                                <div class="wrapper" data-autocomplete="inspectorModal">
                                     <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
                                         <span>점검자 검색</span>
                                         <i class="uil uil-angle-down"></i>
@@ -318,7 +320,7 @@
                                             <input
                                                     type="text"
                                                     class="form-control top-search"
-                                                    id="inspector"
+                                                    id="inspectorModal"
                                                     placeholder="점검자를 입력해주세요"
                                                     aria-label="점검자 검색"
                                             />
@@ -330,8 +332,8 @@
 
                             <!-- 담당 SV 선택 -->
                             <div class="col-12 col-md-6">
-                                <label for="inspector" class="form-label">담당 SV (심사원)</label>
-                                <div class="wrapper" data-autocomplete="sv">
+                                <label for="sv" class="form-label">담당 SV (가맹점 관리 매니저)</label>
+                                <div class="wrapper" data-autocomplete="svModal">
                                     <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
                                         <span>SV 검색</span>
                                         <i class="uil uil-angle-down"></i>
@@ -341,7 +343,7 @@
                                             <input
                                                     type="text"
                                                     class="form-control top-search"
-                                                    id="inspector"
+                                                    id="sv"
                                                     placeholder="담당자를 입력해주세요"
                                                     aria-label="담당자 검색"
                                             />
@@ -356,12 +358,12 @@
                                 <label class="form-label">운영 상태</label>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="operationStatus" id="operating"
-                                           value="operating" checked>
-                                    <label class="form-check-label" for="operating">운영중</label>
+                                           value="영업중">
+                                    <label class="form-check-label" for="operating">영업중</label>
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="operationStatus" id="closed"
-                                           value="closed">
+                                           value="폐업">
                                     <label class="form-check-label" for="closed">폐업</label>
                                 </div>
                             </div>
@@ -371,26 +373,28 @@
                 </form>
             </div>
 
-
             <%-------------- body --------------%>
 
             <%-------------- footer --------------%>
             <div class="modal-footer">
                 <button class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">취소</button>
-                <button class="" data-bs-dismiss="modal">선택</button>
+                <button id="save">등록/수정</button>
             </div>
+                <input type="hidden">
+                <input type="hidden" id="deleteFile">
             <%-------------- footer --------------%>
         </div>
     </div>
 </div>
 
 <script src="/resources/js/master/store_manage/store_list.js"></script>
+<script src="/resources/js/master/store_manage/store_filter.js"></script>
 <script src="/resources/js/master/store_manage/maps.js"></script>
-<!-- 주소 검색 다음 -->
-<script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+<script src="/resources/js/master/store_manage/store_modal.js"></script>
 <!-- SweetAlert2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+<!-- 주소 검색 다음 -->
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
 
 
@@ -406,6 +410,7 @@
 
                 // 주소를 좌표로 변환하고 지도를 이동
                 searchAddressToCoordinate(fullRoadAddr);
+
             },
         }).open();
     }

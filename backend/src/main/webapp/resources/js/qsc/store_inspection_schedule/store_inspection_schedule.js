@@ -328,7 +328,7 @@ $(function () {
 	/** 점검자가 들어올 경우 전체 검색 X */
 	let username = $('input[type="hidden"]').val();
 	if(username.slice(0,1) === 'C') {
-		$('.hide-list li:first-child()').eq(0).remove();
+		$('.hide-list li:first-child').eq(0).remove();
 	}
 	
 	

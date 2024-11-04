@@ -44,6 +44,13 @@
             rel="stylesheet"
             href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
     />
+    <!-- SweetAlert2 CSS -->
+    <link
+            href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+            rel="stylesheet"
+    />
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="/resources/css/master/product_manage/product_list.css">
@@ -61,7 +68,7 @@
     <main class="page-content">
         <div class="container content">
             <%-- top box start--%>
-            <div class="row top-box mb-3" style="margin-bottom: 40px !important;">
+            <div class="row top-box mb-3" >
                 <div class="col ">
                     <div class="top-content">
                         <div class="button-box" style="display: flex; justify-content: space-between; align-items: center;">
@@ -190,19 +197,22 @@
         <div class="modal-content p-3">
             <div class="modal-header">
                 <h1 class="modal-title" id="staticBackdropLabel">제품 등록/수정</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+
+
             <div class="modal-body">
                 <div class="row mx-0 mb-4 justify-content-between">
                     <div class="productName_input_area col-md-5 row m-0 p-0">
-                        <label for="productName" class="col-12 py-2 mb-2">제품명</label>
-                        <input type="text" id="productName" class="ps-3 py-2" placeholder="제품명 입력">
+                        <label for="productName" class="col-12 py-2 mb-2 d-flex align-items-center">제품명</label>
+                        <input type="text" id="productName" class="ps-3 py-2" placeholder="제품명 입력" name="pdtNm" required>
                     </div>
                     <div class="brandName_input_area col-md-6 row p-0 m-0">
-                        <label for="brandName" class="py-2 mb-2">브랜드</label>
-                        <div class="wrapper p-0" data-autocomplete="brandNm" id="brandName">
+                        <label for="brandName" class="py-2 mb-2 d-flex align-items-center">브랜드</label>
+                        <div class="wrapper p-0" data-autocomplete="modalBrandNm" >
                             <!-- Search Button -->
                             <div class="search-btn top-search py-2">
-                                <span class="ps-3">브랜드 선택</span>
+                                <span class="ps-3" id="brandName">브랜드 선택</span>
                                 <i class="fa-solid fa-angle-down me-4 fa-lg"></i>
                             </div>
 
@@ -220,34 +230,33 @@
                 </div>
                 <div class="row mx-0 mb-4 justify-content-between">
                     <div class="expiration_input_area col-md-5 row m-0 p-0">
-                        <label for="expiration" class="col-12 py-2 mb-2">소비기한(일수)</label>
-                        <input type="number" class="ps-3 py-2" id="expiration" placeholder="소비기한 입력">
+                        <label for="expiration" class="col-12 py-2 mb-2 d-flex align-items-center">소비기한(일수)</label>
+                        <input type="number" class="ps-3 py-2" id="expiration" placeholder="소비기한 입력" name="expDaynum" required>
                     </div>
                     <div class="price_input_area p-0 col-md-6 m-0 row">
-                        <label for="price" class="py-2 col-12 mb-2">가격(원)</label>
-                        <input type="number" id="price" class="ps-3 py-2" placeholder="가격 입력">
+                        <label for="price" class="py-2 col-12 mb-2 d-flex align-items-center">가격(원)</label>
+                        <input type="text" id="price" class="ps-3 py-2" placeholder="가격 입력" name="pdtPrice" required>
                     </div>
                 </div>
                 <div class="productStatus_checkbox_area d-flex row">
-                    <div class="label_text col-12 mb-3 pt-2">판매상태</div>
+                    <div class="label_text col-12 mb-3 pt-2 d-flex align-items-center">판매상태</div>
                     <div class="radio_input_area">
                         <label for="for_sale">판매중</label><input type="radio" name="pdtSellSttsCd" class="ms-1 me-3"
-                                                                id="for_sale">
+                                                                id="for_sale" value="판매중">
                         <label for="out_of_stack">품절</label><input type="radio" name="pdtSellSttsCd" class="ms-1 me-3"
-                                                                   id="out_of_stack">
-                        <label for="pre_order">예약 판매</label><input type="radio" name="pdtSellSttsCd" class="ms-1 me-3"
-                                                                   id="pre_order">
+                                                                   id="out_of_stack" value="품절">
                         <label for="not_for_sale">판매 중지</label><input type="radio" name="pdtSellSttsCd"
-                                                                      class="ms-1 me-3" id="not_for_sale">
+                                                                      class="ms-1 me-3" id="not_for_sale" value="판매 중지">
                         <label for="restock_in_progress">재고확보중</label><input type="radio" name="pdtSellSttsCd"
-                                                                             class="ms-1 me-3" id="restock_in_progress">
+                                                                             class="ms-1 me-3" id="restock_in_progress" value="재고확보중">
                     </div>
                 </div>
             </div>
             <div class="modal-footer mt-2">
                 <button type="button" class="btn-cancel" data-bs-dismiss="modal">등록 취소</button>
-                <button type="button" class="btn-register">등록 완료</button>
+                <button type="button" class="btn-register" id="submit">등록 완료</button>
             </div>
+            <input type="hidden">
         </div>
     </div>
 </div>
@@ -258,6 +267,7 @@
 <!-- 해당 JSP의 SCRIPT 경로 -->
 <script src="/resources/js/master/product_manage/product_list.js"></script>
 <script src="/resources/js/master/product_manage/product_filter.js"></script>
+<script src="/resources/js/master/product_manage/product_modal.js"></script>
 
 </body>
 </html>

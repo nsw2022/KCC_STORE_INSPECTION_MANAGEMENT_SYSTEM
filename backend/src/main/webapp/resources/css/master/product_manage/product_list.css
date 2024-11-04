@@ -118,6 +118,7 @@ body {
 
 .wrapper.active .hide-list {
   display: block;
+  background: #fff !important;
 }
 
 .hide-list .search {
@@ -338,8 +339,8 @@ body {
 /** 최대 width가 992일 때 */
 @media screen and (max-width: 1000px) {
   .page-content {
-    padding-left: 30px !important;
-    padding-right: 30px;
+    padding-left: 5px !important;
+    padding-right: 5px;
   }
   
   .hide-list {
@@ -372,12 +373,67 @@ body {
 
 /** 최대 width가 576일 때 */
 @media screen and (max-width: 576px) {
+  .top-box {
+    padding : 30px 15px 15px 20px;
+  }
+
+  .button-box >.d-flex >.m-3 {
+    line-height: 29px !important;
+    font: 700 16px Noto Sans KR;
+    margin: 0 !important;
+  }
+
+  .middle-box {
+    padding: 0;
+  }
+
+  .middle-content .button-box .ms-3 {
+    font : 350 15px "Noto Sans KR" !important;
+  }
+
+  .middle-content .button-box {
+    margin-bottom: 15px !important;
+  }
+
+  .top-drop-down {
+    width: 23px;
+    height: 23px;
+  }
+
+  .top-drop-down > button {
+    padding-top: 0 !important;
+  }
+
+  .button-box .my-3 button
+  , .middle-content .button-box .my-0 button{
+    width: 53px;
+    font : 400 14px "Noto Sans KR";
+  }
+
+  .button-box .my-3 button:first-child {
+    margin-right: 5px !important;
+  }
+
+ .middle-content .button-box .my-0 button {
+   margin-right: 5px !important;
+ }
+
+  .top-box >.col {
+    padding: 0 !important;
+    margin-bottom: -30px;
+  }
+
+  .hide-list {
+    width: 83%;
+    padding-bottom: 0px;
+  }
+
   .header_btn_area {
     margin-bottom: auto;
   }
 
   .row > .col > .middle-content {
-    padding: 25px !important;
+    padding: 20px 15px !important;
   }
 
   .ag-paging-panel {
@@ -387,6 +443,14 @@ body {
 
   .ag-paging-row-summary-panel {
     margin: 0px auto 0px 0px !important;
+  }
+
+  .ag-row-odd, .ag-row-even {
+    font: 350 12px "Noto Sans KR";
+  }
+
+  .ag-header-row {
+    font: 600 13px "Noto Sans KR";
   }
 
   .ag-paging-page-summary-panel {
@@ -449,7 +513,7 @@ body {
 }
 
 .modal-body .hide-list {
-	width : 100%;
+	width : 48%;
 }
 
 .modal-body input {
@@ -485,6 +549,28 @@ body {
 .radio_input_area input {
 	margin-top : 1px;
 }
+
+
+#expiration::-webkit-outer-spin-button,
+#expiration::-webkit-inner-spin-button,
+#price::-webkit-outer-spin-button,
+#price::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+label[for=productName]::after, label[for=brandName]::after,
+label[for=expiration]::after, label[for=price]::after,
+.label_text::after{
+  content: "*";
+  display: block;
+  height: 13px !important;
+  width: 7px !important;
+  margin-left: 2px;
+  color: red;
+}
+
+
 
 /** 모달 본문 영역 끝 */
 

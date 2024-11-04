@@ -123,7 +123,7 @@ function initializeGrid() {
             e.stopPropagation(); // 이벤트 버블링 방지
 
             // 모달 열기
-            openPopup(params.data.data.inspResultId); // 팝업으로 데이터 전송 - 다른페이지에서는  $("#masterChecklistModal").modal("show");
+            openPopup(params.data.inspResultId); // 팝업으로 데이터 전송 - 다른페이지에서는  $("#masterChecklistModal").modal("show");
 
             // 'edit-options' 숨기기
             $editDiv.removeClass("show");

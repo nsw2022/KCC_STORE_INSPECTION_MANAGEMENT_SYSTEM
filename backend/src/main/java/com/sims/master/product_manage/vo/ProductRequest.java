@@ -15,6 +15,5 @@ public class ProductRequest {
     private int pdtPrice;
     private int expDaynum;
     private String pdtSellSttsNm;
-    private String creMbrId;
-    private String creTm;
+    private String mbrNo;
 }

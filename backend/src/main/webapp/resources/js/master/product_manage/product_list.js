@@ -53,6 +53,15 @@ function initializeGrid() {
   gridOptions = {
     rowData: rowData,
     columnDefs: [
+      {
+        headerName: "",
+        checkboxSelection: true,
+        headerCheckboxSelection: true,
+        minWidth: 45,
+        width: 70,
+        resizable: true,
+        cellStyle: { backgroundColor: "#ffffff" },
+      },
       { field: "no", headerName: "No", width: 80, minWidth: 60 },
       { field: `pdtNm`, headerName: "제품명", width: 200, minWidth: 180 },
       { field: "brandNm", headerName: "브랜드", width: 180, minWidth: 120 },
@@ -79,7 +88,7 @@ function initializeGrid() {
         headerName: "자세히보기",
         field: "more",
         width: 150,
-        minWidth: 120,
+        minWidth: 100,
         cellRenderer: function (params) {
           // jQuery를 사용하여 컨테이너 div 생성
           const $container = $("<div>", {
@@ -121,13 +130,36 @@ function initializeGrid() {
 
           // '수정' 옵션 클릭 시 모달 열기
           $editDiv.on("click", function (e) {
-            e.stopPropagation(); // 이벤트 버블링 방지
+            let pdtId = $(this).attr('data-no');
+            console.log(pdtId === 'undefined')
+              if(pdtId === 'undefined') {
+                $('#productName').attr('placeholder', '제품명 입력');
+                $('#brandName').text( '브랜드 선택');
+                $('#expiration').attr('placeholder', '소비기한 입력');
+                $('#price').attr('placeholder', '가격 입력');
+                $('input[name="pdtSellSttsCd"]').prop('checked', false);
+                return;
+              }
 
-            // 모달 열기
-            openPopup(params.data.data.inspResultId); // 팝업으로 데이터 전송 - 다른페이지에서는  $("#masterChecklistModal").modal("show");
+              $.ajax({
+                url : `/master/product/${pdtId}`,
+                method : 'POST',
+                success : function (data) {
+                  $('#productName').attr('placeholder', data.pdtNm);
+                  $('input[type="hidden"]').val(data.pdtId);
+                  $('#brandName').text(data.brandNm);
+                  $('#expiration').attr('placeholder', data.expDaynum);
+                  $('#price').attr('placeholder', data.pdtPrice.toLocaleString('ko-KR'));
+                  let status = $('.radio_input_area input[name="pdtSellSttsCd"]');
+                  $.each(status, function (index, item)  {
+                    if(item.value === data.pdtSellSttsNm) {
+                      item.checked = true;
+                    }
+                  })
 
-            // 'edit-options' 숨기기
-            $editDiv.removeClass("show");
+                }
+              })
+
           });
 
           // 컨테이너에 SVG 추가
@@ -146,6 +178,7 @@ function initializeGrid() {
       defaultMinWidth: 10,
     },
     rowHeight: 45,
+    rowSelection: "multiple",
     pagination: true,
     paginationAutoPageSize: true,
   };
@@ -324,6 +357,9 @@ $(function () {
     brandNm: [
       "전체"
     ],
+    modalBrandNm: [
+
+    ],
     pdtNm: [
       "전체"
     ],
@@ -342,6 +378,9 @@ $(function () {
     success : function(data) {
       data.brandNmList.filter(x => {
         autocompleteData.brandNm.push(x);
+      })
+      data.brandNmList.filter(x => {
+        autocompleteData.modalBrandNm.push(x);
       })
       data.pdtNmList.filter(x => {
         autocompleteData.pdtNm.push(x);
@@ -457,42 +496,48 @@ function warningMessage() {
 function onProductDeleteRow() {
   const selectedRows = gridApi.getSelectedRows();
 
-  if (selectedRows.length > 0) {
-    // 경고 메시지 표시
-    warningMessage().then((result) => {
-      if (result.isConfirmed) { // 사용자가 삭제를 확인한 경우
-        fetch(`/master/checklist/delete`, {
-          method: 'DELETE',
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(selectedRows.map(row => ({ chklstId: row.chklstId })))
-        }).then(response => {
-          // 응답 상태 코드 확인
-          if (!response.ok) {
-            if (response.status === 403) {
-              Swal.fire("실패!", "권한이 없습니다.", "error");
-            }else if(response.status === 409){
-              Swal.fire("실패!", "사용중인 점검계획이 있습니다.", "error");
-            }
-          } else {
-            // 그리드에서도 해당 행 삭제
-            gridApi.applyTransaction({ remove: selectedRows });
-
-            selectedRows.forEach((row) => {
-              const index = rowData.findIndex((data) => data.chklstId === row.chklstId);
-              if (index > -1) {
-                rowData.splice(index, 1);
+    if (selectedRows.length > 0) {
+      // 경고 메시지 표시
+      warningMessage().then((result) => {
+        if (result.isConfirmed) { // 사용자가 삭제를 확인한 경우
+          fetch('/master/product/delete', {
+            method: 'PATCH',
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(selectedRows.map(row => ({ pdtId: row.pdtId })))
+          }).then(response => {
+            // 응답 상태 코드 확인
+            if (!response.ok) {
+              if (response.status === 403) {
+                Swal.fire("실패!", "권한이 없습니다.", "error");
+              }else if(response.status === 409){
+                Swal.fire("실패!", "사용중인 점검계획이 있습니다.", "error");
               }
-            });
-            updateProductCount();
-          }
-        })
-      }
-    });
-  } else {
-    alert("삭제할 항목을 선택하세요.");
-  }
+            } else {
+              Swal.fire({
+                title: "삭제 완료!",
+                text: "완료되었습니다.",
+                icon: "success",
+                confirmButtonText: "OK"
+              });
+              // 그리드에서도 해당 행 삭제
+              gridApi.applyTransaction({ remove: selectedRows });
+
+              selectedRows.forEach((row) => {
+                const index = rowData.findIndex((data) => data.pdtId === row.pdtId);
+                if (index > -1) {
+                  rowData.splice(index, 1);
+                }
+              });
+              updateProductCount();
+            }
+          })
+        }
+      });
+    } else {
+      alert("삭제할 항목을 선택하세요.");
+    }
 }
 
 
@@ -508,6 +553,10 @@ $(function () {
       $(".page-wrapper").css("position", "fixed");
     }
   }, 10);
+
+
+
+
 });
 /* 본문 표 영역 끝 */
 

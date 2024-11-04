@@ -22,8 +22,13 @@ public interface InspectionResultMapper {
 	 * @return List<InspectionResultResponse>
 	 */
 	public List<InspectionResultResponse> selectInspectionResultList(@Param("currentMbrNo") String currentMbrNo);
-	
 
+	/**
+	 * 검색에 따라 점검 결과를 다르게 보여준다.
+	 * @param request
+	 * @param currentMbrNo
+	 * @return 검색에 다른 점검결과 List 반환
+	 */
 	public List<InspectionResultResponse> selectInspectionResultBySearch(InspectionResultRequest request,
 																		 @Param("currentMbrNo") String currentMbrNo);
 

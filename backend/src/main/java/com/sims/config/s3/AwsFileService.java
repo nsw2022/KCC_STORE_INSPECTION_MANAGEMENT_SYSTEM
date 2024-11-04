@@ -29,6 +29,8 @@ public class AwsFileService {
 
 	private String INSPECTION_IMG_DIR = "inspection_img/";
 
+	private String BRD_DIR = "brd/";
+
 	/**
 	 * 이미지를 S3에 저장하는 메서드
 	 * @param multipartFile 업로드할 파일
@@ -41,6 +43,15 @@ public class AwsFileService {
 		String filePath = upload(uploadFile, INSPECTION_IMG_DIR);
 		return filePath.substring(filePath.lastIndexOf('/') + 1);
 	}
+
+	public String saveBrdFile(MultipartFile multipartFile) throws IOException {
+		File uploadFile = convertAndResize(multipartFile)
+				.orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File convert fail"));
+		String filePath = upload(uploadFile, BRD_DIR);
+		return filePath.substring(filePath.lastIndexOf('/') + 1);
+	}
+
+
 
 
 	/**
