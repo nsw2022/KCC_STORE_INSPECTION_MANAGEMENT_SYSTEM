@@ -2,16 +2,21 @@ package com.sims.qsc.inspection_schedule.controller;
 
 import com.sims.qsc.inspection_schedule.service.InspectionScheduleService;
 import com.sims.qsc.inspection_schedule.vo.InspectionDetailsResponse;
+import com.sims.qsc.inspection_schedule.vo.InspectionPlan;
+import com.sims.qsc.inspection_schedule.vo.InspectionSchedule;
 import com.sims.qsc.inspection_schedule.vo.InspectionScheduleRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import oracle.ucp.proxy.annotation.Post;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -61,8 +66,10 @@ public class InspectionScheduleRestController {
      * @return 가맹점 목록
      */
     @GetMapping("/stores")
-    public ResponseEntity<List<String>> selectAllStores() {
-        List<String> stores = inspectionScheduleService.selectAllStores();
+    public ResponseEntity<List<Map<String, Object>>> selectAllStores() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String currentMbrNo = auth.getName(); // 로그인 한 사람
+        List<Map<String, Object>> stores = inspectionScheduleService.selectAllStores(currentMbrNo);
         return ResponseEntity.ok(stores);
     }
 
@@ -100,8 +107,8 @@ public class InspectionScheduleRestController {
     }
 
     @GetMapping("/bottom-checkLists")
-    public ResponseEntity<List<String>> selectAllBottomCheckLists() {
-        List<String> bottomCheckLists = inspectionScheduleService.selectBottomChkLst();
+    public ResponseEntity<?> selectAllBottomCheckLists() {
+        List<Map<String, Object>> bottomCheckLists = inspectionScheduleService.selectBottomChkLst();
         return ResponseEntity.ok(bottomCheckLists);
     }
 
@@ -127,6 +134,24 @@ public class InspectionScheduleRestController {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("서버 오류가 발생했습니다.");
+        }
+    }
+
+    /**
+     * 점검 일정 저장/수정 엔드포인트
+     *
+     * @param inspectionPlans 저장할 점검 계획 목록
+     * @return 저장 결과 메시지
+     */
+    @PostMapping("/saveSchedules")
+    public ResponseEntity<?> saveInspectionSchedules(@RequestBody List<InspectionPlan> inspectionPlans) {
+        try {
+
+            inspectionScheduleService.insertOrUpdateInspectionPlans(inspectionPlans);
+            return ResponseEntity.ok("점검 일정이 정상적으로 저장되었습니다.");
+        } catch (Exception e) {
+            log.error("점검 일정 저장 중 오류 발생: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("점검 일정 저장 중 오류가 발생했습니다.");
         }
     }
 
