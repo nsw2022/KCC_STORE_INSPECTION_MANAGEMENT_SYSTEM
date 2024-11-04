@@ -307,7 +307,7 @@ function evitSaveOrUpdate() {
 
             const totalScore = gridApi3.getGridOption("rowData").reduce((sum, row) => sum + (parseInt(row.score, 10) || 0), 0);
 
-            if (totalScore !== subCtgScore) {
+            if (totalScore != subCtgScore) {
                 Swal.fire("실패!", `총 기준점수는 ${subCtgScore}점과 같아야 합니다.`, "error");
                 $(this).val(''); // 입력값 초기화
                 return;

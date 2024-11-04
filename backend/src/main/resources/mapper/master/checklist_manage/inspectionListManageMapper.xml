@@ -86,6 +86,8 @@
         WHERE cc.MASTER_CTG_ID IS NOT NULL
           AND cc.CTG_NM = #{ctgNm, jdbcType=VARCHAR}
           AND cc2.CTG_ID = #{ctgId, jdbcType=INTEGER}
+        ORDER BY
+            ce.EVIT_SEQ
         ]]>
     </select>
 
@@ -114,6 +116,8 @@
             ce.EVIT_ID = ec.EVIT_ID
           AND
             ce.EVIT_CONTENT = #{evitNm}
+        ORDER BY
+            ec.CHCLST_SEQ
     </select>
 
     <update id="insertOrUpdateCtg">

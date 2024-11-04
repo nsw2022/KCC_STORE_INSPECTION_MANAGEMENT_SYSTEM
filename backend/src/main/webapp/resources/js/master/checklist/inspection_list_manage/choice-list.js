@@ -334,8 +334,8 @@ function onInsertOrUpdateChclst() {
             const EvitScore = selectedEvitRows.length > 0 && selectedEvitRows[0].score !== undefined ? selectedEvitRows[0].score : 0;
 
             const totalScore = gridApi4.getGridOption("rowData").reduce((sum, row) => sum + (parseInt(row.score, 10) || 0), 0);
-
-            if (totalScore !== EvitScore) {
+            console.log(EvitScore, totalScore);
+            if (totalScore != EvitScore) {
                 Swal.fire("실패!", `총 기준점수는 ${EvitScore}점과 같아야 합니다.`, "error");
                 $(this).val(''); // 입력값 초기화
                 return;
