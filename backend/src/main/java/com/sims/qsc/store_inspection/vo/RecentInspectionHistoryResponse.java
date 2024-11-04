@@ -23,4 +23,5 @@ public class RecentInspectionHistoryResponse {
     private String inspPlanDt;     // 점검 예정일
     private String mbrNm;          // 점검자 이름
     private Integer totalScore;    // 총 점수
+    private Integer inspResultId;  // 점검 결과 ID
 }

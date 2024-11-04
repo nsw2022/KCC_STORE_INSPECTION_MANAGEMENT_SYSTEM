@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (chklstId && storeNm && inspPlanDt) {
         fetchPopupData(chklstId, storeNm, inspPlanDt);
-        fetchRecentInspectionHistory(storeNm, 'IS001'); // inspSttsCd는 'IS002'로 변경됨
+        fetchRecentInspectionHistory(storeNm, 'IS002'); // inspSttsCd는 'IS002'로 변경됨
     } else {
         alert('필수 파라미터(chklstId, storeNm, inspPlanDt)가 지정되지 않았습니다.');
     }
@@ -213,7 +213,9 @@ function populateRecentInspectionHistory(data) {
         historyBtn.classList.add('history-btn');
         historyBtn.textContent = '이력조회';
         historyBtn.addEventListener('click', function() {
-            viewHistory(item); // 이력 조회 함수 호출
+            // viewHistory(item); // 이력 조회 함수 호출
+
+            openPopup2(item.inspResultId);
         });
         historyCell.appendChild(historyBtn);
         row.appendChild(historyCell);
@@ -222,11 +224,8 @@ function populateRecentInspectionHistory(data) {
     });
 }
 
-// 이력 조회 버튼 클릭 시 호출되는 함수
-function viewHistory(item) {
-    // 임시 alert
-    alert(`점검 유형: ${item.chklstNm}\n점검일자: ${formatDate(item.inspPlanDt)}\n점검자: ${item.mbrNm}\n점수: ${item.totalScore !== null ? item.totalScore : '점수없음'}`);
-}
+
+
 
 function startInspection() {
     // 현재 페이지의 URL에서 파라미터 추출
@@ -323,6 +322,61 @@ function startInspection() {
         });
 }
 
+//---------------------------이력조회함수------------------------
+// 이력 조회 버튼 클릭 시 호출되는 함수
+function openPopup2(inspResultId) {
+    // 팝업 페이지 URL 설정
+    const popupUrl = "/qsc/popup/inspection/result"; // 팝업 페이지로 보낼 URL 설정
 
+    // 현재 화면 크기 확인
+    const screenWidth =
+        window.innerWidth || document.documentElement.clientWidth || screen.width;
+    const screenHeight =
+        window.innerHeight ||
+        document.documentElement.clientHeight ||
+        screen.height;
+
+    // 모바일 디바이스 확인 (가로 크기가 768px 이하인 경우)
+    const isMobile = screenWidth <= 768;
+
+    // 팝업 창 크기 설정 (화면의 90% 크기 또는 전체 크기)
+    const popupWidth = isMobile ? screenWidth : screenWidth * 0.8;
+    const popupHeight = isMobile ? screenHeight : screenHeight;
+
+    // 팝업 창의 중앙 위치 계산 (모바일은 무시)
+    const screenLeft = window.screenLeft || window.screenX;
+    const screenTop = window.screenTop || window.screenY;
+    const left = isMobile ? 0 : screenLeft + (screenWidth - popupWidth) / 2;
+    const top = isMobile ? 0 : screenTop + (screenHeight - popupHeight) / 2;
+
+    // 팝업 창 옵션 (위치 및 크기 포함)
+    const popupOptions = `width=${popupWidth},height=${popupHeight},top=${top},left=${left},scrollbars=yes,resizable=yes`;
+
+    // 팝업 창을 열기
+    const popupWindow = window.open("", "_blank", popupOptions);
+
+    // 팝업 창이 열렸는지 확인 후 폼을 팝업 창에서 제출
+    if (popupWindow) {
+        // 팝업 창에 form을 작성하여 POST 방식으로 데이터를 전송
+        const form = popupWindow.document.createElement("form");
+        form.method = "POST";
+        form.action = popupUrl; // 팝업 창에서 처리할 URL
+
+
+        // 필요한 데이터를 form에 추가 (필요에 따라 수정 가능)
+        const input = popupWindow.document.createElement("input");
+        input.type = "hidden";
+        input.name = "inspectionContent";
+        input.value = inspResultId; // inspResultId는 팝업으로 전송할 데이터
+
+        form.appendChild(input);
+
+        // form을 팝업창에 추가 후 제출
+        popupWindow.document.body.appendChild(form);
+        form.submit();
+    } else {
+        alert("팝업 차단이 발생했습니다. 팝업을 허용해 주세요.");
+    }
+}
 
 

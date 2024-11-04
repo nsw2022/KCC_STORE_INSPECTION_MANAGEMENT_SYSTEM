@@ -94,6 +94,8 @@ function loadTemporaryInspection(inspResultId) {
       });
 }
 
+
+
 function applyTemporaryData(temporaryData) {
   // evitId, inspResultId, creMbrId를 키로 사용하여 tempDataMap 생성
   const tempDataMap = {};
@@ -109,6 +111,8 @@ function applyTemporaryData(temporaryData) {
       });
     }
   });
+
+  console.log("Temp Data Map:", tempDataMap);
 
   // 화면에 표시된 모든 문항을 순회하며 임시데이터를 반영
   document.querySelectorAll('.inspection-content-detail').forEach(detail => {
@@ -131,10 +135,20 @@ function applyTemporaryData(temporaryData) {
 
       // 상세 입력 필드 반영
       applyDetailContent(inspectionContentWrapper, tempData);
+
+      // 사진 경로 처리
+      if (tempData.photos && Array.isArray(tempData.photos)) {
+        // photos 배열을 seq 기준으로 정렬
+        const sortedPhotos = tempData.photos
+            .filter(photo => photo.photoPath && photo.seq)
+            .sort((a, b) => a.seq - b.seq);
+
+        // 수정된 setPhotoPaths 함수 호출
+        setPhotoPaths(inspectionContentWrapper, sortedPhotos);
+      }
     }
   });
 }
-
 
 
 
@@ -148,7 +162,7 @@ function applyAnswerContent(wrapper, answerContent) {
       if (btn.getAttribute('data-option-value') === answerContent) {
         btn.classList.add('active');
         // 이벤트 트리거를 통해 필드 활성화
-        btn.click();
+        // btn.click(); // 제거됨
       } else {
         btn.classList.remove('active');
       }
@@ -162,7 +176,7 @@ function applyAnswerContent(wrapper, answerContent) {
     if (radio.value === answerContent) {
       radio.checked = true;
       // 이벤트 트리거를 통해 필드 활성화
-      radio.dispatchEvent(new Event('change'));
+      // radio.dispatchEvent(new Event('change')); // 제거됨
     } else {
       radio.checked = false;
     }
@@ -178,30 +192,55 @@ function setResponsibility(detailContent, tempData) {
     "C004": "기타"
   };
 
-  // caupvdCd가 정의된 값인지 확인, 아니면 "기타"로 설정
-  let responsibilityValue = tempData.caupvdCd && caupvdCdValueMap[tempData.caupvdCd]
-      ? caupvdCdValueMap[tempData.caupvdCd]
-      : "기타";
+  let responsibilityValue;
 
-  const responsibilityRadios = detailContent.querySelectorAll('input[name^="responsibility_"]');
-  responsibilityRadios.forEach(radio => {
-    if (radio.value === responsibilityValue) {
-      radio.checked = true;
-      radio.dispatchEvent(new Event('change'));
+  if (tempData.caupvdCd) {
+    if (Object.values(caupvdCdValueMap).includes(tempData.caupvdCd)) {
+      // tempData.caupvdCd가 직접 라벨 값인 경우
+      responsibilityValue = tempData.caupvdCd;
+    } else if (caupvdCdValueMap[tempData.caupvdCd]) {
+      // tempData.caupvdCd가 코드 값인 경우
+      responsibilityValue = caupvdCdValueMap[tempData.caupvdCd];
     } else {
-      radio.checked = false;
-    }
-  });
-
-  // responsibilityValue가 "기타"인 경우에만 기타 입력 필드 활성화
-  if (responsibilityValue === "기타") {
-    const caupvdInput = detailContent.querySelector('.caupvd');
-    if (caupvdInput) {
-      caupvdInput.value = tempData.caupvdCd || ''; // 실제 값 설정
-      caupvdInput.disabled = false;
+      // 그 외의 경우 '기타'로 처리
+      responsibilityValue = "기타";
     }
   } else {
-    // 기타가 아닐 경우 입력 필드 비활성화 및 초기화
+    // tempData.caupvdCd가 null 또는 undefined인 경우
+    responsibilityValue = null;
+  }
+
+  // responsibilityValue가 존재할 때만 처리
+  if (responsibilityValue) {
+    const responsibilityRadios = detailContent.querySelectorAll('input[name^="responsibility_"]');
+    responsibilityRadios.forEach(radio => {
+      if (radio.value === responsibilityValue) {
+        radio.checked = true;
+        // '기타'일 경우에만 입력 필드 활성화
+        const caupvdInput = detailContent.querySelector('.caupvd');
+        if (radio.value === "기타") {
+          if (caupvdInput) {
+            caupvdInput.value = tempData.caupvdCd || ''; // 실제 값 설정
+            caupvdInput.disabled = false;
+          }
+        } else {
+          // '기타'가 아닌 경우 입력 필드 비활성화 및 초기화
+          if (caupvdInput) {
+            caupvdInput.value = '';
+            caupvdInput.disabled = true;
+          }
+        }
+      } else {
+        radio.checked = false;
+      }
+    });
+  } else {
+    // 모든 라디오 버튼 비활성화 및 입력 필드 초기화
+    const responsibilityRadios = detailContent.querySelectorAll('input[name^="responsibility_"]');
+    responsibilityRadios.forEach(radio => {
+      radio.checked = false;
+    });
+
     const caupvdInput = detailContent.querySelector('.caupvd');
     if (caupvdInput) {
       caupvdInput.value = '';
@@ -209,6 +248,7 @@ function setResponsibility(detailContent, tempData) {
     }
   }
 }
+
 
 
 function setLocation(locationContent, tempData) {
@@ -219,30 +259,55 @@ function setLocation(locationContent, tempData) {
     "VP004": "기타"
   };
 
-  // vltPlcCd가 정의된 값인지 확인, 아니면 "기타"로 설정
-  let locationValue = tempData.vltPlcCd && vltPlcCdValueMap[tempData.vltPlcCd]
-      ? vltPlcCdValueMap[tempData.vltPlcCd]
-      : "기타";
+  let locationValue;
 
-  const locationRadios = locationContent.querySelectorAll('input[name^="location_"]');
-  locationRadios.forEach(radio => {
-    if (radio.value === locationValue) {
-      radio.checked = true;
-      radio.dispatchEvent(new Event('change'));
+  if (tempData.vltPlcCd) {
+    if (Object.values(vltPlcCdValueMap).includes(tempData.vltPlcCd)) {
+      // tempData.vltPlcCd가 직접 라벨 값인 경우
+      locationValue = tempData.vltPlcCd;
+    } else if (vltPlcCdValueMap[tempData.vltPlcCd]) {
+      // tempData.vltPlcCd가 코드 값인 경우
+      locationValue = vltPlcCdValueMap[tempData.vltPlcCd];
     } else {
-      radio.checked = false;
-    }
-  });
-
-  // locationValue가 "기타"인 경우에만 기타 입력 필드 활성화
-  if (locationValue === "기타") {
-    const etcInput = locationContent.querySelector('.etc-input');
-    if (etcInput) {
-      etcInput.value = tempData.vltPlcCd || ''; // 실제 값 설정
-      etcInput.disabled = false;
+      // 그 외의 경우 '기타'로 처리
+      locationValue = "기타";
     }
   } else {
-    // 기타가 아닐 경우 입력 필드 비활성화 및 초기화
+    // tempData.vltPlcCd가 null 또는 undefined인 경우
+    locationValue = null;
+  }
+
+  // locationValue가 존재할 때만 처리
+  if (locationValue) {
+    const locationRadios = locationContent.querySelectorAll('input[name^="location_"]');
+    locationRadios.forEach(radio => {
+      if (radio.value === locationValue) {
+        radio.checked = true;
+        // '기타'일 경우에만 입력 필드 활성화
+        const etcInput = locationContent.querySelector('.etc-input');
+        if (radio.value === "기타") {
+          if (etcInput) {
+            etcInput.value = tempData.vltPlcCd || ''; // 실제 값 설정
+            etcInput.disabled = false;
+          }
+        } else {
+          // '기타'가 아닌 경우 입력 필드 비활성화 및 초기화
+          if (etcInput) {
+            etcInput.value = '';
+            etcInput.disabled = true;
+          }
+        }
+      } else {
+        radio.checked = false;
+      }
+    });
+  } else {
+    // 모든 라디오 버튼 비활성화 및 입력 필드 초기화
+    const locationRadios = locationContent.querySelectorAll('input[name^="location_"]');
+    locationRadios.forEach(radio => {
+      radio.checked = false;
+    });
+
     const etcInput = locationContent.querySelector('.etc-input');
     if (etcInput) {
       etcInput.value = '';
@@ -250,6 +315,8 @@ function setLocation(locationContent, tempData) {
     }
   }
 }
+
+
 
 
 
@@ -325,15 +392,125 @@ function applyDetailContent(wrapper, tempData) {
   console.log("Setting photo paths:", tempData.photoPaths); // 디버깅 로그
 
   // 로컬 경로를 제외하고 S3 경로만 추출
-  const s3PhotoPaths = tempData.photoPaths.filter(path => path && !path.startsWith('/'));
+  // const s3PhotoPaths = tempData.photoPaths.filter(path => path && !path.startsWith('/'));
+  const s3PhotoPaths = tempData.photos
+      .filter(photo => photo.photoPath && !photo.photoPath.startsWith('/'))
+      .sort((a, b) => a.seq - b.seq) // seq 기준 정렬
+      // .map(photo => photo.photoPath);
 
   setPhotoPaths(wrapper, s3PhotoPaths);
 }
 
 // S3 베이스 URL을 사용하는 대신, /download 엔드포인트를 사용
-function setPhotoPaths(inspectionContentWrapper, photoPaths) {
-  if (!photoPaths || !Array.isArray(photoPaths)) {
-    console.warn("photoPaths가 유효하지 않습니다:", photoPaths);
+// function setPhotoPaths(inspectionContentWrapper, photos) {
+//   if (!photos || !Array.isArray(photos)) {
+//     console.warn("photoPaths가 유효하지 않습니다:", photos);
+//     return;
+//   }
+//
+//   const photoBoxes = inspectionContentWrapper.querySelectorAll('.photo-box');
+//
+//   // 모든 photoBox를 초기화
+//   photoBoxes.forEach((box) => {
+//     box.style.backgroundImage = "";
+//     box.textContent = "사진 미등록";
+//     box.removeAttribute('data-path');
+//
+//     // 기존의 delete 버튼 제거
+//     const deleteButton = box.querySelector('.delete-btn');
+//     if (deleteButton) {
+//       deleteButton.remove();
+//     }
+//   });
+//
+//   // 사진 경로에 따라 사진 설정
+//   photos.forEach((path, index) => {
+//     if (path && !path.startsWith('/')) {
+//       const s3Key = 'inspection_img/' + path;
+//       const box = photoBoxes[index];
+//       if (box) {
+//         console.log(`Path ${s3Key} is recognized as an S3 key.`);
+//         fetch('/download', {
+//           method: 'POST',
+//           headers: {
+//             'Content-Type': 'application/json'
+//           },
+//           body: JSON.stringify({ path: s3Key })
+//         })
+//             .then(response => {
+//               console.log("Download response status:", response.status); // 디버깅 로그
+//               if (!response.ok) {
+//                 throw new Error(`파일 다운로드 실패: ${response.statusText}`);
+//               }
+//               return response.blob();
+//             })
+//             .then(blob => {
+//               const imageUrl = URL.createObjectURL(blob);
+//               console.log("Image URL created:", imageUrl); // 디버깅 로그
+//
+//               // 이미지 표시
+//               box.style.backgroundImage = `url(${imageUrl})`;
+//               box.style.backgroundSize = "cover";
+//               box.style.backgroundPosition = "center";
+//               box.style.backgroundRepeat = "no-repeat";
+//               box.textContent = "";
+//
+//               // S3 경로 저장 (접두사 없이 원본 path만 저장)
+//               box.setAttribute('data-path', path);
+//
+//               // X 버튼 추가 (이미 존재하지 않을 경우)
+//               if (!box.querySelector(".delete-btn")) {
+//                 const deleteButton = document.createElement("button");
+//                 deleteButton.classList.add("delete-btn");
+//                 deleteButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+//                 box.appendChild(deleteButton);
+//
+//                 // 이미지 삭제 기능
+//                 deleteButton.addEventListener("click", function () {
+//                   fetch('/delete', {
+//                     method: 'POST',
+//                     headers: {
+//                       'Content-Type': 'application/json'
+//                     },
+//                     body: JSON.stringify({ path: s3Key })
+//                   })
+//                       .then(response => response.json())
+//                       .then(data => {
+//                         if (data.error) {
+//                           throw new Error(data.error);
+//                         }
+//                         // 이미지 제거
+//                         box.style.backgroundImage = "";
+//                         box.textContent = "사진 미등록";
+//                         box.removeAttribute('data-path');
+//                         deleteButton.remove();
+//                       })
+//                       .catch(error => {
+//                         console.error("파일 삭제 실패:", error);
+//                         alert("파일 삭제에 실패했습니다.");
+//                       });
+//                 });
+//               }
+//             })
+//             .catch(error => {
+//               console.error(`이미지 로드 실패 (path: ${s3Key}):`, error);
+//               box.textContent = "이미지 로드 실패";
+//             });
+//       }
+//     } else {
+//       // path가 없거나 로컬 경로인 경우 처리
+//       console.warn(`Photo box ${index}에 대한 유효한 S3 path가 없습니다.`);
+//       const box = photoBoxes[index];
+//       if (box) {
+//         box.style.backgroundImage = "";
+//         box.textContent = "사진 미등록";
+//       }
+//     }
+//   });
+// }
+function setPhotoPaths(inspectionContentWrapper, photos) {
+  if (!photos || !Array.isArray(photos)) {
+    console.warn("photos가 유효하지 않습니다:", photos);
     return;
   }
 
@@ -352,10 +529,13 @@ function setPhotoPaths(inspectionContentWrapper, photoPaths) {
     }
   });
 
-  // 사진 경로에 따라 사진 설정
-  photoPaths.forEach((path, index) => {
-    if (path && !path.startsWith('/')) {
-      const s3Key = 'inspection_img/' + path;
+  // 사진 객체 배열을 순회하면서 각 사진을 설정
+  photos.forEach((photo) => {
+    const { seq, photoPath } = photo;
+    const index = seq - 1; // 배열 인덱스는 0부터 시작하므로
+
+    if (photoPath && !photoPath.startsWith('/')) {
+      const s3Key = 'inspection_img/' + photoPath;
       const box = photoBoxes[index];
       if (box) {
         console.log(`Path ${s3Key} is recognized as an S3 key.`);
@@ -367,7 +547,7 @@ function setPhotoPaths(inspectionContentWrapper, photoPaths) {
           body: JSON.stringify({ path: s3Key })
         })
             .then(response => {
-              console.log("Download response status:", response.status); // 디버깅 로그
+              console.log("Download response status:", response.status);
               if (!response.ok) {
                 throw new Error(`파일 다운로드 실패: ${response.statusText}`);
               }
@@ -375,7 +555,7 @@ function setPhotoPaths(inspectionContentWrapper, photoPaths) {
             })
             .then(blob => {
               const imageUrl = URL.createObjectURL(blob);
-              console.log("Image URL created:", imageUrl); // 디버깅 로그
+              console.log("Image URL created:", imageUrl);
 
               // 이미지 표시
               box.style.backgroundImage = `url(${imageUrl})`;
@@ -385,7 +565,7 @@ function setPhotoPaths(inspectionContentWrapper, photoPaths) {
               box.textContent = "";
 
               // S3 경로 저장 (접두사 없이 원본 path만 저장)
-              box.setAttribute('data-path', path);
+              box.setAttribute('data-path', photoPath);
 
               // X 버튼 추가 (이미 존재하지 않을 경우)
               if (!box.querySelector(".delete-btn")) {
@@ -427,7 +607,7 @@ function setPhotoPaths(inspectionContentWrapper, photoPaths) {
             });
       }
     } else {
-      // path가 없거나 로컬 경로인 경우 처리
+      // photoPath가 없거나 로컬 경로인 경우 처리
       console.warn(`Photo box ${index}에 대한 유효한 S3 path가 없습니다.`);
       const box = photoBoxes[index];
       if (box) {
@@ -437,6 +617,8 @@ function setPhotoPaths(inspectionContentWrapper, photoPaths) {
     }
   });
 }
+
+
 
 
 
@@ -676,7 +858,10 @@ function generateContent(data) {
   const tabContainer = document.querySelector(".inspection-tabs");
   const contentContainer = document.querySelector(".inspection-section");
 
-  let totalScoreValue = 0;
+  // 대분류의 개수를 기반으로 총 점수 계산
+  const totalScoreValue = data.length * 100;
+
+  console.log(`대분류의 갯수는?:`, data.length);
 
   data.forEach((category, index) => {
     console.log(`Generating content for category: ${category.categoryName}`);
@@ -745,6 +930,9 @@ function generateContent(data) {
         const inspectionContentWrapper = document.createElement("div");
         inspectionContentWrapper.classList.add("inspection-content-wrapper");
 
+
+        //------------------------------------------------------
+
         // 답변 섹션 생성
         let answerSection;
         if (question.questionType === "2-choice") {
@@ -804,19 +992,12 @@ function generateContent(data) {
                 detailContent
                     .querySelectorAll("input, textarea, select")
                     .forEach((input) => {
-                      if (
-                          !input.classList.contains("caupvd") &&
-                          !input.name.startsWith("etc_")
-                      ) {
-                        input.disabled = true;
-                        if (input.tagName.toLowerCase() === "textarea") {
-                          input.value = "";
-                        } else if (
-                            input.tagName.toLowerCase() === "input" &&
-                            input.type === "radio"
-                        ) {
-                          input.checked = false;
-                        }
+                      input.disabled = true;
+                      if (input.tagName.toLowerCase() === "textarea" || input.tagName.toLowerCase() === "input") {
+                        input.value = "";
+                      }
+                      if (input.type === "radio" || input.type === "checkbox") {
+                        input.checked = false;
                       }
                     });
 
@@ -882,24 +1063,15 @@ function generateContent(data) {
                 });
               } else {
                 // 그 외 선택 시 하위 입력 필드 비활성화 및 초기화 (etc-input과 caupvd 제외)
-                detailContent
-                    .querySelectorAll("input, textarea, select")
-                    .forEach((input) => {
-                      if (
-                          !input.classList.contains("caupvd") &&
-                          !input.name.startsWith("etc_")
-                      ) {
-                        input.disabled = true;
-                        if (input.tagName.toLowerCase() === "textarea") {
-                          input.value = "";
-                        } else if (
-                            input.tagName.toLowerCase() === "input" &&
-                            input.type === "radio"
-                        ) {
-                          input.checked = false;
-                        }
-                      }
-                    });
+                detailContent.querySelectorAll("input, textarea, select").forEach((input) => {
+                  input.disabled = true;
+                  if (input.tagName.toLowerCase() === "textarea" || input.tagName.toLowerCase() === "input") {
+                    input.value = "";
+                  }
+                  if (input.type === "radio" || input.type === "checkbox") {
+                    input.checked = false;
+                  }
+                });
 
                 // 위치정보 라디오 버튼 비활성화 및 초기화
                 locationInputs.forEach((input) => {
@@ -1206,12 +1378,10 @@ function generateContent(data) {
         inspectionContentWrapper.appendChild(storeInfo);
 
         inspectionContent.appendChild(inspectionContentWrapper);
-      });
 
-      // 중분류의 scoreChklstEvit 값을 합산
-      if (subcategory.scoreChklstEvit) {
-        totalScoreValue += parseInt(subcategory.scoreChklstEvit, 10) || 0;
-      }
+
+        //----------------------------------------------------
+      });
 
       inspectionBox.appendChild(inspectionHeader);
       inspectionBox.appendChild(inspectionContent);
@@ -1242,7 +1412,8 @@ function generateContent(data) {
 let deletedImages = [];
 function setupPhotoUpload(photoBoxes, cameraBtn, galleryBtn, inspectionContentWrapper) {
   // 기존 photoCount 제거하고 현재 사진 수를 기반으로 설정
-  let photoCount = Array.from(photoBoxes).filter(box => box.getAttribute('data-path')).length;
+  // let photoCount = Array.from(photoBoxes).filter(box => box.getAttribute('data-path')).length;
+  let photoCount = Array.from(photoBoxes.children).filter(box => box.getAttribute('data-path')).length;
 
   // 카메라 버튼 클릭 시
   cameraBtn.addEventListener("click", function () {
@@ -1290,6 +1461,103 @@ function setupPhotoUpload(photoBoxes, cameraBtn, galleryBtn, inspectionContentWr
   });
 
   // 이미지 업로드 및 표시 처리 함수
+  // function uploadAndDisplayImage(file, photoBoxes, inspectionContentWrapper) {
+  //   const formData = new FormData();
+  //   formData.append("file", file);
+  //
+  //   fetch('/upload', {
+  //     method: 'POST',
+  //     body: formData
+  //   })
+  //       .then(response => response.json())
+  //       .then(data => {
+  //         console.log("Upload response data:", data); // 디버깅 로그
+  //         if (data.error) {
+  //           throw new Error(data.error);
+  //         }
+  //
+  //         // S3 키 생성: data.path에 'inspection_img/'가 포함되어 있지 않은지 확인
+  //         const s3Key = data.path.startsWith('inspection_img/') ? data.path : 'inspection_img/' + data.path;
+  //
+  //         const emptyBox = Array.from(photoBoxes.children).find(
+  //             (box) => !box.style.backgroundImage
+  //         );
+  //         if (emptyBox) {
+  //           console.log("Fetching image from path:", s3Key); // 추가된 로그
+  //           fetch('/download', {
+  //             method: 'POST',
+  //             headers: {
+  //               'Content-Type': 'application/json'
+  //             },
+  //             body: JSON.stringify({ path: s3Key })
+  //           })
+  //               .then(response => {
+  //                 console.log("Download response status:", response.status); // 디버깅 로그
+  //                 if (!response.ok) {
+  //                   throw new Error(`파일 다운로드 실패: ${response.statusText}`);
+  //                 }
+  //                 return response.blob();
+  //               })
+  //               .then(blob => {
+  //                 const imageUrl = URL.createObjectURL(blob);
+  //                 console.log("Image URL created:", imageUrl); // 디버깅 로그
+  //
+  //                 // 이미지 표시
+  //                 emptyBox.style.backgroundImage = `url(${imageUrl})`;
+  //                 emptyBox.style.backgroundSize = "cover";
+  //                 emptyBox.style.backgroundPosition = "center";
+  //                 emptyBox.style.backgroundRepeat = "no-repeat";
+  //                 emptyBox.textContent = "";
+  //
+  //                 // S3 경로 저장 (접두사 없이 원본 path만 저장)
+  //                 emptyBox.setAttribute('data-path', data.path);
+  //
+  //                 // X 버튼 추가
+  //                 const deleteButton = document.createElement("button");
+  //                 deleteButton.classList.add("delete-btn");
+  //                 deleteButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+  //
+  //                 // 이미지 삭제 기능
+  //                 deleteButton.addEventListener("click", function () {
+  //                   fetch('/delete', {
+  //                     method: 'POST',
+  //                     headers: {
+  //                       'Content-Type': 'application/json'
+  //                     },
+  //                     body: JSON.stringify({ path: s3Key })
+  //                   })
+  //                       .then(response => response.json())
+  //                       .then(data => {
+  //                         if (data.error) {
+  //                           throw new Error(data.error);
+  //                         }
+  //                         // 이미지 제거
+  //                         emptyBox.style.backgroundImage = "";
+  //                         emptyBox.textContent = "사진 미등록";
+  //                         emptyBox.removeAttribute('data-path');
+  //                         deleteButton.remove();
+  //                         photoCount--;
+  //                       })
+  //                       .catch(error => {
+  //                         console.error("파일 삭제 실패:", error);
+  //                         alert("파일 삭제에 실패했습니다.");
+  //                       });
+  //                 });
+  //
+  //                 emptyBox.appendChild(deleteButton);
+  //                 photoCount++;
+  //               })
+  //               .catch(error => {
+  //                 console.error(`이미지 로드 실패 (path: ${s3Key}):`, error);
+  //                 alert("파일 다운로드에 실패했습니다.");
+  //               });
+  //         }
+  //       })
+  //       .catch(error => {
+  //         console.error("파일 업로드 실패:", error);
+  //         alert("파일 업로드에 실패했습니다.");
+  //       });
+  // }
   function uploadAndDisplayImage(file, photoBoxes, inspectionContentWrapper) {
     const formData = new FormData();
     formData.append("file", file);
@@ -1387,6 +1655,7 @@ function setupPhotoUpload(photoBoxes, cameraBtn, galleryBtn, inspectionContentWr
           alert("파일 업로드에 실패했습니다.");
         });
   }
+
 }
 
 
@@ -1553,10 +1822,11 @@ function getParameterByName(name) {
   return urlParams.get(name);
 }
 
+
 function temporarySave() {
   console.log("temporarySave() 함수가 호출됨");
 
-  // 1. URL 파라미터에서 필요한 값 가져오기
+  // URL 파라미터에서 필요한 값 가져오기
   const inspResultId = getParameterByName('inspResultId');
   if (!inspResultId) {
     alert('inspResultId가 누락되었습니다.');
@@ -1576,13 +1846,13 @@ function temporarySave() {
 
   const inspections = []; // 각 카테고리의 데이터를 저장할 배열
 
-  // 2. 각 카테고리 순회
+  // 각 카테고리 순회
   document.querySelectorAll('.inspection-tab').forEach(tab => {
     const categoryId = tab.getAttribute('data-tab');
     const categoryName = tab.textContent.trim();
     const subcategories = [];
 
-    // 3. 해당 카테고리의 문항들 순회
+    // 해당 카테고리의 문항들 순회
     const inspectionList = document.getElementById(categoryId);
     if (inspectionList) {
       inspectionList.querySelectorAll('.inspection-box').forEach(box => {
@@ -1603,7 +1873,7 @@ function temporarySave() {
             return;
           }
 
-          // 4. 각 문항의 상세 내용 추출
+          // 각 문항의 상세 내용 추출
           const answerContent = getAnswerContent(wrapper);
           const pdtNmDtplc = getProductName(wrapper) || "";
           const vltContent = getViolationContent(wrapper) || "";
@@ -1612,10 +1882,10 @@ function temporarySave() {
           const vltCause = getVltCause(wrapper) || "";
           const instruction = getInstruction(wrapper) || "";
           const vltPlcCd = getVltPlcCd(wrapper) || "";
-          let photoPaths = getPhotoPaths(wrapper) || [];
+          // let photoPaths = getPhotoPaths(wrapper) || [];
 
           // 사진 경로에서 null 값 제거
-          photoPaths = photoPaths.filter(path => path);
+          const photos = getPhotoPaths(wrapper) || [];
 
           // 필수 데이터 검증
           if (!answerContent) {
@@ -1623,7 +1893,7 @@ function temporarySave() {
             return;
           }
 
-          // 5. 서브카테고리 데이터 객체 생성
+          // 서브카테고리 데이터 객체 생성
           const subcategoryInspection = {
             evitId,
             answerContent,
@@ -1634,7 +1904,7 @@ function temporarySave() {
             vltCause,
             instruction,
             vltPlcCd,
-            photoPaths,
+            photos,
             inspResultId: parseInt(inspResultId, 10),
             creMbrId: creMbrId || "defaultCreMbrId", // creMbrId 추가
           };
@@ -1648,7 +1918,7 @@ function temporarySave() {
     inspections.push({ categoryName, subcategories });
   });
 
-  // 6. 최종 데이터 객체 생성
+  // 최종 데이터 객체 생성
   const requestData = {
     chklstId: parseInt(chklstId, 10),
     storeNm: storeNm,
@@ -1661,7 +1931,7 @@ function temporarySave() {
 
   console.log("Sending data to server:", JSON.stringify(requestData, null, 2));
 
-  // 7. 서버로 데이터 전송
+  // 서버로 데이터 전송
   sendDataToServer(requestData);
 }
 
@@ -1800,18 +2070,32 @@ function getVltPlcCd(locationContent) {
   return null;
 }
 
+// function getPhotoPaths(inspectionContentWrapper) {
+//   const photoBoxes = inspectionContentWrapper.querySelectorAll('.photo-box');
+//   const paths = [];
+//   photoBoxes.forEach(box => {
+//     const path = box.getAttribute('data-path');
+//     if (path) {
+//       paths.push(path);
+//     } else {
+//       paths.push(null); // undefined 대신 null 사용
+//     }
+//   });
+//   return paths;
+// }
 function getPhotoPaths(inspectionContentWrapper) {
   const photoBoxes = inspectionContentWrapper.querySelectorAll('.photo-box');
-  const paths = [];
-  photoBoxes.forEach(box => {
+  const photos = [];
+  photoBoxes.forEach((box, index) => {
     const path = box.getAttribute('data-path');
     if (path) {
-      paths.push(path);
-    } else {
-      paths.push(null); // undefined 대신 null 사용
+      photos.push({
+        seq: index + 1,
+        photoPath: path
+      });
     }
   });
-  return paths;
+  return photos;
 }
 
 
@@ -1822,125 +2106,199 @@ function getPhotoPaths(inspectionContentWrapper) {
 
 // -------------------------데이터 전달 함수-------------------------
 
-
 function checkInspection() {
   // 모든 .inspection-content-wrapper 요소를 가져옵니다.
   const inspectionWrappers = document.querySelectorAll('.inspection-content-wrapper');
   let allInputsValid = true; // 모든 입력이 유효한지 확인하기 위한 플래그
 
-  // 각 문항을 순회하며 검증합니다.
-  inspectionWrappers.forEach(wrapper => {
-    let answer = null;
-    let isNegative = false; // 부정적인 답변 여부
+  // 수집된 데이터를 저장할 배열
+  const inspections = [];
 
-    // .answer-section과 .answer-section2 중 어떤 섹션인지 확인
-    const answerSection = wrapper.querySelector('.answer-section');
-    const answerSection2 = wrapper.querySelector('.answer-section2');
+  // URL 파라미터 가져오기
+  const urlParams = new URLSearchParams(window.location.search);
+  const chklstId = urlParams.get("chklstId");
+  const storeNm = urlParams.get("storeNm");
+  const inspPlanDt = urlParams.get("inspPlanDt");
+  const inspSchdId = urlParams.get("inspSchdId");
+  const inspResultId = urlParams.get("inspResultId");
 
-    if (answerSection) {
-      // 2-choice 질문
-      const activeBtn = answerSection.querySelector('.answer-btn.active');
-      if (activeBtn) {
-        answer = activeBtn.getAttribute('data-option-value');
-      }
+  // 필수 파라미터 검증
+  if (!chklstId || !storeNm || !inspPlanDt || !inspSchdId || !inspResultId) {
+    alert('필수 파라미터(chklstId, storeNm, inspPlanDt, inspSchdId, inspResultId)가 누락되었습니다.');
+    return;
+  }
 
-      // 2-choice의 부정적인 답변 정의
-      const negativeAnswers = ['부적합'];
+  // 각 문항을 순회하며 검증 및 데이터 수집을 합니다.
+  document.querySelectorAll('.inspection-tab').forEach(tab => {
+    const categoryId = tab.getAttribute('data-tab');
+    const categoryName = tab.textContent.trim();
+    const subcategories = [];
 
-      // 답변이 선택되지 않은 경우
-      if (!answer) {
-        allInputsValid = false;
-        return; // 다음 문항으로 넘어감
-      }
+    const inspectionList = document.getElementById(categoryId);
+    if (inspectionList) {
+      inspectionList.querySelectorAll('.inspection-box').forEach(box => {
+        const subcategoryHeader = box.querySelector('.inspection-header');
+        const subcategoryName = subcategoryHeader
+            ? subcategoryHeader.textContent.trim().replace('▼', '').trim()
+            : "알 수 없는 서브카테고리";
 
-      // 부정적인 답변인지 확인
-      if (negativeAnswers.includes(answer)) {
-        isNegative = true;
-      }
-    } else if (answerSection2) {
-      // 5-choice 질문
-      const selectedRadio = answerSection2.querySelector('input[type="radio"]:checked');
-      if (selectedRadio) {
-        answer = selectedRadio.value;
-      }
+        box.querySelectorAll('.inspection-content-detail').forEach(detail => {
+          const evitId = parseInt(detail.getAttribute('data-evit-id'), 10);
+          const creMbrId = detail.getAttribute('data-cre-mbr-id');
+          const wrapper = detail.nextElementSibling;
 
-      // 5-choice의 부정적인 답변 정의
-      const negativeAnswers = ['나쁨', '매우나쁨'];
+          if (isNaN(evitId)) {
+            console.warn('유효하지 않은 evitId:', detail);
+            return;
+          }
 
-      // 답변이 선택되지 않은 경우
-      if (!answer) {
-        allInputsValid = false;
-        return; // 다음 문항으로 넘어감
-      }
+          let answer = null;
+          let isNegative = false; // 부정적인 답변 여부
 
-      // 부정적인 답변인지 확인
-      if (negativeAnswers.includes(answer)) {
-        isNegative = true;
-      }
-    } else {
-      // .answer-section 또는 .answer-section2가 없는 경우
-      console.warn("Unknown answer section type.");
-      allInputsValid = false;
-      return;
+          // .answer-section과 .answer-section2 중 어떤 섹션인지 확인
+          const answerSection = wrapper.querySelector('.answer-section');
+          const answerSection2 = wrapper.querySelector('.answer-section2');
+
+          if (answerSection) {
+            // 2-choice 질문
+            const activeBtn = answerSection.querySelector('.answer-btn.active');
+            if (activeBtn) {
+              answer = activeBtn.getAttribute('data-option-value');
+            }
+
+            // 2-choice의 부정적인 답변 정의
+            const negativeAnswers = ['부적합'];
+
+            // 답변이 선택되지 않은 경우
+            if (!answer) {
+              allInputsValid = false;
+              return; // 다음 문항으로 넘어감
+            }
+
+            // 부정적인 답변인지 확인
+            if (negativeAnswers.includes(answer)) {
+              isNegative = true;
+            }
+          } else if (answerSection2) {
+            // 5-choice 질문
+            const selectedRadio = answerSection2.querySelector('input[type="radio"]:checked');
+            if (selectedRadio) {
+              answer = selectedRadio.value;
+            }
+
+            // 5-choice의 부정적인 답변 정의
+            const negativeAnswers = ['나쁨', '매우나쁨'];
+
+            // 답변이 선택되지 않은 경우
+            if (!answer) {
+              allInputsValid = false;
+              return; // 다음 문항으로 넘어감
+            }
+
+            // 부정적인 답변인지 확인
+            if (negativeAnswers.includes(answer)) {
+              isNegative = true;
+            }
+          } else {
+            // .answer-section 또는 .answer-section2가 없는 경우
+            console.warn("Unknown answer section type.");
+            allInputsValid = false;
+            return;
+          }
+
+          // 부정적인 답변인 경우에만 추가 입력 필드 검증
+          if (isNegative) {
+            const locationContent = wrapper.querySelector('.location-content');
+            const detailContent = wrapper.querySelector('.detail-content');
+
+            // 1. 위치정보 라디오 버튼 확인
+            const locationRadios = locationContent.querySelectorAll('input[name^="location_"]');
+            const locationChecked = Array.from(locationRadios).some(radio => radio.checked);
+            if (!locationChecked) {
+              allInputsValid = false;
+              return;
+            }
+
+            // 2. "기타"가 선택된 경우 추가 입력 필드 확인
+            const locationEtcRadio = locationContent.querySelector('input[name^="location_"][value="기타"]');
+            if (locationEtcRadio && locationEtcRadio.checked) {
+              const etcInput = locationContent.querySelector('.etc-input');
+              if (!etcInput || !etcInput.value.trim()) {
+                allInputsValid = false;
+                return;
+              }
+            }
+
+            // 3. 상세입력 필드 확인
+            const requiredDetailFields = [
+              '.product-name',
+              '.violation-quantity',
+              '.reason',
+              '.action',
+              '.violation'
+            ];
+            for (const selector of requiredDetailFields) {
+              const input = detailContent.querySelector(selector);
+              if (!input || !input.value.trim()) {
+                allInputsValid = false;
+                return;
+              }
+            }
+
+            // 4. 귀책사유 라디오 버튼 확인
+            const responsibilityRadios = detailContent.querySelectorAll('input[name^="responsibility_"]');
+            const responsibilityChecked = Array.from(responsibilityRadios).some(radio => radio.checked);
+            if (!responsibilityChecked) {
+              allInputsValid = false;
+              return;
+            }
+
+            // 5. 귀책사유 "기타" 선택 시 추가 입력 필드 확인
+            const responsibilityEtcRadio = detailContent.querySelector('input[name^="responsibility_"][value="기타"]');
+            if (responsibilityEtcRadio && responsibilityEtcRadio.checked) {
+              const caupvdInput = detailContent.querySelector('.caupvd');
+              if (!caupvdInput || !caupvdInput.value.trim()) {
+                allInputsValid = false;
+                return;
+              }
+            }
+          }
+
+          // 데이터 수집
+          const pdtNmDtplc = getProductName(wrapper) || "";
+          const vltContent = getViolationContent(wrapper) || "";
+          const vltCnt = getViolationCount(wrapper) || 0;
+          const caupvdCd = getCaupvdCd(wrapper) || "";
+          const vltCause = getVltCause(wrapper) || "";
+          const instruction = getInstruction(wrapper) || "";
+          const vltPlcCd = getVltPlcCd(wrapper) || "";
+          // let photoPaths = getPhotoPaths(wrapper) || [];
+
+          // 사진 경로에서 null 값 제거
+          const photos = getPhotoPaths(wrapper) || [];
+
+          // 서브카테고리 데이터 객체 생성
+          const subcategoryInspection = {
+            evitId,
+            answerContent: answer,
+            pdtNmDtplc,
+            vltContent,
+            vltCnt,
+            caupvdCd,
+            vltCause,
+            instruction,
+            vltPlcCd,
+            photos,
+            inspResultId: parseInt(inspResultId, 10),
+            creMbrId: creMbrId || "defaultCreMbrId",
+          };
+
+          subcategories.push(subcategoryInspection);
+        });
+      });
     }
 
-    // 부정적인 답변인 경우에만 추가 입력 필드 검증
-    if (isNegative) {
-      const locationContent = wrapper.querySelector('.location-content');
-      const detailContent = wrapper.querySelector('.detail-content');
-
-      // 1. 위치정보 라디오 버튼 확인
-      const locationRadios = locationContent.querySelectorAll('input[name^="location_"]');
-      const locationChecked = Array.from(locationRadios).some(radio => radio.checked);
-      if (!locationChecked) {
-        allInputsValid = false;
-        return;
-      }
-
-      // 2. "기타"가 선택된 경우 추가 입력 필드 확인
-      const locationEtcRadio = locationContent.querySelector('input[name^="location_"][value="기타"]');
-      if (locationEtcRadio && locationEtcRadio.checked) {
-        const etcInput = locationContent.querySelector('.etc-input');
-        if (!etcInput || !etcInput.value.trim()) {
-          allInputsValid = false;
-          return;
-        }
-      }
-
-      // 3. 상세입력 필드 확인
-      const requiredDetailFields = [
-        '.product-name',
-        '.violation-quantity',
-        '.reason',
-        '.action',
-        '.violation'
-      ];
-      for (const selector of requiredDetailFields) {
-        const input = detailContent.querySelector(selector);
-        if (!input || !input.value.trim()) {
-          allInputsValid = false;
-          return;
-        }
-      }
-
-      // 4. 귀책사유 라디오 버튼 확인
-      const responsibilityRadios = detailContent.querySelectorAll('input[name^="responsibility_"]');
-      const responsibilityChecked = Array.from(responsibilityRadios).some(radio => radio.checked);
-      if (!responsibilityChecked) {
-        allInputsValid = false;
-        return;
-      }
-
-      // 5. 귀책사유 "기타" 선택 시 추가 입력 필드 확인
-      const responsibilityEtcRadio = detailContent.querySelector('input[name^="responsibility_"][value="기타"]');
-      if (responsibilityEtcRadio && responsibilityEtcRadio.checked) {
-        const caupvdInput = detailContent.querySelector('.caupvd');
-        if (!caupvdInput || !caupvdInput.value.trim()) {
-          allInputsValid = false;
-          return;
-        }
-      }
-    }
+    inspections.push({ categoryName, subcategories });
   });
 
   if (!allInputsValid) {
@@ -1957,109 +2315,20 @@ function checkInspection() {
     });
   }
 
-  // URL 파라미터 가져오기
-  const urlParams = new URLSearchParams(window.location.search);
-  const chklstId = urlParams.get("chklstId");
-  const storeNm = urlParams.get("storeNm");
-  const inspPlanDt = urlParams.get("inspPlanDt");
-  const inspSchdId = urlParams.get("inspSchdId");
-  const inspResultId = urlParams.get("inspResultId");
-
-  // 필수 파라미터 검증
-  if (!chklstId || !storeNm || !inspPlanDt || !inspSchdId || !inspResultId) {
-    alert('필수 파라미터(chklstId, storeNm, inspPlanDt, inspSchdId, inspResultId)가 누락되었습니다.');
-    return;
-  }
-
-  // 데이터 수집 로직 (temporarySave와 유사)
-  const inspections = []; // 각 카테고리의 데이터를 저장할 배열
-
-  // 1. 각 카테고리 순회
-  document.querySelectorAll('.inspection-tab').forEach(tab => {
-    const categoryId = tab.getAttribute('data-tab');
-    const categoryName = tab.textContent.trim();
-    const subcategories = [];
-
-    // 2. 해당 카테고리의 문항들 순회
-    const inspectionList = document.getElementById(categoryId);
-    if (inspectionList) {
-      inspectionList.querySelectorAll('.inspection-box').forEach(box => {
-        const subcategoryHeader = box.querySelector('.inspection-header');
-        const subcategoryName = subcategoryHeader
-            ? subcategoryHeader.textContent.trim().replace('▼', '').trim()
-            : "알 수 없는 서브카테고리";
-
-        console.log(`Processing Subcategory: ${subcategoryName}`); // 디버깅 로그
-
-        box.querySelectorAll('.inspection-content-detail').forEach(detail => {
-          const evitId = parseInt(detail.getAttribute('data-evit-id'), 10);
-          const creMbrId = detail.getAttribute('data-cre-mbr-id'); // 추가된 부분
-          const wrapper = detail.nextElementSibling;
-
-          if (isNaN(evitId)) {
-            console.warn('유효하지 않은 evitId:', detail);
-            return;
-          }
-
-          // 각 문항의 상세 내용 추출
-          const answerContent = getAnswerContent(wrapper);
-          const pdtNmDtplc = getProductName(wrapper) || "";
-          const vltContent = getViolationContent(wrapper) || "";
-          const vltCnt = getViolationCount(wrapper) || 0;
-          const caupvdCd = getCaupvdCd(wrapper) || "";
-          const vltCause = getVltCause(wrapper) || "";
-          const instruction = getInstruction(wrapper) || "";
-          const vltPlcCd = getVltPlcCd(wrapper) || "";
-          let photoPaths = getPhotoPaths(wrapper) || [];
-
-          // 사진 경로에서 null 값 제거
-          photoPaths = photoPaths.filter(path => path);
-
-          // 필수 데이터 검증
-          if (!answerContent) {
-            console.warn(`답변이 누락됨. evitId: ${evitId}`);
-            return;
-          }
-
-          // 서브카테고리 데이터 객체 생성
-          const subcategoryInspection = {
-            evitId,
-            answerContent,
-            pdtNmDtplc,
-            vltContent,
-            vltCnt,
-            caupvdCd,
-            vltCause,
-            instruction,
-            vltPlcCd,
-            photoPaths,
-            inspResultId: parseInt(inspResultId, 10),
-            creMbrId: creMbrId || "defaultCreMbrId", // creMbrId 추가
-          };
-
-          console.log(`Collected data for evitId ${evitId}:`, subcategoryInspection);
-          subcategories.push(subcategoryInspection);
-        });
-      });
-    }
-
-    inspections.push({ categoryName, subcategories });
-  });
-
   // 최종 데이터 객체 생성
   const requestData = {
     chklstId: parseInt(chklstId, 10),
     storeNm: storeNm,
     inspPlanDt: inspPlanDt,
     inspResultId: parseInt(inspResultId, 10),
-    inspSchdId: parseInt(inspSchdId, 10), // 기존 함수에서 가져온 스케줄 ID 추가
-    inspComplW: "N", // 임시저장 상태
+    inspSchdId: parseInt(inspSchdId, 10),
+    inspComplW: "N",
     inspections,
   };
 
   console.log("Sending data to server:", JSON.stringify(requestData, null, 2));
 
-  // 서버로 데이터 전송 (temporarySave 로직)
+  // 서버로 데이터 전송 (temporarySave 로직과 동일)
   fetch('/filter/store_inspection_save', {
     method: 'POST',
     headers: {
@@ -2083,7 +2352,7 @@ function checkInspection() {
         }).then(() => {
           // 알림 확인 후 페이지 이동
           const form = document.createElement("form");
-          form.method = "GET"; // GET 방식 사용 (필요 시 "POST"로 변경 가능)
+          form.method = "GET"; // GET 방식 사용
           form.action = "/qsc/popup_middleCheck";
 
           // 숨겨진 입력 필드 생성 및 추가
@@ -2127,8 +2396,3 @@ function checkInspection() {
         Swal.fire("오류", "점검결과를 저장하는 데 실패했습니다.", "error");
       });
 }
-
-
-
-
-

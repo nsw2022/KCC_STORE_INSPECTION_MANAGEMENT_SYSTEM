@@ -114,18 +114,9 @@ public class StoreInspectionController {
     }
 
 
-    @PostMapping("/popup_signature")
-    public String moveToSignaturePage(Model model, @RequestParam Map<String, String> allParams) {
-//        log.info("Received parameters: " + allParams);
+    @GetMapping("/popup_signature")
+    public String moveToSignaturePage(Model model) {
 
-        // 필드 값이 없을 때 기본값 설정
-        String textareaData = allParams.getOrDefault("textareaData", "");
-        model.addAttribute("textareaData", textareaData);
-
-        // 다른 필요한 필드도 같은 방식으로 기본값 설정
-        // model.addAttribute("otherField", allParams.getOrDefault("otherField", "default"));
-
-        // popup_signature.jsp로 이동
         return "qsc/store_inspection/popup_signature";
     }
 

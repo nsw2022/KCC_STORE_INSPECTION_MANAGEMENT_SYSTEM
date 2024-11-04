@@ -1,6 +1,8 @@
 package com.sims.qsc.store_inspection.vo;
 
 import lombok.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -20,8 +22,15 @@ public class StoreInspectionPopupRequest {
 
     private List<CategoryInspection> inspections;
 
+    private String signImgPath; // 서명 이미지 경로
+    private String totalReview; // 총평
+
+    private Integer totalScore; // 총점
+    private Integer totalPenalty; // 총과태료
+    private Integer totalClosureDays; // 총영업정지일수
+
     @Builder
-    public StoreInspectionPopupRequest(Long chklstId, String storeNm, String inspPlanDt, Long inspResultId, Long inspSchdId,  String inspComplW, Long creMbrId, List<CategoryInspection> inspections) {
+    public StoreInspectionPopupRequest(Long chklstId, String storeNm, String inspPlanDt, Long inspResultId, Long inspSchdId,  String inspComplW, Long creMbrId, List<CategoryInspection> inspections, String signImgPath, String totalReview, Integer totalScore, Integer totalPenalty, Integer totalClosureDays) {
         this.chklstId = chklstId;
         this.storeNm = storeNm;
         this.inspPlanDt = inspPlanDt;
@@ -30,7 +39,16 @@ public class StoreInspectionPopupRequest {
         this.inspSchdId = inspSchdId;
         this.inspComplW = inspComplW;
         this.creMbrId = creMbrId;
+
         this.inspections = inspections != null ? inspections : List.of(); // null 체크 및 기본값 설정
+
+        this.signImgPath = signImgPath;
+        this.totalReview = totalReview;
+
+        this.totalScore = totalScore;
+        this.totalPenalty = totalPenalty;
+        this.totalClosureDays = totalClosureDays;
+
     }
 
     @Getter
@@ -54,7 +72,8 @@ public class StoreInspectionPopupRequest {
     @ToString
     public static class SubcategoryInspection {
         private String subcategoryName; // 예: '영업취소', '영업정지 1개월', 등
-        private List<String> photoPaths; // 사진 경로 목록
+//        private List<String> photoPaths; // 사진 경로 목록
+        private List<Photo> photos; // 변경된 부분
 
         // 추가 필드 (예: EVIT_ID, answerContent 등)
         private Long evitId;
@@ -73,12 +92,13 @@ public class StoreInspectionPopupRequest {
         private boolean shouldMergeAnswImg;
 
         @Builder
-        public SubcategoryInspection(String subcategoryName, List<String> photoPaths,
+        public SubcategoryInspection(String subcategoryName, List<Photo> photos,
                                      Long evitId, String answerContent, String pdtNmDtplc, String vltContent,
                                      Integer vltCnt, String caupvdCd, String vltCause, String instruction,
                                      String vltPlcCd, Long creMbrId,Long inspResultId) {
             this.subcategoryName = subcategoryName;
-            this.photoPaths = photoPaths != null ? photoPaths : List.of(); // null 체크 및 기본값 설정
+//            this.photoPaths = photoPaths != null ? photoPaths : List.of(); // null 체크 및 기본값 설정
+            this.photos = photos != null ? photos : new ArrayList<>();
             this.evitId = evitId;
             this.answerContent = answerContent;
             this.pdtNmDtplc = pdtNmDtplc;
@@ -93,6 +113,23 @@ public class StoreInspectionPopupRequest {
 
 
 
+        }
+    }
+
+    // Photo 클래스 추가
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @ToString
+    @Builder
+    public static class Photo {
+        private Integer seq;
+        private String photoPath;
+
+        @Builder
+        public Photo(Integer seq, String photoPath) {
+            this.seq = seq;
+            this.photoPath = photoPath;
         }
     }
 

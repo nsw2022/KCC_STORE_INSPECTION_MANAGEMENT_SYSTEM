@@ -35,6 +35,7 @@
             , e.NPRFS_CD AS nprfsCd
             , e.PENALTY AS penalty
             , e.SCORE AS scoreEvitChclst  -- EVIT_CHCLST 테이블의 SCORE
+            , e.BSN_SSPN_DAYNUM AS bsnSspnDaynum
         FROM
             INSP_SCHD isch
                 JOIN STORE s ON isch.STORE_ID = s.STORE_ID
@@ -54,9 +55,10 @@
     <select id="selectRecentInspectionHistory" resultType="com.sims.qsc.store_inspection.vo.RecentInspectionHistoryResponse">
         SELECT
             c.CHKLST_NM AS chklstNm
-            , isch.INSP_PLAN_DT AS inspPlanDt
-            , m.MBR_NM AS mbrNm
-            , ir.TOTAL_SCORE AS totalScore
+             , isch.INSP_PLAN_DT AS inspPlanDt
+             , m.MBR_NM AS mbrNm
+             , ir.TOTAL_SCORE AS totalScore
+             , ir.INSP_RESULT_ID
         FROM
             INSP_SCHD isch
                 JOIN STORE s ON isch.STORE_ID = s.STORE_ID
@@ -86,11 +88,11 @@
             SELECT INSP_RESULT_SEQ.NEXTVAL FROM DUAL
         </selectKey>
         INSERT INTO INSP_RESULT (
-            INSP_RESULT_ID,
-            INSP_SCHD_ID,
-            INSP_START_TM,
-            CRE_MBR_ID,
-            CRE_TM
+            INSP_RESULT_ID
+            , INSP_SCHD_ID
+            , INSP_START_TM
+            , CRE_MBR_ID
+            , CRE_TM
         ) VALUES (
                      #{inspResultId},
                      #{inspSchdId},
@@ -102,92 +104,15 @@
 
 
 
-<!--    <insert id="mergeEVIT_ANSW" parameterType="com.sims.qsc.store_inspection.vo.StoreInspectionPopupRequest$SubcategoryInspection">-->
-<!--        MERGE INTO EVIT_ANSW t-->
-<!--            USING (-->
-<!--                SELECT-->
-<!--                    #{evitId} AS evitId,-->
-<!--                    #{inspResultId} AS inspResultId,-->
-<!--                    #{creMbrId} AS creMbrId-->
-<!--                FROM dual-->
-<!--            ) s-->
-<!--            ON (-->
-<!--                t.EVIT_ID = s.evitId AND-->
-<!--                t.INSP_RESULT_ID = s.inspResultId AND-->
-<!--                t.CRE_MBR_ID = s.creMbrId-->
-<!--                )-->
-<!--            WHEN MATCHED THEN-->
-<!--                UPDATE SET-->
-<!--                    t.EVIT_ANSW_CONTENT = #{answerContent},-->
-<!--                    t.CRE_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')-->
-<!--            WHEN NOT MATCHED THEN-->
-<!--                INSERT (ANSW_ID, EVIT_ID, INSP_RESULT_ID, EVIT_ANSW_CONTENT, CRE_MBR_ID, CRE_TM)-->
-<!--                    VALUES (EVIT_ANSW_SEQ.NEXTVAL, #{evitId}, #{inspResultId}, #{answerContent}, #{creMbrId}, TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI'))-->
-<!--    </insert>-->
 
-<!--    -->
-
-<!--    <insert id="mergeEVIT_VLT" parameterType="com.sims.qsc.store_inspection.vo.StoreInspectionPopupRequest$SubcategoryInspection">-->
-<!--        MERGE INTO EVIT_VLT t-->
-<!--            USING (-->
-<!--                SELECT-->
-<!--                    #{evitId} AS evitId,-->
-<!--                    #{inspResultId} AS inspResultId,-->
-<!--                    #{creMbrId} AS creMbrId-->
-<!--                FROM dual-->
-<!--            ) s-->
-<!--            ON (-->
-<!--                t.EVIT_ID = s.evitId AND-->
-<!--                t.INSP_RESULT_ID = s.inspResultId AND-->
-<!--                t.CRE_MBR_ID = s.creMbrId-->
-<!--                )-->
-<!--            WHEN MATCHED THEN-->
-<!--                UPDATE SET-->
-<!--                    t.PDT_NM_DTPLC = #{pdtNmDtplc, jdbcType=VARCHAR},-->
-<!--                    t.VLT_CONTENT = #{vltContent, jdbcType=VARCHAR},-->
-<!--                    t.VLT_CNT = #{vltCnt, jdbcType=INTEGER},-->
-<!--                    t.CAUPVD_CD = #{caupvdCd, jdbcType=VARCHAR},-->
-<!--                    t.VLT_CAUSE = #{vltCause, jdbcType=VARCHAR},-->
-<!--                    t.INSTRUCTION = #{instruction, jdbcType=VARCHAR},-->
-<!--                    t.VLT_PLC_CD = #{vltPlcCd, jdbcType=VARCHAR},-->
-<!--                    t.CRE_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')-->
-<!--            WHEN NOT MATCHED THEN-->
-<!--                INSERT (VLT_ID, EVIT_ID, INSP_RESULT_ID, PDT_NM_DTPLC, VLT_CONTENT, VLT_CNT, CAUPVD_CD, VLT_CAUSE, INSTRUCTION, VLT_PLC_CD, CRE_MBR_ID, CRE_TM)-->
-<!--                    VALUES (EVIT_VLT_SEQ.NEXTVAL, #{evitId}, #{inspResultId}, #{pdtNmDtplc, jdbcType=VARCHAR}, #{vltContent, jdbcType=VARCHAR}, #{vltCnt, jdbcType=INTEGER}, #{caupvdCd, jdbcType=VARCHAR}, #{vltCause, jdbcType=VARCHAR}, #{instruction, jdbcType=VARCHAR}, #{vltPlcCd, jdbcType=VARCHAR}, #{creMbrId}, TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI'))-->
-<!--    </insert>-->
-<!--    -->
-<!--    <insert id="mergeEVIT_ANSW_IMG" parameterType="map">-->
-<!--        MERGE INTO EVIT_ANSW_IMG t-->
-<!--            USING (-->
-<!--                SELECT-->
-<!--                    #{evitId} AS evitId,-->
-<!--                    #{inspResultId} AS inspResultId,-->
-<!--                    #{seq} AS seq,-->
-<!--                    #{creMbrId} AS creMbrId-->
-<!--                FROM dual-->
-<!--            ) s-->
-<!--            ON (-->
-<!--                t.EVIT_ID = s.evitId AND-->
-<!--                t.INSP_RESULT_ID = s.inspResultId AND-->
-<!--                t.SEQ = s.seq AND-->
-<!--                t.CRE_MBR_ID = s.creMbrId-->
-<!--                )-->
-<!--            WHEN MATCHED THEN-->
-<!--                UPDATE SET-->
-<!--                    t.EVIT_ANSW_IMG_PATH = #{photoPath},-->
-<!--                    t.CRE_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')-->
-<!--            WHEN NOT MATCHED THEN-->
-<!--                INSERT (ANSW_IMG_ID, EVIT_ID, INSP_RESULT_ID, EVIT_ANSW_IMG_PATH, SEQ, CRE_MBR_ID, CRE_TM)-->
-<!--                    VALUES (EVIT_ANSW_IMG_SEQ.NEXTVAL, #{evitId}, #{inspResultId}, #{photoPath}, #{seq}, #{creMbrId}, TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI'))-->
-<!--    </insert>-->
     <!-- MERGE EVIT_ANSW -->
     <update id="mergeEVIT_ANSW" parameterType="com.sims.qsc.store_inspection.vo.StoreInspectionPopupRequest$SubcategoryInspection">
         MERGE INTO EVIT_ANSW t
             USING (
                 SELECT
-                    #{evitId} AS evitId,
-                    #{inspResultId} AS inspResultId,
-                    #{creMbrId} AS creMbrId
+                    #{evitId} AS evitId
+                    , #{inspResultId} AS inspResultId
+                    , #{creMbrId} AS creMbrId
                 FROM dual
             ) s
             ON (
@@ -209,9 +134,9 @@
         MERGE INTO EVIT_VLT t
             USING (
                 SELECT
-                    #{evitId} AS evitId,
-                    #{inspResultId} AS inspResultId,
-                    #{creMbrId} AS creMbrId
+                    #{evitId} AS evitId
+                    , #{inspResultId} AS inspResultId
+                    , #{creMbrId} AS creMbrId
                 FROM dual
             ) s
             ON (
@@ -221,14 +146,14 @@
                 )
             WHEN MATCHED THEN
                 UPDATE SET
-                    t.PDT_NM_DTPLC = #{pdtNmDtplc, jdbcType=VARCHAR},
-                    t.VLT_CONTENT = #{vltContent, jdbcType=VARCHAR},
-                    t.VLT_CNT = #{vltCnt, jdbcType=INTEGER},
-                    t.CAUPVD_CD = #{caupvdCd, jdbcType=VARCHAR},
-                    t.VLT_CAUSE = #{vltCause, jdbcType=VARCHAR},
-                    t.INSTRUCTION = #{instruction, jdbcType=VARCHAR},
-                    t.VLT_PLC_CD = #{vltPlcCd, jdbcType=VARCHAR},
-                    t.CRE_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+                    t.PDT_NM_DTPLC = #{pdtNmDtplc, jdbcType=VARCHAR}
+                    , t.VLT_CONTENT = #{vltContent, jdbcType=VARCHAR}
+                    , t.VLT_CNT = #{vltCnt, jdbcType=INTEGER}
+                    , t.CAUPVD_CD = #{caupvdCd, jdbcType=VARCHAR}
+                    , t.VLT_CAUSE = #{vltCause, jdbcType=VARCHAR}
+                    , t.INSTRUCTION = #{instruction, jdbcType=VARCHAR}
+                    , t.VLT_PLC_CD = #{vltPlcCd, jdbcType=VARCHAR}
+                    , t.CRE_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
             WHEN NOT MATCHED THEN
                 INSERT (VLT_ID, EVIT_ID, INSP_RESULT_ID, PDT_NM_DTPLC, VLT_CONTENT, VLT_CNT, CAUPVD_CD, VLT_CAUSE, INSTRUCTION, VLT_PLC_CD, CRE_MBR_ID, CRE_TM)
                     VALUES (EVIT_VLT_SEQ.NEXTVAL, #{evitId}, #{inspResultId}, #{pdtNmDtplc, jdbcType=VARCHAR}, #{vltContent, jdbcType=VARCHAR}, #{vltCnt, jdbcType=INTEGER}, #{caupvdCd, jdbcType=VARCHAR}, #{vltCause, jdbcType=VARCHAR}, #{instruction, jdbcType=VARCHAR}, #{vltPlcCd, jdbcType=VARCHAR}, #{creMbrId}, TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI'))
@@ -239,10 +164,10 @@
         MERGE INTO EVIT_ANSW_IMG t
             USING (
                 SELECT
-                    #{evitId} AS evitId,
-                    #{inspResultId} AS inspResultId,
-                    #{seq} AS seq,
-                    #{creMbrId} AS creMbrId
+                    #{evitId} AS evitId
+                    , #{inspResultId} AS inspResultId
+                    , #{seq} AS seq
+                    , #{creMbrId} AS creMbrId
                 FROM dual
             ) s
             ON (
@@ -260,16 +185,16 @@
                     VALUES (EVIT_ANSW_IMG_SEQ.NEXTVAL, #{evitId}, #{inspResultId}, #{photoPath}, #{seq}, #{creMbrId}, TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI'))
     </insert>
 
-
-
+    <!-- 불필요한 이미지 레코드 삭제 -->
     <delete id="deleteUnmatchedEVIT_ANSW_IMG" parameterType="map">
-        DELETE FROM EVIT_ANSW_IMG t
-        WHERE t.EVIT_ID = #{evitId}
-          AND t.INSP_RESULT_ID = #{inspResultId}
-          AND t.SEQ NOT IN
-      <foreach item="seq" index="index" collection="seqList" open="(" separator="," close=")">
+        DELETE FROM EVIT_ANSW_IMG
+        WHERE EVIT_ID = #{evitId}
+        AND INSP_RESULT_ID = #{inspResultId}
+        AND CRE_MBR_ID = #{creMbrId}
+        AND SEQ NOT IN
+        <foreach item="seq" index="index" collection="seqList" open="(" separator="," close=")">
             #{seq}
-            </foreach>
+        </foreach>
     </delete>
 
     <!--  삭제될 이미지의 경로를 조회  -->
@@ -284,81 +209,89 @@
         </foreach>
     </select>
 
+    <!--  총점수, 총과태료, 총영업정지일 추가  -->
+    <update id="updateINSP_RESULTTotals" parameterType="com.sims.qsc.store_inspection.vo.StoreInspectionPopupRequest">
+        UPDATE INSP_RESULT
+        SET
+            TOTAL_SCORE = #{totalScore},
+            TOTAL_PENALTY = #{totalPenalty},
+            TOTAL_BSN_SSPN = #{totalClosureDays}
+        WHERE INSP_RESULT_ID = #{inspResultId}
+    </update>
 
+
+    <!--  최종저장  -->
+    <update id="updateInspResultCompletion" parameterType="com.sims.qsc.store_inspection.vo.StoreInspectionPopupRequest">
+        UPDATE INSP_RESULT
+        SET
+            SIGN_IMG_PATH = #{signImgPath}
+            , TOTAL_REVIEW = #{totalReview}
+            , INSP_COMPL_W = 'Y'
+            , INSP_COMPL_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+        WHERE INSP_RESULT_ID = #{inspResultId}
+    </update>
+
+    <!-- INSP_SCHD 업데이트 쿼리 -->
+    <update id="updateInspSchdStatus" parameterType="com.sims.qsc.store_inspection.vo.StoreInspectionPopupRequest">
+        UPDATE INSP_SCHD s
+        SET
+            s.INSP_STTS_CD = 'IS002'
+        WHERE s.INSP_SCHD_ID = (
+            SELECT r.INSP_SCHD_ID
+            FROM INSP_RESULT r
+            WHERE r.INSP_RESULT_ID = #{inspResultId}
+        )
+    </update>
 
 
     <!-- 임시저장된 EVIT_ANSW 및 EVIT_ANSW_IMG 조회 -->
-<!--    <select id="selectTemporaryAnswImg" resultType="com.sims.qsc.store_inspection.vo.StoreInspectionPopupResponse$EvitAnswImgVO">-->
+<!--    <select id="selectTemporaryInspectionDetails" parameterType="map" resultType="com.sims.qsc.store_inspection.vo.StoreInspectionPopupResponse$TemporaryInspectionDetailsVO">-->
 <!--        SELECT-->
-<!--            EA.EVIT_ANSW_CONTENT,-->
-<!--            EA.EVIT_ID AS EA_EVIT_ID,-->
-<!--            EA.CRE_MBR_ID AS EA_CRE_MBR_ID,-->
-<!--            EAI.EVIT_ANSW_IMG_PATH,-->
-<!--            EAI.EVIT_ID AS EAI_EVIT_ID,-->
-<!--            EAI.CRE_MBR_ID AS EAI_CRE_MBR_ID,-->
-<!--            EAI.SEQ-->
+<!--            EV.VLT_ID-->
+<!--            , EA.EVIT_ID-->
+<!--            , EA.INSP_RESULT_ID-->
+<!--            , EV.PDT_NM_DTPLC-->
+<!--            , EV.VLT_CONTENT-->
+<!--            , EV.VLT_CNT-->
+<!--            , EV.CAUPVD_CD-->
+<!--            , EV.VLT_CAUSE-->
+<!--            , EV.INSTRUCTION-->
+<!--            , EV.VLT_PLC_CD-->
+<!--            , EA.CRE_MBR_ID AS CRE_MBR_ID_EV_VLT-->
+<!--            , EA.CRE_TM AS CRE_TM_EV_VLT-->
+<!--            , EA.EVIT_ANSW_CONTENT-->
+<!--            , EAI.EVIT_ANSW_IMG_PATH-->
+<!--            , EAI.SEQ-->
+<!--            , IR.CRE_MBR_ID AS creMbrId-->
 <!--        FROM-->
 <!--            INSP_RESULT IR-->
-<!--                INNER JOIN EVIT_ANSW EA-->
-<!--                           ON IR.INSP_RESULT_ID = EA.INSP_RESULT_ID-->
-<!--                INNER JOIN EVIT_ANSW_IMG EAI-->
-<!--                           ON EA.EVIT_ID = EAI.EVIT_ID-->
-<!--                               AND EA.INSP_RESULT_ID = EAI.INSP_RESULT_ID-->
+<!--                INNER JOIN EVIT_ANSW EA ON EA.INSP_RESULT_ID = IR.INSP_RESULT_ID-->
+<!--                LEFT JOIN EVIT_VLT EV ON EV.INSP_RESULT_ID = EA.INSP_RESULT_ID AND EV.EVIT_ID = EA.EVIT_ID-->
+<!--                LEFT JOIN EVIT_ANSW_IMG EAI ON EAI.EVIT_ID = EA.EVIT_ID AND EAI.INSP_RESULT_ID = EA.INSP_RESULT_ID-->
 <!--        WHERE-->
 <!--            IR.INSP_COMPL_W = 'N'-->
 <!--          AND IR.INSP_RESULT_ID = #{inspResultId}-->
-<!--          AND EA.CRE_MBR_ID = #{creMbrId}-->
-<!--    </select>-->
-
-<!--    &lt;!&ndash; 임시저장된 EVIT_VLT, EVIT_ANSW, EVIT_ANSW_IMG 조회 &ndash;&gt;-->
-<!--    <select id="selectTemporaryVlt" resultType="com.sims.qsc.store_inspection.vo.StoreInspectionPopupResponse$EvitVltVO">-->
-<!--        SELECT-->
-<!--            EV.VLT_ID,-->
-<!--            EV.EVIT_ID,-->
-<!--            EV.INSP_RESULT_ID,-->
-<!--            EV.PDT_NM_DTPLC,-->
-<!--            EV.VLT_CONTENT,-->
-<!--            EV.VLT_CNT,-->
-<!--            EV.CAUPVD_CD,-->
-<!--            EV.VLT_CAUSE,-->
-<!--            EV.INSTRUCTION,-->
-<!--            EV.VLT_PLC_CD,-->
-<!--            EV.CRE_MBR_ID,-->
-<!--            EV.CRE_TM,-->
-<!--            EA.EVIT_ANSW_CONTENT,-->
-<!--            EAI.EVIT_ANSW_IMG_PATH,-->
-<!--            EAI.SEQ-->
-<!--        FROM-->
-<!--            INSP_RESULT IR-->
-<!--                INNER JOIN EVIT_VLT EV ON IR.INSP_RESULT_ID = EV.INSP_RESULT_ID-->
-<!--                LEFT JOIN EVIT_ANSW EA ON EV.EVIT_ID = EA.EVIT_ID-->
-<!--                AND EV.INSP_RESULT_ID = EA.INSP_RESULT_ID-->
-<!--                LEFT JOIN EVIT_ANSW_IMG EAI ON EV.EVIT_ID = EAI.EVIT_ID-->
-<!--                AND EV.INSP_RESULT_ID = EAI.INSP_RESULT_ID-->
-<!--        WHERE-->
-<!--            IR.INSP_COMPL_W = 'N'-->
-<!--          AND IR.INSP_RESULT_ID = #{inspResultId}-->
-<!--          AND EV.CRE_MBR_ID = #{creMbrId}-->
+<!--          AND IR.CRE_MBR_ID = #{creMbrId}-->
 <!--    </select>-->
 
     <select id="selectTemporaryInspectionDetails" parameterType="map" resultType="com.sims.qsc.store_inspection.vo.StoreInspectionPopupResponse$TemporaryInspectionDetailsVO">
         SELECT
-            EV.VLT_ID,
-            EA.EVIT_ID,
-            EA.INSP_RESULT_ID,
-            EV.PDT_NM_DTPLC,
-            EV.VLT_CONTENT,
-            EV.VLT_CNT,
-            EV.CAUPVD_CD,
-            EV.VLT_CAUSE,
-            EV.INSTRUCTION,
-            EV.VLT_PLC_CD,
-            EA.CRE_MBR_ID AS CRE_MBR_ID_EV_VLT,
-            EA.CRE_TM AS CRE_TM_EV_VLT,
-            EA.EVIT_ANSW_CONTENT,
-            EAI.EVIT_ANSW_IMG_PATH,
-            EAI.SEQ,
-            IR.CRE_MBR_ID AS creMbrId
+            EV.VLT_ID
+             , EA.EVIT_ID
+             , EA.INSP_RESULT_ID
+             , EV.PDT_NM_DTPLC
+             , EV.VLT_CONTENT
+             , EV.VLT_CNT
+             , EV.CAUPVD_CD
+             , EV.VLT_CAUSE
+             , EV.INSTRUCTION
+             , EV.VLT_PLC_CD
+             , EA.CRE_MBR_ID AS CRE_MBR_ID_EV_VLT
+             , EA.CRE_TM AS CRE_TM_EV_VLT
+             , EA.EVIT_ANSW_CONTENT
+             , EAI.EVIT_ANSW_IMG_PATH
+             , EAI.SEQ
+             , IR.CRE_MBR_ID AS creMbrId
         FROM
             INSP_RESULT IR
                 INNER JOIN EVIT_ANSW EA ON EA.INSP_RESULT_ID = IR.INSP_RESULT_ID
@@ -368,9 +301,49 @@
             IR.INSP_COMPL_W = 'N'
           AND IR.INSP_RESULT_ID = #{inspResultId}
           AND IR.CRE_MBR_ID = #{creMbrId}
+        ORDER BY
+            EAI.SEQ -- SEQ를 기준으로 정렬
     </select>
 
 
+
+    <!-- EVIT_VLT 레코드 삭제 -->
+    <delete id="deleteEVIT_VLT" parameterType="map">
+        DELETE FROM EVIT_VLT
+        WHERE EVIT_ID = #{evitId}
+          AND INSP_RESULT_ID = #{inspResultId}
+          AND CRE_MBR_ID = #{creMbrId}
+    </delete>
+
+    <!-- 기존 EVIT_VLT 조회 -->
+    <select id="selectExistingEVIT_VLT" parameterType="map" resultType="com.sims.qsc.store_inspection.vo.StoreInspectionPopupRequest$SubcategoryInspection">
+        SELECT
+            EV.PDT_NM_DTPLC AS pdtNmDtplc,
+            EV.VLT_CONTENT AS vltContent,
+            EV.VLT_CNT AS vltCnt,
+            EV.CAUPVD_CD AS caupvdCd,
+            EV.VLT_CAUSE AS vltCause,
+            EV.INSTRUCTION AS instruction,
+            EV.VLT_PLC_CD AS vltPlcCd,
+            EA.EVIT_ANSW_CONTENT AS answerContent
+        FROM
+            EVIT_VLT EV
+                JOIN EVIT_ANSW EA ON EV.EVIT_ID = EA.EVIT_ID
+                AND EV.INSP_RESULT_ID = EA.INSP_RESULT_ID
+                AND EV.CRE_MBR_ID = EA.CRE_MBR_ID
+        WHERE
+            EV.EVIT_ID = #{evitId}
+          AND EV.INSP_RESULT_ID = #{inspResultId}
+          AND EV.CRE_MBR_ID = #{creMbrId}
+    </select>
+
+    <select id="selectMaxSeq" parameterType="map" resultType="java.lang.Integer">
+        SELECT MAX(SEQ)
+        FROM EVIT_ANSW_IMG
+        WHERE EVIT_ID = #{evitId}
+          AND INSP_RESULT_ID = #{inspResultId}
+          AND CRE_MBR_ID = #{creMbrId}
+    </select>
 
 
 </mapper>

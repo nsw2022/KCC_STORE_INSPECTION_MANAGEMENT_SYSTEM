@@ -16,6 +16,7 @@
           href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap"
           rel="stylesheet"
   />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
@@ -26,6 +27,7 @@
   <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js'></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
@@ -59,22 +61,22 @@
   </div>
 </div>
 
-<section class="inspection-detail">
-  <div class="inspection-info">
-    <table class="inspection-table">
-      <tr>
-        <td class="info-title">
-          <p>KCC 크라상 점포 위생점검표_2024</p>
-        </td>
-        <td class="info-details">
-          <span class="store-name">KCC 크라상</span>
-          <span class="store-subtitle">가맹점 (이름예시 아무거나 추가하기)</span>
-          <span class="inspection-date">점검일 : 2024.09.24</span>
-          <span class="inspector-name">점검자 : 노승우</span>
-        </td>
-      </tr>
-    </table>
-  </div>
+<section class="inspection-detail" id="inspection-detail">
+<%--  <div class="inspection-info">--%>
+<%--    <table class="inspection-table">--%>
+<%--      <tr>--%>
+<%--        <td class="info-title">--%>
+<%--          <p>KCC 크라상 점포 위생점검표_2024</p>--%>
+<%--        </td>--%>
+<%--        <td class="info-details">--%>
+<%--          <span class="store-name">KCC 크라상</span>--%>
+<%--          <span class="store-subtitle">가맹점 (이름예시 아무거나 추가하기)</span>--%>
+<%--          <span class="inspection-date">점검일 : 2024.09.24</span>--%>
+<%--          <span class="inspector-name">점검자 : 노승우</span>--%>
+<%--        </td>--%>
+<%--      </tr>--%>
+<%--    </table>--%>
+<%--  </div>--%>
 </section>
 
 <section class="signature-container">
@@ -97,7 +99,7 @@
 </section>
 <div id="go-inspection-wrap">
   <button class="go-inspection" onclick="lastCheckInspection()">점검확인 완료</button>
-  <button class="go-inspection" onclick="tenpoirySave()">임시저장</button>
+<%--  <button class="go-inspection" onclick="tenpoirySave()">임시저장</button>--%>
 </div>
 
 </body>

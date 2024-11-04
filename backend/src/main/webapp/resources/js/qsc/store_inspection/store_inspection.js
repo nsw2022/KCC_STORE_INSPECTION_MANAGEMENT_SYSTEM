@@ -42,6 +42,7 @@ function transformData(data) {
         const inspPlanDtRaw = item.inspPlanDt;
         const inspSttsCd = item.inspSttsCd;
         const chklstId = item.chklstId;
+        const inspResultId = item.inspResultId;
 
         // CTG_NM 추출 (chklstNm의 첫 네 글자)
         const CTG_NM = chklstNmFull.slice(0, 4); // 예: "위생점검체크리스트" -> "위생점검"
@@ -86,7 +87,8 @@ function transformData(data) {
             CHKLST_NM: CHKLST_NM,
             INSP_PLAN_DT: inspPlanDt,
             INSP_STTS_CD: inspSttsCd,
-            CHKLST_ID : chklstId
+            CHKLST_ID : chklstId,
+            INSP_RESULT_ID : inspResultId
         });
         console.log(`Added checklist: ${CHKLST_NM} on ${inspPlanDt} with status ${inspSttsCd}`);
     });
@@ -116,6 +118,26 @@ function populateInspectorSelect() {
         option.textContent = inspector.INSP_MBR_NAME;
         inspMbrSelect.appendChild(option);
     });
+
+    // 사용자 역할에 따라 선택된 옵션 설정
+    if (currentUserRole === 'INSPECTOR') {
+        // INSPECTOR인 경우 자신의 INSP_MBR_ID를 선택
+        const inspector = inspectionAllScheduleData.find(ins => ins.INSP_MBR_NO === currentUsername);
+        if (inspector) {
+            inspMbrSelect.value = inspector.INSP_MBR_ID;
+            console.log(`INSPECTOR found: ${inspector.INSP_MBR_NAME} (ID: ${inspector.INSP_MBR_ID})`);
+        } else {
+            // 해당 INSP_MBR_NO를 가진 Inspector가 없으면 "전체" 선택
+            inspMbrSelect.value = 'all';
+            console.warn(`No INSPECTOR found with mbrNo: ${currentUsername}. Defaulting to 'all'.`);
+        }
+    } else {
+        // INSPECTOR가 아닌 경우 "전체" 선택
+        inspMbrSelect.value = 'all';
+        console.log("User is not INSPECTOR. Defaulting insp-mbr select to 'all'.");
+    }
+
+    console.log('insp-mbr select value set to:', inspMbrSelect.value);
 }
 
 function getSelectedInspector() {
@@ -408,6 +430,126 @@ function generateTodayInspectionList(date) {
 
 
 // 점검 한주 스케줄 표시 함수
+// function generateScheduleTable(date) {
+//     const tableBody = document.getElementById('schedule-table-body');
+//     tableBody.innerHTML = '';
+//
+//     // 선택한 날짜의 주 (일요일 시작)
+//     const weekStartDate = new Date(date);
+//     weekStartDate.setDate(date.getDate() - date.getDay()); // 일요일로 설정
+//
+//     const selectedChecklist = document.getElementById('checklist-select').value;
+//     const selectedInspector = getSelectedInspector();
+//
+//     const weekRow = document.createElement('tr');
+//     for (let i = 0; i < 7; i++) {
+//         const cellDate = new Date(weekStartDate);
+//         cellDate.setDate(weekStartDate.getDate() + i);
+//
+//         const td = document.createElement('td');
+//         const span = document.createElement('span');
+//         span.textContent = `${cellDate.getMonth() + 1}/${cellDate.getDate()}`;
+//         td.appendChild(span);
+//
+//         // 일요일(0)과 토요일(6)에 empty-cell 클래스 추가
+//         if (i === 0 || i === 6) {
+//             td.classList.add('empty-cell');
+//         }
+//
+//         // 해당 날짜의 점검 항목 가져오기
+//         const dateStr = formatDate(cellDate);
+//
+//         let allItems = [];
+//         inspectionAllScheduleData.forEach(inspector => {
+//             // 선택된 점검자에 따라 필터링 ('all'인 경우 모두 포함)
+//             if (selectedInspector === 'all' || selectedInspector == inspector.INSP_MBR_ID) {
+//                 inspector.INSP_TYPE.forEach(category => {
+//                     if (selectedChecklist === 'all' || category.CTG_NM === selectedChecklist) {
+//                         category.SUB_CTH_NM.forEach(item => {
+//                             if (item.INSP_PLAN_DT === dateStr) {
+//                                 allItems.push({
+//                                     categoryName: category.CTG_NM,
+//                                     itemName: item.CHKLST_NM,
+//                                     planDate: item.INSP_PLAN_DT,
+//                                     statusCode: item.INSP_STTS_CD, // 상태 코드 추가
+//                                     chklstId: item.CHKLST_ID, // chklstId 추가
+//                                     storeNm: extractStoreName(item.CHKLST_NM), // storeNm 추출 함수 사용
+//                                     inspResultId : item.INSP_RESULT_ID
+//                                 });
+//                             }
+//                         });
+//                     }
+//                 });
+//             }
+//         });
+//
+//         // 미완료된 점검 항목을 먼저 오도록 정렬
+//         allItems.sort((a, b) => {
+//             const today = new Date();
+//             today.setHours(0,0,0,0);
+//
+//             const dateA = new Date(a.planDate.replace(/\//g, '-'));
+//             const dateB = new Date(b.planDate.replace(/\//g, '-'));
+//             dateA.setHours(0,0,0,0);
+//             dateB.setHours(0,0,0,0);
+//
+//             const isIncompleteA = dateA < today && a.statusCode === 'IS001' ? 1 : 0;
+//             const isIncompleteB = dateB < today && b.statusCode === 'IS002' ? 1 : 0;
+//
+//             return isIncompleteB - isIncompleteA; // isIncomplete가 높은 것부터 정렬
+//         });
+//
+//         // 버튼들을 td에 추가
+//         allItems.forEach((item, index) => {
+//             if (index < 3) {
+//                 const button = document.createElement('button');
+//                 button.classList.add('inspection-btn');
+//                 button.textContent = item.itemName;
+//                 button.onclick = function() {
+//                     openPopup(item);
+//                 };
+//
+//                 // 아이템의 날짜와 상태를 확인하여 스타일 적용
+//                 const itemDate = new Date(item.planDate.replace(/\//g, '-'));
+//                 const todayDate = new Date();
+//                 todayDate.setHours(0,0,0,0); // 오늘 날짜의 시간을 0시로 설정
+//                 itemDate.setHours(0,0,0,0); // 아이템 날짜의 시간을 0시로 설정
+//
+//                 if (itemDate < todayDate) {
+//                     if (item.statusCode === 'IS001') {
+//                         // 미완료된 이전 날짜의 점검인 경우 배경색 변경
+//                         button.style.backgroundColor = '#EC3B57';
+//                         button.style.color = 'white';
+//                     } else if (item.statusCode === 'IS002') {
+//                         // 완료된 이전 날짜의 점검인 경우 배경색 변경
+//                         button.style.backgroundColor = '#eeeeee';
+//                     }
+//                 }
+//
+//                 td.appendChild(button);
+//             }
+//         });
+//
+//         // 버튼이 3개 이상일 경우 '+n 더보기' 버튼 추가
+//         if (allItems.length > 3) {
+//             const extraCount = allItems.length - 3;
+//             const moreButton = document.createElement('button');
+//             moreButton.classList.add('more-btn');
+//             moreButton.textContent = `+${extraCount} 더보기`;
+//
+//             // '+n 더보기' 버튼 클릭 시 모달 창 열기
+//             moreButton.addEventListener('click', function() {
+//                 openModal(allItems);
+//             });
+//
+//             td.appendChild(moreButton);
+//         }
+//
+//         weekRow.appendChild(td);
+//     }
+//
+//     tableBody.appendChild(weekRow);
+// }
 function generateScheduleTable(date) {
     const tableBody = document.getElementById('schedule-table-body');
     tableBody.innerHTML = '';
@@ -425,9 +567,12 @@ function generateScheduleTable(date) {
         cellDate.setDate(weekStartDate.getDate() + i);
 
         const td = document.createElement('td');
-        const span = document.createElement('span');
-        span.textContent = `${cellDate.getMonth() + 1}/${cellDate.getDate()}`;
-        td.appendChild(span);
+        const spanDate = document.createElement('span');
+        spanDate.textContent = `${cellDate.getMonth() + 1}/${cellDate.getDate()}`;
+
+        // 버튼과 날짜를 감쌀 div 생성
+        const btnDateWrap = document.createElement('div');
+        btnDateWrap.classList.add('btn-date-wrap');
 
         // 일요일(0)과 토요일(6)에 empty-cell 클래스 추가
         if (i === 0 || i === 6) {
@@ -451,7 +596,8 @@ function generateScheduleTable(date) {
                                     planDate: item.INSP_PLAN_DT,
                                     statusCode: item.INSP_STTS_CD, // 상태 코드 추가
                                     chklstId: item.CHKLST_ID, // chklstId 추가
-                                    storeNm: extractStoreName(item.CHKLST_NM) // storeNm 추출 함수 사용
+                                    storeNm: extractStoreName(item.CHKLST_NM), // storeNm 추출 함수 사용
+                                    inspResultId: item.INSP_RESULT_ID
                                 });
                             }
                         });
@@ -476,38 +622,7 @@ function generateScheduleTable(date) {
             return isIncompleteB - isIncompleteA; // isIncomplete가 높은 것부터 정렬
         });
 
-        // 버튼들을 td에 추가
-        allItems.forEach((item, index) => {
-            if (index < 3) {
-                const button = document.createElement('button');
-                button.classList.add('inspection-btn');
-                button.textContent = item.itemName;
-                button.onclick = function() {
-                    openPopup(item);
-                };
-
-                // 아이템의 날짜와 상태를 확인하여 스타일 적용
-                const itemDate = new Date(item.planDate.replace(/\//g, '-'));
-                const todayDate = new Date();
-                todayDate.setHours(0,0,0,0); // 오늘 날짜의 시간을 0시로 설정
-                itemDate.setHours(0,0,0,0); // 아이템 날짜의 시간을 0시로 설정
-
-                if (itemDate < todayDate) {
-                    if (item.statusCode === 'IS001') {
-                        // 미완료된 이전 날짜의 점검인 경우 배경색 변경
-                        button.style.backgroundColor = '#EC3B57';
-                        button.style.color = 'white';
-                    } else if (item.statusCode === 'IS002') {
-                        // 완료된 이전 날짜의 점검인 경우 배경색 변경
-                        button.style.backgroundColor = '#eeeeee';
-                    }
-                }
-
-                td.appendChild(button);
-            }
-        });
-
-        // 버튼이 3개 이상일 경우 '+n 더보기' 버튼 추가
+        // 버튼들을 td에 추가하기 전에 btn-date-wrap에 추가
         if (allItems.length > 3) {
             const extraCount = allItems.length - 3;
             const moreButton = document.createElement('button');
@@ -519,14 +634,70 @@ function generateScheduleTable(date) {
                 openModal(allItems);
             });
 
-            td.appendChild(moreButton);
+            // btn-date-wrap에 more-btn과 spanDate 추가
+            btnDateWrap.appendChild(moreButton);
+            btnDateWrap.appendChild(spanDate);
+            td.appendChild(btnDateWrap);
+        } else {
+            // 더보기 버튼이 없을 경우 날짜만 추가
+            const spanWrapper = document.createElement('div');
+            spanWrapper.classList.add('btn-date-wrap');
+            spanWrapper.appendChild(spanDate);
+            td.appendChild(spanWrapper);
         }
+
+        // 실제로 표시할 버튼들 (최대 3개)
+        const displayItems = allItems.slice(0, 3);
+        displayItems.forEach(item => {
+            const button = document.createElement('button');
+            button.classList.add('inspection-btn');
+            button.textContent = item.itemName;
+
+            // 점검 상태에 따라 팝업 함수 설정
+            if (item.statusCode === 'IS002') {
+                // 완료된 점검인 경우 openPopup2 호출
+                button.onclick = function() {
+                    openPopup2(item.inspResultId);
+                };
+            } else {
+                // 미완료된 점검인 경우 openPopup 호출
+                button.onclick = function() {
+                    openPopup(item);
+                };
+            }
+
+            // 아이템의 날짜과 상태를 확인하여 스타일 적용
+            const itemDate = new Date(item.planDate.replace(/\//g, '-'));
+            const todayDate = new Date();
+            todayDate.setHours(0,0,0,0); // 오늘 날짜의 시간을 0시로 설정
+            itemDate.setHours(0,0,0,0); // 아이템 날짜의 시간을 0시로 설정
+
+            if (itemDate < todayDate) {
+                if (item.statusCode === 'IS001') {
+                    // 미완료된 이전 날짜의 점검인 경우 배경색 변경
+                    button.style.backgroundColor = '#EC3B57';
+                    button.style.color = 'white';
+                } else if (item.statusCode === 'IS002') {
+                    // 완료된 이전 날짜의 점검인 경우 배경색 변경
+                    button.style.backgroundColor = '#eeeeee';
+                }
+            }
+
+            td.appendChild(button);
+        });
+
+        // 버튼이 3개 이상일 경우 '+n 더보기' 버튼은 이미 추가됨
+        // (추가적인 처리가 필요하지 않습니다)
 
         weekRow.appendChild(td);
     }
 
     tableBody.appendChild(weekRow);
 }
+
+
+
+
 
 // storeNm 추출 함수 예시 (CHKLST_NM에서 storeNm을 추출하는 방법에 따라 수정 필요)
 function extractStoreName(chklstNmFull) {
@@ -549,6 +720,89 @@ function formatDate(date) {
 
 
 // 모달 창 열기 함수
+// function openModal(items) {
+//     // 미완료된 점검 항목을 먼저 오도록 정렬
+//     items.sort((a, b) => {
+//         const today = new Date();
+//         today.setHours(0,0,0,0);
+//
+//         const dateA = new Date(a.planDate.replace(/\//g, '-'));
+//         const dateB = new Date(b.planDate.replace(/\//g, '-'));
+//         dateA.setHours(0,0,0,0);
+//         dateB.setHours(0,0,0,0);
+//
+//         const isIncompleteA = dateA < today && a.statusCode === 'IS001' ? 1 : 0;
+//         const isIncompleteB = dateB < today && b.statusCode === 'IS002' ? 1 : 0;
+//
+//         return isIncompleteB - isIncompleteA;
+//     });
+//
+//     // 모달 배경 요소 생성
+//     let modalBackground = document.getElementById('modal-background');
+//     if (!modalBackground) {
+//         modalBackground = document.createElement('div');
+//         modalBackground.id = 'modal-background';
+//         modalBackground.classList.add('modal-background');
+//         document.body.appendChild(modalBackground);
+//     }
+//
+//     // 모달 내용 요소 생성
+//     let modalContent = document.getElementById('modal-content');
+//     if (!modalContent) {
+//         modalContent = document.createElement('div');
+//         modalContent.id = 'modal-content';
+//         modalContent.classList.add('modal-content');
+//         modalBackground.appendChild(modalContent);
+//     }
+//
+//     // 모달 내용 초기화
+//     modalContent.innerHTML = '<h2>점검 목록</h2>';
+//
+//     // 아이템들을 모달에 추가
+//     items.forEach(function(item) {
+//         const button = document.createElement('button');
+//         button.classList.add('inspection-btn');
+//         button.textContent = item.itemName;
+//         button.onclick = function() {
+//             openPopup(item);
+//         };
+//
+//         // 아이템의 날짜와 상태를 확인하여 스타일 적용
+//         const itemDate = new Date(item.planDate.replace(/\//g, '-'));
+//         const todayDate = new Date();
+//         todayDate.setHours(0,0,0,0);
+//         itemDate.setHours(0,0,0,0);
+//
+//         if (itemDate < todayDate && item.statusCode === 'IS001') {
+//             button.style.backgroundColor = '#EC3B57';
+//             button.style.color = 'white';
+//         }
+//
+//         modalContent.appendChild(button);
+//     });
+//
+//     // 모달 닫기 버튼 추가
+//     const closeButton = document.createElement('button');
+//     closeButton.textContent = '닫기';
+//     closeButton.classList.add('modal-close-btn');
+//     closeButton.addEventListener('click', function() {
+//         // 'show' 클래스 제거하여 애니메이션 시작
+//         modalBackground.classList.remove('show');
+//         modalContent.classList.remove('show');
+//         // 애니메이션 후 display:none 처리
+//         setTimeout(function() {
+//             modalBackground.style.display = 'none';
+//         }, 300); // transition 시간과 동일하게 설정
+//     });
+//     modalContent.appendChild(closeButton);
+//
+//     // 모달 표시 (display:flex 설정 후 약간의 지연을 주어 애니메이션 적용)
+//     modalBackground.style.display = 'flex';
+//     setTimeout(function() {
+//         modalBackground.classList.add('show');
+//         modalContent.classList.add('show');
+//     }, 10);
+// }
 function openModal(items) {
     // 미완료된 점검 항목을 먼저 오도록 정렬
     items.sort((a, b) => {
@@ -592,19 +846,35 @@ function openModal(items) {
         const button = document.createElement('button');
         button.classList.add('inspection-btn');
         button.textContent = item.itemName;
-        button.onclick = function() {
-            openPopup(item);
-        };
 
-        // 아이템의 날짜와 상태를 확인하여 스타일 적용
+        // **수정된 부분: 점검 상태에 따라 팝업 함수 설정**
+        if (item.statusCode === 'IS002') {
+            // 완료된 점검인 경우 openPopup2 호출
+            button.onclick = function() {
+                openPopup2(item.inspResultId);
+            };
+        } else {
+            // 미완료된 점검인 경우 openPopup 호출
+            button.onclick = function() {
+                openPopup(item);
+            };
+        }
+
+        // **수정된 부분: 아이템의 날짜와 상태를 확인하여 스타일 적용**
         const itemDate = new Date(item.planDate.replace(/\//g, '-'));
         const todayDate = new Date();
         todayDate.setHours(0,0,0,0);
         itemDate.setHours(0,0,0,0);
 
-        if (itemDate < todayDate && item.statusCode === 'IS001') {
-            button.style.backgroundColor = '#EC3B57';
-            button.style.color = 'white';
+        if (itemDate < todayDate) {
+            if (item.statusCode === 'IS001') {
+                // 미완료된 이전 날짜의 점검인 경우 배경색 변경
+                button.style.backgroundColor = '#EC3B57';
+                button.style.color = 'white';
+            } else if (item.statusCode === 'IS002') {
+                // 완료된 이전 날짜의 점검인 경우 배경색 변경
+                button.style.backgroundColor = '#eeeeee';
+            }
         }
 
         modalContent.appendChild(button);
@@ -636,6 +906,25 @@ function openModal(items) {
 //---------------------팝업 이동 함수------------------------
 // 팝업 이동 함수
 function openPopup(item) {
+
+    if (item.statusCode === 'IS001') {
+        const itemDate = new Date(item.planDate.replace(/\//g, '-'));
+        const today = new Date();
+        today.setHours(0,0,0,0); // 오늘 날짜의 시간을 0시로 설정
+        itemDate.setHours(0,0,0,0); // 아이템 날짜의 시간을 0시로 설정
+
+        if (itemDate > today) {
+            // 오늘 이후의 날짜인 경우 경고 메시지 표시하고 함수 종료
+            Swal.fire({
+                title: '점검 날짜가 아닙니다.',
+                text: '해당 점검은 지정된 날짜에만 진행할 수 있습니다.',
+                icon: 'warning',
+                confirmButtonText: '확인'
+            });
+            return; // 팝업을 열지 않고 함수 종료
+        }
+    }
+
     // 팝업 페이지 URL 설정 (컨트롤러 매핑과 일치)
     const popupUrl = `/qsc/popup_page?chklstId=${item.chklstId}&storeNm=${encodeURIComponent(item.storeNm)}&inspPlanDt=${item.planDate.replace(/\//g, '')}`;
 
@@ -661,4 +950,60 @@ function openPopup(item) {
 
     // 새 창을 팝업으로 엽니다
     window.open(popupUrl, '_blank', popupOptions);
+}
+
+// 점검완료페이지
+function openPopup2(inspResultId) {
+    // 팝업 페이지 URL 설정
+    const popupUrl = "/qsc/popup/inspection/result"; // 팝업 페이지로 보낼 URL 설정
+
+    // 현재 화면 크기 확인
+    const screenWidth =
+        window.innerWidth || document.documentElement.clientWidth || screen.width;
+    const screenHeight =
+        window.innerHeight ||
+        document.documentElement.clientHeight ||
+        screen.height;
+
+    // 모바일 디바이스 확인 (가로 크기가 768px 이하인 경우)
+    const isMobile = screenWidth <= 768;
+
+    // 팝업 창 크기 설정 (화면의 90% 크기 또는 전체 크기)
+    const popupWidth = isMobile ? screenWidth : screenWidth * 0.8;
+    const popupHeight = isMobile ? screenHeight : screenHeight;
+
+    // 팝업 창의 중앙 위치 계산 (모바일은 무시)
+    const screenLeft = window.screenLeft || window.screenX;
+    const screenTop = window.screenTop || window.screenY;
+    const left = isMobile ? 0 : screenLeft + (screenWidth - popupWidth) / 2;
+    const top = isMobile ? 0 : screenTop + (screenHeight - popupHeight) / 2;
+
+    // 팝업 창 옵션 (위치 및 크기 포함)
+    const popupOptions = `width=${popupWidth},height=${popupHeight},top=${top},left=${left},scrollbars=yes,resizable=yes`;
+
+    // 팝업 창을 열기
+    const popupWindow = window.open("", "_blank", popupOptions);
+
+    // 팝업 창이 열렸는지 확인 후 폼을 팝업 창에서 제출
+    if (popupWindow) {
+        // 팝업 창에 form을 작성하여 POST 방식으로 데이터를 전송
+        const form = popupWindow.document.createElement("form");
+        form.method = "POST";
+        form.action = popupUrl; // 팝업 창에서 처리할 URL
+
+
+        // 필요한 데이터를 form에 추가 (필요에 따라 수정 가능)
+        const input = popupWindow.document.createElement("input");
+        input.type = "hidden";
+        input.name = "inspectionContent";
+        input.value = inspResultId; // inspResultId는 팝업으로 전송할 데이터
+
+        form.appendChild(input);
+
+        // form을 팝업창에 추가 후 제출
+        popupWindow.document.body.appendChild(form);
+        form.submit();
+    } else {
+        alert("팝업 차단이 발생했습니다. 팝업을 허용해 주세요.");
+    }
 }
