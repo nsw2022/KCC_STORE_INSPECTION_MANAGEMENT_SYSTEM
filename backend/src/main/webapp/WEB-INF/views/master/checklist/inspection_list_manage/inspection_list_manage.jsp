@@ -224,7 +224,7 @@
                       <div class="title-box">
                         <span class="m-3" style="font: 400 15px Noto Sans KR;">평가항목 등록 및 수정</span>
                         <div class="my-3">
-                          <button type="button" class="btn btn-primary me-3 evit-save-btn" disabled>저장</button>
+                          <button type="button" class="btn btn-primary me-3 evit-save-btn" disabled onclick="evitSaveOrUpdate()">저장</button>
                         </div>
                       </div>
                       <div class="container">
@@ -232,11 +232,11 @@
                           <div class="row first-input-box mb-3">
                             <div class="col-12 col-lg-12 d-flex align-items-center mb-2">
                               <label class="col-form-label me-2 evit-nm" style="min-width: 50px;">평가항목</label>
-                              <input type="text" class="form-control" placeholder="평가항목">
+                              <input type="text" class="form-control evit-nm-input" placeholder="평가항목">
                             </div>
                             <div class="col-12 col-lg-6 d-flex align-items-center mb-2">
                               <label class="col-form-label me-2 evit-type-nm" style="min-width: 50px;">평가항목유형</label>
-                              <input type="text" class="form-control" placeholder="평가항목유형" list="evaluationOptions">
+                              <input type="text" class="form-control evit-type-input" placeholder="평가항목유형" list="evaluationOptions">
                               <datalist id="evaluationOptions">
                                 <option value="Y/N">
                                 <option value="선택지형">
@@ -245,11 +245,11 @@
                             </div>
                             <div class="col-12 col-lg-3 d-flex align-items-center mb-2 suspention position-relative">
                               <label class="col-form-label me-2 evit-score" style="min-width: 22px;">점수</label>
-                              <input type="text" class="form-control" placeholder="100">
+                              <input type="text" class="form-control evit-score" placeholder="100">
                             </div>
                             <div class="col-12 col-lg-3 d-flex align-items-center mb-2">
                               <label class="col-form-label me-2 evit-use-w" style="min-width: 50px;">사용여부</label>
-                              <input type="checkbox" class="form-check-label">
+                              <input type="checkbox" class="form-check-label evit-use-w-input">
                             </div>
                           </div>
                         </div>
@@ -284,7 +284,7 @@
                       <div class="title-box">
                         <span class="m-3" style="font: 400 15px Noto Sans KR;">선택지 등록 및 수정</span>
                         <div class="my-3">
-                          <button type="button" class="btn btn-primary me-3 chclst-save-btn" disabled>저장</button>
+                          <button type="button" class="btn btn-primary me-3 chclst-save-btn" disabled onclick="onInsertOrUpdateChclst()">저장</button>
                         </div>
                       </div>
                       <div class="container">
@@ -292,19 +292,23 @@
                           <div class="row first-input-box mb-3">
                             <div class="col-12 col-lg-6 d-flex align-items-center mb-2">
                               <label class="col-form-label me-2 chclst-nm" style="min-width: 50px;">선택지<br>내용</label>
-                              <input type="text" class="form-control" placeholder="적합">
+                              <input type="text" class="form-control chclst-nm-input" placeholder="적합">
                             </div>
-                            <div class="col-12 col-lg-6 d-flex align-items-center mb-2">
+                            <div class="col-12 col-lg-3 d-flex align-items-center mb-2">
                               <label class="col-form-label me-2 chclst-use-w" style="min-width: 50px;">사용여부</label>
-                              <input type="checkbox" class="form-check-label">
+                              <input type="checkbox" class="form-check-label chclst-use-w-input">
+                            </div>
+                            <div class="col-12 col-lg-3 d-flex align-items-center mb-2">
+                              <label class="col-form-label me-2 w" style="min-width: 50px;">적합여부</label>
+                              <input type="checkbox" class="form-check-label chclst-prfW-input">
                             </div>
                             <div class="col-12 col-lg-6 d-flex align-items-center mb-2 position-relative">
                               <label class="col-form-label me-2 chclst-score" style="min-width: 50px;">선택지<br>점수</label>
-                              <input type="text" class="form-control" placeholder="100">
+                              <input type="text" class="form-control chclst-score-input" placeholder="100">
                             </div>
                             <div class="col-12 col-lg-6 d-flex align-items-center mb-2 position-relative">
-                              <label class="col-form-label me-2 chclst-nprfsCd" style="min-width: 50px;">부적합<br>강도</label>
-                              <input type="text" class="form-control" list="strengthOptions">
+                              <label class="col-form-label me-2" style="min-width: 50px;">부적합<br>강도</label>
+                              <input type="text" class="form-control chclst-nprfsCd" list="strengthOptions">
                               <datalist id="strengthOptions">
                                 <option value="크리티컬">
                                 <option value="메이져">

@@ -22,6 +22,11 @@ public interface InspectionListManageMapper {
     public InspectionPageResponse selectChklstNmByChklstId(String chklstId);
 
     /**
+     *
+     */
+    public String selectChklstIdByChklstNm(String chklstNm);
+
+    /**
      * 대분류 목록 조회
      * @param chklstId
      * @return 대분류 목록
@@ -81,4 +86,31 @@ public interface InspectionListManageMapper {
      */
     public int deleteSubCtg(List<String> subCtgId);
 
+    /**
+     * 평가항목 저장 / 수정
+     * @param evitRequest
+     * @return 평가항목 저장 / 수정 결과
+     */
+    public int insertOrUpdateEvit(List<EvitRequest> evitRequest);
+
+    /**
+     * 평가항목 삭제
+     * @param evitId
+     * @return 평가항목 삭제 결과
+     */
+    public int deleteChklstEvit(List<String> evitId);
+
+    /**
+     * 선택지 저장 / 수정
+     * @param chclstRequest
+     * @return 선택지 저장 / 수정 결과
+     */
+    public int insertOrUpdateEvitChclst(List<ChclstRequest> chclstRequest);
+
+    /**
+     * 선택지 삭제
+     * @param chclstId
+     * @return 선택지 삭제 결과
+     */
+    public int deleteEvitChclst(List<String> chclstId);
 }

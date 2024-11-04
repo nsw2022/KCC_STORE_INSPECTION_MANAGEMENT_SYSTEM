@@ -17,6 +17,15 @@
           AND c.CHKLST_ID = #{chklstId}
     </select>
 
+    <select id="selectChklstIdByChklstNm">
+        SELECT /* InspectionListManageMapper.selectChklstIdByChklstNm 유재원 */
+            CHKLST_ID
+        FROM
+            CHKLST
+        WHERE
+            CHKLST_NM = #{chklstNm}
+    </select>
+
     <select id="selectCtgByChklstId" resultType="CtgResponse">
         SELECT /* InspectionListManageMapper.selectCtgByChklstId 유재원 */
             CC.CTG_ID AS ctgId
@@ -237,6 +246,148 @@
         <where>
             <foreach collection="list" item="item">
                 CTG_ID = #{item}
+            </foreach>
+        </where>
+    </delete>
+
+    <update id="insertOrUpdateEvit">
+        MERGE INTO CHKLST_EVIT /* InspectionListManageMapper.insertOrUpdateEvit 유재원 */
+        USING (
+        <foreach collection="list" item="item" separator="UNION ALL">
+            SELECT
+            #{item.evitId} AS EVIT_ID,
+            #{item.subCtgId} AS CTG_ID,
+            #{item.evitNm} AS EVIT_CONTENT,
+            (SELECT DTL_CD FROM COMM_CD_DTL WHERE DTL_CD_NM = #{item.evitTypeNm}) AS EVIT_TYPE_CD,
+            #{item.score} AS SCORE,
+            #{item.chklstEvitUseW} AS CHKLST_EVIT_USE_W,
+            #{item.evitSeq} AS EVIT_SEQ,
+            (SELECT MBR_ID FROM MBR WHERE MBR_NO = #{item.creMbrId}) AS CRE_MBR_ID
+            FROM DUAL
+        </foreach>
+        ) temp
+        ON (
+        CHKLST_EVIT.EVIT_ID = temp.EVIT_ID
+        AND CHKLST_EVIT.CTG_ID = temp.CTG_ID
+        )
+        WHEN MATCHED THEN
+        UPDATE SET
+        EVIT_CONTENT = temp.EVIT_CONTENT,
+        EVIT_TYPE_CD = temp.EVIT_TYPE_CD,
+        SCORE = temp.SCORE,
+        CHKLST_EVIT_USE_W = temp.CHKLST_EVIT_USE_W,
+        EVIT_SEQ = temp.EVIT_SEQ,
+        UPD_MBR_ID = temp.CRE_MBR_ID,
+        UPD_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+        WHEN NOT MATCHED THEN
+        INSERT (
+            EVIT_ID,
+            CTG_ID,
+            EVIT_CONTENT,
+            EVIT_TYPE_CD,
+            SCORE,
+            CHKLST_EVIT_USE_W,
+            EVIT_SEQ,
+            CRE_MBR_ID,
+            CRE_TM
+        )
+        VALUES (
+            CHKLST_EVIT_SEQ.NEXTVAL,
+            temp.CTG_ID,
+            temp.EVIT_CONTENT,
+            temp.EVIT_TYPE_CD,
+            temp.SCORE,
+            temp.CHKLST_EVIT_USE_W,
+            temp.EVIT_SEQ,
+            temp.CRE_MBR_ID,
+            TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+        )
+    </update>
+
+    <delete id="deleteChklstEvit">
+        DELETE
+        FROM
+            CHKLST_EVIT
+        <where>
+            <foreach collection="list" item="item">
+                EVIT_ID = #{item}
+            </foreach>
+        </where>
+    </delete>
+
+    <update id="insertOrUpdateEvitChclst">
+        MERGE INTO EVIT_CHCLST /* InspectionListManageMapper.insertOrUpdateChclst 유재원 */
+        USING (
+        <foreach collection="list" item="item" separator="UNION ALL">
+            SELECT
+            #{item.chclstId} AS CHCLST_ID,
+            #{item.evitId} AS EVIT_ID,
+            #{item.chclstContent} AS CHCLST_CONTENT,
+            #{item.nprfsCd} AS NPRFS_CD,
+            #{item.prfW} AS PRF_W,
+            #{item.score} AS SCORE,
+            #{item.penalty} AS PENALTY,
+            #{item.bsnSspnDaynum} AS BSN_SSPN_DAYNUM,
+            #{item.evitChclstUseW} AS EVIT_CHCLST_USE_W,
+            #{item.chclstSeq} AS CHCLST_SEQ,
+            (SELECT MBR_ID FROM MBR WHERE MBR_NO = #{item.creMbrId}) AS CRE_MBR_ID
+            FROM DUAL
+        </foreach>
+        ) temp
+        ON (
+        EVIT_CHCLST.CHCLST_ID = temp.CHCLST_ID AND EVIT_CHCLST.EVIT_ID = temp.EVIT_ID
+        )
+        WHEN MATCHED THEN
+        UPDATE SET
+        CHCLST_CONTENT = temp.CHCLST_CONTENT,
+        NPRFS_CD = temp.NPRFS_CD,
+        PRF_W = temp.PRF_W,
+        SCORE = temp.SCORE,
+        PENALTY = temp.PENALTY,
+        BSN_SSPN_DAYNUM = temp.BSN_SSPN_DAYNUM,
+        EVIT_CHCLST_USE_W = temp.EVIT_CHCLST_USE_W,
+        CHCLST_SEQ = temp.CHCLST_SEQ,
+        UPD_MBR_ID = temp.CRE_MBR_ID,
+        UPD_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+        WHEN NOT MATCHED THEN
+        INSERT (
+        CHCLST_ID,
+        EVIT_ID,
+        CHCLST_CONTENT,
+        NPRFS_CD,
+        PRF_W,
+        SCORE,
+        PENALTY,
+        BSN_SSPN_DAYNUM,
+        EVIT_CHCLST_USE_W,
+        CHCLST_SEQ,
+        CRE_MBR_ID,
+        CRE_TM
+        )
+        VALUES (
+        EVIT_CHCLST_SEQ.NEXTVAL,
+        temp.EVIT_ID,
+        temp.CHCLST_CONTENT,
+        temp.NPRFS_CD,
+        temp.PRF_W,
+        temp.SCORE,
+        temp.PENALTY,
+        temp.BSN_SSPN_DAYNUM,
+        temp.EVIT_CHCLST_USE_W,
+        temp.CHCLST_SEQ,
+        temp.CRE_MBR_ID,
+        TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+        )
+    </update>
+
+
+    <delete id="deleteEvitChclst">
+        DELETE
+        FROM
+        EVIT_CHCLST
+        <where>
+            <foreach collection="list" item="item">
+                CHCLST_ID = #{item}
             </foreach>
         </where>
     </delete>
