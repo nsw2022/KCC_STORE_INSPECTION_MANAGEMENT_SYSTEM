@@ -402,112 +402,6 @@ function applyDetailContent(wrapper, tempData) {
 }
 
 // S3 베이스 URL을 사용하는 대신, /download 엔드포인트를 사용
-// function setPhotoPaths(inspectionContentWrapper, photos) {
-//   if (!photos || !Array.isArray(photos)) {
-//     console.warn("photoPaths가 유효하지 않습니다:", photos);
-//     return;
-//   }
-//
-//   const photoBoxes = inspectionContentWrapper.querySelectorAll('.photo-box');
-//
-//   // 모든 photoBox를 초기화
-//   photoBoxes.forEach((box) => {
-//     box.style.backgroundImage = "";
-//     box.textContent = "사진 미등록";
-//     box.removeAttribute('data-path');
-//
-//     // 기존의 delete 버튼 제거
-//     const deleteButton = box.querySelector('.delete-btn');
-//     if (deleteButton) {
-//       deleteButton.remove();
-//     }
-//   });
-//
-//   // 사진 경로에 따라 사진 설정
-//   photos.forEach((path, index) => {
-//     if (path && !path.startsWith('/')) {
-//       const s3Key = 'inspection_img/' + path;
-//       const box = photoBoxes[index];
-//       if (box) {
-//         console.log(`Path ${s3Key} is recognized as an S3 key.`);
-//         fetch('/download', {
-//           method: 'POST',
-//           headers: {
-//             'Content-Type': 'application/json'
-//           },
-//           body: JSON.stringify({ path: s3Key })
-//         })
-//             .then(response => {
-//               console.log("Download response status:", response.status); // 디버깅 로그
-//               if (!response.ok) {
-//                 throw new Error(`파일 다운로드 실패: ${response.statusText}`);
-//               }
-//               return response.blob();
-//             })
-//             .then(blob => {
-//               const imageUrl = URL.createObjectURL(blob);
-//               console.log("Image URL created:", imageUrl); // 디버깅 로그
-//
-//               // 이미지 표시
-//               box.style.backgroundImage = `url(${imageUrl})`;
-//               box.style.backgroundSize = "cover";
-//               box.style.backgroundPosition = "center";
-//               box.style.backgroundRepeat = "no-repeat";
-//               box.textContent = "";
-//
-//               // S3 경로 저장 (접두사 없이 원본 path만 저장)
-//               box.setAttribute('data-path', path);
-//
-//               // X 버튼 추가 (이미 존재하지 않을 경우)
-//               if (!box.querySelector(".delete-btn")) {
-//                 const deleteButton = document.createElement("button");
-//                 deleteButton.classList.add("delete-btn");
-//                 deleteButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
-//                 box.appendChild(deleteButton);
-//
-//                 // 이미지 삭제 기능
-//                 deleteButton.addEventListener("click", function () {
-//                   fetch('/delete', {
-//                     method: 'POST',
-//                     headers: {
-//                       'Content-Type': 'application/json'
-//                     },
-//                     body: JSON.stringify({ path: s3Key })
-//                   })
-//                       .then(response => response.json())
-//                       .then(data => {
-//                         if (data.error) {
-//                           throw new Error(data.error);
-//                         }
-//                         // 이미지 제거
-//                         box.style.backgroundImage = "";
-//                         box.textContent = "사진 미등록";
-//                         box.removeAttribute('data-path');
-//                         deleteButton.remove();
-//                       })
-//                       .catch(error => {
-//                         console.error("파일 삭제 실패:", error);
-//                         alert("파일 삭제에 실패했습니다.");
-//                       });
-//                 });
-//               }
-//             })
-//             .catch(error => {
-//               console.error(`이미지 로드 실패 (path: ${s3Key}):`, error);
-//               box.textContent = "이미지 로드 실패";
-//             });
-//       }
-//     } else {
-//       // path가 없거나 로컬 경로인 경우 처리
-//       console.warn(`Photo box ${index}에 대한 유효한 S3 path가 없습니다.`);
-//       const box = photoBoxes[index];
-//       if (box) {
-//         box.style.backgroundImage = "";
-//         box.textContent = "사진 미등록";
-//       }
-//     }
-//   });
-// }
 function setPhotoPaths(inspectionContentWrapper, photos) {
   if (!photos || !Array.isArray(photos)) {
     console.warn("photos가 유효하지 않습니다:", photos);
@@ -1461,103 +1355,6 @@ function setupPhotoUpload(photoBoxes, cameraBtn, galleryBtn, inspectionContentWr
   });
 
   // 이미지 업로드 및 표시 처리 함수
-  // function uploadAndDisplayImage(file, photoBoxes, inspectionContentWrapper) {
-  //   const formData = new FormData();
-  //   formData.append("file", file);
-  //
-  //   fetch('/upload', {
-  //     method: 'POST',
-  //     body: formData
-  //   })
-  //       .then(response => response.json())
-  //       .then(data => {
-  //         console.log("Upload response data:", data); // 디버깅 로그
-  //         if (data.error) {
-  //           throw new Error(data.error);
-  //         }
-  //
-  //         // S3 키 생성: data.path에 'inspection_img/'가 포함되어 있지 않은지 확인
-  //         const s3Key = data.path.startsWith('inspection_img/') ? data.path : 'inspection_img/' + data.path;
-  //
-  //         const emptyBox = Array.from(photoBoxes.children).find(
-  //             (box) => !box.style.backgroundImage
-  //         );
-  //         if (emptyBox) {
-  //           console.log("Fetching image from path:", s3Key); // 추가된 로그
-  //           fetch('/download', {
-  //             method: 'POST',
-  //             headers: {
-  //               'Content-Type': 'application/json'
-  //             },
-  //             body: JSON.stringify({ path: s3Key })
-  //           })
-  //               .then(response => {
-  //                 console.log("Download response status:", response.status); // 디버깅 로그
-  //                 if (!response.ok) {
-  //                   throw new Error(`파일 다운로드 실패: ${response.statusText}`);
-  //                 }
-  //                 return response.blob();
-  //               })
-  //               .then(blob => {
-  //                 const imageUrl = URL.createObjectURL(blob);
-  //                 console.log("Image URL created:", imageUrl); // 디버깅 로그
-  //
-  //                 // 이미지 표시
-  //                 emptyBox.style.backgroundImage = `url(${imageUrl})`;
-  //                 emptyBox.style.backgroundSize = "cover";
-  //                 emptyBox.style.backgroundPosition = "center";
-  //                 emptyBox.style.backgroundRepeat = "no-repeat";
-  //                 emptyBox.textContent = "";
-  //
-  //                 // S3 경로 저장 (접두사 없이 원본 path만 저장)
-  //                 emptyBox.setAttribute('data-path', data.path);
-  //
-  //                 // X 버튼 추가
-  //                 const deleteButton = document.createElement("button");
-  //                 deleteButton.classList.add("delete-btn");
-  //                 deleteButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
-  //
-  //                 // 이미지 삭제 기능
-  //                 deleteButton.addEventListener("click", function () {
-  //                   fetch('/delete', {
-  //                     method: 'POST',
-  //                     headers: {
-  //                       'Content-Type': 'application/json'
-  //                     },
-  //                     body: JSON.stringify({ path: s3Key })
-  //                   })
-  //                       .then(response => response.json())
-  //                       .then(data => {
-  //                         if (data.error) {
-  //                           throw new Error(data.error);
-  //                         }
-  //                         // 이미지 제거
-  //                         emptyBox.style.backgroundImage = "";
-  //                         emptyBox.textContent = "사진 미등록";
-  //                         emptyBox.removeAttribute('data-path');
-  //                         deleteButton.remove();
-  //                         photoCount--;
-  //                       })
-  //                       .catch(error => {
-  //                         console.error("파일 삭제 실패:", error);
-  //                         alert("파일 삭제에 실패했습니다.");
-  //                       });
-  //                 });
-  //
-  //                 emptyBox.appendChild(deleteButton);
-  //                 photoCount++;
-  //               })
-  //               .catch(error => {
-  //                 console.error(`이미지 로드 실패 (path: ${s3Key}):`, error);
-  //                 alert("파일 다운로드에 실패했습니다.");
-  //               });
-  //         }
-  //       })
-  //       .catch(error => {
-  //         console.error("파일 업로드 실패:", error);
-  //         alert("파일 업로드에 실패했습니다.");
-  //       });
-  // }
   function uploadAndDisplayImage(file, photoBoxes, inspectionContentWrapper) {
     const formData = new FormData();
     formData.append("file", file);
@@ -1951,12 +1748,22 @@ function sendDataToServer(requestData) {
         return response.text(); // JSON 대신 텍스트로 응답 받기
       })
       .then(data => {
-        alert("임시저장이 완료되었습니다.");
+        Swal.fire({
+          title: "완료",
+          text: "임시저장이 완료되었습니다.",
+          icon: "success",
+          confirmButtonText: "확인",
+        });
         console.log("저장 성공:", data);
       })
       .catch(error => {
         console.error('임시저장 실패:', error);
-        alert("임시저장에 실패했습니다.");
+        Swal.fire({
+          title: "오류",
+          text: "임시저장에 실패했습니다.",
+          icon: "error",
+          confirmButtonText: "확인",
+        });
       });
 }
 
@@ -2070,19 +1877,6 @@ function getVltPlcCd(locationContent) {
   return null;
 }
 
-// function getPhotoPaths(inspectionContentWrapper) {
-//   const photoBoxes = inspectionContentWrapper.querySelectorAll('.photo-box');
-//   const paths = [];
-//   photoBoxes.forEach(box => {
-//     const path = box.getAttribute('data-path');
-//     if (path) {
-//       paths.push(path);
-//     } else {
-//       paths.push(null); // undefined 대신 null 사용
-//     }
-//   });
-//   return paths;
-// }
 function getPhotoPaths(inspectionContentWrapper) {
   const photoBoxes = inspectionContentWrapper.querySelectorAll('.photo-box');
   const photos = [];

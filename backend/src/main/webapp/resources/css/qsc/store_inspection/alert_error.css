@@ -1,0 +1,378 @@
+#today_inspection{
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+
+/*---------------------------달력---------------------------*/
+.calendar-container {
+    width: 330px;
+    /*flex: 0 0 320px; !* 고정된 너비로 설정 *!*/
+    height: 370px;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-header select {
+    float: left;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    padding: 5px;
+    border: solid 1px #cccccc !important;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #6b6b6b;
+}
+
+/*#month-select {*/
+/*    padding: 5px;*/
+/*    border: none;*/
+/*    border-radius: 8px;*/
+/*    font-size: 16px;*/
+/*    color: #6b6b6b;*/
+/*}*/
+
+#year {
+    font-size: 18px;
+    font-weight: bold;
+    color: #4a4a4a;
+}
+
+table.calendar {
+    width: 100%;
+    text-align: center;
+    border-collapse: collapse;
+}
+
+table.calendar th {
+    color: #6b6b6b;
+    font-weight: normal;
+    padding: 10px 0;
+}
+
+table.calendar td {
+    color: #4a4a4a;
+    cursor: pointer;
+    transition: 0.3s ease-out;
+    overflow: hidden;
+}
+
+.day-content {
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease-out;
+}
+.day-content:hover {
+    background-color: #cccccc;
+    color: white;
+    border-radius: 50%;
+}
+
+table.calendar td .selected {
+    background-color: #6e00fa;
+    color: white;
+}
+
+table.calendar td .incomplete {
+    background-color: #ec3b57;
+    color: white;
+}
+
+#year-select {
+    border: solid 1px #cccccc;
+    border-radius: 5px;
+    padding: 5px;
+    box-sizing: border-box;
+}
+#year-select > option {
+    color: black;
+}
+#month-select {
+    border: solid 1px #cccccc;
+    border-radius: 5px;
+    padding: 5px;
+    box-sizing: border-box;
+}
+#month-select > option {
+    color: black;
+}
+
+#insp-mbr{
+    margin-right: 0;
+}
+
+/*---------------------------스케줄 표시달력---------------------------*/
+.schedule-container {
+    width: calc(100% - 370px);
+    height: 310px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 30px 40px;
+    box-sizing: border-box;
+}
+
+.schedule-header {
+    width: 300px;
+    margin-bottom: 20px;
+}
+.schedule-header label {
+    font: 500 15px "Noto Sans KR";
+    color: #5a5a5a;
+}
+
+#checklist-select {
+    border: solid 1px #cccccc;
+    border-radius: 5px;
+    margin-left: 10px;
+    padding: 5px;
+    box-sizing: border-box;
+    font: 400 14px "Noto Sans KR";
+}
+#checklist-select option {
+    font: 500 18px "Noto Sans KR";
+}
+
+.schedule-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.schedule-table {
+    /*min-width: 1200px;*/
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    height: 180px;
+    table-layout: fixed;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.schedule-table thead th:first-child {
+    border-top-left-radius: 10px;
+}
+.schedule-table thead th:last-child {
+    border-top-right-radius: 10px;
+}
+.schedule-table tbody td:first-child {
+    border-bottom-left-radius: 10px;
+}
+.schedule-table tbody td:last-child {
+    border-bottom-right-radius: 10px;
+}
+
+.schedule-table thead th {
+    background-color: #f4f4f4;
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+    width: 130px;
+    font: 500 14px "Noto Sans KR";
+    color: #5a5a5a;
+}
+
+.schedule-table tbody td {
+    padding: 15px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    width: 150px;
+    height: 80px;
+    vertical-align: top;
+    overflow: hidden;
+    text-align: right;
+}
+
+.schedule-table tbody td span {
+    font: 400 13px "Noto Sans KR";
+    color: #5a5a5a;
+}
+.schedule-table tbody td button {
+    font: 400 14px "Noto Sans KR";
+    color: #5a5a5a;
+    margin-top: 10px;
+}
+.schedule-table tbody td button:hover {
+    font-weight: 500;
+    background: #4a00e0 !important;
+    color: white;
+    transition: ease-out 0.3s;
+}
+
+.scrollable-content {
+    max-height: 150px; /* 고정된 높이 */
+    overflow-y: auto; /* 스크롤을 활성화 */
+    padding-right: 10px; /* 스크롤바와 내용 간의 여백 */
+}
+
+.inspection-btn {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    border: none;
+    background: white;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 5px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.empty-cell {
+    background-color: #eeeeee;
+    border: none;
+}
+
+/* 스크롤이 필요한 요소에 스크롤바 스타일 적용 */
+
+.scrollable-content::-webkit-scrollbar {
+    width: 8px;
+    border-radius: 5px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+    background-color: #828282;
+    border-radius: 4px;
+}
+
+.scrollable-content::-webkit-scrollbar-track {
+    background-color: #ededed;
+    border-radius: 5px;
+}
+
+/* 가로 스크롤바 스타일 */
+.schedule-table-wrapper {
+    width: 100%;
+}
+
+.schedule-table-wrapper::-webkit-scrollbar {
+    height: 8px; /* 가로 스크롤바 두께 */
+    border-radius: 5px;
+}
+
+.schedule-table-wrapper::-webkit-scrollbar-thumb {
+    background-color: #828282;
+    border-radius: 4px;
+}
+
+.schedule-table-wrapper::-webkit-scrollbar-track {
+    background-color: #ededed;
+    border-radius: 5px;
+}
+
+/*----------모달 스타일---------*/
+.modal-background {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1200;
+    transition: opacity 0.3s ease;
+}
+
+/* 모달 내용 스타일 */
+.modal-content {
+    width: 30% !important;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    max-height: 80%;
+    overflow-y: auto;
+    transition:
+            transform 0.3s ease,
+            opacity 0.3s ease;
+}
+.modal-content > h2 {
+    margin-bottom: 20px;
+}
+.modal-content > .inspection-btn {
+    margin-bottom: 15px;
+}
+
+.modal-content > .inspection-btn:hover {
+    background: #4a00e0;
+    color: white;
+    transition: ease-out 0.3s;
+}
+
+.btn-date-wrap{
+    margin-bottom: 15px;
+}
+
+/* '+n 더보기' 버튼 스타일 */
+.more-btn {
+    background-color: #eee;
+    border: none;
+    padding: 5px;
+    font-size: 12px !important;
+    cursor: pointer;
+    border-radius: 5px;
+    color: #5a5a5a;
+    float: left;
+    margin-top: 0 !important;
+}
+
+/* 모달 닫기 버튼 스타일 */
+.modal-close-btn {
+    margin-top: 10px;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 10px;
+    border: none;
+    color: #5a5a5a;
+}
+.modal-close-btn:hover {
+    background: #4a00e0;
+    color: white;
+    transition: ease-out 0.3s;
+}
+
+/* 모달 표시 시 스타일 */
+.modal-background.show {
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 1;
+}
+
+.modal-content.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+@media screen and (max-width: 1200px) {
+    /* 반응형으로 할때, 아래로 쌓이는 순서는 order: 원하는숫자; 로 조절할 것 */
+
+    #today_inspection {
+        flex-direction: column; /* 세로 배치로 변경 */
+        justify-content: inherit;
+    }
+
+    .calendar-container {
+        order: 1; /* 첫 번째로 표시 */
+        width: 100%;
+        margin-bottom: 30px;
+    }
+
+    .schedule-container {
+        order: 2; /* 두 번째로 표시 */
+        width: 100%;
+    }
+
+
+}

@@ -75,8 +75,8 @@
     <!-- 임시저장 INSERT 쿼리 -->
     <select id="selectExistingInspResultIdBySchdId" resultType="com.sims.qsc.store_inspection.vo.StoreInspectionPopupRequest">
         SELECT
-            INSP_RESULT_ID,
-            INSP_SCHD_ID
+            INSP_RESULT_ID
+            , INSP_SCHD_ID
         FROM INSP_RESULT
         WHERE INSP_SCHD_ID = #{inspSchdId}
     </select>
@@ -94,11 +94,11 @@
             , CRE_MBR_ID
             , CRE_TM
         ) VALUES (
-                     #{inspResultId},
-                     #{inspSchdId},
-                     TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI'),
-                     #{creMbrId},
-                     TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+                     #{inspResultId}
+                     , #{inspSchdId}
+                     , TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+                     , #{creMbrId}
+                     , TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
                  )
     </insert>
 
@@ -189,9 +189,9 @@
     <delete id="deleteUnmatchedEVIT_ANSW_IMG" parameterType="map">
         DELETE FROM EVIT_ANSW_IMG
         WHERE EVIT_ID = #{evitId}
-        AND INSP_RESULT_ID = #{inspResultId}
-        AND CRE_MBR_ID = #{creMbrId}
-        AND SEQ NOT IN
+            AND INSP_RESULT_ID = #{inspResultId}
+            AND CRE_MBR_ID = #{creMbrId}
+            AND SEQ NOT IN
         <foreach item="seq" index="index" collection="seqList" open="(" separator="," close=")">
             #{seq}
         </foreach>
@@ -202,8 +202,8 @@
         SELECT t.EVIT_ANSW_IMG_PATH
         FROM EVIT_ANSW_IMG t
         WHERE t.EVIT_ID = #{evitId}
-        AND t.INSP_RESULT_ID = #{inspResultId}
-        AND t.SEQ NOT IN
+            AND t.INSP_RESULT_ID = #{inspResultId}
+            AND t.SEQ NOT IN
         <foreach item="seq" index="index" collection="seqList" open="(" separator="," close=")">
             #{seq}
         </foreach>
@@ -213,9 +213,9 @@
     <update id="updateINSP_RESULTTotals" parameterType="com.sims.qsc.store_inspection.vo.StoreInspectionPopupRequest">
         UPDATE INSP_RESULT
         SET
-            TOTAL_SCORE = #{totalScore},
-            TOTAL_PENALTY = #{totalPenalty},
-            TOTAL_BSN_SSPN = #{totalClosureDays}
+            TOTAL_SCORE = #{totalScore}
+            , TOTAL_PENALTY = #{totalPenalty}
+            , TOTAL_BSN_SSPN = #{totalClosureDays}
         WHERE INSP_RESULT_ID = #{inspResultId}
     </update>
 
@@ -245,35 +245,6 @@
 
 
     <!-- 임시저장된 EVIT_ANSW 및 EVIT_ANSW_IMG 조회 -->
-<!--    <select id="selectTemporaryInspectionDetails" parameterType="map" resultType="com.sims.qsc.store_inspection.vo.StoreInspectionPopupResponse$TemporaryInspectionDetailsVO">-->
-<!--        SELECT-->
-<!--            EV.VLT_ID-->
-<!--            , EA.EVIT_ID-->
-<!--            , EA.INSP_RESULT_ID-->
-<!--            , EV.PDT_NM_DTPLC-->
-<!--            , EV.VLT_CONTENT-->
-<!--            , EV.VLT_CNT-->
-<!--            , EV.CAUPVD_CD-->
-<!--            , EV.VLT_CAUSE-->
-<!--            , EV.INSTRUCTION-->
-<!--            , EV.VLT_PLC_CD-->
-<!--            , EA.CRE_MBR_ID AS CRE_MBR_ID_EV_VLT-->
-<!--            , EA.CRE_TM AS CRE_TM_EV_VLT-->
-<!--            , EA.EVIT_ANSW_CONTENT-->
-<!--            , EAI.EVIT_ANSW_IMG_PATH-->
-<!--            , EAI.SEQ-->
-<!--            , IR.CRE_MBR_ID AS creMbrId-->
-<!--        FROM-->
-<!--            INSP_RESULT IR-->
-<!--                INNER JOIN EVIT_ANSW EA ON EA.INSP_RESULT_ID = IR.INSP_RESULT_ID-->
-<!--                LEFT JOIN EVIT_VLT EV ON EV.INSP_RESULT_ID = EA.INSP_RESULT_ID AND EV.EVIT_ID = EA.EVIT_ID-->
-<!--                LEFT JOIN EVIT_ANSW_IMG EAI ON EAI.EVIT_ID = EA.EVIT_ID AND EAI.INSP_RESULT_ID = EA.INSP_RESULT_ID-->
-<!--        WHERE-->
-<!--            IR.INSP_COMPL_W = 'N'-->
-<!--          AND IR.INSP_RESULT_ID = #{inspResultId}-->
-<!--          AND IR.CRE_MBR_ID = #{creMbrId}-->
-<!--    </select>-->
-
     <select id="selectTemporaryInspectionDetails" parameterType="map" resultType="com.sims.qsc.store_inspection.vo.StoreInspectionPopupResponse$TemporaryInspectionDetailsVO">
         SELECT
             EV.VLT_ID
@@ -318,14 +289,14 @@
     <!-- 기존 EVIT_VLT 조회 -->
     <select id="selectExistingEVIT_VLT" parameterType="map" resultType="com.sims.qsc.store_inspection.vo.StoreInspectionPopupRequest$SubcategoryInspection">
         SELECT
-            EV.PDT_NM_DTPLC AS pdtNmDtplc,
-            EV.VLT_CONTENT AS vltContent,
-            EV.VLT_CNT AS vltCnt,
-            EV.CAUPVD_CD AS caupvdCd,
-            EV.VLT_CAUSE AS vltCause,
-            EV.INSTRUCTION AS instruction,
-            EV.VLT_PLC_CD AS vltPlcCd,
-            EA.EVIT_ANSW_CONTENT AS answerContent
+            EV.PDT_NM_DTPLC AS pdtNmDtplc
+            , EV.VLT_CONTENT AS vltContent
+            , EV.VLT_CNT AS vltCnt
+            , EV.CAUPVD_CD AS caupvdCd
+            , EV.VLT_CAUSE AS vltCause
+            , EV.INSTRUCTION AS instruction
+            , EV.VLT_PLC_CD AS vltPlcCd
+            , EA.EVIT_ANSW_CONTENT AS answerContent
         FROM
             EVIT_VLT EV
                 JOIN EVIT_ANSW EA ON EV.EVIT_ID = EA.EVIT_ID

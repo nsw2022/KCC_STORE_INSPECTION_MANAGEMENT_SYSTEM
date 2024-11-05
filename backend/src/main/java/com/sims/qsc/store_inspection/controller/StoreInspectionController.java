@@ -81,7 +81,6 @@ public class StoreInspectionController {
         String mbrNo = inspection.getMbrNo();
         if (!Objects.equals(username, mbrNo)) {
             log.info("사용자 {}는 chklstId {}에 접근할 권한이 없습니다.", username, chklstId);
-//            return "qsc/store_inspection/alert_error"; // 접근 금지 페이지로 이동
             inspection = null;
         }
 
@@ -123,14 +122,10 @@ public class StoreInspectionController {
 
     @PostMapping("/popup_lastCheck")
     public String lastCheckInspection(Model model, @RequestParam Map<String, String> allParams) {
-//        log.info("Received parameters for last check inspection: " + allParams);
 
         // 필요한 데이터를 가져와서 model에 추가
         String inspectionData = allParams.getOrDefault("inspectionData", "");  // 기본 값은 빈 문자열
         model.addAttribute("inspectionData", inspectionData);
-
-        // 필요한 경우 추가적인 데이터를 처리하거나 model에 담기
-        // model.addAttribute("otherData", "value");
 
         return "qsc/store_inspection/popup_lastCheck";  // JSP 경로
     }
@@ -138,5 +133,41 @@ public class StoreInspectionController {
 
 
 
+
+
+    //실험용---------------------------------------------------
+    @GetMapping("/alert_error")
+    public String newInspectionSchedule(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        log.info("여기는 사용자 이름입니다 = {}", username);
+
+        // 역할 결정 (A: 관리자, P: 품질관리자, S: SV, C: 점검자)
+        char roleChar = username.charAt(0);
+        String userRole;
+        switch(roleChar) {
+            case 'A':
+                userRole = "ADMIN";
+                break;
+            case 'P':
+                userRole = "QUALITY_MANAGER";
+                break;
+            case 'S':
+                userRole = "SV";
+                break;
+            case 'C':
+                userRole = "INSPECTOR";
+                break;
+            default:
+                userRole = "UNKNOWN";
+        }
+
+        model.addAttribute("naverClientId", naverClientId);
+        model.addAttribute("username", username);
+        model.addAttribute("userRole", userRole);
+
+        return "qsc/store_inspection/alert_error"; // JSP 경로
+    }
 
 }

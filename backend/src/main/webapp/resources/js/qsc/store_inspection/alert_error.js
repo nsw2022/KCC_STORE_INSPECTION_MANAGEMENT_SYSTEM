@@ -224,7 +224,6 @@ function calender() {
         // 초기 로드시 오늘 날짜의 점검 목록과 스케줄 테이블 생성
         const selectedDay = selectedDate ? parseInt(selectedDate.textContent) : defaultDay;
         const date = new Date(year, month, selectedDay);
-        generateTodayInspectionList(date);
         generateScheduleTable(date);
     }
 
@@ -293,7 +292,6 @@ function calender() {
             const selectedDay = parseInt(dayContent.textContent);
             const date = new Date(selectedYear, selectedMonth, selectedDay);
 
-            generateTodayInspectionList(date); // 점검 목록 생성
             generateScheduleTable(date); // 스케줄 테이블 생성
         });
 
@@ -328,8 +326,6 @@ function calender() {
 
         // 달력 업데이트
         generateCalendar(selectedMonth, selectedYear);
-        // 오늘의 점검 목록 업데이트
-        generateTodayInspectionList(date);
         // 스케줄 테이블 업데이트
         generateScheduleTable(date);
     });
@@ -339,93 +335,10 @@ function calender() {
         const selectedMonth = parseInt(monthSelect.value);
         const selectedDay = selectedDate ? parseInt(selectedDate.textContent) : defaultDay;
         const date = new Date(selectedYear, selectedMonth, selectedDay);
-        generateTodayInspectionList(date); // 필요에 따라 추가
         generateScheduleTable(date);
     });
 
 }
-
-//좌측상단 오늘의 점검표시 함수
-function generateTodayInspectionList(date) {
-    const listContainer = document.getElementById('today_inspection_list');
-    listContainer.innerHTML = '';
-
-    const dateStr = formatDate(date); // "YYYY/MM/DD" 형식으로 변환
-    let hasInspection = false; // 점검 여부를 추적하는 변수
-
-    const selectedInspector = getSelectedInspector();
-    const MAX_VISIBLE_ITEMS = 5; // 처음에 보여줄 최대 항목 수
-    let itemCount = 0; // 생성된 항목 수를 추적
-    let hiddenItems = []; // 숨겨진 항목들을 저장할 배열
-
-    inspectionAllScheduleData.forEach(inspector => {
-        // 선택된 점검자에 따라 필터링 ('all'인 경우 모두 포함)
-        if (selectedInspector === 'all' || selectedInspector == inspector.INSP_MBR_ID) {
-            inspector.INSP_TYPE.forEach(category => {
-                category.SUB_CTH_NM.forEach(item => {
-                    if (item.INSP_PLAN_DT === dateStr) {
-                        hasInspection = true;
-                        const li = document.createElement('li');
-                        const h4 = document.createElement('h4');
-                        h4.textContent = category.CTG_NM;
-                        const pTitle = document.createElement('p');
-                        pTitle.classList.add('today_inspection_list_title');
-                        pTitle.textContent = item.STORE_NM;
-                        const pDate = document.createElement('p');
-                        pDate.classList.add('today_inspection_list_date');
-                        pDate.textContent = item.INSP_PLAN_DT.replace(/\//g, '.');
-                        li.appendChild(h4);
-                        li.appendChild(pTitle);
-                        li.appendChild(pDate);
-
-                        // 항목 개수에 따라 처리
-                        if (itemCount < MAX_VISIBLE_ITEMS) {
-                            listContainer.appendChild(li);
-                        } else {
-                            li.style.display = 'none'; // 처음엔 숨김 처리
-                            hiddenItems.push(li); // 숨겨진 항목에 추가
-                        }
-                        itemCount++;
-                    }
-                });
-            });
-        }
-    });
-
-    // 5개 이상일 때 "+n개 더보기" div 생성
-    if (hiddenItems.length > 0) {
-        const moreLi = document.createElement('li');
-        const moreP = document.createElement('p');
-        moreP.classList.add('today_inspection_list_title');
-        moreP.textContent = `+${hiddenItems.length}개 더보기`;
-        moreP.style.cursor = 'pointer';
-
-        // 스타일을 직접 적용
-        moreLi.style.display = 'flex';
-        moreLi.style.justifyContent = 'center';
-        moreLi.style.alignItems = 'center';
-        moreLi.style.padding = '0';
-
-        moreP.addEventListener('click', () => {
-            hiddenItems.forEach(item => (item.style.display = '')); // 숨겨진 항목 표시
-            moreLi.style.display = 'none'; // 더보기 항목 숨기기
-        });
-
-        moreLi.appendChild(moreP);
-        listContainer.appendChild(moreLi);
-    }
-
-    // 점검이 없는 경우 "점검이 없습니다." 메시지 표시
-    if (!hasInspection) {
-        const noInspectionMsg = document.createElement('li');
-        const pTag = document.createElement('p');
-        pTag.textContent = '점검이 없습니다.';
-        pTag.classList.add('no-inspection-message');
-        noInspectionMsg.appendChild(pTag);
-        listContainer.appendChild(noInspectionMsg);
-    }
-}
-
 
 
 
@@ -434,30 +347,27 @@ function generateScheduleTable(date) {
     const tableBody = document.getElementById('schedule-table-body');
     tableBody.innerHTML = '';
 
-    // 선택한 날짜의 주 (일요일 시작)
+    // 선택한 날짜의 주 (월요일 시작)
     const weekStartDate = new Date(date);
-    weekStartDate.setDate(date.getDate() - date.getDay()); // 일요일로 설정
+    const day = weekStartDate.getDay(); // 0 (일요일) ~ 6 (토요일)
+    const diff = (day === 0 ? -6 : 1 - day); // 월요일로 조정
+    weekStartDate.setDate(weekStartDate.getDate() + diff);
 
     const selectedChecklist = document.getElementById('checklist-select').value;
     const selectedInspector = getSelectedInspector();
 
     const weekRow = document.createElement('tr');
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 5; i++) { // 5일 (월~금)으로 반복
         const cellDate = new Date(weekStartDate);
         cellDate.setDate(weekStartDate.getDate() + i);
 
         const td = document.createElement('td');
         const spanDate = document.createElement('span');
-        spanDate.textContent = `${cellDate.getMonth() + 1}/${cellDate.getDate()}`;
+        spanDate.textContent = `${cellDate.getMonth() + 1}/${cellDate.getDate()}`; // +1 제거
 
         // 버튼과 날짜를 감쌀 div 생성
         const btnDateWrap = document.createElement('div');
         btnDateWrap.classList.add('btn-date-wrap');
-
-        // 일요일(0)과 토요일(6)에 empty-cell 클래스 추가
-        if (i === 0 || i === 6) {
-            td.classList.add('empty-cell');
-        }
 
         // 해당 날짜의 점검 항목 가져오기
         const dateStr = formatDate(cellDate);
@@ -503,8 +413,8 @@ function generateScheduleTable(date) {
         });
 
         // 버튼들을 td에 추가하기 전에 btn-date-wrap에 추가
-        if (allItems.length > 3) {
-            const extraCount = allItems.length - 3;
+        if (allItems.length > 2) {
+            const extraCount = allItems.length - 2;
             const moreButton = document.createElement('button');
             moreButton.classList.add('more-btn');
             moreButton.textContent = `+${extraCount} 더보기`;
@@ -527,7 +437,7 @@ function generateScheduleTable(date) {
         }
 
         // 실제로 표시할 버튼들 (최대 3개)
-        const displayItems = allItems.slice(0, 3);
+        const displayItems = allItems.slice(0, 2);
         displayItems.forEach(item => {
             const button = document.createElement('button');
             button.classList.add('inspection-btn');
@@ -566,14 +476,12 @@ function generateScheduleTable(date) {
             td.appendChild(button);
         });
 
-        // 버튼이 3개 이상일 경우 '+n 더보기' 버튼은 이미 추가됨
-        // (추가적인 처리가 필요하지 않습니다)
-
         weekRow.appendChild(td);
     }
 
     tableBody.appendChild(weekRow);
 }
+
 
 
 
