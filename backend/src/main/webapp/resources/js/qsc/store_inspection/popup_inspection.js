@@ -2147,7 +2147,7 @@ function checkInspection() {
           // 알림 확인 후 페이지 이동
           const form = document.createElement("form");
           form.method = "GET"; // GET 방식 사용
-          form.action = "/qsc/popup_middleCheck";
+          form.action = "/qsc/popup-middleCheck";
 
           // 숨겨진 입력 필드 생성 및 추가
           const input1 = document.createElement("input");

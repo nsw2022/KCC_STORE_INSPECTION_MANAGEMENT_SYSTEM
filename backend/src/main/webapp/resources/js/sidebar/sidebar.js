@@ -147,13 +147,13 @@ function restoreActiveMenu() {
   // URL과 메뉴 인덱스를 매핑한 객체를 생성
   const menuMapping = {
     '/': { parentIndex: 0 }, // 대시보드
-    '/master/store_manage/store_list': { parentIndex: 1, subIndex: 0 },
-    '/master/product_manage/product_list': { parentIndex: 1, subIndex: 1 },
+    '/master/store/manage': { parentIndex: 1, subIndex: 0 },
+    '/master/product/manage': { parentIndex: 1, subIndex: 1 },
     '/master/checklist': { parentIndex: 2, subIndex: 0 },
     '/master/inspection-list-manage': { parentIndex: 2, subIndex: 1 },
     '/qsc/inspection-schedule/schedule-list': { parentIndex: 3, subIndex: 0 },
     '/qsc/store-inspection-schedule': { parentIndex: 3, subIndex: 1 },
-    '/qsc/store_inspection': { parentIndex: 3, subIndex: 2 },
+    '/qsc/store-inspection': { parentIndex: 3, subIndex: 2 },
     '/qsc/inspection/result': { parentIndex: 3, subIndex: 3 },
 
   };

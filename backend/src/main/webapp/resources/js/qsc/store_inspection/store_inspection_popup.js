@@ -225,16 +225,31 @@ function populateRecentInspectionHistory(data) {
 }
 
 
+// SweetAlert를 표시하는 함수
+function showUnauthorizedAlert() {
+    Swal.fire({
+        title: "접근 불가",
+        text: "점검 권한이 없습니다.",
+        icon: "error",
+        confirmButtonText: "확인",
+    })
+}
 
+function startInspection(button) {
+    // 버튼의 data-authorized 속성 확인
+    const authorized = button.getAttribute('data-authorized') === 'true';
 
-function startInspection() {
+    if (!authorized) {
+        showUnauthorizedAlert();
+        return;
+    }
+
     // 현재 페이지의 URL에서 파라미터 추출
     const urlParams = new URLSearchParams(window.location.search);
     const chklstId = urlParams.get('chklstId');
     const storeNm = urlParams.get('storeNm');
     const inspPlanDt = urlParams.get('inspPlanDt');
     const inspSchdId = inspectionData.inspSchdId;
-
 
     const url = `/filter/store_inspection_popup?chklstId=${chklstId}&storeNm=${encodeURIComponent(storeNm)}&inspPlanDt=${inspPlanDt}`;
 
@@ -247,7 +262,6 @@ function startInspection() {
 
     // inspPlanDt의 '/' 문자 제거 (예: '2024/10/18' -> '20241018')
     const formattedInspPlanDt = inspPlanDt.replace(/\//g, '');
-
 
     const requestData = {
         chklstId: parseInt(chklstId, 10),
@@ -279,7 +293,7 @@ function startInspection() {
             // 팝업 페이지로 이동하면서 inspSchdId 전달
             var form = document.createElement("form");
             form.method = "GET"; // @GetMapping에 맞춰 GET 방식 사용
-            form.action = "/qsc/popup_page_inspection";
+            form.action = "/qsc/popup-page-inspection";
 
             // 숨겨진 입력 필드 생성 및 추가
             var input1 = document.createElement("input");
@@ -321,6 +335,7 @@ function startInspection() {
             alert('점검을 시작하는 데 실패했습니다.');
         });
 }
+
 
 //---------------------------이력조회함수------------------------
 // 이력 조회 버튼 클릭 시 호출되는 함수
