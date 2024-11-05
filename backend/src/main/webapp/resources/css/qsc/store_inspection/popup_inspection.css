@@ -138,9 +138,10 @@ body{
 .inspection-table td.info-title p {
     display: block;
     margin: 0;
-    line-height: 1.4; /* 줄 간격 설정 */
+    line-height: 2.8    ; /* 줄 간격 설정 */
     word-wrap: break-word; /* 긴 단어를 줄 바꿈 처리 */
     white-space: normal; /* 여러 줄로 표시되도록 설정 */
+    text-align: center;
 }
 
 .info-details {
@@ -687,6 +688,9 @@ input[type="radio"] {
 
 /* 반응형 스타일 */
 @media screen and (max-width: 1000px) {
+    body{
+        padding: 40px 20px;
+    }
     .info-title{
         padding: 29px;
     }

@@ -63,10 +63,4 @@ public interface StoreInspectionPopupService {
      */
     void completeInspection(Long inspResultId, String signImgPath, String totalReview);
 
-
-//    List<StoreInspectionPopupRequest.SubcategoryInspection> selectExistingEVIT_VLT(Long evitId, Long inspResultId, Long creMbrId);
-
-
-
-
 }
