@@ -31,25 +31,8 @@
     <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js'></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script type="text/javascript">
-        document.addEventListener('DOMContentLoaded', function() {
-            // 'inspection' 모델 속성이 없는 경우 (권한 없음)
-            var authorized = <c:out value="${inspection != null}" />;
-            if (!authorized) {
-                Swal.fire({
-                    title: "권한이 없습니다.",
-                    text: "문제가 발생했습니다. 다시 시도해주세요.",
-                    icon: "error",
-                    confirmButtonText: "확인",
-                }).then(() => {
-                    window.close(); // 사용자가 확인을 누르면 창을 닫습니다.
-                });
-            }
-        });
-    </script>
 </head>
 <body>
-<c:if test="${inspection != null}">
 <section class="inspection-detail">
     <div class="inspection-header">
         <h2>점검 가맹점 상세조회</h2>
@@ -78,9 +61,9 @@
     </table>
 </section>
 <div id="go-inspection-wrap">
-    <button id="go-inspection" onclick="startInspection(this)">점검시작</button>
+<%--    <button id="go-inspection" onclick="startInspection(this)">점검시작</button>--%>
+    <button id="go-inspection" data-authorized="<c:out value='${inspection != null}'/>" onclick="startInspection(this)">점검시작</button>
 </div>
-</c:if>
 <script src="/resources/js/qsc/store_inspection/store_inspection_popup.js"></script>
 </body>
 </html>
