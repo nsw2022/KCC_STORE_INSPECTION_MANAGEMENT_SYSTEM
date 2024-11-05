@@ -315,7 +315,7 @@
   position: absolute;
   top: 60px; /* user_mini 아래에 표시되도록 조정 */
   right: 10px;
-  width: 270px;
+  width: auto;
   background-color: #222222;
 
   border-radius: 5px;
@@ -330,6 +330,10 @@
   padding: 20px 20px 3px 20px;
 
   opacity: 90%;
+}
+
+#login-user{
+  margin-right: 25px;
 }
 
 #login-user-name{
@@ -406,7 +410,6 @@
     top: 13px;
     right: 70px;
     float: right;
-    width: 210px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;

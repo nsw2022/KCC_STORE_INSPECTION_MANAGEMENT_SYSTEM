@@ -71,26 +71,27 @@ public class AwsFileController {
     }
 
 
-
-    //    @PostMapping("/download")
-
-//    /**
-//     * 새로운 서명 이미지 업로드 엔드포인트 (sign_img 디렉토리)
-//     */
-//    @PostMapping("/sign_img")
-//    @ResponseBody
-//    public ResponseEntity<String> uploadSignImg(@RequestParam("file") MultipartFile file) {
-//        log.info("서명 이미지 업로드 시작");
-//        log.info("파일 이름 : " + file.getOriginalFilename());
-//        try {
-//            String s3Key = awsFileService.saveSignImage(file); // sign_img 디렉토리에 저장
-//            log.info("서명 이미지 업로드 성공 : " + s3Key);
-//            return ResponseEntity.ok(s3Key); // S3 키 반환 (단순 문자열)
-//        } catch (Exception e) {
-//            log.error("서명 이미지 업로드 실패", e);
-//            return ResponseEntity.status(500).body("서명 이미지 업로드에 실패했습니다.");
-//        }
-//    }
+    /**
+     * 새로운 서명 이미지 업로드 엔드포인트 (sign_img 디렉토리)
+     */
+    @PostMapping("/sign_img")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> uploadSignImg(@RequestParam("file") MultipartFile file) {
+        log.info("서명 이미지 업로드 시작");
+        log.info("파일 이름 : " + file.getOriginalFilename());
+        try {
+            String s3Key = awsFileService.saveSignImage(file); // sign_img 디렉토리에 저장
+            log.info("서명 이미지 업로드 성공 : " + s3Key);
+            Map<String, String> response = new HashMap<>();
+            response.put("path", s3Key); // S3 키 반환
+            return ResponseEntity.ok(response); // S3 키 반환 (단순 문자열)
+        } catch (Exception e) {
+            log.error("서명 이미지 업로드 실패", e);
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("error", "파일 업로드에 실패했습니다.");
+            return ResponseEntity.status(500).body(errorResponse);
+        }
+    }
 
 
 

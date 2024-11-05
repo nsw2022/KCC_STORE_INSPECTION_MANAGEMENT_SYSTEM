@@ -53,18 +53,18 @@ public class AwsFileService {
 	}
 
 
-//	/**
-//	 * 서명 이미지를 S3에 저장하는 메서드 (sign_img 디렉토리)
-//	 * @param multipartFile 업로드할 파일
-//	 * @return 업로드된 파일의 S3 키
-//	 * @throws IOException 파일 변환 실패 시 예외 발생
-//	 */
-//	public String saveSignImage(MultipartFile multipartFile) throws IOException {
-//		File uploadFile = convertAndResize(multipartFile)
-//				.orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File convert fail"));
-//		String filePath = upload(uploadFile, SIGN_IMG_DIR);
-//		return filePath.substring(filePath.lastIndexOf('/') + 1);
-//	}
+	/**
+	 * 서명 이미지를 S3에 저장하는 메서드 (sign_img 디렉토리)
+	 * @param multipartFile 업로드할 파일
+	 * @return 업로드된 파일의 S3 키
+	 * @throws IOException 파일 변환 실패 시 예외 발생
+	 */
+	public String saveSignImage(MultipartFile multipartFile) throws IOException {
+		File uploadFile = convertAndResize(multipartFile)
+				.orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File convert fail"));
+		String filePath = upload(uploadFile, SIGN_IMG_DIR);
+		return filePath.substring(filePath.lastIndexOf('/') + 1);
+	}
 
 
 	/**

@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const inspResultId = urlParams.get("inspResultId");
 
     initializeSignaturePad();
+    setTodayAsDefaultDate();
 
     globalInspResultId = inspResultId; // 전역 변수에 설정
 
@@ -44,6 +45,13 @@ document.addEventListener("DOMContentLoaded", function () {
         alert('필수 파라미터(chklstId, storeNm, inspPlanDt 또는 inspResultId)가 지정되지 않았습니다.');
     }
 });
+
+// 오늘 날짜를 기본값으로 설정하는 함수
+function setTodayAsDefaultDate() {
+    const today = new Date();
+    const formattedDate = today.toISOString().split('T')[0];
+    document.getElementById('visitDate').value = formattedDate;
+}
 
 // REST API에서 inspection-detail 섹션 데이터를 가져오는 함수
 function fetchPopupData(chklstId, storeNm, inspPlanDt) {
@@ -278,7 +286,7 @@ function lastCheckInspection() {
         const formData = new FormData();
         formData.append('file', blob, 'signature.png');
 
-        fetch('/upload', { // AwsFileController의 /upload 엔드포인트 사용
+        fetch('/sign_img', { // AwsFileController의 /upload 엔드포인트 사용
             method: 'POST',
             body: formData
         })
@@ -319,6 +327,7 @@ function lastCheckInspection() {
             })
             .then(response => {
                 if (!response.ok) {
+                    console.log("응답이 JSON 형식이 아님:", text);
                     throw new Error(`점검 완료 저장 실패: ${response.statusText}`);
                 }
                 return response.text();
@@ -343,6 +352,7 @@ function lastCheckInspection() {
             });
     }, 'image/png');
 }
+
 
 // 새로운 함수: 결과 페이지로 inspResultId를 POST로 전송하여 이동
 function redirectToResultPage(inspResultId) {
