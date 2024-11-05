@@ -28,7 +28,7 @@ public class StoreInspectionController {
     @Value("${naver.maps.client.id}")
     private String naverClientId;
 
-    @GetMapping("/store_inspection")
+    @GetMapping("/store-inspection")
     public String selectInspectionSchedule(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
@@ -55,15 +55,16 @@ public class StoreInspectionController {
                 userRole = "UNKNOWN";
         }
 
-        model.addAttribute("naverClientId", naverClientId);
         model.addAttribute("username", username);
         model.addAttribute("userRole", userRole);
 
-        return "qsc/store_inspection/store_inspection"; // JSP 경로
+        model.addAttribute("naverClientId", naverClientId);
+
+        return "qsc/store_inspection/store-inspection"; // JSP 경로
     }
 
     // 점검페이지 -> 점검시작팝업페이지
-    @GetMapping("/popup_page")
+    @GetMapping("/popup-page")
     public String openPopupPage(
             @RequestParam("chklstId") String chklstId,
             @RequestParam("storeNm") String storeNm,
@@ -89,7 +90,7 @@ public class StoreInspectionController {
         model.addAttribute("naverClientId", naverClientId);
         model.addAttribute("username", username);
 
-        return "qsc/store_inspection/popup_page"; // popup_page.jsp로 이동
+        return "qsc/store_inspection/popup-page"; // popup-page.jsp로 이동
     }
 
     //점검페이지 -> 점검결과팝업페이지
@@ -99,24 +100,24 @@ public class StoreInspectionController {
         return "qsc/inspection_result/popup_inspection_result"; // 반환할 뷰의 이름
     }
 
-    @GetMapping("/popup_page_inspection")
+    @GetMapping("/popup-page-inspection")
     public String nextPage(Model model) {
         // 지금은 데이터가 필요 없으므로 바로 페이지 이동
-        return "qsc/store_inspection/popup_page_inspection"; // JSP 경로
+        return "qsc/store_inspection/popup-page-inspection"; // JSP 경로
     }
 
-    @GetMapping("/popup_middleCheck")
+    @GetMapping("/popup-middleCheck")
     public String middleCheck(Model model) {
 
         // popup_middleCheck.jsp로 이동
-        return "qsc/store_inspection/popup_middleCheck";
+        return "qsc/store_inspection/popup-middleCheck";
     }
 
 
-    @GetMapping("/popup_signature")
+    @GetMapping("/popup-signature")
     public String moveToSignaturePage(Model model) {
 
-        return "qsc/store_inspection/popup_signature";
+        return "qsc/store_inspection/popup-signature";
     }
 
 

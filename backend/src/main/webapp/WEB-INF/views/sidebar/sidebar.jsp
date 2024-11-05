@@ -99,7 +99,7 @@
                                     <a href="#" onclick="document.getElementById('inspection_schedule_detail').submit()">가맹점 점검 일정 조회</a>
                                 </li>
                                 <li>
-                                    <form id="inspection" action="/qsc/store_inspection" method="get"></form>
+                                    <form id="inspection" action="/qsc/store-inspection" method="get"></form>
                                     <a href="#" onclick="document.getElementById('inspection').submit()">가맹점 점검</a>
                                 </li>
                                 <li>

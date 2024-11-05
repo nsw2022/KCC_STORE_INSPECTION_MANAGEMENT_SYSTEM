@@ -450,26 +450,27 @@ function setPhotoPaths(contentWrapper, photos) {
     const photoBoxes = contentWrapper.querySelectorAll('.photo-box');
 
     // 모든 photoBox를 초기화
-    photoBoxes.forEach((box) => {
-        box.style.backgroundImage = "";
-        box.textContent = "사진 미등록";
-        box.removeAttribute('data-path');
+    // photoBoxes.forEach((box) => {
+    //     box.style.backgroundImage = "";
+    //     box.textContent = "사진 미등록";
+    //     box.removeAttribute('data-path');
+    //
+    //     // 기존의 delete 버튼 제거
+    //     const deleteButton = box.querySelector('.delete-btn');
+    //     if (deleteButton) {
+    //         deleteButton.remove();
+    //     }
+    // });
 
-        // 기존의 delete 버튼 제거
-        const deleteButton = box.querySelector('.delete-btn');
-        if (deleteButton) {
-            deleteButton.remove();
-        }
-    });
-
-    // 사진 경로에 따라 사진 설정
-    photos.forEach((photo, index) => {
+    photos.forEach((photo) => {
+        const seq = photo.seq;
         const path = photo.photoPath;
         if (path && !path.startsWith('/')) {
             const s3Key = 'inspection_img/' + path;
-            const box = photoBoxes[index];
+            const box = photoBoxes[seq - 1]; // seq는 1부터 시작하므로 인덱스는 seq - 1
             if (box) {
-                console.log(`Path ${s3Key} is recognized as an S3 key.`);
+                console.log(`Fetching image from path: ${s3Key} for box sequence: ${seq}`);
+
                 fetch('/download', {
                     method: 'POST',
                     headers: {
@@ -524,6 +525,7 @@ function setPhotoPaths(contentWrapper, photos) {
                                         box.textContent = "사진 미등록";
                                         box.removeAttribute('data-path');
                                         deleteButton.remove();
+                                        // photoCount는 필요 시 별도로 관리
                                     })
                                     .catch(error => {
                                         console.error("파일 삭제 실패:", error);
@@ -539,8 +541,8 @@ function setPhotoPaths(contentWrapper, photos) {
             }
         } else {
             // path가 없거나 로컬 경로인 경우 처리
-            console.warn(`Photo box ${index}에 대한 유효한 S3 path가 없습니다.`);
-            const box = photoBoxes[index];
+            console.warn(`Photo box seq ${photo.seq}에 대한 유효한 S3 path가 없습니다.`);
+            const box = photoBoxes[photo.seq - 1];
             if (box) {
                 box.style.backgroundImage = "";
                 box.textContent = "사진 미등록";
@@ -1963,12 +1965,6 @@ function generateInspectionList(category) {
 }
 
 
-
-
-
-
-
-
 // 콘텐츠 높이를 조정하는 함수
 function adjustWrapperHeight(element) {
     element.style.height = 'auto';
@@ -2266,6 +2262,7 @@ function getVltPlcCd(contentWrapper) {
     return null;
 }
 
+
 function getPhotoPaths(contentWrapper) {
     const photoBoxes = contentWrapper.querySelectorAll('.photo-box');
     const photos = [];
@@ -2280,7 +2277,6 @@ function getPhotoPaths(contentWrapper) {
     });
     return photos;
 }
-
 
 
 
@@ -2597,7 +2593,7 @@ function middleCheckInspection() {
                         // 알림 확인 후 페이지 이동
                         const form = document.createElement("form");
                         form.method = "GET"; // GET 방식 사용
-                        form.action = "/qsc/popup_signature";
+                        form.action = "/qsc/popup-signature";
 
                         // 숨겨진 입력 필드 생성 및 추가
                         const input1 = document.createElement("input");
@@ -2771,4 +2767,3 @@ function getPhotoPaths(contentWrapper) {
     });
     return photos;
 }
-

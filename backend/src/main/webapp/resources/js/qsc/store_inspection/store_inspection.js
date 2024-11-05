@@ -726,7 +726,7 @@ function openPopup(item) {
     }
 
     // 팝업 페이지 URL 설정 (컨트롤러 매핑과 일치)
-    const popupUrl = `/qsc/popup_page?chklstId=${item.chklstId}&storeNm=${encodeURIComponent(item.storeNm)}&inspPlanDt=${item.planDate.replace(/\//g, '')}`;
+    const popupUrl = `/qsc/popup-page?chklstId=${item.chklstId}&storeNm=${encodeURIComponent(item.storeNm)}&inspPlanDt=${item.planDate.replace(/\//g, '')}`;
 
     // 현재 화면 크기 확인
     const screenWidth = window.innerWidth || document.documentElement.clientWidth || screen.width;
