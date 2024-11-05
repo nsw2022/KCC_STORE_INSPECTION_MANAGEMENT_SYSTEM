@@ -146,6 +146,199 @@ function getSelectedInspector() {
 }
 
 
+// function calender() {
+//     const calendarBody = document.getElementById('calendar-body');
+//     const monthSelect = document.getElementById('month-select');
+//     const yearSelect = document.getElementById('year-select');
+//     const checklistSelect = document.getElementById('checklist-select');
+//     let selectedDate = null;
+//
+//
+//     const today = new Date(); // 오늘 날짜 객체 생성
+//     const defaultYear = today.getFullYear(); // 오늘의 년도
+//     const defaultMonth = today.getMonth(); // 오늘의 월 (0부터 시작)
+//     let defaultDay = new Date().getDate(); // 전역 변수로 이동
+//
+//     // 년도 드롭다운 생성 함수
+//     function populateYearSelect(startYear = 1900, endYear = 2100, defaultYear) {
+//         yearSelect.innerHTML = ''; // 기존 옵션 제거
+//         for (let year = startYear; year <= endYear; year++) {
+//             const option = document.createElement('option');
+//             option.value = year;
+//             option.textContent = `${year}년`;
+//             if (year === defaultYear) {
+//                 option.selected = true;
+//             }
+//             yearSelect.appendChild(option);
+//         }
+//     }
+//
+//     // 월 드롭다운 생성 함수
+//     function populateMonthSelect(defaultMonth) {
+//         const months = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+//         monthSelect.innerHTML = '';
+//         months.forEach((monthName, index) => {
+//             const option = document.createElement('option');
+//             option.value = index;
+//             option.textContent = monthName;
+//             if (index === defaultMonth) {
+//                 option.selected = true;
+//             }
+//             monthSelect.appendChild(option);
+//         });
+//     }
+//
+//
+//     // 달력 생성 함수
+//     function generateCalendar(month, year) {
+//         calendarBody.innerHTML = ''; // 기존 달력 내용 초기화
+//
+//         const firstDay = new Date(year, month, 1).getDay(); // 해당 월의 첫 번째 날의 요일 (0: 일요일)
+//         const lastDate = new Date(year, month + 1, 0).getDate(); // 해당 월의 마지막 날짜
+//
+//         let day = 1;
+//         let row;
+//
+//         // 총 주 수 계산 (첫 주 + 마지막 주의 빈 칸을 고려)
+//         const totalDays = firstDay + lastDate;
+//         const totalWeeks = Math.ceil(totalDays / 7);
+//
+//         for (let week = 0; week < totalWeeks; week++) {
+//             row = document.createElement('tr');
+//
+//             for (let i = 0; i < 7; i++) {
+//                 const currentDayIndex = week * 7 + i;
+//                 const cell = document.createElement('td');
+//
+//                 if (currentDayIndex >= firstDay && day <= lastDate) {
+//                     const dayContent = createCalendarCell(day++, year, month);
+//                     cell.appendChild(dayContent);
+//                 }
+//
+//                 row.appendChild(cell);
+//             }
+//
+//             calendarBody.appendChild(row);
+//         }
+//
+//         // 초기 로드시 오늘 날짜의 점검 목록과 스케줄 테이블 생성
+//         const selectedDay = selectedDate ? parseInt(selectedDate.textContent) : defaultDay;
+//         const date = new Date(year, month, selectedDay);
+//         generateScheduleTable(date);
+//     }
+//
+//
+//     // 날짜 선택 함수
+//     function createCalendarCell(day, year, month) {
+//         const dayContent = document.createElement('div');
+//         dayContent.classList.add('day-content');
+//         dayContent.textContent = day;
+//
+//         // 오늘 날짜 자동 선택
+//         if (year === defaultYear && month === defaultMonth && day === defaultDay) {
+//             dayContent.classList.add('selected'); // selected 클래스 추가
+//             selectedDate = dayContent;
+//         }
+//
+//
+//         // 현재 날짜를 "YYYY/MM/DD" 형식으로 변환
+//         const currentDate = new Date(year, month, day);
+//         const dateStr = formatDate(currentDate);
+//
+//         // 오늘 날짜 객체 생성 (시간 부분을 제거하여 날짜만 비교)
+//         const todayDate = new Date();
+//         todayDate.setHours(0, 0, 0, 0);
+//
+//         // 선택된 점검자 가져오기
+//         const selectedInspector = getSelectedInspector();
+//
+//         // 해당 날짜가 오늘 이전인지 확인
+//         const isPastDate = currentDate < todayDate;
+//
+//         // 해당 날짜에 미완료된 점검이 있는지 확인
+//         let hasIncompleteInspection = false;
+//
+//         if (isPastDate) {
+//             inspectionAllScheduleData.forEach(inspector => {
+//                 // 선택된 점검자에 따라 필터링 ('all'인 경우 모두 포함)
+//                 if (selectedInspector === 'all' || selectedInspector == inspector.INSP_MBR_ID) {
+//                     inspector.INSP_TYPE.forEach(category => {
+//                         category.SUB_CTH_NM.forEach(item => {
+//                             if (item.INSP_PLAN_DT === dateStr && item.INSP_STTS_CD === 'IS001') {
+//                                 hasIncompleteInspection = true;
+//                             }
+//                         });
+//                     });
+//                 }
+//             });
+//         }
+//
+//         // 미완료된 점검이 있는 경우 'incomplete' 클래스 추가
+//         if (hasIncompleteInspection) {
+//             dayContent.classList.add('incomplete');
+//         }
+//
+//
+//         // 클릭 이벤트 추가
+//         dayContent.addEventListener('click', function () {
+//             if (selectedDate) {
+//                 selectedDate.classList.remove('selected'); // 이전 선택 제거
+//             }
+//             selectedDate = dayContent; // 새로 선택된 요소로 갱신
+//             dayContent.classList.add('selected'); // 선택된 날짜 표시
+//
+//             const selectedYear = parseInt(yearSelect.value);
+//             const selectedMonth = parseInt(monthSelect.value);
+//             const selectedDay = parseInt(dayContent.textContent);
+//             const date = new Date(selectedYear, selectedMonth, selectedDay);
+//
+//             generateScheduleTable(date); // 스케줄 테이블 생성
+//         });
+//
+//         return dayContent;
+//     }
+//
+//
+//
+//
+//     // 년도 및 월 선택 시 달력 갱신
+//     function updateCalendar() {
+//         const selectedYear = parseInt(yearSelect.value);
+//         const selectedMonth = parseInt(monthSelect.value);
+//         generateCalendar(selectedMonth, selectedYear);
+//     }
+//
+//     // 페이지 로드 시 초기 설정
+//     populateYearSelect(2024, 2100, defaultYear); // 년도 드롭다운 생성
+//     populateMonthSelect(defaultMonth); // 월 드롭다운 생성
+//     updateCalendar(); // 초기 달력 생성
+//
+//     // 월 또는 년도 변경 시 달력 갱신
+//     monthSelect.addEventListener('change', updateCalendar);
+//     yearSelect.addEventListener('change', updateCalendar);
+//
+//     // 체크리스트 선택 변경 시 스케줄 테이블 갱신
+//     document.getElementById('insp-mbr').addEventListener('change', function() {
+//         const selectedYear = parseInt(document.getElementById('year-select').value);
+//         const selectedMonth = parseInt(document.getElementById('month-select').value);
+//         const selectedDay = selectedDate ? parseInt(selectedDate.textContent) : defaultDay;
+//         const date = new Date(selectedYear, selectedMonth, selectedDay);
+//
+//         // 달력 업데이트
+//         generateCalendar(selectedMonth, selectedYear);
+//         // 스케줄 테이블 업데이트
+//         generateScheduleTable(date);
+//     });
+//
+//     checklistSelect.addEventListener('change', function() {
+//         const selectedYear = parseInt(yearSelect.value);
+//         const selectedMonth = parseInt(monthSelect.value);
+//         const selectedDay = selectedDate ? parseInt(selectedDate.textContent) : defaultDay;
+//         const date = new Date(selectedYear, selectedMonth, selectedDay);
+//         generateScheduleTable(date);
+//     });
+//
+// }
 function calender() {
     const calendarBody = document.getElementById('calendar-body');
     const monthSelect = document.getElementById('month-select');
@@ -157,7 +350,7 @@ function calender() {
     const today = new Date(); // 오늘 날짜 객체 생성
     const defaultYear = today.getFullYear(); // 오늘의 년도
     const defaultMonth = today.getMonth(); // 오늘의 월 (0부터 시작)
-    let defaultDay = new Date().getDate(); // 전역 변수로 이동
+    let defaultDay = today.getDate(); // 오늘의 일
 
     // 년도 드롭다운 생성 함수
     function populateYearSelect(startYear = 1900, endYear = 2100, defaultYear) {
@@ -211,7 +404,7 @@ function calender() {
                 const cell = document.createElement('td');
 
                 if (currentDayIndex >= firstDay && day <= lastDate) {
-                    const dayContent = createCalendarCell(day++, year, month);
+                    const dayContent = createCalendarCell(day++, year, month, i); // 요일 인덱스 전달
                     cell.appendChild(dayContent);
                 }
 
@@ -229,17 +422,23 @@ function calender() {
 
 
     // 날짜 선택 함수
-    function createCalendarCell(day, year, month) {
+    function createCalendarCell(day, year, month, dayOfWeek) { // dayOfWeek 인자 추가
         const dayContent = document.createElement('div');
         dayContent.classList.add('day-content');
         dayContent.textContent = day;
+
+        // 요일에 따라 클래스 추가
+        if (dayOfWeek === 0) { // 일요일
+            dayContent.classList.add('sunday');
+        } else if (dayOfWeek === 6) { // 토요일
+            dayContent.classList.add('saturday');
+        }
 
         // 오늘 날짜 자동 선택
         if (year === defaultYear && month === defaultMonth && day === defaultDay) {
             dayContent.classList.add('selected'); // selected 클래스 추가
             selectedDate = dayContent;
         }
-
 
         // 현재 날짜를 "YYYY/MM/DD" 형식으로 변환
         const currentDate = new Date(year, month, day);
@@ -339,6 +538,7 @@ function calender() {
     });
 
 }
+
 
 
 

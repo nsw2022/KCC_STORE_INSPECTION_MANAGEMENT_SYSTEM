@@ -188,7 +188,6 @@ function calender() {
         });
     }
 
-
     // 달력 생성 함수
     function generateCalendar(month, year) {
         calendarBody.innerHTML = ''; // 기존 달력 내용 초기화
@@ -211,7 +210,7 @@ function calender() {
                 const cell = document.createElement('td');
 
                 if (currentDayIndex >= firstDay && day <= lastDate) {
-                    const dayContent = createCalendarCell(day++, year, month);
+                    const dayContent = createCalendarCell(day++, year, month, i); // 요일 인덱스 전달
                     cell.appendChild(dayContent);
                 }
 
@@ -228,19 +227,24 @@ function calender() {
         generateScheduleTable(date);
     }
 
-
     // 날짜 선택 함수
-    function createCalendarCell(day, year, month) {
+    function createCalendarCell(day, year, month, dayOfWeek) { // dayOfWeek 인자 추가
         const dayContent = document.createElement('div');
         dayContent.classList.add('day-content');
         dayContent.textContent = day;
+
+        // 요일에 따라 클래스 추가
+        if (dayOfWeek === 0) { // 일요일
+            dayContent.classList.add('sunday');
+        } else if (dayOfWeek === 6) { // 토요일
+            dayContent.classList.add('saturday');
+        }
 
         // 오늘 날짜 자동 선택
         if (year === defaultYear && month === defaultMonth && day === defaultDay) {
             dayContent.classList.add('selected'); // selected 클래스 추가
             selectedDate = dayContent;
         }
-
 
         // 현재 날짜를 "YYYY/MM/DD" 형식으로 변환
         const currentDate = new Date(year, month, day);
@@ -278,7 +282,6 @@ function calender() {
         if (hasIncompleteInspection) {
             dayContent.classList.add('incomplete');
         }
-
 
         // 클릭 이벤트 추가
         dayContent.addEventListener('click', function () {
