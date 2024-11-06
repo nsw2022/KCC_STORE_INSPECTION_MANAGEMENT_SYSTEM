@@ -68,4 +68,11 @@ public interface ChecklistMapper {
      */
     public List<Map<String, Object>> selectChecklistPreview(String chklstNm);
 
+    /**
+     * 체크리스트 사용 여부 수정
+     * @Param chklstId 체크리스트 Id
+     * @return 수정된 데이터 갯수
+     */
+    public int updateChklstUseW(int chklstId);
+
 }

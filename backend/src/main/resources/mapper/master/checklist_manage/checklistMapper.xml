@@ -5,7 +5,7 @@
 
 <mapper namespace="com.sims.master.checklist_manage.mapper.ChecklistMapper">
     <select id="selectChecklistAll">
-        SELECT
+        SELECT /* ChecklistMapper.selectChecklistAll 유재원 */
             CHKLST.CHKLST_ID,
             BRAND_NM.DTL_CD_NM AS brandNm,
             MASTER_CHKLST.CHKLST_NM AS masterChklstNm,
@@ -46,7 +46,7 @@
 
 
     <update id="deleteChecklistByChklstId" parameterType="List">
-        UPDATE
+        UPDATE /* ChecklistMapper.deleteChecklistByChklstId 유재원 */
             CHKLST
         SET
             CHKLST_STTS_W = '0'
@@ -59,7 +59,7 @@
     </update>
 
     <select id="selectBrandOptions">
-        SELECT
+        SELECT /* ChecklistMapper.selectBrandOptions 유재원 */
             DTL_CD_NM
         FROM
             COMM_CD_DTL
@@ -70,7 +70,7 @@
     </select>
 
     <select id="selectInspTypeOptions">
-        SELECT
+        SELECT /* ChecklistMapper.selectInspTypeOptions 유재원 */
             DTL_CD_NM
         FROM
             COMM_CD_DTL
@@ -81,14 +81,14 @@
     </select>
 
     <select id="selectChecklistOptions">
-        SELECT
+        SELECT /* ChecklistMapper.selectChecklistOptions 유재원 */
             CHKLST_NM
         FROM
             CHKLST
     </select>
 
     <select id="selectChklstIdByChklstIdAndChklstUseW">
-        SELECT
+        SELECT /* ChecklistMapper.selectChklstIdByChklstIdAndChklstUseW 유재원 */
             CHKLST_ID
         FROM
             CHKLST
@@ -102,73 +102,92 @@
     </select>
 
     <update id="insertOrUpdateChecklist">
-        MERGE INTO CHKLST /* ChecklistMapper.insertOrUpdateChecklist 유재원 */
+        MERGE INTO /* ChecklistMapper.insertOrUpdateChecklist 유재원 */
+            CHKLST
         USING (
-        <foreach collection="list" item="item" separator="UNION ALL">
-            SELECT
-            #{item.chklstId} AS CHKLST_ID,
-            (SELECT DTL_CD
-            FROM COMM_CD, COMM_CD_DTL
-            WHERE COMM_CD.COMM_CD_ID = COMM_CD_DTL.COMM_CD_ID
-            AND DTL_CD_NM = #{item.brandNm}) AS BRAND_CD,
-            (SELECT CHKLST_ID
-            FROM CHKLST
-            WHERE CHKLST_NM = #{item.masterChklstNm}) AS MASTER_CHKLST_ID,
-            #{item.chklstNm} AS CHKLST_NM,
-            #{item.chklstUseW} AS CHKLST_USE_W,
-            (SELECT DTL_CD
-            FROM COMM_CD, COMM_CD_DTL
-            WHERE COMM_CD.COMM_CD_ID = COMM_CD_DTL.COMM_CD_ID
-            AND DTL_CD_NM = #{item.inspTypeNm}) AS INSP_TYPE_CD,
-            (SELECT MBR_ID
-            FROM MBR
-            WHERE MBR_NO = #{item.MbrNo}) AS CRE_MBR_ID
-            FROM DUAL
-        </foreach>
+            <foreach collection="list" item="item" separator="UNION ALL">
+                SELECT
+                    #{item.chklstId} AS CHKLST_ID
+                    , (SELECT
+                           DTL_CD
+                       FROM
+                           COMM_CD
+                          , COMM_CD_DTL
+                       WHERE
+                           COMM_CD.COMM_CD_ID = COMM_CD_DTL.COMM_CD_ID
+                         AND
+                           DTL_CD_NM = #{item.brandNm}) AS BRAND_CD
+                    , (SELECT
+                              CHKLST_ID
+                          FROM
+                              CHKLST
+                          WHERE
+                              CHKLST_NM = #{item.masterChklstNm}) AS MASTER_CHKLST_ID
+                    , #{item.chklstNm} AS CHKLST_NM
+                    , #{item.chklstUseW} AS CHKLST_USE_W
+                    , (SELECT
+                           DTL_CD
+                       FROM
+                           COMM_CD
+                          , COMM_CD_DTL
+                       WHERE
+                           COMM_CD.COMM_CD_ID = COMM_CD_DTL.COMM_CD_ID
+                         AND
+                           DTL_CD_NM = #{item.inspTypeNm}) AS INSP_TYPE_CD
+                    , (SELECT
+                           MBR_ID
+                       FROM
+                           MBR
+                       WHERE
+                           MBR_NO = #{item.MbrNo}) AS CRE_MBR_ID
+                FROM
+                    DUAL
+            </foreach>
         ) temp
-        ON (CHKLST.CHKLST_ID = temp.CHKLST_ID)
+        ON
+            (CHKLST.CHKLST_ID = temp.CHKLST_ID)
         WHEN MATCHED THEN
         UPDATE SET
-        BRAND_CD = temp.BRAND_CD,
-        MASTER_CHKLST_ID = temp.MASTER_CHKLST_ID,
-        CHKLST_NM = temp.CHKLST_NM,
-        CHKLST_USE_W = temp.CHKLST_USE_W,
-        INSP_TYPE_CD = temp.INSP_TYPE_CD,
-        UPD_MBR_ID = temp.CRE_MBR_ID,
-        UPD_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+            BRAND_CD = temp.BRAND_CD
+            , MASTER_CHKLST_ID = temp.MASTER_CHKLST_ID
+            , CHKLST_NM = temp.CHKLST_NM
+            , CHKLST_USE_W = temp.CHKLST_USE_W
+            , INSP_TYPE_CD = temp.INSP_TYPE_CD
+            , UPD_MBR_ID = temp.CRE_MBR_ID
+            , UPD_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
         WHEN NOT MATCHED THEN
         INSERT (
-        CHKLST_ID,
-        BRAND_CD,
-        MASTER_CHKLST_ID,
-        CHKLST_NM,
-        CHKLST_USE_W,
-        INSP_TYPE_CD,
-        CRE_MBR_ID,
-        CRE_TM,
-        CHKLST_STTS_W
+            CHKLST_ID
+            , BRAND_CD
+            , MASTER_CHKLST_ID
+            , CHKLST_NM
+            , CHKLST_USE_W
+            , INSP_TYPE_CD
+            , CRE_MBR_ID
+            , CRE_TM
+            , CHKLST_STTS_W
         )
         VALUES (
-        CHKLST_SEQ.NEXTVAL,
-        temp.BRAND_CD,
-        temp.MASTER_CHKLST_ID,
-        temp.CHKLST_NM,
-        'N',
-        temp.INSP_TYPE_CD,
-        temp.CRE_MBR_ID,
-        TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI'),
-        '1'
+            CHKLST_SEQ.NEXTVAL
+            , temp.BRAND_CD
+            , temp.MASTER_CHKLST_ID
+            , temp.CHKLST_NM
+            , 'N'
+            , temp.INSP_TYPE_CD
+            , temp.CRE_MBR_ID
+            , TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+            , '1'
         )
     </update>
 
 
     <select id="selectChecklistPreview" resultType="Map" parameterType="String">
-        SELECT
-            CTG.CTG_NM AS category,
-            SUBCTG.CTG_NM AS subCategory,
-            EVIT.EVIT_CONTENT AS evitContent,
-            CHCLST.CHCLST_CONTENT AS checkListContent,
-            CHCLST.CHCLST_ID AS checkListId
+        SELECT /* ChecklistMapper.selectChecklistPreview 유재원 */
+            CTG.CTG_NM AS category
+            , SUBCTG.CTG_NM AS subCategory
+            , EVIT.EVIT_CONTENT AS evitContent
+            , CHCLST.CHCLST_CONTENT AS checkListContent
+            , CHCLST.CHCLST_ID AS checkListId
         FROM
             CHKLST_CTG CTG
                 LEFT JOIN
@@ -183,4 +202,12 @@
             CTG.CTG_ID, SUBCTG.CTG_ID, EVIT.EVIT_ID, CHCLST.CHCLST_ID
     </select>
 
+    <update id="updateChklstUseW">
+        UPDATE /* ChecklistMapper.updateChklstUseW 유재원 */
+            CHKLST
+        SET
+            CHKLST_USE_W = 'Y'
+        WHERE
+            CHKLST_ID = #{chklstId}
+    </update>
 </mapper>

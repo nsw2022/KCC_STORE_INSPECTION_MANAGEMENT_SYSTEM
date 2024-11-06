@@ -273,7 +273,7 @@ pageEncoding="UTF-8" %>
                   <div class="row first-input-box mb-3">
                     <!-- 브랜드 -->
                     <div class="col-lg-3 col-md-6 col-12">
-                      <label for="inspectionType" class="form-label">브랜드</label>
+                      <label for="inspectionType" class="form-label form-label-essential d-flex">브랜드명</label>
                       <div class="wrapper bottom-wrapper" data-autocomplete="BRAND1">
                         <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
                           <span class="brandPlaceholder">브랜드</span>
@@ -294,7 +294,7 @@ pageEncoding="UTF-8" %>
                     </div>
                     <!-- 체크리스트명 -->
                     <div class="col-lg-3 col-md-6 col-12">
-                      <label for="checklistName" class="form-label">체크리스트</label>
+                      <label for="checklistName" class="form-label form-label-essential d-flex">체크리스트명</label>
                       <div class="wrapper bottom-wrapper" data-autocomplete="CHKLST1">
                         <div class="search-btn top-search form-control d-flex align-items-center justify-content-between" style="height: 34px">
                           <span class="checklistPlaceholder" contenteditable="true" style="width: 100%">체크리스트</span>
@@ -313,7 +313,7 @@ pageEncoding="UTF-8" %>
 
                     <!-- 점검유형 -->
                     <div class="col-lg-3 col-md-6 col-12">
-                      <label for="brandSearch" class="form-label">점검유형</label>
+                      <label for="brandSearch" class="form-label form-label-essential d-flex">점검유형</label>
                       <div class="wrapper bottom-wrapper" data-autocomplete="INSP1">
                         <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
                           <span class="inspectionTypePlaceholder">점검유형</span>
