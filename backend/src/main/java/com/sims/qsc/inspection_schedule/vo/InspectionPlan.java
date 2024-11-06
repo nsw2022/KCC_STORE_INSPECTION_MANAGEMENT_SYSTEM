@@ -22,12 +22,12 @@ public class InspectionPlan {
     private String slctDt;
     private String week;
     private String inspPlanUseW;
-    private String inspPlanSttsW;
-    private String creMbrId;
-    private String updMbrId;
-    private Integer storeId;
+    private Integer creMbrId;
     private String creTm;
+    private Integer updMbrId;
     private String updTm;
+    private String inspPlanSttsW;
     private String inspPlanDt;
-    private String mbrNo;
+    private Integer storeId;
+    private int inspSchdId;
 }

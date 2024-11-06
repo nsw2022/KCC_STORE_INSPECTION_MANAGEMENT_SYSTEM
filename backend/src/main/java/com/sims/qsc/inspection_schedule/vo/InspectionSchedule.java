@@ -1,5 +1,6 @@
 package com.sims.qsc.inspection_schedule.vo;
 
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.*;
 
 /**
@@ -19,10 +20,10 @@ public class InspectionSchedule {
     private Integer storeId;
     private String inspPlanDt;
     private String inspSttsCd;
-    private String inspSchdSttsW;
-    private String creMbrId;
-    private String updMbrId;
+    private Integer creMbrId;
     private String creTm;
+    private Integer updMbrId;
     private String updTm;
+    private String inspSchdSttsW;
 
 }

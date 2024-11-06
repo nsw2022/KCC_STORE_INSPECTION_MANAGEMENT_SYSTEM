@@ -1,15 +1,20 @@
 package com.sims.qsc.inspection_schedule.service;
 
+import com.sims.config.common.aop.SVInspectorRolCheck;
 import com.sims.qsc.inspection_schedule.vo.*;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
 
 @Service
-public interface InspectionScheduleService {
+public interface  InspectionScheduleService {
+
+
     /** 점검일정 목록조회
      * @param storeNm 가맹점
      * @param brandNm 브랜드
@@ -29,11 +34,9 @@ public interface InspectionScheduleService {
             @Param("frqCd")String frqCd,
             @Param("currentMbrNo")String currentMbrNo
     );
-    /**
-     * @return 자동완성 가맹점 리스트
-     */
-    List<Map<String, Object>> selectAllStores(@Param("currentMbrNo") String currentMbrNo);
 
+    /** @return 자동완성 가맹점 리스트 */
+    List<Map<String, Object>> selectAllStores(@Param("currentMbrNo") String currentMbrNo);
 
     /** @return 자동완성 브랜드 리스트 */
     List<String> selectAllBrands();
@@ -49,46 +52,50 @@ public interface InspectionScheduleService {
 
     /** @return 하단부분 자동완성 점검유형 */
     List<String> selectBottomINSP();
+    /** 점검 상세 리스트 */
+    List<InspectionDetailsResponse> selectInspectionDetails(Integer storeId);
+
+    /** 점검 계획 업데이트 */
+    void updateInspectionPlans(InspectionPlan inspectionPlan);
+
+    /** 점검 계획 삽입 */
+    void insertInspectionPlans(InspectionPlan inspectionPlan);
+
+    /** 점검 일정 업데이트 */
+    void updateInspectionSchedules(InspectionSchedule inspectionSchedule);
+
+    /** 점검 일정 삽입 */
+    void insertInspectionSchedules(List<InspectionSchedule> schedules);
+
+
+    /** 점검 일정 상세 조회 (INSP_PLAN_ID와 inspSchdId 기준) */
+    InspectionSchedule selectInspectionSchedulesByPlanIdAndDate(
+            @Param("inspPlanId") int inspPlanId,
+            @Param("inspSchdId") int inspSchdId
+    );
+
+    @Transactional
+    @SVInspectorRolCheck
+    void insertOrUpdateInspectionPlans(List<InspectionPlan> inspectionPlans);
+
+    /** 회원 상세 조회 */
+    MemberRequest selectMbrDetail(@Param("creMbrNo") String creMbrNo);
 
     /**
      *
-     * @param storeId 가맹점 번호 - 시퀀스
-     * @return 가맹점별 체크 리스트, 체크리스트 문항과 점수
+     * @param inspPlanId 시퀀스 번호
+     * @return 점검계획 임시객체
      */
-    List<InspectionDetailsResponse> selectInspectionDetails(@Param("storeId") Integer storeId);
-
-    /**
-     * 점검 계획을 삽입하거나 업데이트하는 메서드
-     *
-     * @param inspectionPlans 저장할 점검 계획 목록
-     */
-    void insertOrUpdateInspectionPlans(@Param("list") List<InspectionPlan> inspectionPlans);
-
-    /**
-     * 점검 일정을 배치로 삽입하는 메서드
-     *
-     * @param schedules 저장할 점검 일정 목록
-     */
-    void insertInspectionSchedules(@Param("list") List<InspectionSchedule> schedules);
-
+    @Select("SELECT * FROM INSP_PLAN WHERE INSP_PLAN_ID = #{inspPlanId}")
+    InspectionPlan selectInspPlanById(int inspPlanId);
 
     /**
      *
-     * @param inspPlanId 점검일정 시퀀스번호
-     * @return 스케줄 상세보기
+     * @return 현재 INSP_SCHD시퀀스 최댓값 가져오는 값
      */
-    public InspectionSchedule  selectDetailSchedule(Integer inspPlanId);
-    /**
-     *
-     * @param creMbrId 회원아이디
-     * @return 회원정보
-     */
-    public MemberRequest selectMbrDetail(String creMbrId);
+    @Select("SELECT INSP_SCHD_SEQ.NEXTVAL FROM DUAL")
+    Integer getMaxInspSchdId();
 
-    /**
-     *
-     * @return 가장 최근의 점검 계획 시퀀슥밧
-     */
-    @Select("SELECT MAX(INSP_PLAN_ID) FROM INSP_PLAN")
-    Integer getLastInspPlanSeq();
+
+
 }

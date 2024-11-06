@@ -9,10 +9,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MemberRequest {
-    private String mbrId;
+    private Integer mbrId;
     private String mbrNo;
     private String mbrNm;
-    private String mbrRoleCd;
-    private String mbrSttsCd;
+
 
 }

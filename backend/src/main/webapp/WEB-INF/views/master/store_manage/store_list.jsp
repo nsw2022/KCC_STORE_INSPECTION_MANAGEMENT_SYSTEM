@@ -97,6 +97,29 @@
                             <div class="container-fluid px-0">
                                 <div class="row g-3 align-items-center">
 
+                                    <!-- 브랜드 라벨과 검색 필드 -->
+                                    <div class="col-12 col-md-4">
+                                        <label for="brandNmSearch" class="form-label">브랜드</label>
+                                        <div class="wrapper" data-autocomplete="brandNm">
+                                            <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
+                                                <span>브랜드 검색</span>
+                                                <i class="uil uil-angle-down"></i>
+                                            </div>
+                                            <div class="hide-list">
+                                                <div class="search">
+                                                    <input
+                                                            type="text"
+                                                            class="form-control top-search"
+                                                            id="brandNmSearch"
+                                                            placeholder="브랜드명을 입력해주세요"
+                                                            aria-label="브랜드 검색"
+                                                    />
+                                                    <ul class="options"></ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <!-- 가맹점 라벨과 검색 필드 -->
                                     <div class="col-12 col-md-4">
                                         <label for="storeSearch" class="form-label">가맹점</label>
@@ -120,28 +143,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- 브랜드 라벨과 검색 필드 -->
-                                    <div class="col-12 col-md-4">
-                                        <label for="brandNmSearch" class="form-label">브랜드</label>
-                                        <div class="wrapper" data-autocomplete="brandNm">
-                                            <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                                                <span>브랜드 검색</span>
-                                                <i class="uil uil-angle-down"></i>
-                                            </div>
-                                            <div class="hide-list">
-                                                <div class="search">
-                                                    <input
-                                                            type="text"
-                                                            class="form-control top-search"
-                                                            id="brandNmSearch"
-                                                            placeholder="브랜드명을 입력해주세요"
-                                                            aria-label="브랜드 검색"
-                                                    />
-                                                    <ul class="options"></ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
 
                                     <!-- 점검자 라벨과 검색 필드 -->
                                     <div class="col-12 col-md-4">
@@ -195,23 +196,20 @@
     </main>
 </div>
 <%-- 모달 시작 --%>
-<div class="modal fade" id="DetailStore" aria-hidden="true" aria-labelledby="MoreDetailStore" tabindex="-1"
+<div class="modal fade" id="DetailStore" aria-labelledby="MoreDetailStore" tabindex="-1"
      data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable  modal-lg">
         <div class="modal-content">
 
             <%-------------- header --------------%>
             <div class="modal-header">
-            <span class="modal-title fs-5" id="MoreDetailStore" style="font: 450 16px 'Noto Sans KR'">
-              가맹점 상세 보기
-            </span>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <span class="modal-title fs-5" id="MoreDetailStore" style="font: 450 16px 'Noto Sans KR'"></span>
+                <button type="button" class="btn-close button-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <%-------------- header --------------%>
 
             <%-------------- body --------------%>
             <div class="modal-body">
-                <form>
                     <div class="container-fluid">
                         <div class="row g-3">
 
@@ -370,15 +368,14 @@
 
                         </div>
                     </div>
-                </form>
             </div>
 
             <%-------------- body --------------%>
 
             <%-------------- footer --------------%>
             <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal" aria-label="Close">취소</button>
-                <button id="save">등록/수정</button>
+                <button class="btn btn-secondary button-close" data-bs-dismiss="modal" aria-label="Close">취소</button>
+                <button id="save"></button>
             </div>
                 <input type="hidden">
                 <input type="hidden" id="deleteFile">

@@ -56,7 +56,7 @@
                 WHEN st.BRAND_CD = 'B002' THEN 'KCC 도넛'
                 WHEN st.BRAND_CD = 'B003' THEN 'KCC 브레드'
                 WHEN st.BRAND_CD = 'B004' THEN 'KCC 카페'
-                END AS brandNm,
+                END AS brandNm
             , m.MBR_NM AS inspectorName
             , sv.MBR_NM AS supervisorName
             , s.INSP_PLAN_DT

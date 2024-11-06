@@ -1,3 +1,35 @@
+class CustomLoadingOverlay  {
+  eGui;
+
+  init(params) {
+    this.eGui = document.createElement('div');
+    this.refresh(params);
+  }
+
+  getGui() {
+    return this.eGui;
+  }
+
+  refresh(params) {
+    this.eGui.innerHTML = `
+    <div class="ag-overlay-loading-center" role="presentation">
+      <div aria-label="Loading..." role="status" class="loader">
+        <svg class="icon" viewBox="0 0 256 256">
+          <line x1="128" y1="32" x2="128" y2="64" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="195.9" y1="60.1" x2="173.3" y2="82.7" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="224" y1="128" x2="192" y2="128" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="195.9" y1="195.9" x2="173.3" y2="173.3" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="128" y1="224" x2="128" y2="192" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="60.1" y1="195.9" x2="82.7" y2="173.3" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="32" y1="128" x2="64" y2="128" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="60.1" y1="60.1" x2="82.7" y2="82.7" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+        </svg>
+        <span class="loading-text">Loading...</span>
+      </div>
+     </div>`;
+  }
+}
+
 // ROW 데이터 정의
 let rowData = [];
 let defaultRowData = [];
@@ -15,37 +47,50 @@ async function getStoreAll(searchCriteria = {}) {
       body: JSON.stringify(searchCriteria)
     });
 
+    gridApi.setGridOption("loading", true);
     let data = await response.json();
-    data = data.map((item, index) => ({
-      ...item,
-      no : index+1
-    }));
+      data = data.map((item, index) => ({
+        ...item,
+        no : index+1
+      }));
 
-    rowData = data.map((item) => {
-      item.openHm = item.openHm.slice(0,2) + ':' + item.openHm.slice(2);
-      item.brn = item.brn.replace(item.brn.split('-')[2],'*****');
-      item.ownNm = item.ownNm.replace(item.ownNm.split('')[1], '*');
-      firstRowLength++;
+      rowData = data.map((item) => {
+        item.openHm = item.openHm.slice(0,2) + ':' + item.openHm.slice(2);
+        item.brn = item.brn.replace(item.brn.split('-')[2],'*****');
+        item.ownNm = item.ownNm.replace(item.ownNm.split('')[1], '*');
+        firstRowLength++;
 
-      return item;
-    })
+        return item;
+      })
 
-    if(defaultRowData.length === 0){
-      defaultRowData = data;
-    }
 
-    // gridApi가 존재할 경우 데이터 설정
-    if (gridApi) {
-      gridApi.setGridOption("rowData", rowData); // 데이터 설정
-      updateStoreCount();
-    } else {
-      console.error("gridApi is not initialized.");
-    }
+      if(defaultRowData.length === 0){
+        defaultRowData = data;
+      }
+
+      // gridApi가 존재할 경우 데이터 설정
+      if (gridApi) {
+        setTimeout(function() {
+          gridApi.setGridOption("loading", false);
+        }, 200)
+        gridApi.paginationGoToFirstPage()
+        gridApi.setGridOption("rowData", rowData); // 데이터 설정
+        updateStoreCount();
+      } else {
+        console.error("gridApi is not initialized.");
+      }
 
   } catch (error) {
     console.error("Error fetching data:", error);
+    rowData = [];
+    gridApi.setGridOption("rowData", rowData); // 데이터 설정
+    setTimeout(function() {
+      gridApi.setGridOption("loading", false);
+    }, 200)
+    updateStoreCount();
   }
 }
+
 
 
 function initializeGrid() {
@@ -62,43 +107,48 @@ function initializeGrid() {
         resizable: true,
         cellStyle: { backgroundColor: "#ffffff" },
       },
-      { field: "no", headerName: "No", width: 80, minWidth: 60 },
+      { field: "no", headerName: "No", width: 80, minWidth: 60, cellStyle: {textAlign: 'center'}},
+      { field: "brandNm", headerName: "브랜드", width: 180, minWidth: 120, cellStyle: {textAlign: 'center'} },
       { field: `storeNm`, headerName: "가맹점", width: 150, minWidth: 130 },
-      { field: "brandNm", headerName: "브랜드", width: 180, minWidth: 120 },
       {
         field: "brn",
         headerName: "사업자등록번호",
         width: 200,
         minWidth: 180,
+        cellStyle: {textAlign: 'center'}
       },
       {
         field: "openHm",
         headerName: "오픈 시간",
         width: 150,
         minWidth: 110,
+        cellStyle: {textAlign: 'center'}
       },
       {
         field: "ownNm",
         headerName: "점주명",
         width: 130,
         minWidth: 110,
+        cellStyle: {textAlign: 'center'}
       },
       {
         field: "svMbrNm",
         headerName: "SV",
         width: 130,
         minWidth: 110,
+        cellStyle: {textAlign: 'center'}
       },
       {
         field: "inspMbrNm",
         headerName: "점검자",
         width: 130,
         minWidth: 110,
+        cellStyle: {textAlign: 'center'}
       },
       {
         headerName: "자세히보기",
         field: "more",
-        width: 150,
+        width: 140,
         minWidth: 110,
         cellRenderer: function (params) {
           // jQuery를 사용하여 컨테이너 div 생성
@@ -106,7 +156,6 @@ function initializeGrid() {
             class: "edit-container",
             css: { position: "relative", cursor: "pointer" },
           });
-          $('#input').prop('checked')
           // SVG 요소 생성
           const $svg = $(`
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 15 15">
@@ -117,7 +166,7 @@ function initializeGrid() {
           let storeId = params.data.storeId;
 
           // '수정' 옵션 div 생성
-          const $editDiv = $(`<div class="edit-options" data-no="${storeId}">수정</div>`);
+          const $editDiv = $(`<div class="edit-options" data-no="${storeId}">자세히 보기</div>`);
 
           // SVG 클릭 시 '수정' 옵션 표시
           $svg.on("click", function (e) {
@@ -147,56 +196,41 @@ function initializeGrid() {
             e.stopPropagation(); // 이벤트 버블링 방지
             // 모달 열기
             $("#DetailStore").modal("show");
-            if(storeId === 'undefined') {
-              $('.modal-body #storeName').attr('placeholder', "매장명 입력");
-              $('.modal-body #brn').attr('placeholder', "사업자등록번호 입력 (e.g. 111-11-11111)");
-              $('.modal-body .wrapper span').eq(0).text("브랜드 검색");
-              $('#operationHours').val('');
-              $('#storeAddress').attr('placeholder', "주소찾기 버튼을 클릭해주세요");
-              $('#detailedAddress').attr('placeholder',"상세 주소 입력");
-              $('.file_name').text("파일을 선택해주세요");
-              $('#ownerName').attr('placeholder', "점주명 입력");
-              $('#ownerPhone').attr('placeholder', "휴대폰 번호 입력 (e.g. 010-1111-1111)");
-              $('.modal-body .wrapper span').eq(1).text("점검자 검색");
-              $('.modal-body .wrapper span').eq(2).text("SV 검색");
-              $('.modal-body').find('input[type="radio"]').prop("checked", false)
 
-
-              // 'edit-options' 숨기기
-              $editDiv.removeClass("show");
-            } else {
-              $.ajax({
-                url : `/master/store/${storeId}`,
-                method : 'POST',
-                success : function (data) {
-                  console.log(data);
-                  $('input[type="hidden"]').val(data.storeId)
-                  let openHm = data.openHm.slice(0,2) + ':' + data.openHm.slice(2);
-                  $('.modal-body #storeName').attr('placeholder', data.storeNm);
-                  $('.modal-body #brn').attr('placeholder', data.brn.replace(data.brn.split('-')[2],'*****'));
-                  $('.modal-body .wrapper span').eq(0).text(data.brandNm);
-                  $('#operationHours').val(openHm);
-                  let address = splitAddress(data.storeAddr);
-                  $('#storeAddress').attr('placeholder', address.address);
-                  $('#detailedAddress').attr('placeholder', address.detailAddress);
-                  $('.file_name').text(data.brdPath);
-                  $('#deleteFile').val(data.brdPath);
-                  $('#ownerName').attr('placeholder', data.ownNm.replace(data.ownNm.split('')[1],'*'));
-                  $('#ownerPhone').attr('placeholder', data.ownTel.replace(data.ownTel.split('-')[2],'****'));
-                  $('.modal-body .wrapper span').eq(1).text(data.inspMbrNm+'('+data.inspMbrNo+')');
-                  $('.modal-body .wrapper span').eq(2).text(data.svMbrNm+'('+data.svMbrNo+')');
-                  let status = $('.modal-body').find('input[type="radio"]');
-                  $.each(status, function (index, item) {
-                    if(item.value === data.storeBsnSttsNm) {
-                      item.checked = true;
-                    }
-                  })
-                  setTimeout(function () {
-                    searchAddressToCoordinate(address.address);
-                  }, 1000)
-                }
-              })
-            }
+            // 'edit-options' 숨기기
+            $editDiv.removeClass("show");
+            $.ajax({
+              url : `/master/store/${storeId}`,
+              method : 'POST',
+              success : function (data) {
+                $('.modal-title').text('가맹점 상세보기/수정')
+                $('input[type="hidden"]').val(data.storeId)
+                let openHm = data.openHm.slice(0,2) + ':' + data.openHm.slice(2);
+                $('.modal-body #storeName').val(data.storeNm);
+                $('.modal-body #brn').val(data.brn.replace(data.brn.split('-')[2],'*****'));
+                $('.modal-body .wrapper span').eq(0).text(data.brandNm);
+                $('#operationHours').val(openHm);
+                let address = splitAddress(data.storeAddr);
+                $('#storeAddress').val(address.address);
+                $('#detailedAddress').val(address.detailAddress);
+                $('.file_name').text(data.brdPath);
+                $('#deleteFile').val(data.brdPath);
+                $('#ownerName').val(data.ownNm.replace(data.ownNm.split('')[1],'*'));
+                $('#ownerPhone').val(data.ownTel.replace(data.ownTel.split('-')[2],'****'));
+                $('.modal-body .wrapper span').eq(1).text(data.inspMbrNm+'('+data.inspMbrNo+')');
+                $('.modal-body .wrapper span').eq(2).text(data.svMbrNm+'('+data.svMbrNo+')');
+                $('#save').text('수정');
+                let status = $('.modal-body').find('input[type="radio"]');
+                $.each(status, function (index, item) {
+                  if(item.value === data.storeBsnSttsNm) {
+                    item.checked = true;
+                  }
+                })
+                setTimeout(function () {
+                  searchAddressToCoordinate(address.address);
+                }, 1000)
+              }
+            })
 
 
 
@@ -222,7 +256,13 @@ function initializeGrid() {
     rowSelection: "multiple",
     pagination: true,
     paginationAutoPageSize: true,
+    loadingOverlayComponent: CustomLoadingOverlay,
+    loadingOverlayComponentParams: {
+      loadingMessage: "One moment please...",
+    }
+
   };
+
 
   // 그리드 초기화
   const gridDiv = document.querySelector("#myGrid");
@@ -252,7 +292,20 @@ function splitAddress(address) {
   }
 }
 
+// 검색창에서 ENTER키 누를 때 검색창에 입력한 값이 wrapper의 span text 에 들어옴
+function setupSearchInput() {
+  $('.form-control').keyup(function (e) {
+    if(e.keyCode === 13) {
+      let text = $(this).val();
+      $(this).parents('.wrapper').find('span').text(text);
+      $(this).parents('.wrapper').removeClass('active');
+    }
+  })
+}
+
+
 document.addEventListener("DOMContentLoaded", initializeGrid);
+
 
 // 체크리스트 카운트 업데이트 함수
 function updateStoreCount() {
@@ -264,7 +317,7 @@ function updateStoreCount() {
 // 새로운 Row 생성 함수
 function createNewRowData() {
   return {
-    no: rowData.length+1,
+
     storeNm: "",
     brandNm: "",
     brn: "",
@@ -278,6 +331,7 @@ function createNewRowData() {
 
 // Row 추가 함수
 function onStoreAddRow() {
+  gridApi.paginationGoToFirstPage()
   checkUnload = true;
   const newItem = createNewRowData();
   rowData.unshift(newItem);
@@ -286,6 +340,7 @@ function onStoreAddRow() {
     addIndex: 0
   });
   updateStoreCount();
+
 }
 
 function warningMessage() {
@@ -325,12 +380,17 @@ function onStoreDeleteRow() {
               text: "완료되었습니다.",
               icon: "success",
               confirmButtonText: "OK"
+            }).then((result) => {
+                if(result.isConfirmed) {
+                  location.href = "/master/store/manage";
+                }
             });
             // 그리드에서도 해당 행 삭제
             gridApi.applyTransaction({ remove: selectedRows });
 
+
             selectedRows.forEach((row) => {
-              const index = rowData.findIndex((data) => data.storeId === row.storeId);
+              const index = rowData.findIndex((data) => data.no === row.no);
               if (index > -1) {
                 rowData.splice(index, 1);
               }
@@ -341,7 +401,7 @@ function onStoreDeleteRow() {
       }
     });
   } else {
-    alert("삭제할 항목을 선택하세요.");
+    Swal.fire("실패!", "삭제할 항목을 선택해주세요", "error");
   }
 }
 
@@ -527,6 +587,7 @@ $(function () {
     });
   });
 
+
   // 각 자동완성 필드에 대한 데이터 목록 정의
   /**
    * @todo responseBody로 받아올것이라면 여기서 Ajax로 데이터를 요청하면 됨
@@ -551,6 +612,7 @@ $(function () {
 
     svModal: []
   };
+
 
   /**
    * autocompleteData에 옵션 목록 넣어두기
@@ -589,6 +651,36 @@ $(function () {
     }
   })
 
+  // 가맹점 추가 버튼 누르고 저장 안했을 경우 생선된 ROW 삭제
+  $('.modal-content .button-close').click(function () {
+    const itemsWithoutNo = rowData.filter(item => !Object.keys(item).includes('no'));
+    gridApi.applyTransaction({ remove: itemsWithoutNo });
+  })
+
+  // 가맹점 추가 모달 생성
+  $('#addRowButton').click(function () {
+
+    // 모달 열기
+    $("#DetailStore").modal("show");
+    $('.modal-title').text('가맹점 등록');
+    $('.form-control').val('');
+    $('.modal-body #storeName').attr('placeholder', "매장명 입력");
+    $('.modal-body #brn').attr('placeholder', "사업자등록번호 입력 (e.g. 111-11-11111)");
+    $('.modal-body .wrapper span').eq(0).text("브랜드 검색");
+    $('#operationHours').val('');
+    $('#storeAddress').attr('placeholder', "주소찾기 버튼을 클릭해주세요");
+    $('#detailedAddress').attr('placeholder',"상세 주소 입력");
+    $('.file_name').text("파일을 선택해주세요");
+    $('#ownerName').attr('placeholder', "점주명 입력");
+    $('#ownerPhone').attr('placeholder', "휴대폰 번호 입력 (e.g. 010-1111-1111)");
+    $('.modal-body .wrapper span').eq(1).text("점검자 검색");
+    $('.modal-body .wrapper span').eq(2).text("SV 검색");
+    $('.modal-body').find('input[type="radio"]').eq(0).prop('checked', true);
+
+    $('#save').text('등록');
+  })
+
+
   // 자동완성 인스턴스를 초기화하고 wrapper 요소에 저장
   $(".wrapper").each(function () {
     const $wrapper = $(this);
@@ -598,6 +690,12 @@ $(function () {
       $wrapper.data("autocompleteInstance", autocomplete);
     }
   });
+
+
+
+  })
+
+  setupSearchInput();
 
 
 
@@ -654,6 +752,6 @@ $(function () {
   });
 
   //  중간 테이블 영역 끝
-});
+
 
 

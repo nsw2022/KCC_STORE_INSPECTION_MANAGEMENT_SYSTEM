@@ -1,15 +1,28 @@
 $(function () {
-    const input = document.querySelector('#price');
-    input.addEventListener('keyup', function(e) {
+    // 가격에서 숫자만 입력되게 해줬다.
+    const price = document.querySelector('#price');
+    price.addEventListener('keyup', function(e) {
         let value = e.target.value;
         value = Number(value.replaceAll(',', ''));
         if(isNaN(value)) {         //NaN인지 판별
-            input.value = 0;
-        }else {                   //NaN이 아닌 경우
+            price.value = 0;
+        } else {                   //NaN이 아닌 경우
             const formatValue = value.toLocaleString('ko-KR');
-            input.value = formatValue;
+            price.value = formatValue;
         }
     })
+
+    // 소비기한에서 숫자만 입력하게 해주기
+    const expiration = document.querySelector('#expiration');
+    expiration.addEventListener('keyup', function(e) {
+        let value = e.target.value;
+        value = Number(value.replaceAll(',', ''));
+        if(isNaN(value)) {         //NaN인지 판별
+            expiration.value = 0;
+        }
+    })
+
+
     $('#submit').click(function () {
         let pdtId = $('input[type="hidden"]').val();
         let pdtName = $('#productName').val();
@@ -23,7 +36,7 @@ $(function () {
             pdtName = null;
         }
 
-        if(brandName ==='') {
+        if(brandName ===''|| brandName ==='브랜드 선택') {
             brandName = null;
         }
 
@@ -49,6 +62,18 @@ $(function () {
 
 
         if(pdtId === '') {
+            const requiredField = Object.keys(productRequest).filter(item => {
+                console.log(item)
+                if(productRequest[item] === undefined || productRequest[item] === null || productRequest[item] === ''){
+                    console.log(item);
+                    return item;
+                }
+            });
+
+            if(requiredField.length > 0) {
+                Swal.fire("실패!", `입력하지 않은 항목이 ${requiredField.length}개 남았습니다.`, "error");
+                return;
+            }
             $.ajax({
                 url : '/master/product/save',
                 method : 'POST',

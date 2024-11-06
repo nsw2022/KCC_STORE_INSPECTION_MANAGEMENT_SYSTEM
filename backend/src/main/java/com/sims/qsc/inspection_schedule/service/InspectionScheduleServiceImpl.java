@@ -14,6 +14,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,17 +27,18 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
 
     private final InspectionScheduleMapper scheduleMapper;
 
-
+    @Override
     public List<InspectionScheduleRequest> selectFilteredInspectionScheduleList(
-            String storeNm, String brandNm, String scheduleDate, String chklstNm, String inspector, String frqCd,  String cntCd,  String currentMbrNo) {
+            String storeNm, String brandNm, String scheduleDate, String chklstNm, String inspector, String frqCd, String cntCd, String currentMbrNo) {
         return scheduleMapper.selectFilteredInspectionScheduleList(
                 storeNm, brandNm, scheduleDate, chklstNm, inspector, frqCd, cntCd, currentMbrNo
         );
     }
 
     @Override
-    public List<Map<String, Object>> selectAllStores(String currentMbrNo) { return scheduleMapper.selectAllStores(currentMbrNo); }
-
+    public List<Map<String, Object>> selectAllStores(String currentMbrNo) {
+        return scheduleMapper.selectAllStores(currentMbrNo);
+    }
 
     @Override
     public List<String> selectAllBrands() {
@@ -54,166 +56,265 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
     }
 
     @Override
-    public List<Map<String, Object>> selectBottomChkLst() { return scheduleMapper.selectBottomChkLst(); }
+    public List<Map<String, Object>> selectBottomChkLst() {
+        return scheduleMapper.selectBottomChkLst();
+    }
 
     @Override
-    public List<String> selectBottomINSP() { return scheduleMapper.selectBottomINSP(); }
+    public List<String> selectBottomINSP() {
+        return scheduleMapper.selectBottomINSP();
+    }
 
     @Override
-    public List<InspectionDetailsResponse> selectInspectionDetails(Integer storeId) { return scheduleMapper.selectInspectionDetails(storeId); }
+    public List<InspectionDetailsResponse> selectInspectionDetails(Integer storeId) {
+        return scheduleMapper.selectInspectionDetails(storeId);
+    }
 
-    /**
-     * 점검 계획을 삽입하거나 업데이트하고, 해당 계획에 따른 점검 일정을 생성하는 메서드
-     *
-     * @param inspectionPlans 저장할 점검 계획 목록
-     */
+
+
+    @Override
+    public MemberRequest selectMbrDetail(String creMbrNo) {
+        log.info("creMbrNo {}",creMbrNo);
+        return scheduleMapper.selectMbrDetail(creMbrNo);
+    }
+
+    @Override
+    public InspectionPlan selectInspPlanById(int inspPlanId) {
+        return scheduleMapper.selectInspPlanById(inspPlanId);
+    }
+
+    @Override
+    public Integer getMaxInspSchdId() {
+        Integer a = scheduleMapper.getMaxInspSchdId();
+
+        return a;
+    }
+
+    @Override
+    @Transactional
+    @SVInspectorRolCheck
+    public void updateInspectionPlans(InspectionPlan inspectionPlan) {
+        scheduleMapper.updateInspectionPlans(inspectionPlan);
+        log.info("Updated InspectionPlan with ID: {}", inspectionPlan.getInspPlanId());
+    }
+
+    @Override
+    @Transactional
+    @SVInspectorRolCheck
+    public void insertInspectionPlans(InspectionPlan inspectionPlan) {
+
+        // 생성 시간 설정
+        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
+        inspectionPlan.setCreTm(currentTime);
+        // 상태 코드 설정 (예: '1'로 고정)
+        inspectionPlan.setInspPlanSttsW("1");
+        // 삽입
+        scheduleMapper.insertInspectionPlans(inspectionPlan);
+        log.info("Inserted new InspectionPlan with ID: {}", inspectionPlan.getInspPlanId());
+    }
+
+    @Override
+    @Transactional
+    @SVInspectorRolCheck
+    public void updateInspectionSchedules(InspectionSchedule inspectionSchedule) {
+        scheduleMapper.updateInspectionSchedules(inspectionSchedule);
+        log.info("Updated InspectionSchedule with ID: {}", inspectionSchedule.getInspSchdId());
+    }
+
+    @Override
+    @Transactional
+    @SVInspectorRolCheck
+    public void insertInspectionSchedules(List<InspectionSchedule> schedules) {
+
+        log.info("오긴함?");
+        if (!schedules.isEmpty()) {
+
+            scheduleMapper.insertInspectionSchedules(schedules);
+
+            log.info("Inserted {} new InspectionSchedules.", schedules.size());
+        }
+    }
+
+
+
+
+    @Override
+    @Transactional
+    @SVInspectorRolCheck
+    public InspectionSchedule selectInspectionSchedulesByPlanIdAndDate(int inspPlanId, int inspSchdId) {
+        return scheduleMapper.selectInspectionSchedulesByPlanIdAndDate(inspPlanId, inspSchdId);
+    }
+
     @Override
     @Transactional
     @SVInspectorRolCheck
     public void insertOrUpdateInspectionPlans(List<InspectionPlan> inspectionPlans) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String currentMemberId = auth.getName();  // 로그인 한 사람
-        log.info("@@@@@@@@@@@@@");
-        log.info(inspectionPlans.toString());
-
+        String creMbrNo = auth.getName();  // 로그인 한 사람
+        log.info("Authenticated user name: {}", creMbrNo);
+        log.info("Received inspection plans: {}", inspectionPlans);
 
         // 1. 점검 계획 저장/수정
-        saveInspectionPlans(inspectionPlans, currentMemberId);
+        saveInspectionPlans(inspectionPlans, creMbrNo);
 
         // 2. 점검 일정 생성 준비
-        List<InspectionSchedule> schedulesToSave = new ArrayList<>();
+        List<InspectionSchedule> schedulesToInsert = new ArrayList<>();
+        List<InspectionSchedule> schedulesToUpdate = new ArrayList<>();
         LocalDate today = LocalDate.now();
         LocalDate endDate = today.plusMonths(3);
 
         for (InspectionPlan plan : inspectionPlans) {
             // 점검 계획이 활성화되지 않은 경우 일정 생성하지 않음
             if (!"Y".equals(plan.getInspPlanUseW())) {
+                log.info("InspectionPlan ID: {} is not active. Skipping schedule generation.", plan.getInspPlanId());
                 continue;
             }
 
-            // 점검 일정 날짜 생성
+            // 점검 일정 날짜 생성 (3개월치)
             List<LocalDate> inspectionDates = generateInspectionDates(plan, today, endDate);
+            log.info("Generated {} inspection dates for InspectionPlan ID: {}", inspectionDates.size(), plan.getInspPlanId());
 
             for (LocalDate date : inspectionDates) {
                 // 주말 제외
                 if (isWeekend(date)) {
+                    log.info("Date: {} is weekend. Skipping.", date);
                     continue;
                 }
 
-                // 점검 일정 상세 조회 (inspPlanId를 사용해야 함)
-                InspectionSchedule schedule = scheduleMapper.selectDetailSchedule(plan.getInspPlanId());
 
+                log.info("Processing schedule for InspectionPlan ID: {}, InspSchdId ID: {}", plan.getInspPlanId(), plan.getInspSchdId());
 
+                // 점검 일정 상세 조회 (inspPlanId와 inspPlanDt 기준) -> 여길수정해야해 방법이안떠오름 insp_schd_id 를 어캐가져오지
+                // 1안 -> insp_plan_id로 insp_schd 테이블에 조회때려보기
+                InspectionSchedule existingSchedule = selectDetailSchedule(plan.getInspPlanId(), plan.getInspSchdId());
+
+                log.info("existing schedule type : {}", existingSchedule);
 
                 // 임시객체 mbr
-                MemberRequest  mbrRequest = scheduleMapper.selectMbrDetail(currentMemberId);
-                log.info("mbrRequest : {}", mbrRequest);
-                // 공통 필드 설정
-                schedule.setInspPlanId(plan.getInspPlanId());
-                schedule.setStoreId(plan.getStoreId());
-                schedule.setInspPlanDt(plan.getInspPlanDt());
+                MemberRequest mbrRequest = scheduleMapper.selectMbrDetail(creMbrNo);
+                log.info("Member Request: {}", mbrRequest);
 
-                log.info("schedule : {}", schedule);
-                // 새로운 스케줄일 경우 추가 필드 설정
-                if (schedule.getInspSchdId() == null) {
-                    schedule.setCreTm(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm")));
-                    schedule.setCreMbrId(mbrRequest.getMbrId());
-                    schedule.setInspSchdSttsW("1"); // 새로운 일정의 상태 설정
-                }else{
-                    // 수정사항이있는 경우 필드 설정
-                    schedule.setUpdMbrId(mbrRequest.getMbrId());
-
+                if (mbrRequest == null) {
+                    log.error("MemberRequest is null for creMbrNo: {}", creMbrNo);
+                    throw new RuntimeException("Invalid member ID: " + creMbrNo);
                 }
+                log.info("find existingSchedule{}",existingSchedule );
 
-                log.info("Modified schedule: " + schedule);
-                schedulesToSave.add(schedule);
+                if (existingSchedule == null) { // 새로운 일정이면 삽입
+                    InspectionSchedule newSchedule = new InspectionSchedule();
+                    //newSchedule.setInspSchdId(scheduleMapper.getMaxInspSchdId());
+                    newSchedule.setInspPlanId(plan.getInspPlanId());
+                    newSchedule.setStoreId(plan.getStoreId());
+                    newSchedule.setInspPlanDt(date.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                    newSchedule.setInspSttsCd("IS001");
+                    newSchedule.setCreMbrId(mbrRequest.getMbrId());
+                    newSchedule.setCreTm(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm")));
+                    newSchedule.setInspSchdSttsW("1");
+                    log.info("After insp_schd setting insert {}",newSchedule);
+                    schedulesToInsert.add(newSchedule);
+                    log.info("Prepared new InspectionSchedule for insertion: {}", newSchedule);
+                } else { // 기존 일정이면 업데이트
+                    existingSchedule.setStoreId(plan.getStoreId());
+                    existingSchedule.setInspSttsCd("IS001");
+                    existingSchedule.setUpdMbrId(mbrRequest.getMbrId());
+                    existingSchedule.setInspPlanDt(date.format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+                    existingSchedule.setInspSchdSttsW("1");
+                    existingSchedule.setUpdTm(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm")));
+                    log.info("After insp_schd setting update {} ",existingSchedule);
+                    schedulesToUpdate.add(existingSchedule);
+                    log.info("Prepared existing InspectionSchedule for update: {}", existingSchedule);
+                }
             }
         }
 
-        // 3. 점검 일정 저장
-        if (!schedulesToSave.isEmpty()) {
-            scheduleMapper.insertInspectionSchedules(schedulesToSave);
-            log.info(inspectionPlans.toString());
-            log.info("schdule : {}" , schedulesToSave);
-            log.info("점검 일정이 {}개 저장되었습니다.", schedulesToSave.size());
-        }else{
-            log.info("엥  null이야 진짜?");
+        // 3. 점검 일정 삽입 (배치)
+        if (!schedulesToInsert.isEmpty()) {
+            scheduleMapper.insertInspectionSchedules(schedulesToInsert);
+            log.info("Inserted {} new InspectionSchedules.", schedulesToInsert.size());
         }
-    }
 
+        // 4. 점검 일정 업데이트
+        if (!schedulesToUpdate.isEmpty()) {
+            for (InspectionSchedule schedule : schedulesToUpdate) {
+                updateInspectionSchedules(schedule);
+            }
+            log.info("Updated {} existing InspectionSchedules.", schedulesToUpdate.size());
+        }
+
+        log.info("Total InspectionSchedules to insert: {}", schedulesToInsert.size());
+        log.info("Total InspectionSchedules to update: {}", schedulesToUpdate.size());
+    }
 
     /**
-     * 점검 일정을 배치로 삽입하는 메서드
+     * 특정 inspPlanId와 inspPlanDt에 해당하는 점검 일정을 조회하는 메서드
      *
-     * @param schedules 저장할 점검 일정 목록
+     * @param inspPlanId  점검 계획 ID
+     * @param inspSchdId  점검 일정 ID
+     * @return 점검 일정 객체 또는 null
      */
-    @Override
-    @Transactional
-    public void insertInspectionSchedules(List<InspectionSchedule> schedules) {
-        // 생성 시간 설정
-        LocalDateTime now = LocalDateTime.now();
-        String currentTime = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
+    public InspectionSchedule selectDetailSchedule(int inspPlanId, int inspSchdId) {
+        InspectionSchedule schedules = null;
+        log.info("selectDetailSchedule called@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        if (inspSchdId != 0){
+            log.info("selectDetailSchedule inspSchdId{} ",inspSchdId);
+            schedules = scheduleMapper.selectInspectionSchedulesByPlanIdAndDate(
+                    inspPlanId, inspSchdId
+            );
 
-        for (InspectionSchedule schedule : schedules) {
-            if (schedule.getCreTm() == null || schedule.getCreTm().isEmpty()) {
-                schedule.setCreTm(currentTime);
+            if (schedules == null) {
+                log.warn("No InspectionSchedule found for inspPlanId: {} and inspPlanDt: {}", inspPlanId, inspSchdId);
+                return null;
+            } else  {
+                log.warn("Found for inspPlanId: {} and inspPlanDt: {}", inspPlanId, inspSchdId);
             }
-            if (schedule.getUpdTm() == null || schedule.getUpdTm().isEmpty()) {
-                schedule.setUpdTm(currentTime);
-            }
+            log.info("schedules : {}",schedules);
         }
-        log.info("@@@@@@@@@@@@@@@@@@@");
-        log.info("schedules : {}" , schedules);
-        // 점검 일정 저장
-        scheduleMapper.insertInspectionSchedules(schedules);
-        log.info("점검 일정이 {}개 저장되었습니다.", schedules.size());
-    }
 
-    @Override
-    public InspectionSchedule selectDetailSchedule(Integer inspPlanId) {
-        return scheduleMapper.selectDetailSchedule(inspPlanId);
-    }
-
-    @Override
-    public MemberRequest selectMbrDetail(String creMbrId) { return scheduleMapper.selectMbrDetail(creMbrId); }
-
-    @Override
-    public Integer getLastInspPlanSeq() {
-        return scheduleMapper.getLastInspPlanSeq();
+        return schedules;
     }
 
     /**
      * 점검 계획 목록을 저장 또는 수정하는 메서드
      *
      * @param inspectionPlans 저장할 점검 계획 목록
+     * @param currentMemberId 현재 로그인한 회원 ID
      */
     @Transactional
     public void saveInspectionPlans(List<InspectionPlan> inspectionPlans, String currentMemberId) {
         // 생성 시간 설정
-        LocalDateTime now = LocalDateTime.now();
-        String currentTime = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-
+        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        MemberRequest memberRequest = scheduleMapper.selectMbrDetail(currentMemberId);
+        log.info(" saveInspectionPlans memberRequest  {}",memberRequest);
         for (InspectionPlan plan : inspectionPlans) {
-            if (plan.getInspPlanId() == null||plan.getCreTm() == null || plan.getCreTm().isEmpty()) {
-                plan.setInspPlanId(getLastInspPlanSeq() + 1);
+            if (plan.getInspPlanId() == null ) {
+                // 새로운 점검 계획
                 plan.setCreTm(currentTime);
-                plan.setCreMbrId(currentMemberId); // 생성자 설정
-
-            }
-            if (plan.getUpdTm() == null || plan.getUpdTm().isEmpty()) {
-                plan.setUpdTm(currentTime);
-                plan.setUpdMbrId(currentMemberId); // 수정자 설정
+                plan.setCreMbrId(memberRequest.getMbrId());
+                // 상태 코드 설정 (예: '1'로 고정)
+                plan.setInspPlanSttsW("1");
+                log.info("After setting, insertPlan: {}", plan);
+                scheduleMapper.insertInspectionPlans(plan);
+                log.info("Inserted new InspectionPlan with ID: {}", plan.getInspPlanId());
             } else {
-                plan.setUpdMbrId(currentMemberId); // 항상 수정자 설정
+
+                InspectionPlan inspectionPlan=selectInspPlanById(plan.getInspPlanId());
+
+
+                // 기존 점검 계획 업데이트
+                plan.setCreTm(inspectionPlan.getCreTm());
+                plan.setCreMbrId(inspectionPlan.getCreMbrId());
+                plan.setUpdTm(currentTime);
+                plan.setUpdMbrId(memberRequest.getMbrId());
+                log.info("After setting, update Plan{}",plan);
+                scheduleMapper.updateInspectionPlans(plan);
+                log.info("Updated InspectionPlan with ID: {}", plan.getInspPlanId());
             }
         }
+        log.info("inspectionPlans {}", inspectionPlans);
 
-        // 점검 계획 저장/수정
-
-        log.info("점검 계획이 {}개 저장/수정되었습니다.", inspectionPlans.size());
+        log.info("Saved {} InspectionPlans.", inspectionPlans.size());
     }
-
 
     /**
      * 점검 계획에 따라 점검 일정 날짜를 생성하는 메서드
@@ -256,11 +357,17 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
                 break;
 
             case "NF": // 빈도없음
-                dates.add(start);
+                try {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+                    dates.add(LocalDate.parse(plan.getInspPlanDt(), formatter));
+                } catch (DateTimeParseException e) {
+                    log.error("Invalid date format for NF case: {}. Expected format: yyyyMMdd", plan.getInspPlanDt());
+                    throw e; // or handle it accordingly
+                }
                 break;
 
             default:
-                log.warn("알 수 없는 FRQ_CD: {}", frqCd);
+                log.warn("Unknown FRQ_CD: {}", frqCd);
         }
 
         return dates;
@@ -280,7 +387,7 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
         try {
             return Integer.parseInt(cntCd.substring(1));
         } catch (NumberFormatException e) {
-            log.warn("CNT_CD 파싱 실패: {}, 기본 인터벌 사용", cntCd);
+            log.warn("Failed to parse CNT_CD: {}. Using default interval 1.", cntCd);
             return 1;
         }
     }
@@ -318,6 +425,7 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
             case "SU":
                 return DayOfWeek.SUNDAY;
             default:
+                log.warn("Unknown week code: {}. Defaulting to MONDAY.", week);
                 return DayOfWeek.MONDAY; // 기본값
         }
     }
@@ -332,5 +440,4 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
         DayOfWeek dayOfWeek = date.getDayOfWeek();
         return dayOfWeek == DayOfWeek.SATURDAY || dayOfWeek == DayOfWeek.SUNDAY;
     }
-
 }
