@@ -10,16 +10,32 @@ $(function () {
     let bottomChkLst = []
 
 
+
     /**
      * 현재 선택된 항목들을 반환하는 함수
      */
     function getSelectedItems() {
+        // 주별
+        const selectedWeekdays = $('#dynamic-buttons button.active[data-weekdays]')
+            .toArray()
+            .map(button => $(button).data('weekdays'));
+
+        // 월별
+        const selectedDays = $('#dynamic-buttons button.active[data-month-day]')
+            .toArray()
+            .map(button => $(button).data('month-day'));
+
+
+
         return {
-            selectedDays: [...selectedDays],
-            selectedWeekdays: [...selectedWeekdays],
-            selectedCalendarDates: [...selectedCalendarDates]
+            selectedDays,
+            selectedWeekdays,
+            selectedCalendarDates
         };
     }
+
+
+
 
     /**
      * Autocomplete 클래스 정의
@@ -1630,9 +1646,6 @@ $(function () {
     }
 
 
-    /**
-     * 점검 계획 저장 / 수정 기능 (AJAX 사용)
-     */
     function confirmationDialog() {
         Swal.fire({
             title: "확인",
@@ -1657,128 +1670,117 @@ $(function () {
                 console.log("선택된 Store IDs: ", selectedStoreIds);
 
                 // 'alldata'에서 선택된 'no' 값을 기반으로 데이터 필터링
-                const filteredData = alldata.filter((item) =>
-                    selectedStoreIds.includes(item.no),
-                );
+                const filteredData = alldata.filter((item) => selectedStoreIds.includes(item.no));
                 console.log("필터링된 데이터: ", filteredData);
 
                 // 저장할 데이터 준비
                 let inspectionPlans = [];
-
-                // inspPlanUseW 및 inspPlanSttsW 설정
-                const inspPlanUseW = 'Y'; // 필요에 따라 동적으로 설정 가능
-                const inspPlanSttsW = '1'; // 초기 상태 워크플로우 코드
-
-                // UI에서 선택된 slctDt 값 가져오기 (월별)
-                let selectedSlctDt = null;
-                const activeMonthButton = $('#dynamic-buttons button.active[data-month-day]');
-                if (activeMonthButton.length > 0) {
-                    selectedSlctDt = activeMonthButton.data('month-day');
-                    console.log("선택된 slctDt: ", selectedSlctDt);
-                } else {
-                    console.warn("선택된 slctDt가 없습니다.");
-                }
-
-                // UI에서 선택된 요일 가져오기 (주별)
-                let selectedWeek = null;
-                const activeWeekButton = $('#dynamic-buttons button.active[data-weekdays]');
-                if (activeWeekButton.length > 0) {
-                    selectedWeek = activeWeekButton.data('weekdays');
-                    console.log("선택된 week: ", selectedWeek);
-                } else {
-                    console.warn("선택된 요일이 없습니다.");
-                }
-
-                // UI에서 입력된 점검 예정일 가져오기
-                const scheduleDate = $("#bottomScheduleDate").val();
-                const formattedScheduleDate = scheduleDate ? scheduleDate.replace(/-/g, "") : null;
-                console.log("나는 날짜요"+scheduleDate)
 
                 // 매핑 객체 생성 (한 번만 실행)
                 const chkLstNameToIdMap = {};
                 bottomChkLst.forEach(item => {
                     chkLstNameToIdMap[item.CHKLST_NM.trim()] = item.CHKLST_ID;
                 });
-                console.log(chkLstNameToIdMap)
+                //console.log(chkLstNameToIdMap);
+
                 // chklstId 매핑
                 const selectedName = $('#bottom-CHKLST').text().trim(); // 공백 제거
                 const chklstId = chkLstNameToIdMap[selectedName];
 
-                console.log(selectedCalendarDates)
                 const storeNM = $("#bottom-STORE").text();
+                const storeItem = alldata.find(item => item.storeNm === storeNM);
 
-                const storeItem = alldata.find(item => {
-                    //console.log("Checking item:", item); // 각각의 item 확인
-                    return item.storeNm === storeNM;
-                });
-                console.log(storeNM)
-                console.log(storeItem)
+                const selectedItems = getSelectedItems();
+                const selectedCalendarDates = selectedItems.selectedCalendarDates;
+                const selectedWeekdays = selectedItems.selectedWeekdays;
+                const selectedDays = selectedItems.selectedDays;
+
+                console.log("선택된 캘린더 날짜: ", selectedCalendarDates);
+                console.log("선택된 요일: ", selectedWeekdays);
+                console.log("선택된 일자: ", selectedDays);
 
                 // 모든 selectedRows에 대해 inspectionPlans 생성
                 selectedRows.forEach((row, index) => {
                     const frqCd = row.frqCd;
-                    console.log("내가 선택한 row")
-                    console.table(row)
-                    // InspectionPlan 객체 초기화
+
                     let planEntry = {
-                        inspPlanId: filteredData.length > 0 ? filteredData[index].inspPlanId || null : null, // 기존 ID인 경우, 신규 생성 시에는 null
+                        inspPlanId: filteredData[index] ? filteredData[index].inspPlanId || null : null, // 기존 ID인 경우, 신규 생성 시에는 null
                         chklstId: chklstId,
                         frqCd: frqCd,
-                        cntCd: null,
-                        week: selectedWeek || null,
-                        slctDt: selectedSlctDt || null,
-                        inspPlanUseW: inspPlanUseW,
-                        inspPlanSttsW: inspPlanSttsW,
-                        inspPlanDt: formattedScheduleDate || null, // 점검 예정일
-                        storeId: filteredData.length > 0 ? filteredData[index].storeId || null : storeItem.storeId,
-                        inspSchdId : filteredData.length > 0 ? filteredData[index].inspSchdId || null : null,
+                        cntCd: row.cntCd || null,
+                        week: selectedWeekdays.length > 0 ? selectedWeekdays : null, // 주별 선택된 요일 리스트
+                        slctDt: selectedDays.length > 0 ? selectedDays : null, // 월별 선택된 일 리스트
+                        inspPlanUseW: 'Y',
+                        inspPlanSttsW: '1', // 초기 상태 워크플로우 코드
+                        inspPlanDt: null, // 점검 예정일을 단일 값으로 설정
+                        storeId: storeItem ? storeItem.storeId : null,
+                        inspSchdId: filteredData[index] ? filteredData[index].inspSchdId || null : null,
                     };
 
-                    // frqCd에 따른 필드 매핑
-                    if (frqCd === 'NF') {
-                        // NF: cntCd, week, slctDt는 null
-                        console.log('오긴함?')
-                        planEntry.inspPlanDt = selectedCalendarDates
-                        console.log(selectedCalendarDates)
-                    } else if (frqCd === '일별') {
-                        // ED: cntCd 매핑, week과 slctDt는 null
-
-                        planEntry.inspPlanDt = row.inspPlanDt
-                        console.log(`Mapped ED entry with cntCd: ${planEntry.cntCd}`);
-                        console.log(`Mapped ED entry with cntCd: ${planEntry.inspPlanDt}`);
-                    } else if (frqCd === 'EM') {
-                        // EM: cntCd와 slctDt 매핑, week는 null
-                        planEntry.cntCd = row.cntCd || null;
-                        planEntry.slctDt = selectedSlctDt || null;
-                        console.log(`Mapped EM entry with cntCd: ${planEntry.cntCd} and slctDt: ${planEntry.slctDt}`);
-                    } else {
-                        // 기타 frqCd: 필요 시 추가 매핑
-                        console.log(`Mapped entry with frqCd: ${frqCd}`);
-                    }
-
-                    // UI에서 입력된 빈도 및 횟수 값 매핑
+                    // 추가 로직 적용 (빈도 및 횟수 설정)
                     const frequencyLabel = $("#frequency").val();
                     const countLabel = $("#count").val();
 
-
                     const frequencyCode = frequencyLabel ? FRQ_CD_REVERSE_MAP[frequencyLabel] || frequencyLabel : null;
                     const countCode = countLabel ? CNT_CD_REVERSE_MAP[countLabel] || countLabel : null;
-                    let flag = 0;
-                    console.log(countCode)
+
+                    console.log('frequencyCode : ' + frequencyCode);
+                    console.log('countCode : ' + countCode);
+
                     if (frequencyCode) {
                         planEntry.frqCd = frequencyCode;
                     }
                     if (countCode) {
                         planEntry.cntCd = countCode;
-                        flag = 1
                     }
-                    console.log(selectedCalendarDates)
-                    if (selectedCalendarDates.length !== 0) planEntry.inspPlanDt = selectedCalendarDates[0]
 
-                    
-                    console.log("최종 날짜들 확인")
-                    console.table(getSelectedItems())
-                    inspectionPlans.push(planEntry);
+                    console.log('if 전' + frqCd);
+
+                    // frqCd에 따른 필드 매핑
+                    if (frequencyCode === '빈도없음' || frequencyCode === 'NF') {
+                        // NF: cntCd, week, slctDt는 null
+                        if (selectedCalendarDates.length > 0) {
+                            selectedCalendarDates.forEach((date) => {
+                                console.log('나 빈도없음 : ' + date);
+                                let nfPlanEntry = { ...planEntry, inspPlanDt: date };
+                                inspectionPlans.push(nfPlanEntry);
+                            });
+                        } else {
+                            console.warn("빈도없음 선택 시 선택된 날짜가 없습니다.");
+                        }
+                    } else if (frequencyCode === '일별' || frequencyCode === 'ED') {
+                        // 일별: cntCd, week, slctDt는 null, inspPlanDt는 row의 inspPlanDt 사용
+                        if (row.inspPlanDt) {
+                            planEntry.inspPlanDt = row.inspPlanDt;
+                            inspectionPlans.push(planEntry);
+                        } else {
+                            console.warn("일별 선택 시 inspPlanDt가 없습니다.");
+                        }
+                    } else if (frequencyCode === '주별' || frequencyCode === 'EW') {
+                        // 주별: week 사용, inspPlanDt는 선택된 주별 요일 사용 (캘린더 날짜가 비어있는 경우에도 주별만 처리)
+                        if (selectedWeekdays.length > 0) {
+                            selectedWeekdays.forEach((weekday) => {
+                                let weeklyPlanEntry = { ...planEntry, week: weekday, inspPlanDt: row.inspPlanDt || null };
+                                inspectionPlans.push(weeklyPlanEntry);
+                            });
+                        } else {
+                            console.warn("주별 선택 시 선택된 요일이 없습니다.");
+                        }
+                    } else if (frequencyCode === '월별' || frequencyCode === 'EM') {
+                        // 월별: slctDt 사용, inspPlanDt는 선택된 일자로 설정
+                        if (selectedDays.length > 0) {
+                            selectedDays.forEach((day) => {
+                                let monthlyPlanEntry = { ...planEntry, inspPlanDt: day, slctDt: day };
+                                inspectionPlans.push(monthlyPlanEntry);
+                            });
+                        } else {
+                            console.warn("월별 선택 시 선택된 일자가 없습니다.");
+                        }
+                    } else {
+                        console.log('나 else');
+                        console.table(inspectionPlans);
+                        // 기타 frqCd: 필요 시 추가 매핑
+                    }
                 });
 
                 console.log("Inspection Plans to Save: ", inspectionPlans);
@@ -1787,42 +1789,39 @@ $(function () {
                 // 데이터 유효성 검사 (필요 시 추가)
 
                 // AJAX 요청
-                // $.ajax({
-                //     url: "/qsc/inspection-schedule/saveSchedules", // 백엔드 엔드포인트
-                //     type: "POST",
-                //     contentType: "application/json",
-                //     data: JSON.stringify(inspectionPlans),
-                //     success: function(response) {
-                //         Swal.fire({
-                //             title: "완료!",
-                //             text: response.message || "점검 계획이 성공적으로 저장되었습니다.",
-                //             icon: "success",
-                //             confirmButtonText: "OK",
-                //         }).then((result) => {
-                //             if (result.isConfirmed) {
-                //                 // 저장 후 처리
-                //                 checkUnload = false;
-                //                 loadInitialData().then(() => {
-                //                     // 첫 번째 데이터 로드 완료 후 추가 로드
-                //                     loadInitialData(); // 데이터를 다시 한 번 더 새로 고침
-                //                 });
-                //             }
-                //         });
-                //     },
-                //     error: function(xhr, status, error) {
-                //         console.log("저장 시도한 데이터: ", inspectionPlans);
-                //         let errorMessage = "저장 중 오류가 발생했습니다.";
-                //         if (xhr.status === 403) {
-                //             errorMessage = "권한이 없습니다.";
-                //         } else if (xhr.status === 400) {
-                //             errorMessage = xhr.responseText || "잘못된 요청입니다.";
-                //         } else if (xhr.status === 500) {
-                //             errorMessage = "저장에 실패했습니다. 관리자에게 문의하세요.";
-                //         }
-                //         Swal.fire("실패!", errorMessage, "error");
-                //         console.error("저장 중 오류 발생:", error);
-                //     }
-                // });
+                $.ajax({
+                    url: "/qsc/inspection-schedule/saveSchedules", // 백엔드 엔드포인트
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(inspectionPlans),
+                    success: function(response) {
+                        Swal.fire({
+                            title: "완료!",
+                            text: response.message || "점검 계획이 성공적으로 저장되었습니다.",
+                            icon: "success",
+                            confirmButtonText: "OK",
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                checkUnload = false;
+                                loadInitialData().then(() => {
+                                    loadInitialData();
+                                });
+                            }
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        let errorMessage = "저장 중 오류가 발생했습니다.";
+                        if (xhr.status === 403) {
+                            errorMessage = "권한이 없습니다.";
+                        } else if (xhr.status === 400) {
+                            errorMessage = xhr.responseText || "잘못된 요청입니다.";
+                        } else if (xhr.status === 500) {
+                            errorMessage = "저장에 실패했습니다. 관리자에게 문의하세요.";
+                        }
+                        Swal.fire("실패!", errorMessage, "error");
+                        console.error("저장 중 오류 발생:", error);
+                    }
+                });
             }
         });
     }
