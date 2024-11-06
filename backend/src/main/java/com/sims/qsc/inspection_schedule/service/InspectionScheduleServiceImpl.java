@@ -1,6 +1,9 @@
 package com.sims.qsc.inspection_schedule.service;
 
+import com.sims.config.Exception.CustomException;
+import com.sims.config.Exception.ErrorCode;
 import com.sims.config.common.aop.SVInspectorRolCheck;
+import com.sims.master.checklist_manage.mapper.ChecklistMapper;
 import com.sims.qsc.inspection_schedule.mapper.InspectionScheduleMapper;
 import com.sims.qsc.inspection_schedule.vo.*;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +29,8 @@ import java.util.Map;
 public class InspectionScheduleServiceImpl implements InspectionScheduleService {
 
     private final InspectionScheduleMapper scheduleMapper;
+
+    private final ChecklistMapper checklistMapper;
 
     @Override
     public List<InspectionScheduleRequest> selectFilteredInspectionScheduleList(
@@ -154,6 +159,10 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
         String creMbrNo = auth.getName();  // 로그인 한 사람
         log.info("Authenticated user name: {}", creMbrNo);
         log.info("Received inspection plans: {}", inspectionPlans);
+        if(inspectionPlans.isEmpty()) {
+            throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
+        }
+
 
         // 1. 점검 계획 저장/수정
         saveInspectionPlans(inspectionPlans, creMbrNo);
@@ -174,7 +183,7 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
             // 점검 일정 날짜 생성 (3개월치)
             List<LocalDate> inspectionDates = generateInspectionDates(plan, today, endDate);
             log.info("Generated {} inspection dates for InspectionPlan ID: {}", inspectionDates.size(), plan.getInspPlanId());
-
+            log.info("Generated {} inspectionDates",inspectionDates);
             for (LocalDate date : inspectionDates) {
                 // 주말 제외
                 if (isWeekend(date)) {
@@ -240,6 +249,7 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
                 updateInspectionSchedules(schedule);
             }
             log.info("Updated {} existing InspectionSchedules.", schedulesToUpdate.size());
+            log.info("Updated {} Existing scan schedule objects", schedulesToUpdate);
         }
 
         log.info("Total InspectionSchedules to insert: {}", schedulesToInsert.size());
@@ -288,6 +298,9 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
         log.info(" saveInspectionPlans memberRequest  {}",memberRequest);
         for (InspectionPlan plan : inspectionPlans) {
             if (plan.getInspPlanId() == null ) {
+
+                if(plan.getFrqCd().equals("NF")) plan.setCntCd(null);
+
                 // 새로운 점검 계획
                 plan.setCreTm(currentTime);
                 plan.setCreMbrId(memberRequest.getMbrId());
@@ -297,6 +310,8 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
                 scheduleMapper.insertInspectionPlans(plan);
                 log.info("Inserted new InspectionPlan with ID: {}", plan.getInspPlanId());
             } else {
+
+                if(plan.getFrqCd().equals("NF")) plan.setCntCd(null);
 
                 InspectionPlan inspectionPlan=selectInspPlanById(plan.getInspPlanId());
 
