@@ -37,7 +37,7 @@
                 AND PDT_NM LIKE '%'||#{pdtNm}||'%'
             </if>
             <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(pdtSellSttsNm)">
-                AND PDT_SELL_STTS_CD.DTL_CD_NM  LIKE '%'||#{pdtSellSttsNm})||'%'
+                AND PDT_SELL_STTS_CD.DTL_CD_NM  LIKE '%'||#{pdtSellSttsNm}||'%'
             </if>
         </where>
         ORDER BY
