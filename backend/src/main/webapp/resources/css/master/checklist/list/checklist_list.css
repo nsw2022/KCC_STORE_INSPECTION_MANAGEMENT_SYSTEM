@@ -291,6 +291,15 @@ body {
   border: none !important; /* 필요하다면 보더도 제거 */
 }
 
+.form-label-essential:after {
+  content: "*";
+  display: block;
+  height: 16px !important;
+  width: 7px !important;
+  margin-left: 3px;
+  color: red;
+}
+
 
 /******************   first modal   ********************/
 .list-group {
