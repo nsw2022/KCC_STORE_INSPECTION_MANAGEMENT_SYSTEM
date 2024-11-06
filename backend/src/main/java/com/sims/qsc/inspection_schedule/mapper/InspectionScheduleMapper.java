@@ -4,6 +4,7 @@ import com.sims.qsc.inspection_schedule.vo.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
@@ -49,44 +50,46 @@ public interface InspectionScheduleMapper {
 
     /** @return 하단부분 자동완성 점검유형 */
     List<String> selectBottomINSP();
+    /** 점검일정 상세 리스트 */
+    List<InspectionDetailsResponse> selectInspectionDetails(Integer storeId);
 
-    /**
-     * @param storeId 가맹점 번호 - 시퀀스
-     * @return 가맹점별 체크 리스트, 체크리스트 문항과 점수
-     */
-    List<InspectionDetailsResponse> selectInspectionDetails(@Param("storeId") Integer storeId);
 
-    /**
-     *
-     * @param inspPlanId 점검일정 시퀀스번호
-     * @return 스케줄 상세보기
-     */
-    public InspectionSchedule  selectDetailSchedule(Integer inspPlanId);
-    /**
-     * 점검 계획을 삽입하거나 업데이트하는 메서드
-     *
-     * @param inspectionPlans 저장할 점검 계획 목록
-     */
-    void insertOrUpdateInspectionPlans(@Param("list") List<InspectionPlan> inspectionPlans);
 
-    /**
-     * 점검 일정을 배치로 삽입하는 메서드
-     *
-     * @param schedules 저장할 점검 일정 목록
-     */
-    void insertInspectionSchedules(@Param("list") List<InspectionSchedule> schedules);
+    /** 점검 계획 업데이트 */
+    void updateInspectionPlans(InspectionPlan inspectionPlan);
 
-    /**
-     *
-     * @param creMbrId 회원아이디
-     * @return 회원정보
-     */
-    public MemberRequest selectMbrDetail(String creMbrId);
+    /** 점검 계획 삽입 */
+    void insertInspectionPlans(InspectionPlan inspectionPlan);
+
+    /** 점검 일정 업데이트 */
+    void updateInspectionSchedules(InspectionSchedule inspectionSchedule);
+
+    /** 점검 일정 삽입 */
+    void insertInspectionSchedules(List<InspectionSchedule> schedules);
+
+    /** 점검 일정 상세 조회 (INSP_PLAN_ID와 inspSchdId 기준) */
+    InspectionSchedule selectInspectionSchedulesByPlanIdAndDate(
+            @Param("inspPlanId") int inspPlanId,
+            @Param("inspSchdId") int inspSchdId
+    );
+
+    /** 회원 상세 조회 */
+    MemberRequest selectMbrDetail(@Param("creMbrNo") String creMbrNo);
 
     /**
      *
-     * @return 가장 최근의 점검 계획 시퀀슥밧
+     * @param inspPlanId 시퀀스 번호
+     * @return 점검계획 임시객체
      */
-    @Select("SELECT MAX(INSP_PLAN_ID) FROM INSP_PLAN")
-    Integer getLastInspPlanSeq();
+    @Select("SELECT * FROM INSP_PLAN WHERE INSP_PLAN_ID = #{inspPlanId}")
+    InspectionPlan selectInspPlanById(int inspPlanId);
+
+    /**
+     *
+     * @return 현재 INSP_SCHD시퀀스 최댓값 가져오는 값
+     */
+    @Select("SELECT INSP_SCHD_SEQ.NEXTVAL FROM DUAL")
+    Integer getMaxInspSchdId();
+
+
 }

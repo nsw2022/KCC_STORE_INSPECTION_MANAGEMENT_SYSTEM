@@ -128,7 +128,7 @@ $(function () {
      */
     updateSelected(selectedItem) {
       console.log(`updateSelected 호출됨: ${selectedItem}`);
-      this.$input.val(selectedItem); // 입력 필드에 선택된 값을 설정
+      this.$input.val(''); // 입력 필드에 선택된 값을 설정
       this.renderOptions(selectedItem);
       this.$wrapper.removeClass("active"); // 필요시 유지 또는 조정
       this.$searchBtn.children().first().text(selectedItem);
@@ -594,6 +594,7 @@ $(function () {
   };
 
   const CNT_CD_MAP = {
+    없음: null,
     MO: "월",
     TU: "화",
     WE: "수",
@@ -792,11 +793,11 @@ $(function () {
   const autocompleteData = {
 
     store: (includeAll = true) => {
+      const stores = [...new Set(originalData.map(item => item.storeNm).filter(Boolean))].sort((b, a) => b.localeCompare(a));
 
-      const stores = [...new Set(originalData.map(item => item.storeNm).filter(Boolean))];
-      console.log("stores " + stores)
       return Promise.resolve(includeAll ? ["전체", ...stores] : stores);
     },
+
     inspector: (includeAll = true) => {
       const inspectors = [...new Set(originalData.map(item => item.mbrNm).filter(Boolean))];
       return Promise.resolve(includeAll ? ["전체", ...inspectors] : inspectors);
@@ -826,7 +827,7 @@ $(function () {
           url: "/qsc/inspection-schedule/bottom-checkLists",
           method: "GET",
         }).then((data) => {
-          console.log("bottomChkLst : " + data)
+
           bottomChkLst = data
           return data.map(item => item.CHKLST_NM).filter(Boolean);
         })
@@ -1691,32 +1692,60 @@ $(function () {
         // UI에서 입력된 점검 예정일 가져오기
         const scheduleDate = $("#bottomScheduleDate").val();
         const formattedScheduleDate = scheduleDate ? scheduleDate.replace(/-/g, "") : null;
+        console.log("나는 날짜요"+scheduleDate)
+
+        // 매핑 객체 생성 (한 번만 실행)
+        const chkLstNameToIdMap = {};
+        bottomChkLst.forEach(item => {
+          chkLstNameToIdMap[item.CHKLST_NM.trim()] = item.CHKLST_ID;
+        });
+        console.log(chkLstNameToIdMap)
+        // chklstId 매핑
+        const selectedName = $('#bottom-CHKLST').text().trim(); // 공백 제거
+        const chklstId = chkLstNameToIdMap[selectedName];
+
+        console.log(selectedCalendarDates)
+        const storeNM = $("#bottom-STORE").text();
+
+        const storeItem = alldata.find(item => {
+          //console.log("Checking item:", item); // 각각의 item 확인
+          return item.storeNm === storeNM;
+        });
+        console.log(storeNM)
+        console.log(storeItem)
 
         // 모든 selectedRows에 대해 inspectionPlans 생성
-        selectedRows.forEach(row => {
+        selectedRows.forEach((row, index) => {
           const frqCd = row.frqCd;
-
+          console.log("내가 선택한 row")
+          console.table(row)
           // InspectionPlan 객체 초기화
           let planEntry = {
-            inspPlanId:filteredData.length > 0 ? filteredData[0].inspPlanId || null : null, // 기존 ID인 경우, 신규 생성 시에는 null
-            chklstId: filteredData.length > 0 ? filteredData[0].chklstId||  null : null,
+            inspPlanId: filteredData.length > 0 ? filteredData[index].inspPlanId || null : null, // 기존 ID인 경우, 신규 생성 시에는 null
+            chklstId: chklstId,
             frqCd: frqCd,
             cntCd: null,
             week: selectedWeek || null,
-            slctDt: null,
+            slctDt: selectedSlctDt || null,
             inspPlanUseW: inspPlanUseW,
             inspPlanSttsW: inspPlanSttsW,
             inspPlanDt: formattedScheduleDate || null, // 점검 예정일
+            storeId: filteredData.length > 0 ? filteredData[index].storeId || null : storeItem.storeId,
+            inspSchdId : filteredData.length > 0 ? filteredData[index].inspSchdId || null : null,
           };
 
           // frqCd에 따른 필드 매핑
           if (frqCd === 'NF') {
             // NF: cntCd, week, slctDt는 null
-            console.log(`Mapped NF entry for inspPlanId: ${row.inspPlanId}`);
-          }  else if (frqCd === 'ED') {
+            console.log('오긴함?')
+            planEntry.inspPlanDt = selectedCalendarDates
+            console.log(selectedCalendarDates)
+          } else if (frqCd === '일별') {
             // ED: cntCd 매핑, week과 slctDt는 null
-            planEntry.cntCd = row.cntCd || null;
+
+            planEntry.inspPlanDt = row.inspPlanDt
             console.log(`Mapped ED entry with cntCd: ${planEntry.cntCd}`);
+            console.log(`Mapped ED entry with cntCd: ${planEntry.inspPlanDt}`);
           } else if (frqCd === 'EM') {
             // EM: cntCd와 slctDt 매핑, week는 null
             planEntry.cntCd = row.cntCd || null;
@@ -1731,16 +1760,22 @@ $(function () {
           const frequencyLabel = $("#frequency").val();
           const countLabel = $("#count").val();
 
+
           const frequencyCode = frequencyLabel ? FRQ_CD_REVERSE_MAP[frequencyLabel] || frequencyLabel : null;
           const countCode = countLabel ? CNT_CD_REVERSE_MAP[countLabel] || countLabel : null;
-
+          let flag = 0;
+          console.log(countCode)
           if (frequencyCode) {
             planEntry.frqCd = frequencyCode;
           }
           if (countCode) {
             planEntry.cntCd = countCode;
+            flag = 1
           }
-
+          console.log(selectedCalendarDates)
+          if (selectedCalendarDates.length !== 0) planEntry.inspPlanDt = selectedCalendarDates[0]
+          console.log("최종 날짜들 확인")
+          console.table(getSelectedItems)
           inspectionPlans.push(planEntry);
         });
 
@@ -1765,7 +1800,10 @@ $(function () {
         //             if (result.isConfirmed) {
         //                 // 저장 후 처리
         //                 checkUnload = false;
-        //                 loadInitialData(); // 데이터 새로 고침
+        //                 loadInitialData().then(() => {
+        //                     // 첫 번째 데이터 로드 완료 후 추가 로드
+        //                     loadInitialData(); // 데이터를 다시 한 번 더 새로 고침
+        //                 });
         //             }
         //         });
         //     },
@@ -1786,7 +1824,6 @@ $(function () {
       }
     });
   }
-
 
 
   /**
@@ -1856,15 +1893,16 @@ $(function () {
     updateRowData('storeNm', newText);
 
     // bottomStores에서 STORE_NM이 newText와 일치하는 객체들을 필터링
-    const matchedStores = bottomStores.filter(store => store.STORE_NM === newText);
-
+    const matchedStores = alldata.filter(store => store.storeNm === newText);
+    console.log(newText)
+    console.log(alldata)
     // 일치하는 객체들을 로그로 출력
     console.log("일치하는 스토어:", matchedStores);
-    updateRowData('brandNm', matchedStores[0].BRAND_NM);
-    $("#bottom-BRAND").text(matchedStores[0].BRAND_NM)
-    updateRowData('mbrNm', matchedStores[0].INSPECTOR);
+    updateRowData('brandNm', matchedStores[0].brandNm);
+    $("#bottom-BRAND").text(matchedStores[0].brandNm)
+    updateRowData('mbrNm', matchedStores[0].mbrNm);
 
-    $("#bottom-INSPECTOR").text(matchedStores[0].INSPECTOR)
+    $("#bottom-INSPECTOR").text(matchedStores[0].mbrNm)
   });
 
   observeChanges("#bottom-INSP", function (newText) {
@@ -1899,7 +1937,6 @@ $(function () {
 
   $("#bottomScheduleDate").on("change", function () {
     const newValue = $(this).val().replaceAll("-", "")
-    console.log('오긴함?')
     console.log(newValue)
     updateRowData('inspPlanDt', newValue)
   });

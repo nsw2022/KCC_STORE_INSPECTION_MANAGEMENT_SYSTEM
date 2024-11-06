@@ -7,31 +7,27 @@
 
     <select id="selectFilteredInspectionScheduleList" resultType="com.sims.qsc.inspection_schedule.vo.InspectionScheduleRequest">
         SELECT  /* InspectionScheduleMapper.getInspectionScheduleList 노승우 */
-        STO.STORE_NM
-        , STO.STORE_ID
-        , CASE
+        STO.STORE_NM,
+        STO.STORE_ID,
+        CASE
         WHEN STO.BRAND_CD = 'B001' THEN 'KCC 크라상'
         WHEN STO.BRAND_CD = 'B002' THEN 'KCC 도넛'
         WHEN STO.BRAND_CD = 'B003' THEN 'KCC 브레드'
         WHEN STO.BRAND_CD = 'B004' THEN 'KCC 카페'
-        END AS BRAND_NM
-        , CHK.CHKLST_NM
-        , CHK.CHKLST_ID
-        , ISC.INSP_PLAN_DT
-        , MBR.MBR_NM
-        , INP.CNT_CD
-        , INP.FRQ_CD
-        , CASE
+        END AS BRAND_NM,
+        CHK.CHKLST_NM,
+        MBR.MBR_NM,
+        INP.FRQ_CD,
+        INP.CNT_CD,
+        INP.INSP_PLAN_ID,
+        MIN(ISC.INSP_PLAN_DT) AS INSP_PLAN_DT,
+        CASE
         WHEN CHK.INSP_TYPE_CD = 'IT001' THEN '제품점검'
         WHEN CHK.INSP_TYPE_CD = 'IT002' THEN '위생점검'
         WHEN CHK.INSP_TYPE_CD = 'IT003' THEN '정기점검'
         WHEN CHK.INSP_TYPE_CD = 'IT004' THEN '비정기점검'
         WHEN CHK.INSP_TYPE_CD = 'IT005' THEN '기획점검'
         END AS INSP_TYPE_CD
-        , INP.WEEK
-        , INP.SLCT_DT
-        , INP.INSP_PLAN_ID
-
         FROM INSP_SCHD ISC
         INNER JOIN STORE STO
         ON STO.STORE_ID = ISC.STORE_ID
@@ -41,9 +37,16 @@
         ON CHK.CHKLST_ID = INP.CHKLST_ID
         INNER JOIN MBR
         ON MBR.MBR_ID = STO.INSP_MBR_ID
-        WHERE INP.INSP_PLAN_USE_W = 'Y'
+        WHERE INP.INSP_PLAN_USE_W = 'Y'AND ISC.INSP_PLAN_DT = (SELECT MIN(INSP_PLAN_DT) FROM INSP_SCHD WHERE INSP_PLAN_ID = ISC.INSP_PLAN_ID)
 
+        <include refid="DynamicConditions" />
 
+        GROUP BY STO.STORE_NM, STO.STORE_ID, STO.BRAND_CD, CHK.CHKLST_NM, MBR.MBR_NM, INP.FRQ_CD, INP.CNT_CD, INP.INSP_PLAN_ID, CHK.INSP_TYPE_CD
+
+        ORDER BY STO.STORE_NM
+    </select>
+
+    <sql id="DynamicConditions">
         <choose>
             <when test="currentMbrNo != null and currentMbrNo.startsWith('S')">
                 AND STO.SV_MBR_ID = (SELECT MBR_ID FROM MBR WHERE MBR_NO = #{currentMbrNo})
@@ -53,11 +56,9 @@
             </when>
         </choose>
 
-
         <if test="storeNm != null and storeNm != ''">
             AND STO.STORE_NM LIKE '%' || #{storeNm} || '%'
         </if>
-
 
         <if test="brandNm != null and brandNm != ''">
             <choose>
@@ -79,9 +80,8 @@
             </choose>
         </if>
 
-
         <if test="scheduleDate != null and scheduleDate != ''">
-            AND ISC.INSP_PLAN_DT LIKE '%' || #{scheduleDate} || '%'
+            AND ISC.INSP_PLAN_DT = #{scheduleDate}
         </if>
         <if test="chklstNm != null and chklstNm != ''">
             AND CHK.CHKLST_NM LIKE '%' || #{chklstNm} || '%'
@@ -95,8 +95,8 @@
         <if test="frqCd != null and frqCd !=''" >
             AND INP.FRQ_CD = #{frqCd}
         </if>
-        ORDER BY ISC.INSP_PLAN_DT DESC
-    </select>
+    </sql>
+
 
 
 
@@ -232,66 +232,29 @@
     </select>
 
 
-<!--    <insert id="insertInspectionPlan" parameterType="com.sims.qsc.inspection_schedule.vo.InspectionPlan">-->
-<!--        INSERT INTO INSP_PLAN (-->
-<!--            INSP_PLAN_ID,-->
-<!--            CHKLST_ID,-->
-<!--            FRQ_CD,-->
-<!--            CNT_CD,-->
-<!--            SLCT_DT,-->
-<!--            WEEK,-->
-<!--            INSP_PLAN_USE_W,-->
-<!--            CRE_MBR_ID,-->
-<!--            CRE_TM,-->
-<!--            INSP_PLAN_STTS_W-->
-<!--        ) VALUES (-->
-<!--                     INSP_PLAN_SEQ.NEXTVAL,-->
-<!--                     #{chklstId},-->
-<!--                     #{frqCd},-->
-<!--                     #{cntCd},-->
-<!--                     #{slctDt},-->
-<!--                     #{week},-->
-<!--                     #{inspPlanUseW},-->
-<!--                     #{creMbrId},-->
-<!--                     TO_DATE(CURRENT_DATE,, 'yyyyMMddHHmmss'),-->
-<!--                     1-->
-<!--                 )-->
-<!--    </insert>-->
 
+    <!-- 점검 계획 업데이트 -->
+    <update id="updateInspectionPlans" parameterType="com.sims.qsc.inspection_schedule.vo.InspectionPlan">
+        UPDATE INSP_PLAN
+        SET
+            CHKLST_ID = #{chklstId},
+            FRQ_CD = #{frqCd},
+            CNT_CD = #{cntCd},
+            SLCT_DT = #{slctDt, jdbcType=VARCHAR},
+            WEEK = #{week, jdbcType=VARCHAR},
+            INSP_PLAN_USE_W = #{inspPlanUseW},
+            UPD_MBR_ID = #{updMbrId},
+            UPD_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI'),
+            INSP_PLAN_STTS_W = #{inspPlanSttsW}
+        WHERE INSP_PLAN_ID = #{inspPlanId}
+    </update>
 
-<!--    <update id="updateInspectionPlan" parameterType="com.sims.qsc.inspection_schedule.vo.InspectionPlan">-->
-<!--        UPDATE INSP_PLAN-->
-<!--        SET-->
-<!--            CHKLST_ID = #{chklstId},-->
-<!--            FRQ_CD = #{frqCd},-->
-<!--            CNT_CD = #{cntCd},-->
-<!--            SLCT_DT = #{slctDt},-->
-<!--            WEEK = #{week},-->
-<!--            INSP_PLAN_USE_W = #{inspPlanUseW},-->
-<!--            UPD_MBR_ID = #{updMbrId},-->
-<!--            UPD_TM = TO_DATE(CURRENT_DATE,, 'yyyyMMddHHmmss'),-->
-<!--        WHERE INSP_PLAN_ID = #{inspPlanId}-->
-<!--    </update>-->
-
-
-    <insert id="insertOrUpdateInspectionPlans" parameterType="java.util.List">
-        <foreach collection="list" item="item">
-            MERGE INTO INSP_PLAN T
-            USING (SELECT #{item.inspPlanId} AS INSP_PLAN_ID FROM DUAL) S
-            ON (T.INSP_PLAN_ID = S.INSP_PLAN_ID OR (T.INSP_PLAN_ID IS NULL AND S.INSP_PLAN_ID IS NULL))
-            WHEN MATCHED THEN
-            UPDATE SET
-            CHKLST_ID = #{item.chklstId},
-            FRQ_CD = #{item.frqCd},
-            CNT_CD = #{item.cntCd},
-            SLCT_DT = #{item.slctDt},
-            WEEK = #{item.week},
-            INSP_PLAN_USE_W = #{item.inspPlanUseW},
-            UPD_MBR_ID = #{item.updMbrId},
-            UPD_TM = CURRENT_DATE,
-            INSP_PLAN_STTS_W = #{item.inspPlanSttsW}
-            WHEN NOT MATCHED THEN
-            INSERT (
+    <!-- 점검 계획 삽입 -->
+    <insert id="insertInspectionPlans" parameterType="com.sims.qsc.inspection_schedule.vo.InspectionPlan">
+        <selectKey keyProperty="inspPlanId" resultType="int" order="BEFORE">
+            SELECT INSP_PLAN_SEQ.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO INSP_PLAN (
             INSP_PLAN_ID,
             CHKLST_ID,
             FRQ_CD,
@@ -302,70 +265,87 @@
             CRE_MBR_ID,
             CRE_TM,
             INSP_PLAN_STTS_W
-            ) VALUES (
-            INSP_PLAN_SEQ.NEXTVAL,
-            #{item.chklstId},
-            #{item.frqCd},
-            #{item.cntCd},
-            #{item.slctDt},
-            #{item.week},
-            #{item.inspPlanUseW},
-            #{item.creMbrId},
-            CURRENT_DATE,
-            '1'
-            )
+        ) VALUES (
+                     #{inspPlanId},
+                     #{chklstId},
+                     #{frqCd},
+                     #{cntCd},
+                     #{slctDt},
+                     #{week},
+                     #{inspPlanUseW},
+                     #{creMbrId},
+                     TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI'),
+                     '1'
+                 )
+    </insert>
+
+    <!-- 점검 일정 업데이트 -->
+    <update id="updateInspectionSchedules" parameterType="com.sims.qsc.inspection_schedule.vo.InspectionSchedule">
+        UPDATE INSP_SCHD
+        SET
+            STORE_ID = #{storeId},
+            INSP_STTS_CD = #{inspSttsCd},
+            UPD_MBR_ID = #{updMbrId},
+            INSP_PLAN_DT = #{inspPlanDt},
+            INSP_SCHD_STTS_W = #{inspSchdSttsW},
+            UPD_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+        WHERE INSP_SCHD_ID = #{inspSchdId}
+    </update>
+
+    <!-- 점검 일정 삽입 (배치) -->
+    <insert id="insertInspectionSchedules" parameterType="java.util.List">
+        INSERT INTO INSP_SCHD (
+        INSP_SCHD_ID,
+        INSP_PLAN_ID,
+        STORE_ID,
+        INSP_PLAN_DT,
+        INSP_STTS_CD,
+        CRE_MBR_ID,
+        INSP_SCHD_STTS_W,
+        CRE_TM
+        )
+        SELECT INSP_SCHD_SEQ.NEXTVAL, A.* FROM (
+        <foreach collection="list" item="schedule" separator="UNION ALL">
+            SELECT
+            #{schedule.inspPlanId} AS INSP_PLAN_ID,
+            #{schedule.storeId} AS STORE_ID,
+            #{schedule.inspPlanDt} AS INSP_PLAN_DT,
+            #{schedule.inspSttsCd} AS INSP_STTS_CD,
+            #{schedule.creMbrId} AS CRE_MBR_ID,
+            #{schedule.inspSchdSttsW} AS INSP_SCHD_STTS_W,
+            #{schedule.creTm} AS CRE_TM
+            FROM DUAL
         </foreach>
+        ) A
     </insert>
 
 
-    <select id="selectDetailSchedule" parameterType="com.sims.qsc.inspection_schedule.vo.InspectionSchedule">
+
+
+
+
+
+
+
+
+
+
+    <!-- 점검 일정 상세 조회 (INSP_PLAN_ID와 INSP_PLAN_DT 기준) -->
+    <select id="selectInspectionSchedulesByPlanIdAndDate" parameterType="map" resultType="com.sims.qsc.inspection_schedule.vo.InspectionSchedule">
         SELECT *
         FROM INSP_SCHD
         WHERE INSP_PLAN_ID = #{inspPlanId}
+          AND INSP_SCHD_ID = #{inspSchdId}
     </select>
 
-    <select id="selectMbrDetail" parameterType="com.sims.qsc.inspection_schedule.vo.MemberRequest">
-        SELECT  *
+
+    <select id="selectMbrDetail" parameterType="String" resultType="com.sims.qsc.inspection_schedule.vo.MemberRequest">
+        SELECT
+            MBR_ID
+            , MBR_NO
+            , MBR_NM
         FROM MBR
-        WHERE MBR.MBR_NO = #{mbrNo}
+        WHERE MBR_NO = #{creMbrNo}
     </select>
-
-
-    <update id="insertInspectionSchedules" parameterType="java.util.List">
-        <foreach collection="list" item="item">
-            MERGE INTO INSP_SCHD T
-            USING (SELECT #{item.inspPlanId} AS NEW_ID FROM DUAL) S
-            ON (T.INSP_PLAN_ID = S.NEW_ID OR (T.INSP_PLAN_ID IS NULL AND S.NEW_ID IS NULL))
-            WHEN MATCHED THEN
-            UPDATE SET
-            T.STORE_ID = #{item.storeId},
-            T.INSP_STTS_CD = #{item.inspSttsCd},
-            T.UPD_MBR_ID = #{item.updMbrId},
-            T.INSP_PLAN_DT = #{item.inspPlanDt},
-            T.INSP_SCHD_STTS_W = #{item.inspSchdSttsW},
-            T.UPD_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
-            WHEN NOT MATCHED THEN
-            INSERT (
-            INSP_SCHD_ID,
-            INSP_PLAN_ID,
-            STORE_ID,
-            INSP_PLAN_DT,
-            INSP_STTS_CD,
-            CRE_MBR_ID,
-            INSP_SCHD_STTS_W,
-            CRE_TM
-            ) VALUES (
-            INSP_SCHD_SEQ.NEXTVAL,
-            #{item.inspPlanId},
-            #{item.storeId},
-            #{item.inspPlanDt},
-            #{item.inspSttsCd},
-            #{item.creMbrId},
-            '1',
-            TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
-            )
-        </foreach>
-    </update>
-
 
 </mapper>
