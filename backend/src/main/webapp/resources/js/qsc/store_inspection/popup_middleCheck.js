@@ -1546,33 +1546,44 @@ function generateInspectionList(category) {
                         const detailContent = contentWrapper.querySelector(".detail-content");
                         const storeInfo = contentWrapper.querySelector(".store-info");
                         const locationInputs = storeInfo.querySelectorAll(`input[name='location_${question.evitId}']`);
-                        const locationContent = contentWrapper.querySelector(".location-content");
 
                         if (option === "부적합") {
-                            // "부적합" 선택 시 하위 입력 필드 활성화
+                            // "부적합" 선택 시 하위 입력 필드 활성화 (except .etc-input and .caupvd)
                             detailContent.querySelectorAll("input, textarea, select").forEach((input) => {
-                                input.disabled = false;
+                                if (!input.classList.contains("caupvd") && !input.classList.contains("etc-input")) {
+                                    input.disabled = false;
+                                }
                             });
 
-                            // 위치정보 라디오 버튼 활성화
+                            // 위치정보 라디오 버튼 활성화 (모든 except 기타는 이미 비활성화 상태일 수 있으므로 여기서 활성화)
                             locationInputs.forEach((input) => {
                                 input.disabled = false;
                             });
 
-                            // 기타사항 입력 활성화
+                            // 기타사항 입력 비활성화 및 초기화
                             const etcInput = storeInfo.querySelector(`textarea[name='etc_${question.evitId}']`);
                             if (etcInput) {
-                                etcInput.disabled = false;
+                                etcInput.disabled = true;
+                                etcInput.value = "";
+                            }
+
+                            // 귀책사유 입력 비활성화 및 초기화
+                            const caupvdInput = detailContent.querySelector('.caupvd');
+                            if (caupvdInput) {
+                                caupvdInput.disabled = true;
+                                caupvdInput.value = "";
                             }
                         } else {
-                            // "적합" 선택 시 하위 입력 필드 비활성화 및 초기화
+                            // "적합" 선택 시 하위 입력 필드 비활성화 및 초기화 (except .etc-input and .caupvd)
                             detailContent.querySelectorAll("input, textarea, select").forEach((input) => {
-                                input.disabled = true;
-                                if (input.tagName.toLowerCase() === "textarea" || input.tagName.toLowerCase() === "input") {
-                                    input.value = "";
-                                }
-                                if (input.type === "radio" || input.type === "checkbox") {
-                                    input.checked = false;
+                                if (!input.classList.contains("caupvd") && !input.classList.contains("etc-input")) {
+                                    input.disabled = true;
+                                    if (input.tagName.toLowerCase() === "textarea" || input.tagName.toLowerCase() === "input") {
+                                        input.value = "";
+                                    }
+                                    if (input.type === "radio" || input.type === "checkbox") {
+                                        input.checked = false;
+                                    }
                                 }
                             });
 
@@ -1587,6 +1598,13 @@ function generateInspectionList(category) {
                             if (etcInput) {
                                 etcInput.disabled = true;
                                 etcInput.value = "";
+                            }
+
+                            // 귀책사유 입력 비활성화 및 초기화
+                            const caupvdInput = detailContent.querySelector('.caupvd');
+                            if (caupvdInput) {
+                                caupvdInput.disabled = true;
+                                caupvdInput.value = "";
                             }
                         }
                     });
@@ -1613,7 +1631,7 @@ function generateInspectionList(category) {
                         const locationInputs = storeInfo.querySelectorAll(`input[name='location_${question.evitId}']`);
 
                         if (option === "매우나쁨" || option === "나쁨") {
-                            // "매우나쁨" 또는 "나쁨" 선택 시 하위 입력 필드 활성화 (etc-input과 caupvd 제외)
+                            // "매우나쁨" 또는 "나쁨" 선택 시 하위 입력 필드 활성화 (except .etc-input and .caupvd)
                             detailContent.querySelectorAll("input, textarea, select").forEach((input) => {
                                 if (!input.classList.contains("caupvd") && !input.name.startsWith("etc_")) {
                                     input.disabled = false;
@@ -1624,8 +1642,22 @@ function generateInspectionList(category) {
                             locationInputs.forEach((input) => {
                                 input.disabled = false;
                             });
+
+                            // 기타사항 입력 비활성화 및 초기화
+                            const etcInput = storeInfo.querySelector(`textarea[name='etc_${question.evitId}']`);
+                            if (etcInput) {
+                                etcInput.disabled = true;
+                                etcInput.value = "";
+                            }
+
+                            // 귀책사유 입력 비활성화 및 초기화
+                            const caupvdInput = detailContent.querySelector('.caupvd');
+                            if (caupvdInput) {
+                                caupvdInput.disabled = true;
+                                caupvdInput.value = "";
+                            }
                         } else {
-                            // 그 외 선택 시 하위 입력 필드 비활성화 및 초기화 (etc-input과 caupvd 제외)
+                            // 그 외 선택 시 하위 입력 필드 비활성화 및 초기화 (except .etc-input and .caupvd)
                             detailContent.querySelectorAll("input, textarea, select").forEach((input) => {
                                 if (!input.classList.contains("caupvd") && !input.name.startsWith("etc_")) {
                                     input.disabled = true;
@@ -1645,11 +1677,18 @@ function generateInspectionList(category) {
                                 }
                             });
 
-                            // 기타사항 입력 초기화
+                            // 기타사항 입력 비활성화 및 초기화
                             const etcInput = storeInfo.querySelector(`textarea[name='etc_${question.evitId}']`);
                             if (etcInput) {
                                 etcInput.disabled = true;
                                 etcInput.value = "";
+                            }
+
+                            // 귀책사유 입력 비활성화 및 초기화
+                            const caupvdInput = detailContent.querySelector('.caupvd');
+                            if (caupvdInput) {
+                                caupvdInput.disabled = true;
+                                caupvdInput.value = "";
                             }
                         }
                     });
@@ -1690,7 +1729,7 @@ function generateInspectionList(category) {
             for (let i = 0; i < 2; i++) { // 최대 2개
                 const photoBox = document.createElement('div');
                 photoBox.classList.add('photo-box');
-                photoBox.textContent = i === 0 ? '사진 미등록' : '사진 미등록'; // 두 번째 박스도 초기 상태로 설정
+                photoBox.textContent = '사진 미등록'; // 초기 상태로 설정
                 photoBoxes.appendChild(photoBox);
             }
 
@@ -1720,6 +1759,7 @@ function generateInspectionList(category) {
             tabBtn2.type = "button"; // 버튼의 기본 동작 방지
             tabSection.appendChild(tabBtn2);
 
+            // 탭 버튼 클릭 이벤트 수정
             tabBtn1.addEventListener('click', function() {
                 // 탭 버튼의 활성화 상태 변경
                 tabBtn1.classList.add('active');
