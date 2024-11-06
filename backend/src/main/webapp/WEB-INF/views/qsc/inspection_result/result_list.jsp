@@ -104,27 +104,6 @@
           <%-- 자동 완성 영역 --%>
           <div class="container-fluid px-0">
             <div class="row g-3 align-items-center pt-4 top-search-box d-flex">
-              <!-- 가맹점 라벨과 검색 필드 -->
-              <div class="col-xxl-2 col-lg-4 col-md-4 col-12">
-                <label for="storeSearch" class="form-label">매장명</label>
-                <div class="wrapper" data-autocomplete="store">
-                  <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                    <span>매장명 검색</span>
-                    <i class="uil uil-angle-down"></i>
-                  </div>
-                  <div class="hide-list">
-                    <div class="search">
-                      <input
-                              type="text"
-                              class="form-control top-search"
-                              id="storeSearch"
-                              placeholder="매장명을 입력해주세요"
-                      />
-                      <ul class="options"></ul>
-                    </div>
-                  </div>
-                </div>
-              </div>
 
               <!-- 브랜드 라벨과 검색 필드 -->
               <div class="col-xxl-2 col-lg-4 col-md-4 col-12">
@@ -147,28 +126,39 @@
                   </div>
                 </div>
               </div>
+
+              <!-- 가맹점 라벨과 검색 필드 -->
+              <div class="col-xxl-2 col-lg-4 col-md-4 col-12">
+                <label for="storeSearch" class="form-label">매장명</label>
+                <div class="wrapper" data-autocomplete="store">
+                  <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
+                    <span>가맹점 검색</span>
+                    <i class="uil uil-angle-down"></i>
+                  </div>
+                  <div class="hide-list">
+                    <div class="search">
+                      <input
+                              type="text"
+                              class="form-control top-search"
+                              id="storeSearch"
+                              placeholder="매장명을 입력해주세요"
+                      />
+                      <ul class="options"></ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               <%!
                 String getTodayString() {
                   SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // 날짜 형식 지정
                   return sdf.format(new Date()); // 현재 날짜를 위에서 지정한 형식으로 포맷팅
                 }
               %>
-              <!-- 점검 예정일 라벨과 필드 -->
-              <div class="col-xxl-2 col-lg-4 col-md-4 col-12">
-                <label for="topScheduleDate" class="form-label">점검 완료일</label>
-                <div class="wrapper" data-autocomplete="sv">
-                  <div class="search">
-                    <input
-                            type="date"
-                            class="form-control top-search"
-                            id="topScheduleDate">
-                  </div>
-                </div>
-              </div>
 
               <!-- 체크리스트명 라벨과 검색 필드 -->
               <div class="col-xxl-2 col-lg-4 col-md-6 col-12">
-                <label for="svSearchInput" class="form-label">체크리스트</label>
+                <label for="chklstSearchInput" class="form-label">체크리스트</label>
                 <div class="wrapper" data-autocomplete="CHKLST">
                   <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
                     <span>체크리스트 검색</span>
@@ -179,7 +169,7 @@
                       <input
                               type="text"
                               class="form-control top-search"
-                              id="svSearchInput"
+                              id="chklstSearchInput"
                               placeholder="체크리스트를 입력해주세요"
                       />
                       <ul class="options"></ul>
@@ -231,6 +221,20 @@
                   </div>
                 </div>
               </div>
+
+              <!-- 점검 예정일 라벨과 필드 -->
+              <div class="col-xxl-2 col-lg-4 col-md-4 col-12">
+                <label for="topScheduleDate" class="form-label">점검 완료일</label>
+                <div class="wrapper" data-autocomplete="sv">
+                  <div class="search">
+                    <input
+                            type="date"
+                            class="form-control top-search"
+                            id="topScheduleDate">
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
           </div>
@@ -239,9 +243,16 @@
         <%--  top 영역끝  --%>
 
 
-        <div class="middle-box py-2">
-          <div class="middle-content">
-            <div id="myGrid" class="ag-theme-alpine" style="height: 610px; width: 100%;"></div>
+        <div class="row middle-box g-0">
+          <div class="col px-0">
+            <div class="middle-content">
+              <div class="button-box" style="display: flex; justify-content: space-between; align-items: center;">
+                <span class="ms-3 " style="font: 350 20px Noto Sans KR;">총 <span class="insp_result_count" style="color: #0035BE"></span>개</span>
+              </div>
+              <div>
+                <div id="myGrid" style="height: 70vh; width:100%" class="ag-theme-quartz mb-3"></div>
+              </div>
+            </div>
           </div>
         </div>
 

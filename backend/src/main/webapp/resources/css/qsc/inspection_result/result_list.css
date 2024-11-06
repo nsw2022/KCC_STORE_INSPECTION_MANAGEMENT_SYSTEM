@@ -1,3 +1,5 @@
+@import "/resources/css/common/common.css";
+
 body {
   font-family: "Noto Sans KR" !important;
   padding: 0px;
@@ -382,11 +384,25 @@ list-group {
 /* 가맹점 관리 top 영역 끝 */
 
 /* 중간 게시판 목록 시작 */
+.button-box {
+  margin-bottom: 20px !important;
+}
+
+.button-box .ms-3 {
+  margin-left: 5px !important;
+  font: 400 16px "Noto Sans KR" !important;
+}
+
 /* header */
 .ag-header-row {
   font: 600 14px "Noto Sans KR";
   color: #718ebf !important;
 }
+
+.ag-header-cell-label {
+  justify-content: center;
+}
+
 /* 홀수 row */
 .ag-row-even {
   font: 350 13px "Noto Sans KR";

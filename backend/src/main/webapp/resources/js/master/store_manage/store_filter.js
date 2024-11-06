@@ -3,9 +3,8 @@ async function onSearchRow() {
     let brandNm = $('.wrapper').eq(0).find('span').text();
     let storeNm = $('.wrapper').eq(1).find('span').text();
     let inspector = $('.wrapper').eq(2).find('span').text();
-    let inspectorNm = inspector.slice(0, 3);
-    let inspectorNo = inspector.slice(4,14) || null;
-
+    let inspectorNm ;
+    let inspectorNo ;
 
     // 특정 값일 경우 null로 설정
     if (storeNm === "가맹점 검색" || storeNm === "전체") {
@@ -17,6 +16,15 @@ async function onSearchRow() {
     if (inspector === "점검자 검색" || inspector === "전체") {
         inspectorNm = null;
         inspectorNo = null;
+    } else {
+        const specialCharPattern = /[!@#$%^&*(),.?":{}|<>]/g;
+        if(!specialCharPattern.test(inspector)) {
+            inspectorNm = inspector;
+            inspectorNo = null;
+        } else {
+            inspectorNm = inspector.split('(')[0];
+            inspectorNo = inspector.split('(')[1].slice(0,10);
+        }
     }
 
     // 검색 조건 객체 생성
