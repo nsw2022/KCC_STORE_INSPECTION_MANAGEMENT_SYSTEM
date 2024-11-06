@@ -21,9 +21,9 @@ import lombok.ToString;
 public class InspectionResultResponse {
 	private int inspResultId;		// 점검결과 ID
 	private String storeNm;			// 가맹점명
-	private String brandCd;			// 브랜드명
+	private String brandNm;			// 브랜드명
 	private String chklstNm;		// 체크리스트명
-	private String inspTypeCd;		// 점검유형명
+	private String inspTypeNm;		// 점검유형명
 	private String inspComplTm;		// 점검완료일
 	private String mbrNm;			// 점검자명
 }

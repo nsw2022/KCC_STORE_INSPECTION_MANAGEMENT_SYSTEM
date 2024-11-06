@@ -1,3 +1,35 @@
+class CustomLoadingOverlay  {
+  eGui;
+
+  init(params) {
+    this.eGui = document.createElement('div');
+    this.refresh(params);
+  }
+
+  getGui() {
+    return this.eGui;
+  }
+
+  refresh(params) {
+    this.eGui.innerHTML = `
+    <div class="ag-overlay-loading-center" role="presentation">
+      <div aria-label="Loading..." role="status" class="loader">
+        <svg class="icon" viewBox="0 0 256 256">
+          <line x1="128" y1="32" x2="128" y2="64" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="195.9" y1="60.1" x2="173.3" y2="82.7" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="224" y1="128" x2="192" y2="128" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="195.9" y1="195.9" x2="173.3" y2="173.3" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="128" y1="224" x2="128" y2="192" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="60.1" y1="195.9" x2="82.7" y2="173.3" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="32" y1="128" x2="64" y2="128" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="60.1" y1="60.1" x2="82.7" y2="82.7" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+        </svg>
+        <span class="loading-text">Loading...</span>
+      </div>
+     </div>`;
+  }
+}
+
 // ROW 데이터 정의
 let rowData = [];
 let defaultRowData = [];
@@ -7,13 +39,15 @@ let firstRowLength;
 
 async function getInspResultAll(searchCriteria = {}) {
   try {
-    const response = await fetch("/qsc/inspection/result/list/search", {
+    const response = await fetch("/qsc/inspection/result/list", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(searchCriteria)
     });
+
+    gridApi.setGridOption("loading", true);
 
     let data = await response.json();
     data = data.map((item, index) => ({
@@ -32,16 +66,25 @@ async function getInspResultAll(searchCriteria = {}) {
       firstRowLength++;
       return item;
     })
-    console.log(rowData);
     // gridApi가 존재할 경우 데이터 설정
     if (gridApi) {
+      setTimeout(function() {
+        gridApi.setGridOption("loading", false);
+      }, 200)
+      gridApi.paginationGoToFirstPage();
       gridApi.setGridOption("rowData", rowData); // 데이터 설정
+      updateResultCount();
     } else {
       console.error("gridApi is not initialized.");
     }
 
   } catch (error) {
     console.error("Error fetching data:", error);
+    rowData = [];
+    gridApi.setGridOption("rowData", rowData); // 데이터 설정
+    setTimeout(function() {
+      gridApi.setGridOption("loading", false);
+    }, 200)
   }
 }
 
@@ -51,9 +94,9 @@ function initializeGrid() {
   gridOptions = {
     rowData: rowData,
     columnDefs: [
-      { field: "no", headerName: "순서", width: 80, minWidth: 60 },
+      { field: "no", headerName: "No", width: 80, minWidth: 60 , cellStyle: {textAlign: 'center'} },
+      { field: "brandNm", headerName: "브랜드", width: 150, minWidth: 120 ,cellStyle: {textAlign: 'center'} },
       { field: `storeNm`, headerName: "가맹점", width: 150, minWidth: 160 },
-      { field: "brandCd", headerName: "브랜드", width: 150, minWidth: 120 },
       {
         field: "chklstNm",
         headerName: "체크리스트명",
@@ -61,19 +104,21 @@ function initializeGrid() {
         minWidth: 130,
       },
       {
-        field: "inspTypeCd",
+        field: "inspTypeNm",
         headerName: "점검유형",
         width: 150,
         minWidth: 110,
+        cellStyle: {textAlign: 'center'}
       },
       {
         field: "inspComplTm",
         headerName: "점검완료일",
         width: 150,
         minWidth: 110,
+        cellStyle: {textAlign: 'center'}
       },
 
-      { field: "mbrNm", headerName: "점검자", width: 150, minWidth: 110 },
+      { field: "mbrNm", headerName: "점검자", width: 150, minWidth: 110, cellStyle: {textAlign: 'center'}  },
       {
         headerName: "자세히보기",
         field: "more",
@@ -147,6 +192,10 @@ function initializeGrid() {
     rowHeight: 45,
     pagination: true,
     paginationAutoPageSize: true,
+    loadingOverlayComponent: CustomLoadingOverlay,
+    loadingOverlayComponentParams: {
+      loadingMessage: "One moment please...",
+    }
   };
 
   // 그리드 초기화
@@ -154,13 +203,33 @@ function initializeGrid() {
   gridApi = agGrid.createGrid(gridDiv, gridOptions);
 
   getInspResultAll();
+  updateResultCount();
 
 }
 
 document.addEventListener("DOMContentLoaded", initializeGrid);
 
+// 체크리스트 카운트 업데이트 함수
+function updateResultCount() {
+  const inspResultCount = document.querySelector(".insp_result_count");
+  inspResultCount.textContent = gridApi.getDisplayedRowCount();
+}
+
+// 검색창에서 ENTER키 누를 때 검색창에 입력한 값이 wrapper의 span text 에 들어옴
+function setupSearchInput() {
+  $('.form-control').keyup(function (e) {
+    if(e.keyCode === 13) {
+      let text = $(this).val();
+      $(this).parents('.wrapper').find('span').text(text);
+      $(this).parents('.wrapper').removeClass('active');
+    }
+  })
+}
+
 
 $(function () {
+  // 엔터키치면 입력한 텍스트가 wrapper의 span에 들어감
+  setupSearchInput();
   /**
    * Autocomplete 클래스 정의
    */
@@ -305,31 +374,38 @@ $(function () {
     // 브랜드
     BRAND: ['전체']
   };
-  
 
+  $.ajax({
+    url : '/qsc/inspection/result/options',
+    method : 'GET',
+    async : false,
+    success : function (data) {
+      data.brandNms.filter(brand => {
+        autocompleteData.BRAND.push(brand);
+      })
 
-	$.ajax({
-        url: "/qsc/inspection/result/list",
-        method: 'GET',
-        async: false,
-        dataType: 'json',
-        success: function (data) {
-            data.forEach((x, index) => {
-              deleteDuplication(autocompleteData.store, x.storeNm);
-              deleteDuplication(autocompleteData.inspector, x.mbrNm);
-              deleteDuplication(autocompleteData.CHKLST, x.chklstNm);
-              deleteDuplication(autocompleteData.INSPTYPENM, x.inspTypeCd);
-              deleteDuplication(autocompleteData.BRAND, x.brandCd);
-            });
+      data.storeNms.filter(store => {
+        autocompleteData.store.push(store);
+      })
 
-            // 중복된 단어 배열에서 넣지 않게 해주기
-            function deleteDuplication(arr, unit) {
-              if (!arr.includes(unit)) {
-                arr.push(unit);
-              }
-            }
-          }
-    });
+      data.chklstNms.filter(chklst => {
+        autocompleteData.CHKLST.push(chklst)
+      });
+
+      data.inspTypeNms.filter(inspType => {
+        autocompleteData.INSPTYPENM.push(inspType)
+      })
+
+      data.inspectorNms.filter(inspector => {
+        let inspectorNm = inspector.mbrNm + '(' + inspector.mbrNo + ')';
+        autocompleteData.inspector.push(inspectorNm)
+      })
+
+    },
+    error : function(xhr) {
+      console.log(xhr.status);
+    }
+  })
 
 
   // 자동완성 인스턴스를 초기화하고 wrapper 요소에 저장
@@ -345,7 +421,7 @@ $(function () {
   /**
    * 초기화 버튼 클릭 시 모든 선택 초기화
    */
-  $("#reset-selection-top").on("click", function () {
+  $("#re-selection-top").on("click", function () {
     // 점검 예정일 초기화
     $("#topScheduleDate").val("");
 

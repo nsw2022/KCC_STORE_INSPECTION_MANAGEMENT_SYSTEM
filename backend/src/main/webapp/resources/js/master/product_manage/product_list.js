@@ -81,7 +81,6 @@ async function getProductAll(searchCriteria = {}) {
     }
 
   } catch (error) {
-    console.log(searchCriteria)
     console.error("Error fetching data:", error);
     rowData = [];
     gridApi.setGridOption("rowData", rowData); // 데이터 설정
