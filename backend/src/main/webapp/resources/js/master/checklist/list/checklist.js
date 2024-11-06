@@ -79,8 +79,8 @@ function initializeGrid() {
                 <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0m0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0"/>
               </svg>
             `);
-
-          const $editDiv = $('<div class="edit-options">점검 항목 관리</div>');
+          let chklstId = params.data.chklstId;
+          const $editDiv = $(`<div class="edit-options" data-no="${chklstId}">점검 항목 관리</div>`);
 
           $svg.on("click", function (e) {
             e.stopPropagation();
@@ -99,8 +99,7 @@ function initializeGrid() {
 
           $editDiv.on("click", function (e) {
             e.stopPropagation();
-            console.log(gridApi.getSelectedRows()[0].chklstId);
-            location.href = `/master/inspection-list-manage?chklst-id=${gridApi.getSelectedRows()[0].chklstId}`;
+            location.href = `/master/inspection-list-manage?chklst-id=${$(this).attr("data-no")}`;
             $editDiv.removeClass("show");
           });
 
@@ -248,13 +247,19 @@ function onChecklistDeleteRow() {
                 rowData.splice(index, 1);
               }
             });
+            selectedRows.forEach((row) => {
+              const index = defaultRowData.findIndex((data) => data.chklstId === row.chklstId);
+              if (index > -1) {
+                defaultRowData.splice(index, 1);
+              }
+            });
             updateChecklistCount();
           }
         })
       }
     });
   } else {
-    alert("삭제할 항목을 선택하세요.");
+    Swal.fire("실패!", "삭제할 항목을 선택해주세요.", "error");
   }
 }
 

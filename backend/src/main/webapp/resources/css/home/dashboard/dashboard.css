@@ -11,18 +11,16 @@ body {
     flex-direction: column;
 }
 
-
-
 .item {
     cursor: pointer;
-    height: 432px;
+    height: 300px;
 }
 
 .item-content{
     background-color: #FFFFFF;
     border-radius: 8px;
     box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
-    height: 432px;
+    height: 300px;
 }
 
 .sidebar {
@@ -31,7 +29,7 @@ body {
 }
 
 .item-content .title{
-    font: 700 20px "Noto Sans KR";
+    font: 700 17px "Noto Sans KR";
 }
 
 

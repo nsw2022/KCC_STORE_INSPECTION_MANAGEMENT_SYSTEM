@@ -127,9 +127,29 @@ table.calendar td .incomplete {
     margin-right: 0;
 }
 
+#notification-group{
+    width: 330px;
+    height: 616px;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+}
+#chart-group{
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+#group{
+    width: calc(100% - 345px);
+}
+
 /*---------------------------스케줄 표시달력---------------------------*/
 .schedule-container {
-    width: calc(100% - 370px);
+    width: calc(100% - 345px);
     height: 330px;
     background: white;
     border-radius: 10px;
@@ -370,6 +390,91 @@ table.calendar td .incomplete {
     opacity: 1;
 }
 
+/*--------------------------------*/
+
+.noti-card {
+    width: 100%;
+    background-color: rgba(226, 226, 226, 0.1);
+    border-radius: 0.75em;
+    cursor: pointer;
+    transition: ease 0.2s;
+    border: 1.5px solid #f2f3f7;
+}
+
+.noti-container {
+    margin-top: 0.7em;
+    margin-bottom: 0.7em;
+    margin-left: 0.7em;
+    margin-right: 0.7em;
+    display: flex;
+    flex-direction: row;
+    gap: 0.75em;
+}
+
+.status-ind {
+    width: 0.625em;
+    height: 0.625em;
+    background-color: #3274F9;
+    margin: 0.375em 0;
+    border-radius: 0.5em;
+}
+
+.text-wrap {
+    display: flex;
+    flex-direction: column;
+    color: #333;
+}
+
+.time {
+    font-size: 0.875em;
+    color: #777;
+}
+
+.text-link {
+    font-weight: 500;
+    text-decoration: none;
+    color: black;
+}
+
+.button-wrap {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.secondary-cta {
+    background-color: transparent;
+    border: none;
+    font-size: 15px;
+    font-weight: 400;
+    color: #666;
+    cursor: pointer;
+}
+
+.primary-cta {
+    font-size: 15px;
+    background-color: transparent;
+    font-weight: 600;
+    color: #1677ff;
+    border: none;
+    border-radius: 1.5em;
+    cursor: pointer;
+}
+
+button:hover {
+    text-decoration: underline;
+}
+
+.right {
+    display: flex;
+    flex-direction: column;
+}
+
+/*--------------------------------*/
+
+
+
+
 @media screen and (max-width: 1200px) {
     /* 반응형으로 할때, 아래로 쌓이는 순서는 order: 원하는숫자; 로 조절할 것 */
 
@@ -391,3 +496,4 @@ table.calendar td .incomplete {
 
 
 }
+

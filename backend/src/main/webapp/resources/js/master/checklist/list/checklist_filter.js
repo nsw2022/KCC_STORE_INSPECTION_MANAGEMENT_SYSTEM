@@ -43,8 +43,7 @@ async function onSearchRow() {
     };
 
     await getChecklistAll(searchCriteria); // await 추가
-
-    console.log(searchCriteria);
+    gridApi.paginationGoToFirstPage();
 };
 
 function onSearchInit(){
@@ -56,6 +55,7 @@ function onSearchInit(){
     let searchMasterSttsPlaceholder = $('.searchMasterSttsPlaceholder').text("마스터여부");
     let searchUseWPlaceholder = $('.searchUseWPlaceholder').text("사용여부");
 
+    gridApi.paginationGoToFirstPage();
     gridApi.setGridOption("rowData", defaultRowData); // 데이터 설정
     updateChecklistCount();
 }

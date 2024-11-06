@@ -130,45 +130,4 @@ public class StoreInspectionController {
 
         return "qsc/store_inspection/popup_lastCheck";  // JSP 경로
     }
-
-
-
-
-
-
-    //실험용---------------------------------------------------
-    @GetMapping("/alert_error")
-    public String newInspectionSchedule(Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-
-        log.info("여기는 사용자 이름입니다 = {}", username);
-
-        // 역할 결정 (A: 관리자, P: 품질관리자, S: SV, C: 점검자)
-        char roleChar = username.charAt(0);
-        String userRole;
-        switch(roleChar) {
-            case 'A':
-                userRole = "ADMIN";
-                break;
-            case 'P':
-                userRole = "QUALITY_MANAGER";
-                break;
-            case 'S':
-                userRole = "SV";
-                break;
-            case 'C':
-                userRole = "INSPECTOR";
-                break;
-            default:
-                userRole = "UNKNOWN";
-        }
-
-        model.addAttribute("naverClientId", naverClientId);
-        model.addAttribute("username", username);
-        model.addAttribute("userRole", userRole);
-
-        return "qsc/store_inspection/alert_error"; // JSP 경로
-    }
-
 }
