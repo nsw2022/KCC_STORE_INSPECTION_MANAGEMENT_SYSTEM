@@ -30,20 +30,20 @@
         AND
             STORE_BSN_STTS_CD.COMM_CD_ID = 3
             <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(brandNm)">
-                AND BRAND_CD.DTL_CD = (SELECT DTL_CD FROM COMM_CD_DTL WHERE DTL_CD_NM = #{brandNm})
+                AND BRAND_CD.DTL_CD_NM LIKE '%'||#{brandNm}||'%'
             </if>
             <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(storeNm)">
-                AND STORE_NM = #{storeNm}
+                AND S.STORE_NM LIKE '%'||#{storeNm}||'%'
             </if>
             <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(inspMbrNm)">
-                AND MI.MBR_NM = #{inspMbrNm}
+                AND MI.MBR_NM LIKE '%'||#{inspMbrNm}||'%'
             </if>
             <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(mbrNo)">
-                AND MI.MBR_NO = #{mbrNo}
+                AND MI.MBR_NO LIKE '%'||#{mbrNo}||'%'
             </if>
         </where>
         ORDER BY
-            STORE_ID DESC, STORE_BSN_STTS_CD.DTL_CD_NM DESC
+            BRAND_CD.DTL_CD_NM, S.STORE_NM, STORE_BSN_STTS_CD.DTL_CD_NM DESC
     </select>
 
     <select id="selectAllStoreNms" resultType="String">
@@ -53,6 +53,8 @@
             STORE
         WHERE
             STORE_STTS_W = '1'
+        ORDER BY
+            STORE_NM
     </select>
 
     <select id="selectAllBrandNms" resultType="String">
@@ -65,7 +67,7 @@
         WHERE
             COMM_CD ='BRAND_CD'
         ORDER BY
-            DTL_CD
+            DTL_CD_NM
     </select>
 
     <select id="selectAllInspectorNms" resultType="com.sims.master.store_manage.vo.InspectorNmsResponse">
@@ -79,9 +81,12 @@
             ON S.INSP_MBR_ID = M.MBR_ID
         WHERE
             M.MBR_STTS_CD = '1'
-          AND
+        AND
             M.MBR_ROLE_CD = 'MR004'
+        ORDER BY
+            MBR_NM
     </select>
+
 
     <select id="selectAllSvNms" resultType="com.sims.master.store_manage.vo.SvNmsResponse"
     parameterType="com.sims.master.store_manage.vo.InspectorNmsResponse">
@@ -105,6 +110,8 @@
         <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(inspMbrNo)">
             AND MI.MBR_NO = #{inspMbrNo}
         </if>
+        ORDER BY
+            MS.MBR_NM
 
     </select>
 

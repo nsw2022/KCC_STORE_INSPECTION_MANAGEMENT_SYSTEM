@@ -39,6 +39,12 @@ public interface StoreMapper {
      */
     public List<InspectorNmsResponse> selectAllInspectorNms();
 
+//    public List<String> selectAllBrandNmsByFilter(StoreOptionsRequest storeOptionsRequest);
+//
+//    public List<String> selectAllStoreNmsByFilter(StoreOptionsRequest storeOptionsRequest);
+//
+//    public List<InspectorNmsResponse> selectAllInspectorNmsByFilter(StoreOptionsRequest storeOptionsRequest);
+
     /**
      * SV와 SV의 사원번호 목록 조회
      * @return SV와 사원번호 List로 변환

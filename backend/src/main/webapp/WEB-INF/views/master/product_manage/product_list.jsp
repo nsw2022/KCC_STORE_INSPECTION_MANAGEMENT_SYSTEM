@@ -68,12 +68,14 @@
     <main class="page-content">
         <div class="container content">
             <%-- top box start--%>
-            <div class="row top-box mb-3" >
+            <div class="row top-box mb-3">
                 <div class="col ">
                     <div class="top-content">
-                        <div class="button-box" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="button-box"
+                             style="display: flex; justify-content: space-between; align-items: center;">
                             <div class="d-flex justify-content-start">
-                                <span class="m-3" style="font: 700 20px Noto Sans KR; margin: 0 !important;">제품 관리</span>
+                                <span class="m-3"
+                                      style="font: 700 20px Noto Sans KR; margin: 0 !important;">제품 관리</span>
                                 <div class="top-drop-down">
                                     <button>
                                         <i class="fa-solid fa-angle-right"></i>
@@ -82,8 +84,12 @@
                             </div>
 
                             <div class="my-3" style="margin: 0 !important;">
-                                <button type="button" class="btn btn-light me-3 select-btn p-0" onclick="onSearchRow()" >조회</button>
-                                <button type="button" class="btn btn-light init-btn p-0" id="reset-selection-top" onclick="onSearchInit()">초기화</button>
+                                <button type="button" class="btn btn-light me-3 select-btn p-0" onclick="onSearchRow()">
+                                    조회
+                                </button>
+                                <button type="button" class="btn btn-light init-btn p-0" id="reset-selection-top"
+                                        onclick="onSearchInit()">초기화
+                                </button>
                             </div>
                         </div>
 
@@ -172,10 +178,15 @@
             <div class="row middle-box">
                 <div class="col px-0">
                     <div class="middle-content">
-                        <div class="button-box" style="display: flex; justify-content: space-between; align-items: center;">
-                            <span class="ms-3" style="font: 350 20px Noto Sans KR;">총 <span class="product_count" style="color: #0035BE"></span>개</span>
+                        <div class="button-box"
+                             style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="ms-3" style="font: 350 20px Noto Sans KR;">총 <span class="product_count"
+                                                                                            style="color: #0035BE"></span>개</span>
                             <div class="my-0">
-                                <button type="button" class="btn btn-light me-3" onclick="onProductAddRow()" >추가</button>
+                                <button type="button" id="addRowBtn" class="btn btn-light me-3"
+                                        onclick="onProductAddRow()" data-bs-toggle="modal"
+                                        data-bs-target="#productManagementModal">추가
+                                </button>
                                 <button type="button" class="btn btn-light" onclick="onProductDeleteRow()">삭제</button>
                             </div>
                         </div>
@@ -192,12 +203,13 @@
 
 <!-- 제품 등록/수정 Modal -->
 <div class="modal fade" id="productManagementModal" tabindex="-1" data-bs-keyboard="false"
-     aria-labelledby="productManagementModalLabel" aria-hidden="true" data-bs-backdrop="static">
+     aria-labelledby="productManagementModalLabel" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content p-3">
             <div class="modal-header">
-                <h1 class="modal-title" id="staticBackdropLabel">제품 등록/수정</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h1 class="modal-title" id="staticBackdropLabel"></h1>
+                <button type="button" class="btn-close button-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
             </div>
 
 
@@ -205,11 +217,12 @@
                 <div class="row mx-0 mb-4 justify-content-between">
                     <div class="productName_input_area col-md-5 row m-0 p-0">
                         <label for="productName" class="col-12 py-2 mb-2 d-flex align-items-center">제품명</label>
-                        <input type="text" id="productName" class="ps-3 py-2" placeholder="제품명 입력" name="pdtNm" required>
+                        <input type="text" id="productName" class="ps-3 py-2" placeholder="제품명 입력" name="pdtNm"
+                               required>
                     </div>
                     <div class="brandName_input_area col-md-6 row p-0 m-0">
                         <label for="brandName" class="py-2 mb-2 d-flex align-items-center">브랜드</label>
-                        <div class="wrapper p-0" data-autocomplete="modalBrandNm" >
+                        <div class="wrapper p-0" data-autocomplete="modalBrandNm">
                             <!-- Search Button -->
                             <div class="search-btn top-search py-2">
                                 <span class="ps-3" id="brandName">브랜드 선택</span>
@@ -231,7 +244,8 @@
                 <div class="row mx-0 mb-4 justify-content-between">
                     <div class="expiration_input_area col-md-5 row m-0 p-0">
                         <label for="expiration" class="col-12 py-2 mb-2 d-flex align-items-center">소비기한(일수)</label>
-                        <input type="number" class="ps-3 py-2" id="expiration" placeholder="소비기한 입력" name="expDaynum" required>
+                        <input type="number" class="ps-3 py-2" id="expiration" placeholder="소비기한 입력" name="expDaynum"
+                               required>
                     </div>
                     <div class="price_input_area p-0 col-md-6 m-0 row">
                         <label for="price" class="py-2 col-12 mb-2 d-flex align-items-center">가격(원)</label>
@@ -242,19 +256,20 @@
                     <div class="label_text col-12 mb-3 pt-2 d-flex align-items-center">판매상태</div>
                     <div class="radio_input_area">
                         <label for="for_sale">판매중</label><input type="radio" name="pdtSellSttsCd" class="ms-1 me-3"
-                                                                id="for_sale" value="판매중">
+                                                                id="for_sale" value="판매중" checked>
                         <label for="out_of_stack">품절</label><input type="radio" name="pdtSellSttsCd" class="ms-1 me-3"
                                                                    id="out_of_stack" value="품절">
                         <label for="not_for_sale">판매 중지</label><input type="radio" name="pdtSellSttsCd"
                                                                       class="ms-1 me-3" id="not_for_sale" value="판매 중지">
                         <label for="restock_in_progress">재고확보중</label><input type="radio" name="pdtSellSttsCd"
-                                                                             class="ms-1 me-3" id="restock_in_progress" value="재고확보중">
+                                                                             class="ms-1 me-3" id="restock_in_progress"
+                                                                             value="재고확보중">
                     </div>
                 </div>
             </div>
             <div class="modal-footer mt-2">
-                <button type="button" class="btn-cancel" data-bs-dismiss="modal">등록 취소</button>
-                <button type="button" class="btn-register" id="submit">등록 완료</button>
+                <button type="button" class="btn-cancel button-close" data-bs-dismiss="modal">취소</button>
+                <button type="button" class="btn-register" id="submit"></button>
             </div>
             <input type="hidden">
         </div>

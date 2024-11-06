@@ -1,4 +1,25 @@
 $(function () {
+    /**
+     * 처음 로딩될 때 내용 불러오기
+     * 체크리스트, 점검유형, 총 벌금, 총 영업정지일수, 점검자, 점검완료일, 가맹점명, 브랜드명 정보를 받음
+     */
+    $.ajax({
+        url : `/qsc/popup/inspection/result/detail/${inspResultId}`,
+        method: 'GET',
+        success: function (data){
+            let chklstNm = data.chklstNm + '(' + data.inspTypeNm + ')';
+            let inspComplTm = '점검완료일 : ' + data.inspComplTm.slice(0, 8).replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3');
+            let inspectorNm = '점검자 : ' + data.mbrNm;
+            $('.info-title').text(chklstNm);
+            $('.store-name').text(data.brandNm);
+            $('.store-subtitle').text(data.storeNm);
+            $('.inspection-date').text(inspComplTm);
+            $('.inspector-name').text(inspectorNm);
+            $('.fine-amount span').text(data.totalPenalty);
+            $('.closure-days span').text(data.totalBsnSspn);
+        }
+    })
+
     let inspResultId= $('input[type="hidden"]').val();
     let inspectionData = [];
     /**
@@ -538,26 +559,7 @@ $(function () {
 
 
 
-/**
- * 처음 로딩될 때 내용 불러오기
- * 체크리스트, 점검유형, 총 벌금, 총 영업정지일수, 점검자, 점검완료일, 가맹점명, 브랜드명 정보를 받음
- */
-    $.ajax({
-        url : `/qsc/popup/inspection/result/detail/${inspResultId}`,
-        method: 'GET',
-        success: function (data){
-            let chklstNm = data.chklstNm + '(' + data.inspTypeNm + ')';
-            let inspComplTm = '점검완료일 : ' + data.inspComplTm.slice(0, 8).replace(/(\d{4})(\d{2})(\d{2})/g, '$1-$2-$3');
-            let inspectorNm = '점검자 : ' + data.mbrNm;
-            $('.info-title').text(chklstNm);
-            $('.store-name').text(data.brandNm);
-            $('.store-subtitle').text(data.storeNm);
-            $('.inspection-date').text(inspComplTm);
-            $('.inspector-name').text(inspectorNm);
-            $('.fine-amount span').text(data.totalPenalty);
-            $('.closure-days span').text(data.totalBsnSspn);
-        }
-    })
+
 
     /**
      * 위반사항이 없을 경우에 null을 보여주는 것 보다 display none 을 통해 안보이게 하기

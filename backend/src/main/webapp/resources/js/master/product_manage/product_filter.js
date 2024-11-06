@@ -22,6 +22,7 @@ async function onSearchRow() {
         pdtSellSttsNm : pdtSellSttsNm
     };
 
+
     await getProductAll(searchCriteria); // await 추가
 };
 

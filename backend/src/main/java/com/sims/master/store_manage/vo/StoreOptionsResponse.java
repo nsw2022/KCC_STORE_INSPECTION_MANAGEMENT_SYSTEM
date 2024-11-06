@@ -1,14 +1,14 @@
 package com.sims.master.store_manage.vo;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class StoreOptionsResponse {
     private List<String> brandNmList;
     private List<String> storeNmList;

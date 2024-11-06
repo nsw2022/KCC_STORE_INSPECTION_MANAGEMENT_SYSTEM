@@ -1,3 +1,5 @@
+@import "/resources/css/common/common.css";
+
 body {
   font-family: "Noto Sans KR" !important;
 }
@@ -237,6 +239,11 @@ body {
   font: 600 14px "Noto Sans KR";
   color: #718ebf !important;
 }
+
+.ag-header-cell-label {
+  justify-content: center;
+}
+
 /* 홀수 row */
 .ag-row-even {
   font: 350 13px "Noto Sans KR";
@@ -366,6 +373,24 @@ body {
 }
 .list-group-item button {
   font: 400 13px "Noto Sans KR";
+}
+
+.modal-body .col-12 .form-label:after {
+  content: "*";
+  display: block;
+  height: 16px !important;
+  width: 7px !important;
+  margin-left: 3px;
+  color: red;
+}
+
+.modal-body .col-12 .form-label[for="detailedAddress"]::after{
+  visibility: hidden;
+}
+
+.modal-body .col-12 .form-label {
+  display: flex;
+  align-items: center;
 }
 
 .modal-footer {

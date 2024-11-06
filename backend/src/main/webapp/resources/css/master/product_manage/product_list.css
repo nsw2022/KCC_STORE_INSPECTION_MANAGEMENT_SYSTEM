@@ -1,3 +1,5 @@
+@import "/resources/css/common/common.css";
+
 body {
   font-family: "Noto Sans KR" !important;
 }
@@ -229,10 +231,20 @@ body {
   line-height: 20px;
 }
 
+.button-box .ms-3 {
+  margin-left: 5px !important;
+  font: 400 16px "Noto Sans KR" !important;
+}
+
 .middle-box .btn:hover {
   background-color: #e1e1e1 !important;
   transition: 0.3s ease-out;
 }
+
+.ag-header-cell-label {
+  justify-content: center;
+}
+
 /* header */
 .ag-header-row {
   font: 600 14px "Noto Sans KR";
