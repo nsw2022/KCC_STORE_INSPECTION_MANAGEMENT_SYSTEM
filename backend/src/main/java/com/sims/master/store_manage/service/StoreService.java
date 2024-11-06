@@ -23,9 +23,11 @@ public interface StoreService {
      */
     public StoreOptionsResponse selectAllStoreOptions();
 
+//    public StoreOptionsResponse selectAllStoreOptionsByFilter(StoreOptionsRequest storeOptionsRequest);
+
     /**
      * 점검자에 따라 SV 목록 다르게 보여주기
-     * @param inspectorNmsResponse 점검자의 사원번호와 이름
+     * @param inspectorInfoRequest 점검자의 사원번호와 이름
      * @return SV 이름과 SV 사원번호 List로 반환
      */
     public List<SvNmsResponse> selectAllSvNms(InspectorInfoRequest inspectorInfoRequest);

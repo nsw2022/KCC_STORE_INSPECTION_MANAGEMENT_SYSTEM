@@ -1,3 +1,35 @@
+class CustomLoadingOverlay  {
+  eGui;
+
+  init(params) {
+    this.eGui = document.createElement('div');
+    this.refresh(params);
+  }
+
+  getGui() {
+    return this.eGui;
+  }
+
+  refresh(params) {
+    this.eGui.innerHTML = `
+    <div class="ag-overlay-loading-center" role="presentation">
+      <div aria-label="Loading..." role="status" class="loader">
+        <svg class="icon" viewBox="0 0 256 256">
+          <line x1="128" y1="32" x2="128" y2="64" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="195.9" y1="60.1" x2="173.3" y2="82.7" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="224" y1="128" x2="192" y2="128" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="195.9" y1="195.9" x2="173.3" y2="173.3" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="128" y1="224" x2="128" y2="192" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="60.1" y1="195.9" x2="82.7" y2="173.3" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="32" y1="128" x2="64" y2="128" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="60.1" y1="60.1" x2="82.7" y2="82.7" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+        </svg>
+        <span class="loading-text">Loading...</span>
+      </div>
+     </div>`;
+  }
+}
+
 // ROW 데이터 정의
 let rowData = [];
 let defaultRowData = [];
@@ -15,6 +47,7 @@ async function getProductAll(searchCriteria = {}) {
       body: JSON.stringify(searchCriteria)
     });
 
+    gridApi.setGridOption("loading", true);
     let data = await response.json();
     data = data.map((item, index) => ({
       ...item,
@@ -36,6 +69,10 @@ async function getProductAll(searchCriteria = {}) {
 
     // gridApi가 존재할 경우 데이터 설정
     if (gridApi) {
+      setTimeout(function() {
+        gridApi.setGridOption("loading", false);
+      }, 200)
+      gridApi.paginationGoToFirstPage()
       gridApi.setGridOption("rowData", rowData); // 데이터 설정
       updateProductCount();
     } else {
@@ -44,6 +81,12 @@ async function getProductAll(searchCriteria = {}) {
 
   } catch (error) {
     console.error("Error fetching data:", error);
+    rowData = [];
+    gridApi.setGridOption("rowData", rowData); // 데이터 설정
+    setTimeout(function() {
+      gridApi.setGridOption("loading", false);
+    }, 200)
+    updateProductCount();
   }
 }
 
@@ -62,26 +105,29 @@ function initializeGrid() {
         resizable: true,
         cellStyle: { backgroundColor: "#ffffff" },
       },
-      { field: "no", headerName: "No", width: 80, minWidth: 60 },
+      { field: "no", headerName: "No", width: 80, minWidth: 60, cellStyle: {textAlign: 'center'} },
+      { field: "brandNm", headerName: "브랜드", width: 180, minWidth: 120, cellStyle: {textAlign: 'center'} },
       { field: `pdtNm`, headerName: "제품명", width: 200, minWidth: 180 },
-      { field: "brandNm", headerName: "브랜드", width: 180, minWidth: 120 },
       {
         field: "expDaynum",
         headerName: "소비기한",
         width: 150,
         minWidth: 130,
+        type: 'rightAligned'
       },
       {
         field: "pdtPrice",
         headerName: "가격",
         width: 150,
         minWidth: 110,
+        type: 'rightAligned'
       },
       {
         field: "pdtSellSttsNm",
         headerName: "판매상태",
         width: 150,
         minWidth: 110,
+        cellStyle: {textAlign: 'center'}
       },
 
       {
@@ -95,7 +141,6 @@ function initializeGrid() {
             class: "edit-container",
             css: { position: "relative", cursor: "pointer" },
           });
-          $('#input').prop('checked')
           // SVG 요소 생성
           const $svg = $(`
                         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 15 15">
@@ -131,25 +176,17 @@ function initializeGrid() {
           // '수정' 옵션 클릭 시 모달 열기
           $editDiv.on("click", function (e) {
             let pdtId = $(this).attr('data-no');
-            console.log(pdtId === 'undefined')
-              if(pdtId === 'undefined') {
-                $('#productName').attr('placeholder', '제품명 입력');
-                $('#brandName').text( '브랜드 선택');
-                $('#expiration').attr('placeholder', '소비기한 입력');
-                $('#price').attr('placeholder', '가격 입력');
-                $('input[name="pdtSellSttsCd"]').prop('checked', false);
-                return;
-              }
-
               $.ajax({
                 url : `/master/product/${pdtId}`,
                 method : 'POST',
                 success : function (data) {
-                  $('#productName').attr('placeholder', data.pdtNm);
+                  $('.modal-title').text('제품 상세보기/수정');
+                  $('#submit').text('수정');
+                  $('#productName').val(data.pdtNm);
                   $('input[type="hidden"]').val(data.pdtId);
                   $('#brandName').text(data.brandNm);
-                  $('#expiration').attr('placeholder', data.expDaynum);
-                  $('#price').attr('placeholder', data.pdtPrice.toLocaleString('ko-KR'));
+                  $('#expiration').val(data.expDaynum);
+                  $('#price').val(data.pdtPrice.toLocaleString('ko-KR'));
                   let status = $('.radio_input_area input[name="pdtSellSttsCd"]');
                   $.each(status, function (index, item)  {
                     if(item.value === data.pdtSellSttsNm) {
@@ -181,6 +218,10 @@ function initializeGrid() {
     rowSelection: "multiple",
     pagination: true,
     paginationAutoPageSize: true,
+    loadingOverlayComponent: CustomLoadingOverlay,
+    loadingOverlayComponentParams: {
+      loadingMessage: "One moment please...",
+    }
   };
 
   // 그리드 초기화
@@ -198,6 +239,17 @@ document.addEventListener("DOMContentLoaded", initializeGrid);
 function updateProductCount() {
   const productCount = document.querySelector(".product_count");
   productCount.textContent = gridApi.getDisplayedRowCount();
+}
+
+// 검색창에서 ENTER키 누를 때 검색창에 입력한 값이 wrapper의 span text 에 들어옴
+function setupSearchInput() {
+  $('.form-control').keyup(function (e) {
+    if(e.keyCode === 13) {
+      let text = $(this).val();
+      $(this).parents('.wrapper').find('span').text(text);
+      $(this).parents('.wrapper').removeClass('active');
+    }
+  })
 }
 
 /* 본문 헤더 영역 */
@@ -459,7 +511,6 @@ $(function () {
 // 새로운 Row 생성 함수
 function createNewRowData() {
   return {
-    no: rowData.length+1,
     pdtNm: "",
     brandNm: "",
     expDaynum: "",
@@ -471,6 +522,7 @@ function createNewRowData() {
 
 // Row 추가 함수
 function onProductAddRow() {
+  gridApi.paginationGoToFirstPage()
   checkUnload = true;
   const newItem = createNewRowData();
   rowData.unshift(newItem);
@@ -520,6 +572,10 @@ function onProductDeleteRow() {
                 text: "완료되었습니다.",
                 icon: "success",
                 confirmButtonText: "OK"
+              }).then((result) => {
+                if(result.isConfirmed) {
+                  location.href = "/master/product/manage";
+                }
               });
               // 그리드에서도 해당 행 삭제
               gridApi.applyTransaction({ remove: selectedRows });
@@ -536,12 +592,13 @@ function onProductDeleteRow() {
         }
       });
     } else {
-      alert("삭제할 항목을 선택하세요.");
+      Swal.fire("실패!", "삭제할 항목을 선택해주세요", "error");
     }
 }
 
 
 $(function () {
+  setupSearchInput();
 
   // 동적으로 page-wrapper 클래스에 toggled 클래스명의 유무에 따라 position 변경
   // => 사이드바가 열리면 다른 요소가 보이지 않게끔 해줌
@@ -554,7 +611,22 @@ $(function () {
     }
   }, 10);
 
+  // 가맹점 추가 버튼 누르고 저장 안했을 경우 생선된 ROW 삭제
+  $('.modal-content .button-close').click(function () {
+    const itemsWithoutNo = rowData.filter(item => !Object.keys(item).includes('no'));
+    gridApi.applyTransaction({ remove: itemsWithoutNo });
+  })
 
+  // 추가 버튼 누를 때 모달에서 입력 문구 띄우기
+  $('#addRowBtn').click(function () {
+    $('.modal-title').text('제품 등록')
+    $('#submit').text('등록');
+    $('#productName').attr('placeholder', '제품명 입력');
+    $('#brandName').text( '브랜드 선택');
+    $('#expiration').attr('placeholder', '소비기한 입력');
+    $('#price').attr('placeholder', '가격 입력');
+    $('#for_sale').prop('checked', true);
+  })
 
 
 });

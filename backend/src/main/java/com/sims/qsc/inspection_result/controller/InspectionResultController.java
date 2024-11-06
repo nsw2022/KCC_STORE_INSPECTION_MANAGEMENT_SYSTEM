@@ -85,12 +85,20 @@ public class InspectionResultController {
 		}
 	}
 
-
 	/**
 	 * 팝업 페이지
-	 * @param content 점검결과 ID
-	 * @param model
 	 * @return 팝업 페이지
+	 */
+	@GetMapping("/popup/inspection/result")
+	public String inspectionResultPopup() {
+		return "qsc/inspection_result/popup_inspection_result";
+	}
+
+	/**
+	 *
+	 * @param content 점검결과ID
+	 * @param model
+	 * @return 점검결과ID를 전달한다.
 	 */
     @PostMapping("/popup/inspection/result")
     public String openInspectionPopup(@RequestParam("inspectionContent") String content, Model model) {

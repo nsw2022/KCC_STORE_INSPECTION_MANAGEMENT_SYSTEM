@@ -52,9 +52,11 @@ function uploadFile(file, callback) {
         })
         .catch(error => {
             console.error("파일 업로드 실패:", error);
-            alert("파일 업로드에 실패했습니다.");
+            Swal.fire("실패!", "파일 업로드에 실패했습니다. 다시 시도해주세요", "error");
         });
 }
+
+
 
 function updateAjax(storeRequest) {
     $.ajax({
@@ -91,17 +93,20 @@ function updateAjax(storeRequest) {
     })
 }
 
+
 let selectedFile;
 $(function () {
-    
+    console.log($('.modal-body label:after').eq(6).css('visibility','hidden'));
     // 점검자 입력할 때 자동으로 SV 가 입력되게 하는 이벤트
     $('.modal-body').on('click', $('.hide-list').eq(1).find('li'), function () {
         let inspMbrNm = $('li.selected').text().split('(')[0];
-        let inspMbrNo = $('li.selected').text().split('(')[1].replace(')', '');
+        let inspMbrNo = $('li.selected').text().split('(')[1].slice(0,10);
+
         const inspectorInfoRequest = {
             inspMbrNmm : inspMbrNm,
             inspMbrNo : inspMbrNo
         };
+        console.log(inspectorInfoRequest)
         $.ajax({
             url: '/master/store/superVisors',
             method : 'POST',
@@ -182,7 +187,6 @@ $(function () {
 
     $('#save').click(function () {
         let storeId = $('input[type="hidden"]').val();
-        console.log(storeId)
         let brand = $('.modal-body .wrapper span').eq(0).text()
         let insp = $('.modal-body .wrapper span').eq(1).text()
         let sv = $('.modal-body .wrapper span').eq(2).text()
@@ -190,7 +194,6 @@ $(function () {
             brand = null;
         }
 
-        console.log(insp);
         let inspMbrNmText;
         let inspMbrNoText;
         if(insp === "점검자 검색" || insp ==='undefined') {
@@ -224,7 +227,6 @@ $(function () {
         }
 
         let storeRequest = {
-            storeId : storeId,
             storeNm: storeNmText,
             brandNm: brand,
             brn: brnText,
@@ -240,8 +242,21 @@ $(function () {
             inspMbrNo: inspMbrNoText,
             storeBsnSttsNm: storeBsnSttsNmText
         }
+        console.log(storeRequest)
         let flag = true;
         if (storeId === '') {
+            const requiredField = Object.keys(storeRequest).filter(item => {
+                console.log(item)
+                if(storeRequest[item] === undefined || storeRequest[item] === null || storeRequest[item] === ''){
+                    return item;
+                }
+            });
+
+            if(requiredField.length > 0) {
+                Swal.fire("실패!", `입력하지 않은 항목이 ${requiredField.length}개 남았습니다.`, "error");
+                return;
+            }
+
             uploadFile(selectedFile, function (path) {
             if(flag === false) {
                 return;
@@ -293,7 +308,7 @@ $(function () {
             }
             console.log(selectedFile)
             if(selectedFile === undefined) {
-
+                storeRequest.storeId = storeId;
                 updateAjax(storeRequest)
 
             } else {
