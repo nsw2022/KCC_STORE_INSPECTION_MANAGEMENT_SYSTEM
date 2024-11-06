@@ -27,6 +27,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class Member {
     private int mbrId; // 사용자 ID
     private String mbrNo; // 사번

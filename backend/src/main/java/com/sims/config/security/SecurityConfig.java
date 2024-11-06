@@ -15,7 +15,11 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     private final CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
     private final CustomAuthenticationFailureHandler customAuthenticationFailureHandler;
-
+    private static final String[] WHITE_LIST = {
+            "/resources/**",
+            "/login",
+            "/WEB-INF/views/home/login/login.jsp",
+    };
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
@@ -26,7 +30,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable);
 
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/**").permitAll()
+                .requestMatchers(WHITE_LIST).permitAll()
 //                .requestMatchers(JSP_LIST).permitAll()
 //                .requestMatchers(USER_JSP_LIST).hasAnyRole("USER", "ADMIN")
 //                .requestMatchers("/admin/**").hasAnyRole("ADMIN")
@@ -34,7 +38,7 @@ public class SecurityConfig {
         );
 
         http.formLogin(auth -> auth
-                .loginPage("/home/login/login")
+                .loginPage("/login")
                 .successHandler(customAuthenticationSuccessHandler)
                 .failureHandler(customAuthenticationFailureHandler)
                 .usernameParameter("mbrNo")
