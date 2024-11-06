@@ -23,7 +23,7 @@
     <select id="selectPenalty">
         SELECT /* DashboardMapper.selectPenalty 유재원 */
             s.STORE_NM
-             , ir.TOTAL_PENALTY AS penalty
+             , SUM(ir.TOTAL_PENALTY) AS penalty
         FROM
             INSP_RESULT ir
            , INSP_SCHD is2
@@ -36,6 +36,8 @@
             ir.INSP_COMPL_W = 'Y'
           AND
             ir.TOTAL_PENALTY > 0
+        GROUP BY
+            s.STORE_NM
         ORDER BY
             s.STORE_NM
     </select>
@@ -43,7 +45,7 @@
     <select id="selectBsnSspn">
         SELECT /* DashboardMapper.selectBsnSspn 유재원 */
             s.STORE_NM
-             , ir.TOTAL_BSN_SSPN AS bsnSspn
+             , SUM(ir.TOTAL_BSN_SSPN) AS bsnSspn
         FROM
             INSP_RESULT ir
            , INSP_SCHD is2
@@ -56,8 +58,60 @@
             ir.INSP_COMPL_W = 'Y'
           AND
             ir.TOTAL_BSN_SSPN > 0
+        GROUP BY
+            s.STORE_NM
         ORDER BY
             s.STORE_NM
     </select>
-</mapper>
 
+    <select id="selectNotComplete">
+    <![CDATA[
+        SELECT
+            m.MBR_NM AS mbr_Nm,
+            COUNT(s.INSP_SCHD_ID) AS notCompleteCount
+        FROM
+            INSP_SCHD s
+                JOIN
+            STORE st ON s.STORE_ID = st.STORE_ID
+                JOIN
+            MBR m ON st.INSP_MBR_ID = m.MBR_ID
+                LEFT JOIN
+            INSP_RESULT r ON s.INSP_SCHD_ID = r.INSP_SCHD_ID
+        WHERE
+            s.INSP_PLAN_DT < TO_CHAR(CURRENT_DATE, 'YYYYMMDD')
+          AND
+            (r.INSP_RESULT_ID IS NULL OR r.INSP_COMPL_W = 'N')
+        GROUP BY
+            m.MBR_NM
+        ORDER BY
+            notCompleteCount DESC
+        ]]>
+    </select>
+
+    <select id="selectRecentInspResult">
+    <![CDATA[
+        SELECT
+            ir.INSP_RESULT_ID AS inspResultId,
+            s.store_nm AS storeNm,
+            (SELECT MBR_NM FROM MBR WHERE mbr.MBR_ID = s.INSP_MBR_ID) AS inspMbrNm,
+            ir.INSP_COMPL_TM AS inspComplTm,
+            (SELECT DTL_CD_NM
+             FROM COMM_CD_DTL ccd
+             WHERE ccd.DTL_CD = c.INSP_TYPE_CD) AS inspTypeNm
+        FROM
+            INSP_RESULT ir
+                JOIN
+            INSP_SCHD is2 ON ir.INSP_SCHD_ID = is2.INSP_SCHD_ID
+                JOIN
+            STORE s ON is2.STORE_ID = s.STORE_ID
+                JOIN
+            INSP_PLAN ip ON is2.INSP_PLAN_ID = ip.INSP_PLAN_ID
+                JOIN
+            CHKLST c ON ip.CHKLST_ID = c.CHKLST_ID
+        WHERE
+            ir.INSP_COMPL_W = 'Y'
+        ORDER BY
+            ir.INSP_COMPL_TM DESC
+        ]]>
+    </select>
+</mapper>

@@ -1,14 +1,14 @@
 package com.sims.home.dashboard.controller;
 
 import com.sims.home.dashboard.service.DashboardService;
-import com.sims.home.dashboard.vo.BsnSspnResponse;
-import com.sims.home.dashboard.vo.InspSchdAndResultResponse;
-import com.sims.home.dashboard.vo.PenaltyResponse;
+import com.sims.home.dashboard.vo.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
@@ -19,6 +19,7 @@ import java.util.List;
  */
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class DashboardController {
 
     private final DashboardService dashboardService;
@@ -62,5 +63,24 @@ public class DashboardController {
         return new ResponseEntity<List<BsnSspnResponse>>(dashboardService.selectBsnSspn(), HttpStatus.OK);
     }
 
+    /**
+     * 미완료 점검 조회
+     * @return 미완료 점검
+     */
+    @GetMapping("/not-complete")
+    @ResponseBody
+    public ResponseEntity<List<NotCompleteResponse>> notComplete() {
+        return new ResponseEntity<List<NotCompleteResponse>>(dashboardService.selectNotComplete(), HttpStatus.OK);
+    }
+
+    /**
+     * 최근 점검 조회
+     */
+    @GetMapping("/recent-inspection")
+    @ResponseBody
+    public ResponseEntity<List<RecentInspResultResponse>> selectRecentInspResult(@RequestParam (value = "page-number") int pageNumber){
+        log.info("pageNumber : {}", pageNumber);
+        return new ResponseEntity<List<RecentInspResultResponse>>(dashboardService.selectRecentInspResult(pageNumber), HttpStatus.OK);
+    }
 
 }

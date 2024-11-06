@@ -2,9 +2,7 @@ package com.sims.home.dashboard.service;
 
 
 import com.sims.home.dashboard.mapper.DashboardMapper;
-import com.sims.home.dashboard.vo.BsnSspnResponse;
-import com.sims.home.dashboard.vo.InspSchdAndResultResponse;
-import com.sims.home.dashboard.vo.PenaltyResponse;
+import com.sims.home.dashboard.vo.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,5 +26,15 @@ public class DashboardServiceImpl implements DashboardService{
     @Override
     public List<BsnSspnResponse> selectBsnSspn() {
         return dashboardMapper.selectBsnSspn();
+    }
+
+    @Override
+    public List<NotCompleteResponse> selectNotComplete() {
+        return dashboardMapper.selectNotComplete();
+    }
+
+    @Override
+    public List<RecentInspResultResponse> selectRecentInspResult(int pageNumber) {
+        return dashboardMapper.selectRecentInspResult(pageNumber);
     }
 }
