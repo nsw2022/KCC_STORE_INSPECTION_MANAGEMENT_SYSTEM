@@ -7,6 +7,7 @@
 }
 
 
+
 /*---------------------------달력---------------------------*/
 .calendar-container {
     width: 330px;
@@ -30,13 +31,6 @@
     color: #6b6b6b;
 }
 
-/*#month-select {*/
-/*    padding: 5px;*/
-/*    border: none;*/
-/*    border-radius: 8px;*/
-/*    font-size: 16px;*/
-/*    color: #6b6b6b;*/
-/*}*/
 
 #year {
     font-size: 18px;
@@ -243,6 +237,7 @@ table.calendar td .incomplete {
     background: #4a00e0 !important;
     color: white;
     transition: ease-out 0.3s;
+    text-decoration: none;
 }
 
 .scrollable-content {
@@ -462,7 +457,7 @@ table.calendar td .incomplete {
 }
 
 button:hover {
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 .right {

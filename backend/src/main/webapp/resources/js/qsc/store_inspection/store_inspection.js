@@ -1,6 +1,15 @@
 // 전역 변수로 inspectionAllScheduleData 선언
 let inspectionAllScheduleData = [];
 
+// 점검 유형 코드 매핑 객체 추가
+const INSPECTION_TYPE_MAP = {
+    'IT001': '제품점검',
+    'IT002': '위생점검',
+    'IT003': '정기점검',
+    'IT004': '비정기점검',
+    'IT005': '기획점검'
+};
+
 // DOMContentLoaded 이벤트 리스너
 document.addEventListener('DOMContentLoaded', function () {
     fetchInspectionData()
@@ -43,6 +52,7 @@ function transformData(data) {
         const inspSttsCd = item.inspSttsCd;
         const chklstId = item.chklstId;
         const inspResultId = item.inspResultId;
+        const inspTypeCd = item.inspTypeCd || item.INSP_TYPE_CD; // camelCase로 추가
 
         // CTG_NM 추출 (chklstNm의 첫 네 글자)
         const CTG_NM = chklstNmFull.slice(0, 4); // 예: "위생점검체크리스트" -> "위생점검"
@@ -87,8 +97,9 @@ function transformData(data) {
             CHKLST_NM: CHKLST_NM,
             INSP_PLAN_DT: inspPlanDt,
             INSP_STTS_CD: inspSttsCd,
-            CHKLST_ID : chklstId,
-            INSP_RESULT_ID : inspResultId
+            CHKLST_ID: chklstId,
+            INSP_RESULT_ID: inspResultId,
+            inspTypeCd: inspTypeCd // camelCase로 추가
         });
         console.log(`Added checklist: ${CHKLST_NM} on ${inspPlanDt} with status ${inspSttsCd}`);
     });
@@ -96,6 +107,8 @@ function transformData(data) {
     console.log('Transformed Data:', transformedData);
     return transformedData;
 }
+
+
 
 
 
@@ -348,7 +361,7 @@ function calender() {
 
 }
 
-//좌측상단 오늘의 점검표시 함수
+// 좌측상단 오늘의 점검표시 함수
 function generateTodayInspectionList(date) {
     const listContainer = document.getElementById('today_inspection_list');
     listContainer.innerHTML = '';
@@ -370,7 +383,10 @@ function generateTodayInspectionList(date) {
                         hasInspection = true;
                         const li = document.createElement('li');
                         const h4 = document.createElement('h4');
-                        h4.textContent = category.CTG_NM;
+
+                        // 수정된 부분: INSP_TYPE_CD 대신 inspTypeCd 사용
+                        h4.textContent = INSPECTION_TYPE_MAP[item.inspTypeCd] || '알 수 없는 점검 유형';
+
                         const pTitle = document.createElement('p');
                         pTitle.classList.add('today_inspection_list_title');
                         pTitle.textContent = item.STORE_NM;
@@ -430,8 +446,6 @@ function generateTodayInspectionList(date) {
 }
 
 
-
-
 // 점검 한주 스케줄 표시 함수
 function generateScheduleTable(date) {
     const tableBody = document.getElementById('schedule-table-body');
@@ -470,17 +484,19 @@ function generateScheduleTable(date) {
             // 선택된 점검자에 따라 필터링 ('all'인 경우 모두 포함)
             if (selectedInspector === 'all' || selectedInspector == inspector.INSP_MBR_ID) {
                 inspector.INSP_TYPE.forEach(category => {
-                    if (selectedChecklist === 'all' || category.CTG_NM === selectedChecklist) {
+                    // 수정된 부분: checklistSelect 값과 INSP_TYPE_CD에 따른 필터링
+                    if (selectedChecklist === 'all' || INSPECTION_TYPE_MAP[category.SUB_CTH_NM.find(item => item.inspTypeCd).inspTypeCd] === selectedChecklist) {
                         category.SUB_CTH_NM.forEach(item => {
                             if (item.INSP_PLAN_DT === dateStr) {
                                 allItems.push({
-                                    categoryName: category.CTG_NM,
+                                    categoryName: INSPECTION_TYPE_MAP[item.inspTypeCd] || '알 수 없는 점검 유형',
                                     itemName: item.CHKLST_NM,
                                     planDate: item.INSP_PLAN_DT,
                                     statusCode: item.INSP_STTS_CD, // 상태 코드 추가
                                     chklstId: item.CHKLST_ID, // chklstId 추가
                                     storeNm: extractStoreName(item.CHKLST_NM), // storeNm 추출 함수 사용
-                                    inspResultId: item.INSP_RESULT_ID
+                                    inspResultId: item.INSP_RESULT_ID,
+                                    inspTypeCd: item.inspTypeCd // INSP_TYPE_CD 추가
                                 });
                             }
                         });
@@ -534,7 +550,10 @@ function generateScheduleTable(date) {
         displayItems.forEach(item => {
             const button = document.createElement('button');
             button.classList.add('inspection-btn');
-            button.textContent = item.itemName;
+
+            // 수정된 부분: INSP_TYPE_CD에 따른 점검 유형 이름과 가맹점명 결합
+            const inspTypeName = INSPECTION_TYPE_MAP[item.inspTypeCd] || '알 수 없는 점검 유형';
+            button.textContent = `${item.storeNm} ${inspTypeName}`;
 
             // 점검 상태에 따라 팝업 함수 설정
             if (item.statusCode === 'IS002') {
@@ -577,6 +596,9 @@ function generateScheduleTable(date) {
 
     tableBody.appendChild(weekRow);
 }
+
+
+
 
 
 
@@ -645,9 +667,12 @@ function openModal(items) {
     items.forEach(function(item) {
         const button = document.createElement('button');
         button.classList.add('inspection-btn');
-        button.textContent = item.itemName;
 
-        // **수정된 부분: 점검 상태에 따라 팝업 함수 설정**
+        // 수정된 부분: INSP_TYPE_CD에 따른 점검 유형 이름과 가맹점명 결합
+        const inspTypeName = INSPECTION_TYPE_MAP[item.inspTypeCd] || '알 수 없는 점검 유형';
+        button.textContent = `${item.storeNm} ${inspTypeName}`;
+
+        // 점검 상태에 따라 팝업 함수 설정
         if (item.statusCode === 'IS002') {
             // 완료된 점검인 경우 openPopup2 호출
             button.onclick = function() {
@@ -660,7 +685,7 @@ function openModal(items) {
             };
         }
 
-        // **수정된 부분: 아이템의 날짜와 상태를 확인하여 스타일 적용**
+        // 아이템의 날짜과 상태를 확인하여 스타일 적용
         const itemDate = new Date(item.planDate.replace(/\//g, '-'));
         const todayDate = new Date();
         todayDate.setHours(0,0,0,0);
@@ -702,6 +727,7 @@ function openModal(items) {
         modalContent.classList.add('show');
     }, 10);
 }
+
 
 //---------------------팝업 이동 함수------------------------
 // 팝업 이동 함수
