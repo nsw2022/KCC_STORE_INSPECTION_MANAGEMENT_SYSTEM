@@ -17,6 +17,9 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class LoginLogVo {
     private String connectionId; // 접속 ID
     private String connectionIp; // 접속 IP
