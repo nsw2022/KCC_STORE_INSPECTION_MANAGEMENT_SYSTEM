@@ -91,27 +91,43 @@
     <select id="selectRecentInspResult">
     <![CDATA[
         SELECT
-            ir.INSP_RESULT_ID AS inspResultId,
-            s.store_nm AS storeNm,
-            (SELECT MBR_NM FROM MBR WHERE mbr.MBR_ID = s.INSP_MBR_ID) AS inspMbrNm,
-            ir.INSP_COMPL_TM AS inspComplTm,
-            (SELECT DTL_CD_NM
-             FROM COMM_CD_DTL ccd
-             WHERE ccd.DTL_CD = c.INSP_TYPE_CD) AS inspTypeNm
-        FROM
-            INSP_RESULT ir
-                JOIN
-            INSP_SCHD is2 ON ir.INSP_SCHD_ID = is2.INSP_SCHD_ID
-                JOIN
-            STORE s ON is2.STORE_ID = s.STORE_ID
-                JOIN
-            INSP_PLAN ip ON is2.INSP_PLAN_ID = ip.INSP_PLAN_ID
-                JOIN
-            CHKLST c ON ip.CHKLST_ID = c.CHKLST_ID
+            *
+        FROM (
+            SELECT
+                  ir.INSP_RESULT_ID AS inspResultId
+                   , s.store_nm AS storeNm
+                   , (SELECT
+                          MBR_NM
+                      FROM
+                          MBR
+                      WHERE
+                          mbr.MBR_ID = s.INSP_MBR_ID) AS inspMbrNm
+                   , ir.INSP_COMPL_TM AS inspComplTm
+                   , (SELECT
+                          DTL_CD_NM
+                      FROM
+                          COMM_CD_DTL ccd
+                      WHERE
+                          ccd.DTL_CD = c.INSP_TYPE_CD) AS inspTypeNm
+                   , ROW_NUMBER() OVER (ORDER BY ir.INSP_COMPL_TM DESC) AS rnum
+            FROM
+                  INSP_RESULT ir
+                      JOIN
+                  INSP_SCHD is2 ON ir.INSP_SCHD_ID = is2.INSP_SCHD_ID
+                      JOIN
+                  STORE s ON is2.STORE_ID = s.STORE_ID
+                      JOIN
+                  INSP_PLAN ip ON is2.INSP_PLAN_ID = ip.INSP_PLAN_ID
+                      JOIN
+                  CHKLST c ON ip.CHKLST_ID = c.CHKLST_ID
+            WHERE
+                  ir.INSP_COMPL_W = 'Y'
+            )
         WHERE
-            ir.INSP_COMPL_W = 'Y'
-        ORDER BY
-            ir.INSP_COMPL_TM DESC
+            rnum > (#{pageNumber} - 1) * 10
+          AND
+            rnum <= #{pageNumber} * 10
         ]]>
-    </select>
+</select>
+
 </mapper>
