@@ -46,6 +46,7 @@ async function getProductAll(searchCriteria = {}) {
       },
       body: JSON.stringify(searchCriteria)
     });
+    console.log(searchCriteria)
 
     gridApi.setGridOption("loading", true);
     let data = await response.json();
@@ -80,12 +81,14 @@ async function getProductAll(searchCriteria = {}) {
     }
 
   } catch (error) {
+    console.log(searchCriteria)
     console.error("Error fetching data:", error);
     rowData = [];
     gridApi.setGridOption("rowData", rowData); // 데이터 설정
     setTimeout(function() {
       gridApi.setGridOption("loading", false);
     }, 200)
+
     updateProductCount();
   }
 }

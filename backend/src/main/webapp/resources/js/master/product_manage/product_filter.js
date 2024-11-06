@@ -21,6 +21,7 @@ async function onSearchRow() {
         pdtNm : pdtNm,
         pdtSellSttsNm : pdtSellSttsNm
     };
+    console.log(searchCriteria)
 
 
     await getProductAll(searchCriteria); // await 추가
@@ -30,7 +31,7 @@ function onSearchInit(){
     $('.wrapper').eq(0).find('span').text("제품명 검색");
     $('.wrapper').eq(1).find('span').text("브랜드 검색");
     $('.wrapper').eq(2).find('span').text("판매상태 검색");
-
+    gridApi.paginationGoToFirstPage()
     gridApi.setGridOption("rowData", defaultRowData); // 데이터 설정
     updateProductCount();
 }

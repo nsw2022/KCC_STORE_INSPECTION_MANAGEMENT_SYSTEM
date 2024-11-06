@@ -3,6 +3,7 @@ $(function () {
      * 처음 로딩될 때 내용 불러오기
      * 체크리스트, 점검유형, 총 벌금, 총 영업정지일수, 점검자, 점검완료일, 가맹점명, 브랜드명 정보를 받음
      */
+    let inspResultId= $('input[type="hidden"]').val();
     $.ajax({
         url : `/qsc/popup/inspection/result/detail/${inspResultId}`,
         method: 'GET',
@@ -20,7 +21,7 @@ $(function () {
         }
     })
 
-    let inspResultId= $('input[type="hidden"]').val();
+
     let inspectionData = [];
     /**
      * 점검 결과 ID를 통해 점검 결과를 가져오는 AJAX
