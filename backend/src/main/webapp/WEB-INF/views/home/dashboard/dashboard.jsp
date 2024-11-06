@@ -66,10 +66,11 @@
                         <label for="checklist-select">체크리스트 선택 :</label>
                         <select id="checklist-select">
                             <option value="all">전체</option>
+                            <option value="제품점검">제품 점검</option>
                             <option value="위생점검">위생 점검</option>
-                            <option value="품질점검">품질 점검</option>
-                            <option value="기획점검">기획 점검</option>
                             <option value="정기점검">정기 점검</option>
+                            <option value="비정기점검">비정기 점검</option>
+                            <option value="기획점검">기획 점검</option>
                         </select>
                     </div>
                     <div class="schedule-table-wrapper">

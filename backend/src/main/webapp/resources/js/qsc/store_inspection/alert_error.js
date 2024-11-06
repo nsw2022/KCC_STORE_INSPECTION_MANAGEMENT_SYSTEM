@@ -1,6 +1,15 @@
 // 전역 변수로 inspectionAllScheduleData 선언
 let inspectionAllScheduleData = [];
 
+// 점검 유형 코드 매핑 객체 추가
+const INSPECTION_TYPE_MAP = {
+    'IT001': '제품점검',
+    'IT002': '위생점검',
+    'IT003': '정기점검',
+    'IT004': '비정기점검',
+    'IT005': '기획점검'
+};
+
 // DOMContentLoaded 이벤트 리스너
 document.addEventListener('DOMContentLoaded', function () {
     fetchInspectionData()
@@ -43,6 +52,7 @@ function transformData(data) {
         const inspSttsCd = item.inspSttsCd;
         const chklstId = item.chklstId;
         const inspResultId = item.inspResultId;
+        const inspTypeCd = item.inspTypeCd || item.INSP_TYPE_CD; // camelCase로 추가
 
         // CTG_NM 추출 (chklstNm의 첫 네 글자)
         const CTG_NM = chklstNmFull.slice(0, 4); // 예: "위생점검체크리스트" -> "위생점검"
@@ -87,8 +97,9 @@ function transformData(data) {
             CHKLST_NM: CHKLST_NM,
             INSP_PLAN_DT: inspPlanDt,
             INSP_STTS_CD: inspSttsCd,
-            CHKLST_ID : chklstId,
-            INSP_RESULT_ID : inspResultId
+            CHKLST_ID: chklstId,
+            INSP_RESULT_ID: inspResultId,
+            inspTypeCd: inspTypeCd // camelCase로 추가
         });
         console.log(`Added checklist: ${CHKLST_NM} on ${inspPlanDt} with status ${inspSttsCd}`);
     });
@@ -96,6 +107,8 @@ function transformData(data) {
     console.log('Transformed Data:', transformedData);
     return transformedData;
 }
+
+
 
 
 
@@ -146,199 +159,6 @@ function getSelectedInspector() {
 }
 
 
-// function calender() {
-//     const calendarBody = document.getElementById('calendar-body');
-//     const monthSelect = document.getElementById('month-select');
-//     const yearSelect = document.getElementById('year-select');
-//     const checklistSelect = document.getElementById('checklist-select');
-//     let selectedDate = null;
-//
-//
-//     const today = new Date(); // 오늘 날짜 객체 생성
-//     const defaultYear = today.getFullYear(); // 오늘의 년도
-//     const defaultMonth = today.getMonth(); // 오늘의 월 (0부터 시작)
-//     let defaultDay = new Date().getDate(); // 전역 변수로 이동
-//
-//     // 년도 드롭다운 생성 함수
-//     function populateYearSelect(startYear = 1900, endYear = 2100, defaultYear) {
-//         yearSelect.innerHTML = ''; // 기존 옵션 제거
-//         for (let year = startYear; year <= endYear; year++) {
-//             const option = document.createElement('option');
-//             option.value = year;
-//             option.textContent = `${year}년`;
-//             if (year === defaultYear) {
-//                 option.selected = true;
-//             }
-//             yearSelect.appendChild(option);
-//         }
-//     }
-//
-//     // 월 드롭다운 생성 함수
-//     function populateMonthSelect(defaultMonth) {
-//         const months = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
-//         monthSelect.innerHTML = '';
-//         months.forEach((monthName, index) => {
-//             const option = document.createElement('option');
-//             option.value = index;
-//             option.textContent = monthName;
-//             if (index === defaultMonth) {
-//                 option.selected = true;
-//             }
-//             monthSelect.appendChild(option);
-//         });
-//     }
-//
-//
-//     // 달력 생성 함수
-//     function generateCalendar(month, year) {
-//         calendarBody.innerHTML = ''; // 기존 달력 내용 초기화
-//
-//         const firstDay = new Date(year, month, 1).getDay(); // 해당 월의 첫 번째 날의 요일 (0: 일요일)
-//         const lastDate = new Date(year, month + 1, 0).getDate(); // 해당 월의 마지막 날짜
-//
-//         let day = 1;
-//         let row;
-//
-//         // 총 주 수 계산 (첫 주 + 마지막 주의 빈 칸을 고려)
-//         const totalDays = firstDay + lastDate;
-//         const totalWeeks = Math.ceil(totalDays / 7);
-//
-//         for (let week = 0; week < totalWeeks; week++) {
-//             row = document.createElement('tr');
-//
-//             for (let i = 0; i < 7; i++) {
-//                 const currentDayIndex = week * 7 + i;
-//                 const cell = document.createElement('td');
-//
-//                 if (currentDayIndex >= firstDay && day <= lastDate) {
-//                     const dayContent = createCalendarCell(day++, year, month);
-//                     cell.appendChild(dayContent);
-//                 }
-//
-//                 row.appendChild(cell);
-//             }
-//
-//             calendarBody.appendChild(row);
-//         }
-//
-//         // 초기 로드시 오늘 날짜의 점검 목록과 스케줄 테이블 생성
-//         const selectedDay = selectedDate ? parseInt(selectedDate.textContent) : defaultDay;
-//         const date = new Date(year, month, selectedDay);
-//         generateScheduleTable(date);
-//     }
-//
-//
-//     // 날짜 선택 함수
-//     function createCalendarCell(day, year, month) {
-//         const dayContent = document.createElement('div');
-//         dayContent.classList.add('day-content');
-//         dayContent.textContent = day;
-//
-//         // 오늘 날짜 자동 선택
-//         if (year === defaultYear && month === defaultMonth && day === defaultDay) {
-//             dayContent.classList.add('selected'); // selected 클래스 추가
-//             selectedDate = dayContent;
-//         }
-//
-//
-//         // 현재 날짜를 "YYYY/MM/DD" 형식으로 변환
-//         const currentDate = new Date(year, month, day);
-//         const dateStr = formatDate(currentDate);
-//
-//         // 오늘 날짜 객체 생성 (시간 부분을 제거하여 날짜만 비교)
-//         const todayDate = new Date();
-//         todayDate.setHours(0, 0, 0, 0);
-//
-//         // 선택된 점검자 가져오기
-//         const selectedInspector = getSelectedInspector();
-//
-//         // 해당 날짜가 오늘 이전인지 확인
-//         const isPastDate = currentDate < todayDate;
-//
-//         // 해당 날짜에 미완료된 점검이 있는지 확인
-//         let hasIncompleteInspection = false;
-//
-//         if (isPastDate) {
-//             inspectionAllScheduleData.forEach(inspector => {
-//                 // 선택된 점검자에 따라 필터링 ('all'인 경우 모두 포함)
-//                 if (selectedInspector === 'all' || selectedInspector == inspector.INSP_MBR_ID) {
-//                     inspector.INSP_TYPE.forEach(category => {
-//                         category.SUB_CTH_NM.forEach(item => {
-//                             if (item.INSP_PLAN_DT === dateStr && item.INSP_STTS_CD === 'IS001') {
-//                                 hasIncompleteInspection = true;
-//                             }
-//                         });
-//                     });
-//                 }
-//             });
-//         }
-//
-//         // 미완료된 점검이 있는 경우 'incomplete' 클래스 추가
-//         if (hasIncompleteInspection) {
-//             dayContent.classList.add('incomplete');
-//         }
-//
-//
-//         // 클릭 이벤트 추가
-//         dayContent.addEventListener('click', function () {
-//             if (selectedDate) {
-//                 selectedDate.classList.remove('selected'); // 이전 선택 제거
-//             }
-//             selectedDate = dayContent; // 새로 선택된 요소로 갱신
-//             dayContent.classList.add('selected'); // 선택된 날짜 표시
-//
-//             const selectedYear = parseInt(yearSelect.value);
-//             const selectedMonth = parseInt(monthSelect.value);
-//             const selectedDay = parseInt(dayContent.textContent);
-//             const date = new Date(selectedYear, selectedMonth, selectedDay);
-//
-//             generateScheduleTable(date); // 스케줄 테이블 생성
-//         });
-//
-//         return dayContent;
-//     }
-//
-//
-//
-//
-//     // 년도 및 월 선택 시 달력 갱신
-//     function updateCalendar() {
-//         const selectedYear = parseInt(yearSelect.value);
-//         const selectedMonth = parseInt(monthSelect.value);
-//         generateCalendar(selectedMonth, selectedYear);
-//     }
-//
-//     // 페이지 로드 시 초기 설정
-//     populateYearSelect(2024, 2100, defaultYear); // 년도 드롭다운 생성
-//     populateMonthSelect(defaultMonth); // 월 드롭다운 생성
-//     updateCalendar(); // 초기 달력 생성
-//
-//     // 월 또는 년도 변경 시 달력 갱신
-//     monthSelect.addEventListener('change', updateCalendar);
-//     yearSelect.addEventListener('change', updateCalendar);
-//
-//     // 체크리스트 선택 변경 시 스케줄 테이블 갱신
-//     document.getElementById('insp-mbr').addEventListener('change', function() {
-//         const selectedYear = parseInt(document.getElementById('year-select').value);
-//         const selectedMonth = parseInt(document.getElementById('month-select').value);
-//         const selectedDay = selectedDate ? parseInt(selectedDate.textContent) : defaultDay;
-//         const date = new Date(selectedYear, selectedMonth, selectedDay);
-//
-//         // 달력 업데이트
-//         generateCalendar(selectedMonth, selectedYear);
-//         // 스케줄 테이블 업데이트
-//         generateScheduleTable(date);
-//     });
-//
-//     checklistSelect.addEventListener('change', function() {
-//         const selectedYear = parseInt(yearSelect.value);
-//         const selectedMonth = parseInt(monthSelect.value);
-//         const selectedDay = selectedDate ? parseInt(selectedDate.textContent) : defaultDay;
-//         const date = new Date(selectedYear, selectedMonth, selectedDay);
-//         generateScheduleTable(date);
-//     });
-//
-// }
 function calender() {
     const calendarBody = document.getElementById('calendar-body');
     const monthSelect = document.getElementById('month-select');
@@ -350,7 +170,7 @@ function calender() {
     const today = new Date(); // 오늘 날짜 객체 생성
     const defaultYear = today.getFullYear(); // 오늘의 년도
     const defaultMonth = today.getMonth(); // 오늘의 월 (0부터 시작)
-    let defaultDay = today.getDate(); // 오늘의 일
+    let defaultDay = new Date().getDate(); // 전역 변수로 이동
 
     // 년도 드롭다운 생성 함수
     function populateYearSelect(startYear = 1900, endYear = 2100, defaultYear) {
@@ -380,7 +200,6 @@ function calender() {
             monthSelect.appendChild(option);
         });
     }
-
 
     // 달력 생성 함수
     function generateCalendar(month, year) {
@@ -419,7 +238,6 @@ function calender() {
         const date = new Date(year, month, selectedDay);
         generateScheduleTable(date);
     }
-
 
     // 날짜 선택 함수
     function createCalendarCell(day, year, month, dayOfWeek) { // dayOfWeek 인자 추가
@@ -477,7 +295,6 @@ function calender() {
             dayContent.classList.add('incomplete');
         }
 
-
         // 클릭 이벤트 추가
         dayContent.addEventListener('click', function () {
             if (selectedDate) {
@@ -525,6 +342,7 @@ function calender() {
 
         // 달력 업데이트
         generateCalendar(selectedMonth, selectedYear);
+        // 오늘의 점검 목록 업데이트
         // 스케줄 테이블 업데이트
         generateScheduleTable(date);
     });
@@ -547,23 +365,23 @@ function generateScheduleTable(date) {
     const tableBody = document.getElementById('schedule-table-body');
     tableBody.innerHTML = '';
 
-    // 선택한 날짜의 주 (월요일 시작)
+    // 선택한 날짜의 주 (일요일 시작)
     const weekStartDate = new Date(date);
-    const day = weekStartDate.getDay(); // 0 (일요일) ~ 6 (토요일)
-    const diff = (day === 0 ? -6 : 1 - day); // 월요일로 조정
-    weekStartDate.setDate(weekStartDate.getDate() + diff);
+    weekStartDate.setDate(date.getDate() - weekStartDate.getDay()); // 일요일로 설정
 
     const selectedChecklist = document.getElementById('checklist-select').value;
     const selectedInspector = getSelectedInspector();
 
     const weekRow = document.createElement('tr');
-    for (let i = 0; i < 5; i++) { // 5일 (월~금)으로 반복
+
+    // 월요일부터 금요일까지 (i = 1부터 5까지) 반복
+    for (let i = 1; i <= 5; i++) {
         const cellDate = new Date(weekStartDate);
-        cellDate.setDate(weekStartDate.getDate() + i);
+        cellDate.setDate(weekStartDate.getDate() + i); // 월요일부터 금요일
 
         const td = document.createElement('td');
         const spanDate = document.createElement('span');
-        spanDate.textContent = `${cellDate.getMonth() + 1}/${cellDate.getDate()}`; // +1 제거
+        spanDate.textContent = `${cellDate.getMonth() + 1}/${cellDate.getDate()}`;
 
         // 버튼과 날짜를 감쌀 div 생성
         const btnDateWrap = document.createElement('div');
@@ -571,23 +389,25 @@ function generateScheduleTable(date) {
 
         // 해당 날짜의 점검 항목 가져오기
         const dateStr = formatDate(cellDate);
-
         let allItems = [];
+
         inspectionAllScheduleData.forEach(inspector => {
             // 선택된 점검자에 따라 필터링 ('all'인 경우 모두 포함)
             if (selectedInspector === 'all' || selectedInspector == inspector.INSP_MBR_ID) {
                 inspector.INSP_TYPE.forEach(category => {
-                    if (selectedChecklist === 'all' || category.CTG_NM === selectedChecklist) {
+                    // checklistSelect 값과 INSP_TYPE_CD에 따른 필터링
+                    if (selectedChecklist === 'all' || INSPECTION_TYPE_MAP[category.SUB_CTH_NM.find(item => item.inspTypeCd).inspTypeCd] === selectedChecklist) {
                         category.SUB_CTH_NM.forEach(item => {
                             if (item.INSP_PLAN_DT === dateStr) {
                                 allItems.push({
-                                    categoryName: category.CTG_NM,
+                                    categoryName: INSPECTION_TYPE_MAP[item.inspTypeCd] || '알 수 없는 점검 유형',
                                     itemName: item.CHKLST_NM,
                                     planDate: item.INSP_PLAN_DT,
                                     statusCode: item.INSP_STTS_CD, // 상태 코드 추가
                                     chklstId: item.CHKLST_ID, // chklstId 추가
                                     storeNm: extractStoreName(item.CHKLST_NM), // storeNm 추출 함수 사용
-                                    inspResultId: item.INSP_RESULT_ID
+                                    inspResultId: item.INSP_RESULT_ID,
+                                    inspTypeCd: item.inspTypeCd // INSP_TYPE_CD 추가
                                 });
                             }
                         });
@@ -613,7 +433,7 @@ function generateScheduleTable(date) {
         });
 
         // 버튼들을 td에 추가하기 전에 btn-date-wrap에 추가
-        if (allItems.length > 2) {
+        if (allItems.length > 2) { // 조건을 2개로 변경
             const extraCount = allItems.length - 2;
             const moreButton = document.createElement('button');
             moreButton.classList.add('more-btn');
@@ -636,12 +456,15 @@ function generateScheduleTable(date) {
             td.appendChild(spanWrapper);
         }
 
-        // 실제로 표시할 버튼들 (최대 3개)
-        const displayItems = allItems.slice(0, 2);
+        // 실제로 표시할 버튼들 (최대 2개로 변경)
+        const displayItems = allItems.slice(0, 2); // 2개로 변경
         displayItems.forEach(item => {
             const button = document.createElement('button');
             button.classList.add('inspection-btn');
-            button.textContent = item.itemName;
+
+            // INSP_TYPE_CD에 따른 점검 유형 이름과 가맹점명 결합
+            const inspTypeName = INSPECTION_TYPE_MAP[item.inspTypeCd] || '알 수 없는 점검 유형';
+            button.textContent = `${item.storeNm} ${inspTypeName}`;
 
             // 점검 상태에 따라 팝업 함수 설정
             if (item.statusCode === 'IS002') {
@@ -676,11 +499,14 @@ function generateScheduleTable(date) {
             td.appendChild(button);
         });
 
+        // weekRow에 td 추가
         weekRow.appendChild(td);
     }
 
     tableBody.appendChild(weekRow);
 }
+
+
 
 
 
@@ -750,9 +576,12 @@ function openModal(items) {
     items.forEach(function(item) {
         const button = document.createElement('button');
         button.classList.add('inspection-btn');
-        button.textContent = item.itemName;
 
-        // **수정된 부분: 점검 상태에 따라 팝업 함수 설정**
+        // 수정된 부분: INSP_TYPE_CD에 따른 점검 유형 이름과 가맹점명 결합
+        const inspTypeName = INSPECTION_TYPE_MAP[item.inspTypeCd] || '알 수 없는 점검 유형';
+        button.textContent = `${item.storeNm} ${inspTypeName}`;
+
+        // 점검 상태에 따라 팝업 함수 설정
         if (item.statusCode === 'IS002') {
             // 완료된 점검인 경우 openPopup2 호출
             button.onclick = function() {
@@ -765,7 +594,7 @@ function openModal(items) {
             };
         }
 
-        // **수정된 부분: 아이템의 날짜와 상태를 확인하여 스타일 적용**
+        // 아이템의 날짜과 상태를 확인하여 스타일 적용
         const itemDate = new Date(item.planDate.replace(/\//g, '-'));
         const todayDate = new Date();
         todayDate.setHours(0,0,0,0);
@@ -807,6 +636,7 @@ function openModal(items) {
         modalContent.classList.add('show');
     }, 10);
 }
+
 
 //---------------------팝업 이동 함수------------------------
 // 팝업 이동 함수

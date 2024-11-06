@@ -11,6 +11,7 @@
              , m.MBR_NO
              , c.CHKLST_NM
              , c.CHKLST_ID
+             , c.INSP_TYPE_CD
              , st.STORE_NM
              , s.INSP_PLAN_DT
              , s.INSP_STTS_CD
@@ -31,6 +32,7 @@
             , m.MBR_NO
             , c.CHKLST_NM
             , c.CHKLST_ID
+            , c.INSP_TYPE_CD
             , st.STORE_NM
             , s.INSP_PLAN_DT
             , s.INSP_STTS_CD

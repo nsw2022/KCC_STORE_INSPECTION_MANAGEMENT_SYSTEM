@@ -13,6 +13,7 @@ public class StoreInspectionResponse {
     private String mbrNo;
     private String chklstNm;
     private String chklstId;
+    private String inspTypeCd;
     private String storeNm;
     private String inspPlanDt;
     private String inspSttsCd;
