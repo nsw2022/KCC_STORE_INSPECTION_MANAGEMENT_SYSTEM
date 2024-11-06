@@ -1692,7 +1692,7 @@ $(function () {
                 // UI에서 입력된 점검 예정일 가져오기
                 const scheduleDate = $("#bottomScheduleDate").val();
                 const formattedScheduleDate = scheduleDate ? scheduleDate.replace(/-/g, "") : null;
-
+                console.log("나는 날짜요"+scheduleDate)
 
                 // 매핑 객체 생성 (한 번만 실행)
                 const chkLstNameToIdMap = {};
@@ -1717,7 +1717,8 @@ $(function () {
                 // 모든 selectedRows에 대해 inspectionPlans 생성
                 selectedRows.forEach((row, index) => {
                     const frqCd = row.frqCd;
-
+                    console.log("내가 선택한 row")
+                    console.table(row)
                     // InspectionPlan 객체 초기화
                     let planEntry = {
                         inspPlanId: filteredData.length > 0 ? filteredData[index].inspPlanId || null : null, // 기존 ID인 경우, 신규 생성 시에는 null
@@ -1729,8 +1730,8 @@ $(function () {
                         inspPlanUseW: inspPlanUseW,
                         inspPlanSttsW: inspPlanSttsW,
                         inspPlanDt: formattedScheduleDate || null, // 점검 예정일
-                        storeId: filteredData.length > 0 ? filteredData[index].storeId || null : storeItem.storeId
-
+                        storeId: filteredData.length > 0 ? filteredData[index].storeId || null : storeItem.storeId,
+                        inspSchdId : filteredData.length > 0 ? filteredData[index].inspSchdId || null : null,
                     };
 
                     // frqCd에 따른 필드 매핑
@@ -1739,10 +1740,12 @@ $(function () {
                         console.log('오긴함?')
                         planEntry.inspPlanDt = selectedCalendarDates
                         console.log(selectedCalendarDates)
-                    } else if (frqCd === 'ED') {
+                    } else if (frqCd === '일별') {
                         // ED: cntCd 매핑, week과 slctDt는 null
-                        planEntry.cntCd = row.cntCd || null;
+
+                        planEntry.inspPlanDt = row.inspPlanDt
                         console.log(`Mapped ED entry with cntCd: ${planEntry.cntCd}`);
+                        console.log(`Mapped ED entry with cntCd: ${planEntry.inspPlanDt}`);
                     } else if (frqCd === 'EM') {
                         // EM: cntCd와 slctDt 매핑, week는 null
                         planEntry.cntCd = row.cntCd || null;
@@ -1769,10 +1772,12 @@ $(function () {
                         planEntry.cntCd = countCode;
                         flag = 1
                     }
+                    console.log(selectedCalendarDates)
+                    if (selectedCalendarDates.length !== 0) planEntry.inspPlanDt = selectedCalendarDates[0]
 
-
-                    if (selectedCalendarDates != null) planEntry.inspPlanDt = selectedCalendarDates[0]
-
+                    
+                    console.log("최종 날짜들 확인")
+                    console.table(getSelectedItems())
                     inspectionPlans.push(planEntry);
                 });
 
@@ -1782,39 +1787,42 @@ $(function () {
                 // 데이터 유효성 검사 (필요 시 추가)
 
                 // AJAX 요청
-                $.ajax({
-                    url: "/qsc/inspection-schedule/saveSchedules", // 백엔드 엔드포인트
-                    type: "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify(inspectionPlans),
-                    success: function(response) {
-                        Swal.fire({
-                            title: "완료!",
-                            text: response.message || "점검 계획이 성공적으로 저장되었습니다.",
-                            icon: "success",
-                            confirmButtonText: "OK",
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                // 저장 후 처리
-                                checkUnload = false;
-                                loadInitialData(); // 데이터 새로 고침
-                            }
-                        });
-                    },
-                    error: function(xhr, status, error) {
-                        console.log("저장 시도한 데이터: ", inspectionPlans);
-                        let errorMessage = "저장 중 오류가 발생했습니다.";
-                        if (xhr.status === 403) {
-                            errorMessage = "권한이 없습니다.";
-                        } else if (xhr.status === 400) {
-                            errorMessage = xhr.responseText || "잘못된 요청입니다.";
-                        } else if (xhr.status === 500) {
-                            errorMessage = "저장에 실패했습니다. 관리자에게 문의하세요.";
-                        }
-                        Swal.fire("실패!", errorMessage, "error");
-                        console.error("저장 중 오류 발생:", error);
-                    }
-                });
+                // $.ajax({
+                //     url: "/qsc/inspection-schedule/saveSchedules", // 백엔드 엔드포인트
+                //     type: "POST",
+                //     contentType: "application/json",
+                //     data: JSON.stringify(inspectionPlans),
+                //     success: function(response) {
+                //         Swal.fire({
+                //             title: "완료!",
+                //             text: response.message || "점검 계획이 성공적으로 저장되었습니다.",
+                //             icon: "success",
+                //             confirmButtonText: "OK",
+                //         }).then((result) => {
+                //             if (result.isConfirmed) {
+                //                 // 저장 후 처리
+                //                 checkUnload = false;
+                //                 loadInitialData().then(() => {
+                //                     // 첫 번째 데이터 로드 완료 후 추가 로드
+                //                     loadInitialData(); // 데이터를 다시 한 번 더 새로 고침
+                //                 });
+                //             }
+                //         });
+                //     },
+                //     error: function(xhr, status, error) {
+                //         console.log("저장 시도한 데이터: ", inspectionPlans);
+                //         let errorMessage = "저장 중 오류가 발생했습니다.";
+                //         if (xhr.status === 403) {
+                //             errorMessage = "권한이 없습니다.";
+                //         } else if (xhr.status === 400) {
+                //             errorMessage = xhr.responseText || "잘못된 요청입니다.";
+                //         } else if (xhr.status === 500) {
+                //             errorMessage = "저장에 실패했습니다. 관리자에게 문의하세요.";
+                //         }
+                //         Swal.fire("실패!", errorMessage, "error");
+                //         console.error("저장 중 오류 발생:", error);
+                //     }
+                // });
             }
         });
     }

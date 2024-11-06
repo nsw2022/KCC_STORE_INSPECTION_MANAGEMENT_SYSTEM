@@ -28,4 +28,5 @@ public class InspectionScheduleRequest {
     private String slctDt;// 월에 일자
     private String currentMbrNo;//로그인한사람
     private Integer inspPlanId; // 계획 고유번호
+    private Integer inspSchdId;
 }

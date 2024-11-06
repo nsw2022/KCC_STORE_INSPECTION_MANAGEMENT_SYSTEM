@@ -2,12 +2,10 @@
 //
 //import com.sims.config.common.aop.SVInspectorRolCheck;
 //import com.sims.qsc.inspection_schedule.mapper.InspectionScheduleMapper;
-//import com.sims.qsc.inspection_schedule.vo.InspectionDetailsResponse;
-//import com.sims.qsc.inspection_schedule.vo.InspectionPlan;
-//import com.sims.qsc.inspection_schedule.vo.InspectionSchedule;
-//import com.sims.qsc.inspection_schedule.vo.InspectionScheduleRequest;
+//import com.sims.qsc.inspection_schedule.vo.*;
 //import lombok.RequiredArgsConstructor;
 //import lombok.extern.slf4j.Slf4j;
+//import org.eclipse.tags.shaded.org.apache.bcel.generic.RETURN;
 //import org.springframework.security.core.Authentication;
 //import org.springframework.security.core.context.SecurityContextHolder;
 //import org.springframework.stereotype.Service;
@@ -25,9 +23,10 @@
 //@Service
 //@RequiredArgsConstructor
 //@Slf4j
-//public class InspectionScheduleServiceImpl_back implements InspectionScheduleService {
+//public class InspectionScheduleServiceImpl implements InspectionScheduleService {
 //
 //    private final InspectionScheduleMapper scheduleMapper;
+//
 //
 //    public List<InspectionScheduleRequest> selectFilteredInspectionScheduleList(
 //            String storeNm, String brandNm, String scheduleDate, String chklstNm, String inspector, String frqCd,  String cntCd,  String currentMbrNo) {
@@ -76,13 +75,14 @@
 //
 //        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 //        String currentMemberId = auth.getName();  // 로그인 한 사람
-//
+//        log.info("@@@@@@@@@@@@@");
 //        log.info(inspectionPlans.toString());
+//
 //
 //        // 1. 점검 계획 저장/수정
 //        saveInspectionPlans(inspectionPlans, currentMemberId);
 //
-//        // 2. 점검 일정 생성
+//        // 2. 점검 일정 생성 준비
 //        List<InspectionSchedule> schedulesToSave = new ArrayList<>();
 //        LocalDate today = LocalDate.now();
 //        LocalDate endDate = today.plusMonths(3);
@@ -102,18 +102,42 @@
 //                    continue;
 //                }
 //
-//                // 점검 일정 객체 생성
-//                InspectionSchedule schedule = new InspectionSchedule();
-//                schedule.setInspPlanId(plan.getInspPlanId());
+//                // 점검 일정 상세 조회 (inspPlanId를 사용해야 함) 만약 여기서 null 이라면 update
+//                InspectionSchedule schedule = scheduleMapper.selectDetailSchedule(plan.getInspPlanId());
+//
+//                if (schedule == null) { // 일로빠지면 insert
+//                    schedule = new InspectionSchedule();
+//                    // 새로운 점검 계획 ID 설정
+//                    schedule.setInspPlanId(getLastInspPlanSeq() + 1);
+//                    schedule.setInspSchdId(getLastInspSchdSeq() + 1);
+//                }
+//                // 임시객체 mbr
+//                MemberRequest  mbrRequest = scheduleMapper.selectMbrDetail(currentMemberId);
+//                log.info("mbrRequest : {}", mbrRequest);
+//                // 공통 필드 설정 -> update
 //                schedule.setStoreId(plan.getStoreId());
-//                schedule.setInspPlanDt(date.format(DateTimeFormatter.BASIC_ISO_DATE)); // YYYYMMDD
-//                schedule.setInspSttsCd("IS001"); // '점검 미완료' 상태 코드
-//                schedule.setCreMbrId(plan.getCreMbrId());
-//                schedule.setUpdMbrId(currentMemberId);
-//                schedule.setCreTm(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
-//                schedule.setUpdTm(plan.getUpdTm());
-//                schedule.setInspSchdSttsW("1"); // 활성화 상태
-//                log.info(schedule.toString());
+//                schedule.setInspPlanDt(plan.getInspPlanDt());
+//
+//                log.info("schedule : {}", schedule);
+//                // 새로운 스케줄일 경우 추가 필드 설정
+//                if (schedule.getInspSchdId() == null) {
+//                    schedule.setCreTm(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm")));
+//                    schedule.setCreMbrId(mbrRequest.getMbrId());
+//                    schedule.setInspSchdSttsW("1"); // 새로운 일정의 상태 설정
+//                    schedule.setInspSttsCd("IS001");
+//
+//                }else{
+//                    // 수정사항이있는 경우 필드 설정
+//                    schedule.setCreTm(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmm")));
+//                    schedule.setCreMbrId(mbrRequest.getMbrId());
+//                    schedule.setInspSchdSttsW("1"); // 새로운 일정의 상태 설정
+//                    schedule.setInspSttsCd("IS001");
+//                    schedule.setCreMbrId(mbrRequest.getMbrId());
+//                    schedule.setUpdMbrId(mbrRequest.getMbrId());
+//
+//                }
+//
+//                log.info("Modified schedule: " + schedule);
 //                schedulesToSave.add(schedule);
 //            }
 //        }
@@ -121,7 +145,11 @@
 //        // 3. 점검 일정 저장
 //        if (!schedulesToSave.isEmpty()) {
 //            scheduleMapper.insertInspectionSchedules(schedulesToSave);
+//            log.info(inspectionPlans.toString());
+//            log.info("schdule : {}" , schedulesToSave);
 //            log.info("점검 일정이 {}개 저장되었습니다.", schedulesToSave.size());
+//        }else{
+//            log.info("엥  null이야 진짜?");
 //        }
 //    }
 //
@@ -136,7 +164,7 @@
 //    public void insertInspectionSchedules(List<InspectionSchedule> schedules) {
 //        // 생성 시간 설정
 //        LocalDateTime now = LocalDateTime.now();
-//        String currentTime = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+//        String currentTime = now.format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
 //
 //        for (InspectionSchedule schedule : schedules) {
 //            if (schedule.getCreTm() == null || schedule.getCreTm().isEmpty()) {
@@ -146,21 +174,29 @@
 //                schedule.setUpdTm(currentTime);
 //            }
 //        }
-//
+//        log.info("@@@@@@@@@@@@@@@@@@@");
+//        log.info("schedules : {}" , schedules);
 //        // 점검 일정 저장
 //        scheduleMapper.insertInspectionSchedules(schedules);
 //        log.info("점검 일정이 {}개 저장되었습니다.", schedules.size());
 //    }
 //
-//    /** 점검일정생성 */
 //    @Override
-//    public void insertInspectionPlan(InspectionPlan inspectionPlan) {
-//
+//    public InspectionSchedule selectDetailSchedule(Integer inspPlanId) {
+//        return scheduleMapper.selectDetailSchedule(inspPlanId);
 //    }
-//    /** 점검일정수정 */
-//    @Override
-//    public void updateInspectionPlan(InspectionPlan inspectionPlan) {
 //
+//    @Override
+//    public MemberRequest selectMbrDetail(String creMbrId) { return scheduleMapper.selectMbrDetail(creMbrId); }
+//
+//    @Override
+//    public Integer getLastInspPlanSeq() {
+//        return scheduleMapper.getLastInspPlanSeq();
+//    }
+//
+//    @Override
+//    public Integer getLastInspSchdSeq() {
+//        return scheduleMapper.getLastInspSchdSeq();
 //    }
 //
 //    /**
@@ -176,6 +212,7 @@
 //
 //        for (InspectionPlan plan : inspectionPlans) {
 //            if (plan.getInspPlanId() == null||plan.getCreTm() == null || plan.getCreTm().isEmpty()) {
+//                plan.setInspPlanId(getLastInspPlanSeq() + 1);
 //                plan.setCreTm(currentTime);
 //                plan.setCreMbrId(currentMemberId); // 생성자 설정
 //
@@ -235,7 +272,7 @@
 //                break;
 //
 //            case "NF": // 빈도없음
-//                // 빈도없음인 경우, 필요 시 별도 로직 구현
+//                dates.add(start);
 //                break;
 //
 //            default:

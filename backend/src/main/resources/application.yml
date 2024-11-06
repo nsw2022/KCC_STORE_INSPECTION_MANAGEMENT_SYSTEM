@@ -28,6 +28,7 @@ spring:
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
+    jdbc-type-for-null: 'NULL'
   mapper-locations: classpath:mapper/**/*.xml
   type-aliases-package: com.sims.home.dashboard.vo, com.sims.home.member.vo, com.sims.log.vo, com.sims.master.*.vo
 
