@@ -10,9 +10,10 @@ import lombok.*;
 @ToString
 public class InspectionResultRequest {
     private String storeNm;
-    private String brandCd;
+    private String brandNm;
     private String inspComplTm;
     private String chklstNm;
-    private String inspTypeCd;
+    private String inspTypeNm;
     private String mbrNm;
+    private String mbrNo;
 }

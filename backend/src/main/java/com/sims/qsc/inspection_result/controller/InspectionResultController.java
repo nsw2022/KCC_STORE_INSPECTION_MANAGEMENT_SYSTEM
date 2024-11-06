@@ -3,8 +3,8 @@ package com.sims.qsc.inspection_result.controller;
 import java.util.List;
 
 import com.sims.qsc.inspection_result.service.inspectionResultPopup.InspectionResultPopupService;
-import com.sims.qsc.inspection_result.vo.InspectionResultCategoryDetailResponse;
-import com.sims.qsc.inspection_result.vo.InspectionResultRequest;
+import com.sims.qsc.inspection_result.vo.*;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -14,8 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.sims.qsc.inspection_result.service.InspectionResultService;
-import com.sims.qsc.inspection_result.vo.InspectionResultDetailResponse;
-import com.sims.qsc.inspection_result.vo.InspectionResultResponse;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,12 +48,12 @@ public class InspectionResultController {
      * @return List<InspectionResultResponse>
      */
     @ResponseBody
-    @GetMapping("/inspection/result/list")
-    public ResponseEntity<List<InspectionResultResponse>> selectInspectionResultList() {
+    @PostMapping("/inspection/result/list")
+    public ResponseEntity<List<InspectionResultResponse>> selectInspectionResultList
+								(@RequestBody InspectionResultRequest inspectionResultRequest) {
     	Authentication auth = SecurityContextHolder.getContext().getAuthentication();
   	  	String username = auth.getName();
-  	  	
-  	  	List<InspectionResultResponse> list = inspectionResultService.selectInspectionResultList(username);
+  	  	List<InspectionResultResponse> list = inspectionResultService.selectInspectionResultList(inspectionResultRequest, username);
 
   	  	if(list.isEmpty()) {
   	  		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -65,25 +63,18 @@ public class InspectionResultController {
   	  
     }
 
-	/**
-	 * 검색에 따른 점검 결과 목록
-	 * @param request
-	 * @return 검색에 따라 점검 결과 목록 보여준다.
-	 */
 	@ResponseBody
-	@PostMapping("/inspection/result/list/search")
-	public ResponseEntity<List<InspectionResultResponse>> selectInspectionResultListSearch
-																		(@RequestBody InspectionResultRequest request) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String username = auth.getName();
-		List<InspectionResultResponse> list = inspectionResultService.selectInspectionResultListBySearch(request, username);
-
-		if(list.isEmpty()) {
+	@GetMapping("/inspection/result/options")
+    public ResponseEntity<InspectionResultOptionResponse> selectAllOptions() {
+		InspectionResultOptionResponse response = inspectionResultService.selectInspectionResultOptions();
+		if(response == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		} else {
-			return new ResponseEntity<>(list, HttpStatus.OK);
+			return new ResponseEntity<>(response, HttpStatus.OK);
 		}
 	}
+
+
 
 	/**
 	 * 팝업 페이지

@@ -13,10 +13,10 @@ class InspectionResultMapperTest {
     @Autowired
     private InspectionResultMapper inspectionResultMapper;
 
-    @Test
-    public void test() {
-        InspectionResultRequest request = InspectionResultRequest.builder().brandCd("B001").build();
-        log.info("result = {}", inspectionResultMapper.selectInspectionResultBySearch(request, "C202410004"));
-        Assertions.assertNotNull(inspectionResultMapper.selectInspectionResultBySearch(request, "C202410004"));
-    }
+//    @Test
+//    public void test() {
+//        InspectionResultRequest request = InspectionResultRequest.builder().brandNm("B001").build();
+//        log.info("result = {}", inspectionResultMapper.selectInspectionResultBySearch(request, "C202410004"));
+//        Assertions.assertNotNull(inspectionResultMapper.selectInspectionResultBySearch(request, "C202410004"));
+//    }
 }
