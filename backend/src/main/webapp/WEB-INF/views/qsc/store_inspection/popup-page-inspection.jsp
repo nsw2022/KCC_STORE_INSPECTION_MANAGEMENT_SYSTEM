@@ -74,10 +74,6 @@
     </div>
 
     <!-- 콘텐츠 섹션들을 동적으로 생성할 컨테이너 -->
-    <!-- JavaScript가 이 위치에 콘텐츠를 삽입합니다. -->
-<%--    <div class="inspection-total-score">--%>
-<%--        <p>총 <span>100</span> 점</p>--%>
-<%--    </div>--%>
 
 
 </section>
@@ -90,6 +86,5 @@
 
 
 </body>
-<%--<script src="/resources/js/qsc/store_inspection/store_inspection_popup.js"></script>--%>
 <script src="/resources/js/qsc/store_inspection/popup_inspection.js"></script>
 </html>
