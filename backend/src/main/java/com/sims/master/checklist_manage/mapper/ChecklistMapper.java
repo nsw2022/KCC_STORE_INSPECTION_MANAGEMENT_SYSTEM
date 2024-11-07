@@ -62,6 +62,12 @@ public interface ChecklistMapper {
     public int insertOrUpdateChecklist(List<ChecklistRequest> checklistRequests);
 
     /**
+     * 체크리스트 중복 체크
+     *
+     */
+    public int selectChklstCount(List<String> chklstNm);
+
+    /**
      * 체크리스트 미리보기
      * @param chklstNm 체크리스트 이름
      * @return 체크리스트 미리보기 데이터

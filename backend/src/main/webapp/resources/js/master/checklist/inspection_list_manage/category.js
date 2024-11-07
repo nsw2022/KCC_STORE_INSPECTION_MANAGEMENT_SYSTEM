@@ -74,8 +74,7 @@ $(document).ready(async function() {
                 fetch(`/master/inspection-list-manage/sub-ctg/${chklstId}?ctg-nm=${encodedCtgNm}`)
                     .then(response => response.json())
                     .then(data => {
-                        console.log(data);
-                        const rowData2 = [];
+                        rowData2 = [];
                         for (let i = 0; i < data.length; i++) {
                             rowData2.push(data[i]);
                         }

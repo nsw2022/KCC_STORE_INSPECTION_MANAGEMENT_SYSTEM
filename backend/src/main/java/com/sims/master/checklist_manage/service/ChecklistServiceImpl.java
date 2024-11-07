@@ -31,7 +31,8 @@ public class ChecklistServiceImpl implements ChecklistService{
     @Override
     public List<ChecklistResponse> selectChecklistAll(ChecklistRequest checklistRequest) {
         log.info("called ChecklsitServiceImpl checklistRequest = {}", checklistRequest);
-        log.info("service 결과 = {}", checklistMapper.selectChecklistAll(checklistRequest));
+
+
         return checklistMapper.selectChecklistAll(checklistRequest);
     }
 
@@ -58,20 +59,21 @@ public class ChecklistServiceImpl implements ChecklistService{
                 .build();
     }
 
-
-    /**
-     * @Todo 체크리스트명 중복 체크
-     */
     @Override
     @PRoleCheck
     @Transactional(rollbackFor = Exception.class)
     public int insertOrUpdateChecklist(List<ChecklistRequest> checklistRequests) {
         String mbrNo = SecurityContextHolder.getContext().getAuthentication().getName();
         int requestDataLength = checklistRequests.size();
-
+        List<String> chklstNm = new ArrayList<String>();
         for(int i = 0; i < checklistRequests.size(); i++) {
             checklistRequests.get(i).setMbrNo(mbrNo);
+            chklstNm.add(checklistRequests.get(i).getChklstNm());
             log.info(mbrNo);
+        }
+
+        if (checklistMapper.selectChklstCount(chklstNm) > 0) {
+            throw new CustomException(ErrorCode.DUPLICATE_CHECKLIST_NAME);
         }
 
         int resultDataLength = checklistMapper.insertOrUpdateChecklist(checklistRequests);

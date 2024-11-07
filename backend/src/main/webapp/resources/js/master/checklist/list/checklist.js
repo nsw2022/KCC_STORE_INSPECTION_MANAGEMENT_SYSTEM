@@ -19,16 +19,16 @@ async function getChecklistAll(searchCriteria = {}) {
     const data = await response.json();
     console.log(data);
 
-    if(defaultRowData.length === 0){
-      defaultRowData = data;
-      console.log(defaultRowData)
-    }
     // rowData에 데이터를 할당
     rowData = data.map((item) => {
       firstRowLength++;
-      item.is_master_checklist = item.masterChklstNm === null ? 'N' : 'Y';
       return item;
     });
+
+    if(defaultRowData.length === 0){
+      defaultRowData = rowData;
+      console.log(defaultRowData)
+    }
 
     // gridApi가 존재할 경우 데이터 설정
     if (gridApi) {
@@ -55,13 +55,13 @@ function initializeGrid() {
         cellStyle: { backgroundColor: "#ffffff" },
       },
       { field: "chklstId", headerName: "No", width: 80, minWidth: 50 },
-      { field: "brandNm", headerName: "브랜드", minWidth: 110 },
+      { field: "brandNm", headerName: "브랜드", minWidth: 110, cellStyle: { textAlign: "center"} },
+      { field: "inspTypeNm", headerName: "점검유형", minWidth: 110,cellStyle: { textAlign: "center"} },
       { field: "chklstNm", headerName: "체크리스트명", minWidth: 110 },
       { field: "masterChklstNm", headerName: "마스터 체크리스트", minWidth: 110 },
-      { field: "inspTypeNm", headerName: "점검유형", minWidth: 110 },
-      { field: "creTm", headerName: "등록일", minWidth: 110 },
-      { field: "is_master_checklist", headerName: "마스터 체크리스트 여부", minWidth: 70 },
-      { field: "chklstUseW", headerName: "사용여부", minWidth: 70 },
+      { field: "creTm", headerName: "등록일", minWidth: 110,cellStyle: { textAlign: "center"} },
+      { field: "masterChklstW", headerName: "마스터 체크리스트 여부", minWidth: 70,cellStyle: { textAlign: "center"} },
+      { field: "chklstUseW", headerName: "사용여부", minWidth: 70,cellStyle: { textAlign: "center"} },
       {
         field: "action",
         headerName: "관리",
@@ -187,7 +187,7 @@ function createNewRowData() {
     masterChklstNm: "",
     inspTypeNm: "",
     creTm: formattedDate.substring(0, 10),
-    is_master_checklist: "N",
+    masterChklstW: "N",
     chklstUseW: "N",
   };
 }
@@ -281,6 +281,16 @@ function confirmationDialog() {
         Swal.fire("실패!", "체크리스트를 선택해주세요.", "error");
         return;
       }
+      // 필수 항목이 비어있으면 종료
+      const hasEmptyFields = selectedRows.some((row) => {
+        if (row.brandNm === "" || row.chklstNm === "" || row.inspTypeNm === "") {
+          Swal.fire("실패!", "필수 입력 항목을 입력해주세요.", "error");
+          return true; // 비어 있는 필드가 있을 경우 true를 반환하여 some을 중단하고 함수 종료
+        }
+        return false;
+      });
+      if (hasEmptyFields) return;
+
 
       // 체크리스트를 서버에 저장하는 fetch 요청
       fetch("/master/checklist/save", {
@@ -304,6 +314,8 @@ function confirmationDialog() {
                 Swal.fire("실패!", "권한이 없습니다.", "error");
               } else if (response.status === 500) {
                 Swal.fire("실패!", "저장에 실패했습니다. 관리자에게 문의하세요.", "error");
+              } else if(response.status === 400){
+                Swal.fire("실패!", "중복된 체크리스트명을 사용할 수 없습니다.", "error");
               }
               return Promise.reject();
             }

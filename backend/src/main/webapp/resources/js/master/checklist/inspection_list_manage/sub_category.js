@@ -45,8 +45,7 @@ const gridOptions2 = {
         fetch(`/master/inspection-list-manage/chklst-evit?ctg-id=${ctgId}&ctg-nm=${encodedCtgNm}`)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
-                const rowData3 = [];
+                rowData3 = [];
                 for (let i = 0; i < data.length; i++) {
                     rowData3.push(data[i]);
                 }
@@ -229,8 +228,8 @@ $('.sub-ctg-stnd-score').keyup(function(){
         const selectedEvitRows = gridApi.getSelectedRows();
         const ctgScore = selectedEvitRows.length > 0 && selectedEvitRows[0].stndScore !== undefined ? selectedEvitRows[0].stndScore : 0;
 
-        const totalScore = gridApi2.getGridOption("rowData").reduce((sum, row) => sum + (parseInt(row.stndScore, 10) || 0), 0);
-
+        const totalScore = rowData2.reduce((sum, row) => sum + (parseInt(row.stndScore, 10) || 0), 0);
+        console.log(totalScore);
         if (totalScore > ctgScore) {
             Swal.fire("실패!", `총 기준점수는 ${ctgScore}를 초과할 수 없습니다..`, "error");
             $(this).val(''); // 입력값 초기화
@@ -278,7 +277,7 @@ function subCtgSaveOrUpdate() {
             const selectedEvitRows = gridApi.getSelectedRows();
             const ctgScore = selectedEvitRows.length > 0 && selectedEvitRows[0].stndScore !== undefined ? selectedEvitRows[0].stndScore : 0;
 
-            const totalScore = gridApi2.getGridOption("rowData").reduce((sum, row) => sum + (parseInt(row.stndScore, 10) || 0), 0);
+            const totalScore = rowData2.reduce((sum, row) => sum + (parseInt(row.stndScore, 10) || 0), 0);
 
             if (totalScore != ctgScore) {
                 Swal.fire("실패!", `총 기준점수는 ${ctgScore}점과 같이야 합니다.`, "error");

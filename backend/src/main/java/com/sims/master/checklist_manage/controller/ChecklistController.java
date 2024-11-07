@@ -59,7 +59,6 @@ public class ChecklistController {
     /**
      * 체크리스트 옵션 목록 조회
      * @return 체크리스트 옵션 리스트(브랜드 이름 리스트, 점검유형 이름 리스트, 체크리스트 이름 리스트)
-     * @Todo status 조건 추가해야 함.
      */
     @GetMapping("/checklist/options")
     @ResponseBody

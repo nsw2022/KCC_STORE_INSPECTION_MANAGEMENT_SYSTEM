@@ -74,6 +74,9 @@ $('.masterChklstSearchBtn .search-btn').click(function(e) {
     });
 });
 
+/**
+ * @Todo 체크리스트 추가 시 검색모달에 나타나는 현상 수정해야 함
+ */
 // 검색 버튼 클릭 시 실행
 $('.chklst-search-btn').click(function() {
     // 검색 텍스트를 가져옴

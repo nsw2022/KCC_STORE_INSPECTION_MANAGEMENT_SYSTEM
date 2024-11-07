@@ -111,6 +111,7 @@ function createNewChoiceListRowData() {
 // 행 추가 함수
 function onAddChoiceListRow() {
     var newItem4 = createNewChoiceListRowData();
+    rowData4.push(newItem4);
     gridApi4.applyTransaction({ add: [newItem4] });
 }
 
@@ -304,7 +305,7 @@ $('.chclst-score-input').keyup(function(){
         const selectedEvitRows = gridApi3.getSelectedRows();
         const EvitScore = selectedEvitRows.length > 0 && selectedEvitRows[0].score !== undefined ? selectedEvitRows[0].score : 0;
 
-        const totalScore = gridApi4.getGridOption("rowData").reduce((sum, row) => sum + (parseInt(row.score, 10) || 0), 0);
+        const totalScore = rowData4.reduce((sum, row) => sum + (parseInt(row.score, 10) || 0), 0);
 
         if (totalScore > EvitScore) {
             Swal.fire("실패!", `총 기준점수는 ${EvitScore}를 초과할 수 없습니다.`, "error");
@@ -333,7 +334,7 @@ function onInsertOrUpdateChclst() {
             const selectedEvitRows = gridApi3.getSelectedRows();
             const EvitScore = selectedEvitRows.length > 0 && selectedEvitRows[0].score !== undefined ? selectedEvitRows[0].score : 0;
 
-            const totalScore = gridApi4.getGridOption("rowData").reduce((sum, row) => sum + (parseInt(row.score, 10) || 0), 0);
+            const totalScore = rowData4.reduce((sum, row) => sum + (parseInt(row.score, 10) || 0), 0);
             console.log(EvitScore, totalScore);
             if (totalScore != EvitScore) {
                 Swal.fire("실패!", `총 기준점수는 ${EvitScore}점과 같아야 합니다.`, "error");

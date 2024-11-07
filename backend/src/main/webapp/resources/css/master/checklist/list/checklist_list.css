@@ -635,3 +635,6 @@ body {
 .top-drop-down button i {
   transition: transform 0.3s ease-in-out;
 }
+.ag-header-cell-label {
+  justify-content: center;
+}
