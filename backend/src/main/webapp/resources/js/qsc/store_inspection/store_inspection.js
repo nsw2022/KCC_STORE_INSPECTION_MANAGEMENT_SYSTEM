@@ -52,7 +52,7 @@ function transformData(data) {
         const inspSttsCd = item.inspSttsCd;
         const chklstId = item.chklstId;
         const inspResultId = item.inspResultId;
-        const inspTypeCd = item.inspTypeCd || item.INSP_TYPE_CD; // camelCase로 추가
+        const inspTypeCd = item.inspTypeCd || item.INSP_TYPE_CD;
 
         // CTG_NM 추출 (chklstNm의 첫 네 글자)
         const CTG_NM = chklstNmFull.slice(0, 4); // 예: "위생점검체크리스트" -> "위생점검"
@@ -67,7 +67,6 @@ function transformData(data) {
         let inspector = transformedData.find(ins => ins.INSP_MBR_ID === mbrId);
 
         if (!inspector) {
-            // 새로운 inspector 추가
             inspector = {
                 INSP_MBR_ID: mbrId,
                 INSP_MBR_NAME: mbrNm,
@@ -82,7 +81,6 @@ function transformData(data) {
         let category = inspector.INSP_TYPE.find(cat => cat.CTG_NM === CTG_NM);
 
         if (!category) {
-            // 새로운 카테고리 추가
             category = {
                 CTG_NM: CTG_NM,
                 SUB_CTH_NM: []
@@ -91,15 +89,16 @@ function transformData(data) {
             console.log(`Added new category: ${CTG_NM} to inspector: ${mbrNm}`);
         }
 
-        // 점검 항목 추가
+        // 점검 항목
         category.SUB_CTH_NM.push({
             STORE_NM: storeNm,
             CHKLST_NM: CHKLST_NM,
+            FULL_CHKLST_NM: chklstNmFull,
             INSP_PLAN_DT: inspPlanDt,
             INSP_STTS_CD: inspSttsCd,
             CHKLST_ID: chklstId,
             INSP_RESULT_ID: inspResultId,
-            inspTypeCd: inspTypeCd // camelCase로 추가
+            inspTypeCd: inspTypeCd
         });
         console.log(`Added checklist: ${CHKLST_NM} on ${inspPlanDt} with status ${inspSttsCd}`);
     });
@@ -107,9 +106,6 @@ function transformData(data) {
     console.log('Transformed Data:', transformedData);
     return transformedData;
 }
-
-
-
 
 
 
@@ -451,6 +447,15 @@ function generateScheduleTable(date) {
     const tableBody = document.getElementById('schedule-table-body');
     tableBody.innerHTML = '';
 
+    // Tooltip div 생성 (한 번만 생성)
+    let tooltip = document.getElementById('tooltip-div');
+    if (!tooltip) {
+        tooltip = document.createElement('div');
+        tooltip.id = 'tooltip-div';
+        tooltip.classList.add('tooltip-div'); // CSS에서 스타일링할 클래스 추가
+        document.body.appendChild(tooltip);
+    }
+
     // 선택한 날짜의 주 (일요일 시작)
     const weekStartDate = new Date(date);
     weekStartDate.setDate(date.getDate() - date.getDay()); // 일요일로 설정
@@ -484,13 +489,14 @@ function generateScheduleTable(date) {
             // 선택된 점검자에 따라 필터링 ('all'인 경우 모두 포함)
             if (selectedInspector === 'all' || selectedInspector == inspector.INSP_MBR_ID) {
                 inspector.INSP_TYPE.forEach(category => {
-                    // 수정된 부분: checklistSelect 값과 INSP_TYPE_CD에 따른 필터링
-                    if (selectedChecklist === 'all' || INSPECTION_TYPE_MAP[category.SUB_CTH_NM.find(item => item.inspTypeCd).inspTypeCd] === selectedChecklist) {
+                    // checklistSelect 값과 INSP_TYPE_CD에 따른 필터링
+                    if (selectedChecklist === 'all' || INSPECTION_TYPE_MAP[category.CTG_NM] === selectedChecklist) {
                         category.SUB_CTH_NM.forEach(item => {
                             if (item.INSP_PLAN_DT === dateStr) {
                                 allItems.push({
                                     categoryName: INSPECTION_TYPE_MAP[item.inspTypeCd] || '알 수 없는 점검 유형',
-                                    itemName: item.CHKLST_NM,
+                                    itemName: item.CHKLST_NM, // 전체 체크리스트 이름 사용
+                                    fullChklstNm: item.FULL_CHKLST_NM, // 전체 체크리스트 이름 추가
                                     planDate: item.INSP_PLAN_DT,
                                     statusCode: item.INSP_STTS_CD, // 상태 코드 추가
                                     chklstId: item.CHKLST_ID, // chklstId 추가
@@ -551,7 +557,7 @@ function generateScheduleTable(date) {
             const button = document.createElement('button');
             button.classList.add('inspection-btn');
 
-            // 수정된 부분: INSP_TYPE_CD에 따른 점검 유형 이름과 가맹점명 결합
+            // INSP_TYPE_CD에 따른 점검 유형 이름과 가맹점명 결합
             const inspTypeName = INSPECTION_TYPE_MAP[item.inspTypeCd] || '알 수 없는 점검 유형';
             button.textContent = `${item.storeNm} ${inspTypeName}`;
 
@@ -585,17 +591,34 @@ function generateScheduleTable(date) {
                 }
             }
 
+            // Tooltip 표시를 위한 이벤트 리스너 추가
+            button.addEventListener('mouseenter', function(e) {
+                tooltip.textContent = `체크리스트명: ${item.fullChklstNm}`; // FULL_CHKLST_NM 필드 사용
+                tooltip.style.display = 'block';
+            });
+
+            button.addEventListener('mousemove', function(e) {
+                // Tooltip을 마우스 커서 옆에 위치시키기
+                tooltip.style.left = (e.pageX + 10) + 'px';
+                tooltip.style.top = (e.pageY + 10) + 'px';
+            });
+
+            button.addEventListener('mouseleave', function(e) {
+                tooltip.style.display = 'none';
+            });
+
             td.appendChild(button);
         });
 
         // 버튼이 3개 이상일 경우 '+n 더보기' 버튼은 이미 추가됨
-        // (추가적인 처리가 필요하지 않습니다)
 
         weekRow.appendChild(td);
     }
 
     tableBody.appendChild(weekRow);
 }
+
+
 
 
 
@@ -663,12 +686,21 @@ function openModal(items) {
     // 모달 내용 초기화
     modalContent.innerHTML = '<h2>점검 목록</h2>';
 
+    // Tooltip div 재사용
+    let tooltip = document.getElementById('tooltip-div');
+    if (!tooltip) {
+        tooltip = document.createElement('div');
+        tooltip.id = 'tooltip-div';
+        tooltip.classList.add('tooltip-div'); // CSS에서 스타일링할 클래스 추가
+        document.body.appendChild(tooltip);
+    }
+
     // 아이템들을 모달에 추가
     items.forEach(function(item) {
         const button = document.createElement('button');
         button.classList.add('inspection-btn');
 
-        // 수정된 부분: INSP_TYPE_CD에 따른 점검 유형 이름과 가맹점명 결합
+        // INSP_TYPE_CD에 따른 점검 유형 이름과 가맹점명 결합
         const inspTypeName = INSPECTION_TYPE_MAP[item.inspTypeCd] || '알 수 없는 점검 유형';
         button.textContent = `${item.storeNm} ${inspTypeName}`;
 
@@ -688,8 +720,8 @@ function openModal(items) {
         // 아이템의 날짜과 상태를 확인하여 스타일 적용
         const itemDate = new Date(item.planDate.replace(/\//g, '-'));
         const todayDate = new Date();
-        todayDate.setHours(0,0,0,0);
-        itemDate.setHours(0,0,0,0);
+        todayDate.setHours(0,0,0,0); // 오늘 날짜의 시간을 0시로 설정
+        itemDate.setHours(0,0,0,0); // 아이템 날짜의 시간을 0시로 설정
 
         if (itemDate < todayDate) {
             if (item.statusCode === 'IS001') {
@@ -701,6 +733,22 @@ function openModal(items) {
                 button.style.backgroundColor = '#eeeeee';
             }
         }
+
+        // Tooltip 표시를 위한 이벤트 리스너 추가
+        button.addEventListener('mouseenter', function(e) {
+            tooltip.textContent = `체크리스트명: ${item.fullChklstNm}`; // FULL_CHKLST_NM 필드 사용
+            tooltip.style.display = 'block';
+        });
+
+        button.addEventListener('mousemove', function(e) {
+            // Tooltip을 마우스 커서 옆에 위치시키기
+            tooltip.style.left = (e.pageX + 10) + 'px';
+            tooltip.style.top = (e.pageY + 10) + 'px';
+        });
+
+        button.addEventListener('mouseleave', function(e) {
+            tooltip.style.display = 'none';
+        });
 
         modalContent.appendChild(button);
     });

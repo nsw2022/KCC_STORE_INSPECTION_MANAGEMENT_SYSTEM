@@ -3,8 +3,10 @@
 }
 body{
     background-color: #f4f7ff !important;
-    padding: 40px;
+    padding-right: 0 !important;
+    padding: 40px !important;
     box-sizing: border-box;
+
 }
 /* 프로그레스 바 컨테이너 */
 .progress-container {
@@ -689,7 +691,7 @@ input[type="radio"] {
 /* 반응형 스타일 */
 @media screen and (max-width: 1000px) {
     body{
-        padding: 40px 20px;
+        padding: 40px 20px !important;
     }
     .info-title{
         padding: 29px;
@@ -703,6 +705,11 @@ input[type="radio"] {
     }
 }
 @media screen and (max-width: 950px) {
+    .inspection-section{
+        padding: 15px;
+    }
+
+
     .input-group-cover{
         width: 100%;
         display: block;
@@ -873,6 +880,14 @@ input[type="radio"] {
         box-sizing: border-box;
     }
 
+    .go-inspection{
+        width: calc(50% - 15px);
+        margin-left: 0;
+    }
+
+    .go-inspection:first-child{
+        margin-left: 15px;
+    }
 }
 
 @media screen and (max-width: 470px) {
