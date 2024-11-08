@@ -22,6 +22,9 @@ $(function () {
     })
 
 
+
+
+
     let inspectionData = [];
     /**
      * 점검 결과 ID를 통해 점검 결과를 가져오는 AJAX
@@ -29,6 +32,7 @@ $(function () {
     $.ajax({
         url: `/qsc/popup/inspection/result/category/${inspResultId}`,
         method: 'GET',
+        async: false,
         success: function (data) {
             inspectionData = data;
 

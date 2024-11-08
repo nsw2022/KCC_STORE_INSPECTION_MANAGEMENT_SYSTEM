@@ -79,33 +79,6 @@ public class StoreServiceImpl implements StoreService {
         }
     }
 
-//    @Override
-//    public StoreOptionsResponse selectAllStoreOptionsByFilter(StoreOptionsRequest storeOptionsRequest) {
-//        List<String> brandNms = storeMapper.selectAllBrandNmsByFilter(storeOptionsRequest);
-//        List<String> storeNms = storeMapper.selectAllStoreNmsByFilter(storeOptionsRequest);
-//        List<InspectorNmsResponse> inspectorNms = storeMapper.selectAllInspectorNmsByFilter(storeOptionsRequest);
-//        InspectorInfoRequest inspectorInfoRequest = new InspectorInfoRequest();
-//        List<SvNmsResponse> svNms = storeMapper.selectAllSvNms(inspectorInfoRequest);
-//        log.info("brandNms:{}", brandNms);
-//        log.info("storeNms:{}", storeNms);
-//        log.info("inspectorNms:{}", inspectorNms);
-//        log.info("svNms:{}", svNms);
-//        StoreOptionsResponse response = StoreOptionsResponse.builder().storeNmList(storeNms).brandNmList(brandNms)
-//                .inspectorNmList(inspectorNms).svNmList(svNms).build();
-//        log.info("responseService:{}", response);
-//        if(response.getStoreNmList().isEmpty()) {
-//            throw new CustomException(ErrorCode.STORE_NOT_FOUND);
-//        } else if(response.getBrandNmList().isEmpty()) {
-//            throw new CustomException(ErrorCode.BRAND_NOT_FOUND);
-//        } else if(response.getInspectorNmList().isEmpty()) {
-//            throw new CustomException(ErrorCode.INSP_NOT_FOUND);
-//        } else if(response.getSvNmList().isEmpty()) {
-//            throw new CustomException(ErrorCode.SV_NOT_FOUND);
-//        } else {
-//            return response;
-//        }
-//    }
-
     @Override
     public List<SvNmsResponse> selectAllSvNms(InspectorInfoRequest inspectorInfoRequest) {
         List<SvNmsResponse> list = storeMapper.selectAllSvNms(inspectorInfoRequest);

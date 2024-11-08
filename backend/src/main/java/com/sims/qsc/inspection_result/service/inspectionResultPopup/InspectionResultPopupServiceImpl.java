@@ -3,14 +3,19 @@ package com.sims.qsc.inspection_result.service.inspectionResultPopup;
 import com.sims.qsc.inspection_result.mapper.InspectionResultPopupMapper;
 import com.sims.qsc.inspection_result.vo.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class InspectionResultPopupServiceImpl implements InspectionResultPopupService {
     private final InspectionResultPopupMapper inspectionResultPopupMapper;
 
@@ -21,44 +26,55 @@ public class InspectionResultPopupServiceImpl implements InspectionResultPopupSe
         return inspResult;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public List<InspectionResultCategoryDetailResponse> selectInspectionResultCategoryDetailByInspResultId(int inspResultId) {
+        long startTime1 = System.currentTimeMillis();
         /**
-         * list = 대분류명 / 대분류 점수 / 받은 점수 / 적합 문항 수 / 부적합 문항 수 / 총 문항 수로 이루어짐
+         * list = 대분류명 / 대분류 점수 / 받은 점수 / 적합 문항 수 / 부적합 문항 수 / 총 문항 수로 이루어짐 9
          */
         List<InspectionResultCategoryDetailResponse> list =
                 inspectionResultPopupMapper.selectInspectionResultCategoryContentByInspResultId(inspResultId);
-
+        long endTime1 = System.currentTimeMillis();
+        long duration1 = endTime1 - startTime1;
+        log.info("duration1 / selectInspectionResultCategoryContentByInspResultId = {}", duration1);
         /**
          * uniqueCategoryNm = 대분류명을 list에서 가져와 중복되는 것은 제외하여 중복되지 않은 String을 가져온다
          */
-        List<String> uniqueCategoryNm = list.stream().map(InspectionResultCategoryDetailResponse::getCategoryNm)
+        List<Integer> uniqueCategoryNm = list.stream().map(InspectionResultCategoryDetailResponse::getCategoryId)
                 .distinct().collect(Collectors.toList());
-        for (String categoryNm : uniqueCategoryNm) {
+        for (int categoryNm : uniqueCategoryNm) {
 
             /**
              * subList = 중복되지 않은 대분류명과 점검결과 ID를 통해서 중분류 / 각 항목 / 각각의 점수 등을 가져온다.
              */
+            long startTime2 = System.currentTimeMillis();
             List<InspectionResultSubCategoryDetailResponse> subList =
                     inspectionResultPopupMapper.selectInspectionResultSubCategoryContentByInspResultId(inspResultId, categoryNm);
-
+            long endTime2 = System.currentTimeMillis();
+            long duration2 = endTime2 - startTime2;
+            log.info("duration2 / selectInspectionResultSubCategoryContentByInspResultId = {}", duration2);
             /**
              * subList들을 list 안에 넣어준다.
              */
-            for(InspectionResultCategoryDetailResponse response : list) {
-                if(response.getCategoryNm().equals(categoryNm)) {
+            for (InspectionResultCategoryDetailResponse response : list) {
+                if (response.getCategoryId() == categoryNm) {
                     response.setSubcategories(subList);
                 }
             }
 
-            List<String> uniqueSubCategoryNm = subList.stream().map(InspectionResultSubCategoryDetailResponse::getSubCtgNm)
+            List<Integer> uniqueSubCategoryNm = subList.stream().map(InspectionResultSubCategoryDetailResponse::getCtgId)
                     .distinct().collect(Collectors.toList());
 
-            for(String subCategoryNm : uniqueSubCategoryNm) {
+            for (int subCategoryNm : uniqueSubCategoryNm) {
+                long startTime3 = System.currentTimeMillis();
                 List<InspectionResultSubCategoriesQuestionsResponse> evalList =
                         inspectionResultPopupMapper.selectInspResultEvaluationByCategoryNms(inspResultId, categoryNm, subCategoryNm);
-                for(InspectionResultSubCategoryDetailResponse subResponse : subList) {
-                    if(subResponse.getSubCtgNm().equals(subCategoryNm)) {
+                long endTime3 = System.currentTimeMillis();
+                long duration3 = endTime3 - startTime3;
+                log.info("duration3 / selectInspResultEvaluationByCategoryNms = {}", duration3);
+                for (InspectionResultSubCategoryDetailResponse subResponse : subList) {
+                    if (subResponse.getCtgId() == subCategoryNm) {
                         subResponse.setQuestions(evalList);
                     }
                 }
@@ -69,14 +85,17 @@ public class InspectionResultPopupServiceImpl implements InspectionResultPopupSe
              * questions 리스트 안에 evit_answ_img 가 들어간다.
              *
              */
-            for(InspectionResultSubCategoryDetailResponse response : subList) {
-                for(InspectionResultSubCategoriesQuestionsResponse questions : response.getQuestions()) {
+            for (InspectionResultSubCategoryDetailResponse response : subList) {
+                for (InspectionResultSubCategoriesQuestionsResponse questions : response.getQuestions()) {
                     List<InspectionResultAnswImgResponse> matchedImages = new ArrayList<>();
-
+                    long startTime4 = System.currentTimeMillis();
                     List<InspectionResultAnswImgResponse> images = inspectionResultPopupMapper.selectAnswImgByInspResultId(inspResultId);
-                    for(InspectionResultAnswImgResponse answImg : images) {
-                        if(questions.getEvitId() == answImg.getEvitId()) {
-                           matchedImages.add(answImg);
+                    long endTime4 = System.currentTimeMillis();
+                    long duration4 = endTime4 - startTime4;
+                    log.info("duration4 = {}", duration4);
+                    for (InspectionResultAnswImgResponse answImg : images) {
+                        if (questions.getEvitId() == answImg.getEvitId()) {
+                            matchedImages.add(answImg);
                         }
                     }
                     questions.setImages(matchedImages);
@@ -84,6 +103,13 @@ public class InspectionResultPopupServiceImpl implements InspectionResultPopupSe
             }
 
         }
+
+        long endTime = System.currentTimeMillis();
+        long duration = endTime - startTime1;
+        log.info("duration = {}", duration);
+
         return list;
     }
+
 }
+

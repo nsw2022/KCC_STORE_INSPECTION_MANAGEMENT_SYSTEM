@@ -102,13 +102,13 @@ function initializeGrid() {
         headerName: "",
         checkboxSelection: true,
         headerCheckboxSelection: true,
-        minWidth: 45,
+        minWidth: 40,
         width: 70,
         resizable: true,
         cellStyle: { backgroundColor: "#ffffff" },
       },
       { field: "no", headerName: "No", width: 80, minWidth: 60, cellStyle: {textAlign: 'center'}},
-      { field: "brandNm", headerName: "브랜드", width: 180, minWidth: 120, cellStyle: {textAlign: 'center'} },
+      { field: "brandNm", headerName: "브랜드", width: 180, minWidth: 95, cellStyle: {textAlign: 'center'} },
       { field: `storeNm`, headerName: "가맹점", width: 150, minWidth: 130 },
       {
         field: "brn",
@@ -149,7 +149,7 @@ function initializeGrid() {
         headerName: "자세히보기",
         field: "more",
         width: 140,
-        minWidth: 110,
+        minWidth: 90,
         cellRenderer: function (params) {
           // jQuery를 사용하여 컨테이너 div 생성
           const $container = $("<div>", {
@@ -676,7 +676,6 @@ $(function () {
     $('.modal-body .wrapper span').eq(1).text("점검자 검색");
     $('.modal-body .wrapper span').eq(2).text("SV 검색");
     $('.modal-body').find('input[type="radio"]').eq(0).prop('checked', true);
-
     $('#save').text('등록');
   })
 
@@ -691,9 +690,12 @@ $(function () {
     }
   });
 
+  /** map CSS */
+  $()
+  console.log($('.map_info'))
 
 
-  })
+})
 
   setupSearchInput();
 
@@ -752,6 +754,8 @@ $(function () {
   });
 
   //  중간 테이블 영역 끝
+
+
 
 
 

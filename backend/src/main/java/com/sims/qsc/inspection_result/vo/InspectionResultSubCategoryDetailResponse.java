@@ -10,6 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class InspectionResultSubCategoryDetailResponse {
+    private int ctgId;
     private int seq;
     private String subCtgNm;
     private List<InspectionResultSubCategoriesQuestionsResponse> questions;

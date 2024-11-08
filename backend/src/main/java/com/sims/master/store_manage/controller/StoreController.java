@@ -69,19 +69,12 @@ public class StoreController{
         }
     }
 
-//    @ResponseBody
-//    @PostMapping("/store/options")
-//    public ResponseEntity<StoreOptionsResponse> selectStoreOptions(@RequestBody StoreOptionsRequest storeOptionsRequest) {
-//        StoreOptionsResponse response = storeService.selectAllStoreOptionsByFilter(storeOptionsRequest);
-//        log.info("response ={}", response);
-//        if(response==null){
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        } else {
-//            return new ResponseEntity<>(response, HttpStatus.OK);
-//        }
-//    }
 
-
+    /**
+     * 가맹점 모달에서 점검자를 입력받을 때 해당 점검자와 연관된 SV 보여줌
+     * @param inspectorInfoRequest
+     * @return SV사원번호, SV이름 List로 반환
+     */
     @ResponseBody
     @PostMapping("/store/superVisors")
     public ResponseEntity<List<SvNmsResponse>> selectAllSuperVisors(@RequestBody InspectorInfoRequest inspectorInfoRequest) {
@@ -145,6 +138,11 @@ public class StoreController{
         }
     }
 
+    /**
+     * 가맹점 정보 수정
+     * @param storeRequest
+     * @return 가맹점 정보 수정
+     */
     @ResponseBody
     @PatchMapping("/store/update")
     public ResponseEntity<?> updateStore(@RequestBody StoreRequest storeRequest) {

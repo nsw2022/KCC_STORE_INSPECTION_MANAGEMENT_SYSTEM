@@ -603,6 +603,23 @@ input[type="file"]:focus-visible ~ .file_btn,
     padding: 10px 20px !important;
   }
 
+  .modal-body .container-fluid {
+    padding: 0 !important;
+  }
+
+  .modal-body .form-label {
+    font : 500 14px "Noto Sans KR";
+  }
+
+  .modal-body .form-control,
+  .modal-body .form-control::placeholder{
+    font : 400 14px "Noto Sans KR";
+  }
+
+  .file_cus label .file_display {
+    margin-bottom: .5rem;
+  }
+
   /* header */
   .ag-header-row {
     font: 600 14px "Noto Sans KR";
@@ -648,9 +665,9 @@ input[type="file"]:focus-visible ~ .file_btn,
 
   .top-box .btn {
     font-size: 13px;
-    width: 15vw;
+    width: 53px;
     margin-right: 0.1rem !important;
-    border-radius: 15px;
+    border-radius: 30px;
   }
 
   .modal-search-box input {
@@ -706,6 +723,33 @@ input[type="file"]:focus-visible ~ .file_btn,
     height: 2rem;
     font: 350 10px "Noto Sans KR";
   }
+
+  /** map css */
+
+  #map {
+    display: flex;
+  }
+
+  .map-content {
+    left: 7px !important;
+  }
+  .map_info h4 {
+    font: 500 15px "Noto Sans KR";
+  }
+
+  .map_info {
+    font: 400 13px "Noto Sans KR";
+  }
+
+  .map-box {
+    width: 265px !important;
+    height: auto !important;
+  }
+
+  .map-arrow {
+    left : 97px !important;
+  }
+
 }
 @media (max-width: 991px) {
   .top-content .first-input-box {
@@ -733,3 +777,5 @@ input[type="file"]:focus-visible ~ .file_btn,
 /*  outline:none !important;*/
 /*  box-shadow:none !important;*/
 /*}*/
+
+

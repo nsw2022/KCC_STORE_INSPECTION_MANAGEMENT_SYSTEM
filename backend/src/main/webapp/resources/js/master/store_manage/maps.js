@@ -138,20 +138,16 @@ document.addEventListener("DOMContentLoaded", function () {
         longitudeText =  item.y
 
         if (item.roadAddress) {
-          htmlAddresses.push("[도로명 주소] " + item.roadAddress);
+          htmlAddresses.push("[도로명 주소]" + "<br>" + item.roadAddress);
         }
 
         if (item.jibunAddress) {
-          htmlAddresses.push("[지번 주소] " + item.jibunAddress);
-        }
-
-        if (item.englishAddress) {
-          htmlAddresses.push("[영문명 주소] " + item.englishAddress);
+          htmlAddresses.push("[지번 주소]" + "<br>" + item.jibunAddress);
         }
 
         infoWindow.setContent(
           [
-            '<div style="padding:10px;min-width:200px;line-height:150%;">',
+            '<div class="map_info" style="padding:10px;min-width:200px;line-height:150%;">',
             '<h4 style="margin-top:5px;">검색 주소 : ' +
               address +
               "</h4><br />",
@@ -160,9 +156,13 @@ document.addEventListener("DOMContentLoaded", function () {
           ].join("\n"),
         );
 
-        map.setCenter(point);
         map.panBy(0, 100); // 필요에 따라 조정
+        map.setCenter(point);
         infoWindow.open(map, point);
+        document.querySelector('.map_info').parentElement.parentElement.className = 'map-content';
+        document.querySelector('.map_info').parentElement.className = 'map-box';
+        document.querySelector('.map_info').parentElement.nextElementSibling.className = 'map-arrow';
+        document.querySelector('.map_info').parentElement.nextElementSibling.nextElementSibling.className = 'map-arrow';
       },
     );
   };

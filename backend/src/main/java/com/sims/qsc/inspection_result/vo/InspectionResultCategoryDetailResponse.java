@@ -10,6 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class InspectionResultCategoryDetailResponse {
+    private int categoryId;
     private String categoryNm;
     private int categoryStndScore;
     private int totalScore;

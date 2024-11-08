@@ -931,4 +931,21 @@ body{
         margin-bottom: 15px;
     }
 
+    .inspection-section {
+        padding: 15px;
+    }
+
+    .inspection-table td {
+        font : 700 15px "Noto Sans KR";
+    }
+
+    .store-subtitle, .inspection-date, .inspector-name{
+        font : 400 13px "Noto Sans KR" !important;
+    }
+
+    .inspection-tabs button{
+        width: 53px;
+        font: 400 13px "Noto Sans KR";
+    }
+
 }
