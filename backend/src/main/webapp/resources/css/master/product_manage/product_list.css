@@ -386,7 +386,7 @@ body {
 /** 최대 width가 576일 때 */
 @media screen and (max-width: 576px) {
   .top-box {
-    padding : 30px 15px 15px 20px;
+    padding : 20px 15px 9px 20px;
   }
 
   .button-box >.d-flex >.m-3 {
@@ -663,4 +663,20 @@ label[for=expiration]::after, label[for=price]::after,
   }
 }
 
+.top-content .button-box {
+  margin-bottom: -4px !important;
+}
+
+.top-content .button-box .d-flex .m-3 {
+  font: 700 16px "Noto Sans KR" !important;
+}
+
+.bottom-box-content .row .col-12 {
+  margin-top: 10px;
+}
+
+.top-drop-down {
+  margin-bottom: -2px;
+  margin-top : 0px;
+}
 /** 최대 Width 576일 때 모달 CSS 끝 */

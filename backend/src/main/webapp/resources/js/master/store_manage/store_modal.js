@@ -99,9 +99,12 @@ $(function () {
     console.log($('.modal-body label:after').eq(6).css('visibility','hidden'));
     // 점검자 입력할 때 자동으로 SV 가 입력되게 하는 이벤트
     $('.modal-body').on('click', $('.hide-list').eq(1).find('li'), function () {
-        let inspMbrNm = $('li.selected').text().split('(')[0];
-        let inspMbrNo = $('li.selected').text().split('(')[1].slice(0,10);
-
+        let inspMbrNm;
+        let inspMbrNo;
+        if($('li.selected').text() !== null || $('li.selected').text() != undefined || $('li.selected').text() !==''){
+            inspMbrNm = $('li.selected').text().split('(')[0];
+            inspMbrNo = $('li.selected').text().split('(')[1].slice(0,10);
+        }
         const inspectorInfoRequest = {
             inspMbrNmm : inspMbrNm,
             inspMbrNo : inspMbrNo

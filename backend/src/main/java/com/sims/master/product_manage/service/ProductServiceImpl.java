@@ -68,6 +68,7 @@ public class ProductServiceImpl implements ProductService{
 
     @ARoleCheck
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int saveProduct(ProductRequest productRequest) {
         if(validateFieldsNull(productRequest)) {
             throw new CustomException(ErrorCode.INVALID_PARAMETER);
@@ -82,6 +83,7 @@ public class ProductServiceImpl implements ProductService{
 
     @ARoleCheck
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int updateProduct(ProductRequest productRequest) {
         int result = productMapper.updateProduct(productRequest);
         if(result < 1) {

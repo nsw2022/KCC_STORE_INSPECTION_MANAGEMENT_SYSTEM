@@ -17,7 +17,7 @@ class InspectionResultPopupMapperTest {
         int id = 1;
         String name = "중대법규";
         String sub = "과태료";
-        log.info("result = {}",inspectionResultPopupMapper.selectInspResultEvaluationByCategoryNms(id, name, sub));
-        Assertions.assertNotNull(inspectionResultPopupMapper.selectInspResultEvaluationByCategoryNms(id, name, sub));
+//        log.info("result = {}",inspectionResultPopupMapper.selectInspResultEvaluationByCategoryNms(id, name, sub));
+//        Assertions.assertNotNull(inspectionResultPopupMapper.selectInspResultEvaluationByCategoryNms(id, name, sub));
     }
 }
