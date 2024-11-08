@@ -69,9 +69,8 @@ public interface  InspectionScheduleService {
 
 
     /** 점검 일정 상세 조회 (INSP_PLAN_ID와 inspSchdId 기준) */
-    InspectionSchedule selectInspectionSchedulesByPlanIdAndDate(
-            @Param("inspPlanId") int inspPlanId,
-            @Param("inspSchdId") int inspSchdId
+    List<InspectionSchedule> selectInspectionSchedulesByPlanIdAndDate(
+            @Param("inspPlanId") int inspPlanId
     );
 
     @Transactional
@@ -97,5 +96,10 @@ public interface  InspectionScheduleService {
     Integer getMaxInspSchdId();
 
 
-
+    /**
+     * 특정 inspPlanId에 해당하는 모든 점검 일정을 삭제하는 메서드
+     *
+     * @param inspPlanId 점검 계획 ID
+     */
+    void deleteInspectionSchedulesByPlanId(int inspPlanId);
 }
