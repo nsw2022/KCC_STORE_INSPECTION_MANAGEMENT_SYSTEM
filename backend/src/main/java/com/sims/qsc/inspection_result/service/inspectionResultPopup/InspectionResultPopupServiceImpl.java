@@ -26,7 +26,7 @@ public class InspectionResultPopupServiceImpl implements InspectionResultPopupSe
         return inspResult;
     }
 
-    @Transactional(readOnly = true)
+//    @Transactional(readOnly = true)
     @Override
     public List<InspectionResultCategoryDetailResponse> selectInspectionResultCategoryDetailByInspResultId(int inspResultId) {
         long startTime1 = System.currentTimeMillis();

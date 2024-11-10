@@ -57,7 +57,6 @@ async function getInspResultAll(searchCriteria = {}) {
 
     if(defaultRowData.length === 0){
       defaultRowData = data;
-      console.log(defaultRowData)
     }
 
     rowData = data.map((item) => {
@@ -95,7 +94,7 @@ function initializeGrid() {
     rowData: rowData,
     columnDefs: [
       { field: "no", headerName: "No", width: 80, minWidth: 60 , cellStyle: {textAlign: 'center'} },
-      { field: "brandNm", headerName: "브랜드", width: 150, minWidth: 120 ,cellStyle: {textAlign: 'center'} },
+      { field: "brandNm", headerName: "브랜드", width: 150, minWidth: 100 ,cellStyle: {textAlign: 'center'} },
       { field: `storeNm`, headerName: "가맹점", width: 150, minWidth: 160 },
       {
         field: "chklstNm",
@@ -123,7 +122,7 @@ function initializeGrid() {
         headerName: "자세히보기",
         field: "more",
         width: 150,
-        minWidth: 80,
+        minWidth: 90,
         cellRenderer: function (params) {
           // jQuery를 사용하여 컨테이너 div 생성
           const $container = $("<div>", {
