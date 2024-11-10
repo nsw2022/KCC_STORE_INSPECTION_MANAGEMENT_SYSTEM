@@ -448,30 +448,34 @@ body {
     padding: 20px 15px !important;
   }
 
-  .ag-paging-panel {
-    justify-content: space-between;
-    font: 500 0.75rem "Noto Sans KR";
-  }
-
-  .ag-paging-row-summary-panel {
-    margin: 0px auto 0px 0px !important;
-  }
-
-  .ag-row-odd, .ag-row-even {
-    font: 350 12px "Noto Sans KR";
-  }
-
   .ag-header-row {
-    font: 600 13px "Noto Sans KR";
+    font: 600 14px "Noto Sans KR";
+    color: #718ebf !important;
+    font-size: 0.7rem !important;
   }
-
-  .ag-paging-page-summary-panel {
-    margin-right: auto !important;
-    margin-left: 0 !important;
+  /* 홀수 row */
+  .ag-row-even {
+    font: 350 13px "Noto Sans KR";
+    color: #232323 !important;
+    overflow: auto;
+    font-size: 0.7rem !important;
   }
-
-  .ag-paging-page-summary-panel > :nth-child(n) {
-    margin: 0 2px !important;
+  /* 짝수 row*/
+  .ag-row-odd {
+    font: 350 13px "Noto Sans KR";
+    color: #232323 !important;
+    overflow: auto;
+    font-size: 0.7rem !important;
+  }
+  .ag-paging-panel {
+    font-size: 0.6rem !important;
+  }
+  .ag-paging-page-summary-panel > * {
+    margin: 0.2px !important;
+    font-size: 0.7rem;
+  }
+  .ag-paging-row-summary-panel > * {
+    font-size: 0.7rem;
   }
 
   .header_text {
@@ -661,22 +665,24 @@ label[for=expiration]::after, label[for=price]::after,
     padding-right: 5px !important;
     padding-left: 5px !important;
   }
+  .top-content .button-box {
+    margin-bottom: -4px !important;
+  }
+
+  .top-content .button-box .d-flex .m-3 {
+    font: 700 16px "Noto Sans KR" !important;
+  }
+
+  .bottom-box-content .row .col-12 {
+    margin-top: 10px;
+  }
+
+  .top-drop-down {
+    margin-bottom: -2px;
+    margin-top : 0px;
+  }
+
 }
 
-.top-content .button-box {
-  margin-bottom: -4px !important;
-}
 
-.top-content .button-box .d-flex .m-3 {
-  font: 700 16px "Noto Sans KR" !important;
-}
-
-.bottom-box-content .row .col-12 {
-  margin-top: 10px;
-}
-
-.top-drop-down {
-  margin-bottom: -2px;
-  margin-top : 0px;
-}
 /** 최대 Width 576일 때 모달 CSS 끝 */

@@ -53,6 +53,12 @@
                 padding: 20px 10px !important;
             }
         }
+
+        @media (max-width: 500px) {
+            .page-content > div{
+                padding: 10px 10px !important;
+            }
+        }
     </style>
 
 

@@ -35,7 +35,7 @@ $(function () {
         async: false,
         success: function (data) {
             inspectionData = data;
-
+            console.log(inspectionData)
             /**
              *  최종점수 / 적합 & 부적합 & 항목 등 점수 및 결과와 관련된 사항 입력
              */
@@ -578,7 +578,6 @@ $(function () {
         }
 
     })
-
 
 
 

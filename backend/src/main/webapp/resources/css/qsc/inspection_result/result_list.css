@@ -4,6 +4,9 @@ body {
   font-family: "Noto Sans KR" !important;
   padding: 0px;
 }
+.page-content > .content {
+  padding: 0px;
+}
 
 /* 모달 시작 */
 
@@ -575,6 +578,10 @@ table tr td input {
 }
 
 @media (max-width: 600px) {
+  body {
+    padding : 0 !important;
+  }
+
   .top-box-content>.col{
     margin-top: 10px;
   }
@@ -596,23 +603,36 @@ table tr td input {
   .top-box-content > .col > .d-flex .my-3 :nth-child(1) {
   	margin-right : 10px !important;
   }
-  
-  
-  .ag-row, .ag-paging-row-summary-panel, .ag-paging-page-summary-panel {
-  	font : 400 13px "Noto Sans KR" !important;
-  	overflow : auto;
+
+
+  .ag-header-row {
+    font: 600 14px "Noto Sans KR";
+    color: #718ebf !important;
+    font-size: 0.7rem !important;
   }
-  .ag-header-row  {
-  	font : 500 13px "Noto Sans KR" !important;
-  	overflow : auto;
+  /* 홀수 row */
+  .ag-row-even {
+    font: 350 13px "Noto Sans KR";
+    color: #232323 !important;
+    overflow: auto;
+    font-size: 0.7rem !important;
   }
-  
-  .ag-header-cell, .ag-cell-value, .ag-cell {
-  	padding : 0 8px !important;
+  /* 짝수 row*/
+  .ag-row-odd {
+    font: 350 13px "Noto Sans KR";
+    color: #232323 !important;
+    overflow: auto;
+    font-size: 0.7rem !important;
   }
-  
-  .ag-paging-page-size {
-  	display : none;
+  .ag-paging-panel {
+    font-size: 0.6rem !important;
+  }
+  .ag-paging-page-summary-panel > * {
+    margin: 0.2px !important;
+    font-size: 0.7rem;
+  }
+  .ag-paging-row-summary-panel > * {
+    font-size: 0.7rem;
   }
   
   .hide-list {
@@ -724,7 +744,7 @@ table tr td input {
 
 @media (max-width: 393px) {
   .top-box-content{
-    padding: 15px 10px 10px 10px;
+    padding: 10px;
   }
 
   .top-drop-down{

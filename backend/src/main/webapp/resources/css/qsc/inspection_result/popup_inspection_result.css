@@ -463,14 +463,20 @@ body{
     justify-content: space-between;
 }
 
-.detailed-item {
+.detailed-item{
     flex: 1 1 48%;  /* 2개씩 배치되도록 설정 */
     box-sizing: border-box;
     margin-bottom: 10px;
     margin-right: 10px;
 }
+
 .detailed-item:nth-child(2n){
     margin-right: 0;
+}
+
+.detailed-item:last-child {
+    flex : none;
+    width: 49%;
 }
 
 .item-header {
@@ -743,6 +749,28 @@ body{
 
 /*------------------- 반응형 디자인 --------------------*/
 @media screen and (max-width: 1000px) {
+
+    .inspection-table td {
+        vertical-align: middle;
+    }
+
+    .subitem-info-wrapper {
+        padding: 20px 10px;
+    }
+    .grade-text span , .total-score-text span {
+        font : 400 18px "Noto Sans KR";
+    }
+
+    .grade-section {
+        padding: 5px 10px 10px 10px;
+    }
+
+    .admin-action-section {
+        padding: 20px 10px;
+    }
+    .page-content > div {
+        padding: 20px 20px;
+    }
     .info-title{
         padding: 29px;
     }
@@ -908,7 +936,7 @@ body{
 
 }
 
-@media screen and (max-width: 470px) {
+@media screen and (max-width: 500px) {
     .info-details > span {
         display: block;
         float: none;
@@ -933,6 +961,7 @@ body{
 
     .inspection-section {
         padding: 15px;
+        margin-bottom: 10px;
     }
 
     .inspection-table td {
@@ -940,12 +969,156 @@ body{
     }
 
     .store-subtitle, .inspection-date, .inspector-name{
-        font : 400 13px "Noto Sans KR" !important;
+        font : 400 15px "Noto Sans KR" !important;
     }
 
     .inspection-tabs button{
-        width: 53px;
+        width: 47%;
+        font: 400 13px "Noto Sans KR";
+        margin-bottom: 0;
+    }
+
+    .inspection-tabs div {
+        font : 400 13px "Noto Sans KR";
+        float: right;
+    }
+
+    .toggleSwitch {
+        width: 40px;
+        height: 22px;
+    }
+
+    .toggleSwitch:after {
+        left: 3px;
+    }
+
+    .page-content > div {
+        padding: 10px 10px;
+    }
+
+    .score-table thead th ,
+    .detailed-table thead th{
+        font : 500 14px "Noto Sans KR";
+    }
+
+    .score-table tbody td,
+    .detailed-table tbody td{
         font: 400 13px "Noto Sans KR";
     }
 
+    .grade-section {
+        flex-direction: unset;
+        padding: 0px 5px;
+        font: 400 14px "Noto Sans KR";
+
+    }
+
+    .grade-box, .total-score-box {
+        width: 49%;
+        height: auto;
+    }
+
+    .grade-text, .total-score-text {
+        font : 500 14px "Noto Sans KR";
+    }
+
+    .grade-text>span, .total-score-text>span {
+        font: 500 14px "Noto Sans KR";
+    }
+
+    .admin-title, .item-title, subitem-title {
+        font: 700 15px "Noto Sans KR";
+    }
+
+    .admin-box {
+        flex-direction: unset;
+    }
+
+    .fine-box-wrapper, .closure-box-wrapper {
+         width: 48%;
+    }
+
+    .fine-box, .closure-box {
+        height: auto;
+    }
+
+
+    .fine-amount, .closure-days {
+        font : 400 14px "Noto Sans KR";
+    }
+
+    .fine-amount>span, .closure-days>span {
+        font : 400 14px "Noto Sans KR";
+    }
+
+    .fine-box-wrapper > p,  .closure-box-wrapper > p {
+        margin-bottom: 5px;
+    }
+    .admin-action-section {
+        padding: 10px;
+    }
+
+    .inspection-total-score {
+        margin-top: 0;
+        height: auto;
+        font : 700 16px "Noto Sans KR";
+    }
+
+
+    .inspection-total-score > p {
+        margin-bottom: 0;
+    }
+
+    .go-inspection {
+        height: 40px;
+        font : 500 16px "Noto Sans KR";
+        width: calc(50% - 15px);
+
+    }
+
+    .item-header > h3 {
+        font: 700 15px "Noto Sans KR";
+    }
+
+    #inspection-result-list {
+        padding: 20px 10px;
+    }
+
+    .subitem-info-wrapper .subitem-info{
+        gap: 7px;
+        display: flex;
+    }
+
+    .inspection-content-wrapper {
+        padding: 20px 10px !important;
+    }
+
+    .subitem-info-wrapper {
+        padding: 20px 10px;
+    }
+
+    .subitem-info .info-box {
+        padding: 10px 5px;
+    }
+
+    .image-section {
+        margin-bottom: 0;
+    }
+
+    .check-subitem {
+        flex: 1 1 100% !important;
+    }
+
+    .detail-section>div {
+        margin-bottom: 0;
+    }
+
+    .detail-item-row:first-child {
+        margin-top: 10px;
+    }
+
+    .detailed-item:last-child {
+        flex : 1 1 48%;
+        width: 100%;
+    }
 }
