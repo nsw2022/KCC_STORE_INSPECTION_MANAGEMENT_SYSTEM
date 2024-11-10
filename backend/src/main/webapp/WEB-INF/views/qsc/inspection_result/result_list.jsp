@@ -273,6 +273,8 @@
 
 <script src="/resources/js/qsc/inspection_result/result.js"></script>
 <script src="/resources/js/qsc/inspection_result/result_filter.js"></script>
+<script src="/resources/js/qsc/inspection_result/popup_inspection_result.js"></script>
+
 <!-- SweetAlert2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>

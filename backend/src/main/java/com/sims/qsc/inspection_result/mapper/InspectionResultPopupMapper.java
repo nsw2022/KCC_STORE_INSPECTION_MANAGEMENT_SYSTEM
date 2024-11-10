@@ -34,17 +34,17 @@ public interface InspectionResultPopupMapper {
 	/**
 	 * 점검 결과에서 중분류 / 항목 별로 자세히 보여주기
 	 * @param inspResultId 점검결과ID
-	 * @param categoryNm 대분류 카테고리명
+	 * @param ctgId 대분류 카테고리명
 	 * @return 대분류 카테고리명과 점검결과로 점검할 때 항목과 분류 점수 등을 자세히 알아보기
 	 */
 	public List<InspectionResultSubCategoryDetailResponse> selectInspectionResultSubCategoryContentByInspResultId
 																		(@Param("inspResultId") int inspResultId,
-																		 @Param("categoryNm") String categoryNm);
+																		 @Param("ctgId") int ctgId);
 
 	public List<InspectionResultSubCategoriesQuestionsResponse> selectInspResultEvaluationByCategoryNms
 																		(@Param("inspResultId") int inspResultId,
-																		 @Param("categoryNm") String categoryNm,
-																		 @Param("subCategoryNm") String subCategoryNm);
+																		 @Param("ctgId") int ctgId,
+																		 @Param("subCtgId") int subCtgId);
 
 	public List<InspectionResultAnswImgResponse> selectAnswImgByInspResultId(@Param("inspResultId") int inspResultId);
 }

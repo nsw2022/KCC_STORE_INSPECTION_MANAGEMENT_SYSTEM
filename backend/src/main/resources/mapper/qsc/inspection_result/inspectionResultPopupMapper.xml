@@ -61,6 +61,7 @@
 	</select>
 
 	<resultMap id="inspResultCategory" type="com.sims.qsc.inspection_result.vo.InspectionResultCategoryDetailResponse">
+		<id property="categoryId" column="CTG_ID"/>
 		<result property="categoryNm" column="CTG_NM"/>
 		<result property="categoryStndScore" column="STND_SCORE"/>
 		<result property="totalScore" column="TOTAL_RECEIVED_SCORE"/>
@@ -71,12 +72,14 @@
 
 	<select id="selectInspectionResultCategoryContentByInspResultId" resultMap="inspResultCategory">
 		SELECT /* InsepctionResultMapper.selectInspectionResultCategoryContent 원승언 */
-			CHCTP.CTG_NM
+		    /*+ FIRST_ROWS */
+			  CHCTP.CTG_ID
+		    , CHCTP.CTG_NM
 			, CHCTP.STND_SCORE
 			, SUM(EVCH.SCORE) TOTAL_RECEIVED_SCORE
 			, SUM(CASE WHEN EVAN.EVIT_ANSW_CONTENT IN('적합', '매우좋음', '좋음', '보통') THEN 1 ELSE 0 END) PROFIT_CNT
 			, SUM(CASE WHEN EVAN.EVIT_ANSW_CONTENT IN('부적합', '매우나쁨', '나쁨') THEN 1 ELSE 0 END) NON_PROFIT_CNT
-			, SUM(CASE WHEN EVAN.EVIT_ANSW_CONTENT IS NOT NULL THEN 1 ELSE 0 END) TOTAL_EVALUATION_CNT
+			, COUNT(EVAN.EVIT_ANSW_CONTENT) TOTAL_EVALUATION_CNT
 		FROM
 			EVIT_ANSW EVAN
 		INNER JOIN CHKLST_EVIT CHEV
@@ -94,15 +97,17 @@
 			</if>
 		</where>
 		GROUP BY
-		    CHCTP.CTG_NM, CHCTP.STND_SCORE
+		    CHCTP.CTG_ID, CHCTP.CTG_NM, CHCTP.STND_SCORE
 	</select>
 
 
 	<select id="selectInspectionResultSubCategoryContentByInspResultId" resultType="com.sims.qsc.inspection_result.vo.InspectionResultSubCategoryDetailResponse">
 		SELECT /* InsepctionResultMapper.selectInspectionResultSubCategoryContentByInspResultId 원승언 */
+		    /*+ ORDERED */
 			DISTINCT
-			CHCTC.SEQ,
-			CHCTC.CTG_NM AS SUB_CTG_NM
+		      CHCTC.CTG_ID
+			, CHCTC.SEQ
+			, CHCTC.CTG_NM AS SUB_CTG_NM
 		FROM
 			INSP_RESULT INRE
 		INNER JOIN EVIT_ANSW EVAN
@@ -122,11 +127,11 @@
 			EVAN.EVIT_ANSW_CONTENT = EVCH.CHCLST_CONTENT
 		AND
 			INRE.INSP_COMPL_W = 'Y'
-			<if test="inspResultId != null">
-				AND EVAN.INSP_RESULT_ID = #{inspResultId}
+			<if test="@org.apache.commons.lang3.math.NumberUtils@isDigits(inspResultId)">
+				AND EVAN.INSP_RESULT_ID = #{inspResultId, jdbcType=INTEGER}
 			</if>
-			<if test="categoryNm != null">
-				AND CHCTP.CTG_NM = #{categoryNm}
+			<if test="@org.apache.commons.lang3.math.NumberUtils@isDigits(ctgId)">
+				AND CHCTP.CTG_ID = #{ctgId, jdbcType=INTEGER}
 			</if>
 		</where>
 		ORDER BY
@@ -154,6 +159,7 @@
 
 	<select id="selectInspResultEvaluationByCategoryNms" resultMap="inspResultBySubCategory">
 		SELECT /* InsepctionResultMapper.selectInspResultEvaluationByCategoryNms 원승언 */
+		/*+ ORDERED */
 			  EVAN.EVIT_ID
 		    , EVVL.VLT_ID
 			, CHEV.EVIT_CONTENT
@@ -181,12 +187,12 @@
 			, EVVL.VLT_CAUSE
 			, EVVL.INSTRUCTION
 		FROM
-			INSP_RESULT INRE
+		    INSP_RESULT INRE
 		INNER JOIN EVIT_ANSW EVAN
-		    ON EVAN.INSP_RESULT_ID = INRE.INSP_RESULT_ID
+			ON EVAN.INSP_RESULT_ID = INRE.INSP_RESULT_ID
 		LEFT JOIN EVIT_VLT EVVL
-		    ON EVAN.EVIT_ID = EVVL.EVIT_ID
-		    AND EVAN.INSP_RESULT_ID = EVVL.INSP_RESULT_ID
+			ON EVAN.EVIT_ID = EVVL.EVIT_ID
+			AND EVAN.INSP_RESULT_ID = EVVL.INSP_RESULT_ID
 		INNER JOIN CHKLST_EVIT CHEV
 			ON CHEV.EVIT_ID = EVAN.EVIT_ID
 		INNER JOIN EVIT_CHCLST EVCH
@@ -199,14 +205,14 @@
 			EVAN.EVIT_ANSW_CONTENT = EVCH.CHCLST_CONTENT
 		  AND
 			INRE.INSP_COMPL_W = 'Y'
-			<if test="inspResultId != null">
-		  		AND EVAN.INSP_RESULT_ID = #{inspResultId}
+			<if test="@org.apache.commons.lang3.math.NumberUtils@isDigits(inspResultId)">
+				AND EVAN.INSP_RESULT_ID = #{inspResultId, jdbcType=INTEGER}
 			</if>
-			<if test="categoryNm != null">
-		  		AND CHCTP.CTG_NM = #{categoryNm}
+			<if test="@org.apache.commons.lang3.math.NumberUtils@isDigits(ctgId)">
+				AND CHCTP.CTG_ID = #{ctgId, jdbcType=INTEGER}
 			</if>
-			<if test="subCategoryNm != null">
-		  		AND CHCTC.CTG_NM = #{subCategoryNm}
+			<if test="@org.apache.commons.lang3.math.NumberUtils@isDigits(subCtgId)">
+				AND CHCTC.CTG_ID = #{subCtgId, jdbcType=INTEGER}
 			</if>
 		</where>
 		ORDER BY
@@ -222,8 +228,8 @@
 		FROM
 		EVIT_ANSW_IMG EAI
 		INNER JOIN EVIT_ANSW EVAN
-		ON EVAN.INSP_RESULT_ID = EAI.INSP_RESULT_ID
-		AND EVAN.EVIT_ID = EAI.EVIT_ID
+			ON EVAN.INSP_RESULT_ID = EAI.INSP_RESULT_ID
+			AND EVAN.EVIT_ID = EAI.EVIT_ID
 		<where>
 			<if test="inspResultId != null">
 				AND EAI.INSP_RESULT_ID = #{inspResultId}

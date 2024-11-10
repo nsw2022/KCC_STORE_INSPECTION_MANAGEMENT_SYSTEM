@@ -7,53 +7,80 @@
 
     <select id="selectFilteredInspectionScheduleList" resultType="com.sims.qsc.inspection_schedule.vo.InspectionScheduleRequest">
         SELECT  /* InspectionScheduleMapper.getInspectionScheduleList 노승우 */
-        STO.STORE_NM,
-        STO.STORE_ID,
-        CASE
-        WHEN STO.BRAND_CD = 'B001' THEN 'KCC 크라상'
-        WHEN STO.BRAND_CD = 'B002' THEN 'KCC 도넛'
-        WHEN STO.BRAND_CD = 'B003' THEN 'KCC 브레드'
-        WHEN STO.BRAND_CD = 'B004' THEN 'KCC 카페'
-        END AS BRAND_NM,
-        CHK.CHKLST_NM,
-        MBR.MBR_NM,
-        INP.FRQ_CD,
-        INP.CNT_CD,
-        INP.INSP_PLAN_ID,
-        ISC.INSP_SCHD_ID,
-        MIN(ISC.INSP_PLAN_DT) AS INSP_PLAN_DT,
-        CASE
-        WHEN CHK.INSP_TYPE_CD = 'IT001' THEN '제품점검'
-        WHEN CHK.INSP_TYPE_CD = 'IT002' THEN '위생점검'
-        WHEN CHK.INSP_TYPE_CD = 'IT003' THEN '정기점검'
-        WHEN CHK.INSP_TYPE_CD = 'IT004' THEN '비정기점검'
-        WHEN CHK.INSP_TYPE_CD = 'IT005' THEN '기획점검'
-        END AS INSP_TYPE_CD
+        STO.STORE_NM
+        , STO.STORE_ID
+        , CASE
+            WHEN STO.BRAND_CD = 'B001' THEN 'KCC 크라상'
+            WHEN STO.BRAND_CD = 'B002' THEN 'KCC 도넛'
+            WHEN STO.BRAND_CD = 'B003' THEN 'KCC 브레드'
+            WHEN STO.BRAND_CD = 'B004' THEN 'KCC 카페'
+          END AS BRAND_NM
+        , CHK.CHKLST_NM
+        , MBR.MBR_NM
+        , INP.FRQ_CD
+        , INP.CNT_CD
+        , INP.WEEK
+        , INP.SLCT_DT
+        , INP.INSP_PLAN_ID
+        , ISC.INSP_SCHD_ID
+        , MIN(ISC.INSP_PLAN_DT) AS INSP_PLAN_DT
+        , CASE
+            WHEN CHK.INSP_TYPE_CD = 'IT001' THEN '제품점검'
+            WHEN CHK.INSP_TYPE_CD = 'IT002' THEN '위생점검'
+            WHEN CHK.INSP_TYPE_CD = 'IT003' THEN '정기점검'
+            WHEN CHK.INSP_TYPE_CD = 'IT004' THEN '비정기점검'
+            WHEN CHK.INSP_TYPE_CD = 'IT005' THEN '기획점검'
+            END AS INSP_TYPE_CD
         FROM INSP_SCHD ISC
-        INNER JOIN STORE STO
-        ON STO.STORE_ID = ISC.STORE_ID
-        INNER JOIN INSP_PLAN INP
-        ON INP.INSP_PLAN_ID = ISC.INSP_PLAN_ID
-        INNER JOIN CHKLST CHK
-        ON CHK.CHKLST_ID = INP.CHKLST_ID
-        INNER JOIN MBR
-        ON MBR.MBR_ID = STO.INSP_MBR_ID
-        WHERE INP.INSP_PLAN_USE_W = 'Y'AND ISC.INSP_PLAN_DT = (SELECT MIN(INSP_PLAN_DT) FROM INSP_SCHD WHERE INSP_PLAN_ID = ISC.INSP_PLAN_ID)
+            INNER JOIN STORE STO
+                ON STO.STORE_ID = ISC.STORE_ID
+            INNER JOIN INSP_PLAN INP
+                ON INP.INSP_PLAN_ID = ISC.INSP_PLAN_ID
+            INNER JOIN CHKLST CHK
+                ON CHK.CHKLST_ID = INP.CHKLST_ID
+            INNER JOIN MBR
+                ON MBR.MBR_ID = STO.INSP_MBR_ID
+        WHERE INP.INSP_PLAN_USE_W = 'Y'
+                AND ISC.INSP_PLAN_DT =
+                    (
+                        SELECT
+                            MIN (INSP_PLAN_DT)
+                        FROM INSP_SCHD
+                            WHERE INSP_PLAN_ID = ISC.INSP_PLAN_ID
+                    )
 
         <include refid="DynamicConditions" />
-
-        GROUP BY STO.STORE_NM, STO.STORE_ID, STO.BRAND_CD, CHK.CHKLST_NM, MBR.MBR_NM, INP.FRQ_CD, INP.CNT_CD, INP.INSP_PLAN_ID,ISC.INSP_SCHD_ID, CHK.INSP_TYPE_CD
-
-        ORDER BY STO.STORE_NM
+            GROUP BY
+                STO.STORE_NM
+                , STO.STORE_ID
+                , STO.BRAND_CD
+                , CHK.CHKLST_NM
+                , MBR.MBR_NM
+                , INP.FRQ_CD
+                , INP.CNT_CD
+                , INP.WEEK
+                , INP.SLCT_DT
+                , INP.INSP_PLAN_ID
+                ,ISC.INSP_SCHD_ID
+                , CHK.INSP_TYPE_CD
+            ORDER BY STO.STORE_NM
     </select>
 
     <sql id="DynamicConditions">
         <choose>
             <when test="currentMbrNo != null and currentMbrNo.startsWith('S')">
-                AND STO.SV_MBR_ID = (SELECT MBR_ID FROM MBR WHERE MBR_NO = #{currentMbrNo})
+                AND STO.SV_MBR_ID = (
+                                                        SELECT MBR_ID
+                                                        FROM MBR
+                                                        WHERE MBR_NO = #{currentMbrNo}
+                                                   )
             </when>
             <when test="currentMbrNo != null and currentMbrNo.startsWith('C')">
-                AND STO.INSP_MBR_ID = (SELECT MBR_ID FROM MBR WHERE MBR_NO = #{currentMbrNo})
+                AND STO.INSP_MBR_ID = (
+                                                            SELECT MBR_ID
+                                                            FROM MBR
+                                                            WHERE MBR_NO = #{currentMbrNo}
+                                                      )
             </when>
         </choose>
 
@@ -99,21 +126,18 @@
     </sql>
 
 
-
-
-
     <select id="selectAllStores" resultType="java.util.HashMap">
         SELECT DISTINCT   /* InspectionScheduleMapper.selectAllStores 노승우 */
-        STO.STORE_NM
-        , INSP_ID.MBR_NM AS INSPECTOR
-        , CCD.DTL_CD_NM AS BRAND_NM
+            STO.STORE_NM
+            , INSP_ID.MBR_NM AS INSPECTOR
+            , CCD.DTL_CD_NM AS BRAND_NM
         FROM STORE STO
-        INNER JOIN COMM_CD_DTL CCD
-        ON CCD.DTL_CD = STO.BRAND_CD
-        INNER JOIN MBR INSP_ID
-        ON INSP_ID.MBR_ID = STO.INSP_MBR_ID
-        INNER JOIN MBR SV_ID
-        ON SV_ID.MBR_ID = STO.SV_MBR_ID
+            INNER JOIN COMM_CD_DTL CCD
+               ON CCD.DTL_CD = STO.BRAND_CD
+            INNER JOIN MBR INSP_ID
+               ON INSP_ID.MBR_ID = STO.INSP_MBR_ID
+            INNER JOIN MBR SV_ID
+              ON SV_ID.MBR_ID = STO.SV_MBR_ID
         <where>
             <choose>
                 <when test="currentMbrNo != null and currentMbrNo.startsWith('S')">
@@ -204,7 +228,7 @@
         WHERE
             S.STORE_ID = #{storeId}
           AND
-            inp.insp_plan_use_w = 'Y'
+            IP.INSP_PLAN_USE_W = 'Y'
         ORDER BY
             CC.SEQ, CE.EVIT_SEQ
 
@@ -253,7 +277,7 @@
     <!-- 점검 계획 삽입 -->
     <insert id="insertInspectionPlans" parameterType="com.sims.qsc.inspection_schedule.vo.InspectionPlan">
         <selectKey keyProperty="inspPlanId" resultType="int" order="BEFORE">
-            SELECT INSP_PLAN_SEQ.NEXTVAL FROM DUAL
+            SELECT INSP_PLAN_SEQ.NEXTVAL FROM DUAL /* InspectionScheduleMapper.insertInspectionPlans 노승우 */
         </selectKey>
         INSERT INTO INSP_PLAN (
             INSP_PLAN_ID,
@@ -282,7 +306,7 @@
 
     <!-- 점검 일정 업데이트 -->
     <update id="updateInspectionSchedules" parameterType="com.sims.qsc.inspection_schedule.vo.InspectionSchedule">
-        UPDATE INSP_SCHD
+        UPDATE INSP_SCHD  /* InspectionScheduleMapper.updateInspectionSchedules 노승우 */
         SET
             STORE_ID = #{storeId},
             INSP_STTS_CD = #{inspSttsCd},
@@ -295,7 +319,7 @@
 
     <!-- 점검 일정 삽입 (배치) -->
     <insert id="insertInspectionSchedules" parameterType="java.util.List">
-        INSERT INTO INSP_SCHD (
+        INSERT INTO INSP_SCHD ( /* InspectionScheduleMapper.insertInspectionSchedules 노승우 */
         INSP_SCHD_ID,
         INSP_PLAN_ID,
         STORE_ID,
@@ -320,33 +344,27 @@
         ) A
     </insert>
 
-
-
-
-
-
-
-
-
-
-
-
     <!-- 점검 일정 상세 조회 (INSP_PLAN_ID와 INSP_PLAN_DT 기준) -->
-    <select id="selectInspectionSchedulesByPlanIdAndDate" parameterType="map" resultType="com.sims.qsc.inspection_schedule.vo.InspectionSchedule">
-        SELECT *
+    <select id="selectInspectionSchedulesByPlanIdAndDate" parameterType="int" resultType="com.sims.qsc.inspection_schedule.vo.InspectionSchedule">
+        SELECT * /* InspectionScheduleMapper.selectInspectionSchedulesByPlanIdAndDate 노승우 */
         FROM INSP_SCHD
         WHERE INSP_PLAN_ID = #{inspPlanId}
-          AND INSP_SCHD_ID = #{inspSchdId}
     </select>
 
 
     <select id="selectMbrDetail" parameterType="String" resultType="com.sims.qsc.inspection_schedule.vo.MemberRequest">
-        SELECT
+        SELECT /* InspectionScheduleMapper.selectMbrDetail 노승우 */
             MBR_ID
             , MBR_NO
             , MBR_NM
         FROM MBR
         WHERE MBR_NO = #{creMbrNo}
     </select>
+
+    <!-- 점검 일정 삭제 -->
+    <delete id="deleteInspectionSchedulesByPlanId" parameterType="int">
+        DELETE FROM INSP_SCHD /* InspectionScheduleMapper.deleteInspectionSchedulesByPlanId 노승우 */
+        WHERE INSP_PLAN_ID = #{inspPlanId}
+    </delete>
 
 </mapper>
