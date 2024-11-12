@@ -589,3 +589,232 @@ function outInspectionResult() {
     // 팝업 창을 닫음
     window.close();  // 점검 완료 후 팝업창 종료
 }
+/**
+ * 인쇄 버튼 클릭 시 모든 상세 내용을 확장하고 PDF을 생성한 후 원래 상태로 복원하는 함수
+ */
+window.fn_printClick = async function() {
+    try {
+        // 인쇄 전에 추가적인 콘텐츠를 추가
+        addPrintContent();
+
+        // '세부결과' 탭이 활성화되어 있는지 확인하고 활성화
+        const detailedTabButton = document.querySelector('.inspection-tab[data-tab="detailed-result"]');
+        if (detailedTabButton && !detailedTabButton.classList.contains('active')) {
+            detailedTabButton.click();
+            await waitForTabActivation(detailedTabButton);
+        }
+
+        // 모든 '상세보기' 버튼을 클릭하여 내용 확장
+        const detailButtons = document.querySelectorAll('.detail-btn');
+        for (let btn of detailButtons) {
+            if (btn.textContent.trim() === '상세보기') { // '상세보기' 상태인 버튼만 클릭
+                btn.click();
+                await waitForContentExpansion(btn);
+            }
+        }
+
+        // 모든 '더보기' 버튼을 클릭하여 세부 내용 확장
+        const editButtons = document.querySelectorAll('.edit-btn');
+        for (let btn of editButtons) {
+            if (btn.textContent.trim() === '더보기') { // '더보기' 상태인 버튼만 클릭
+                btn.click();
+                await waitForContentExpansion(btn);
+            }
+        }
+
+        // 모든 내용이 확장된 후 PDF 생성
+        await generatePDF();
+
+        // 인쇄 후에 추가된 콘텐츠 제거
+        removePrintContent();
+
+        // 확장된 모든 '더보기' 버튼을 다시 '닫기' 상태로 되돌림
+        for (let btn of editButtons) {
+            if (btn.textContent.trim() === '닫기') { // '닫기' 상태인 버튼만 클릭
+                btn.click();
+            }
+        }
+
+        // 확장된 모든 '상세보기' 버튼을 다시 '닫기' 상태로 되돌림
+        for (let btn of detailButtons) {
+            if (btn.textContent.trim() === '닫기') { // '닫기' 상태인 버튼만 클릭
+                btn.click();
+            }
+        }
+
+    } catch (error) {
+        console.error("인쇄 과정 중 오류 발생:", error);
+        alert("인쇄를 진행하는 중 오류가 발생했습니다. 다시 시도해주세요.");
+        // 인쇄 전 상태로 되돌리기 (필요 시 추가)
+        removePrintContent();
+    }
+}
+
+/**
+ * PDF 생성 함수
+ */
+async function generatePDF() {
+    // PDF로 변환할 요소 선택 (전체 문서를 PDF로 변환하려면 body를 선택)
+    const element = document.body;
+
+    // html2pdf.js 옵션 설정
+    const opt = {
+        margin:       0,
+        filename:     '점검 결과.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale:  1.5},
+        pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }  // 세로는 portrait  가로는 landscape
+    };
+
+    // PDF 생성 및 저장
+    await html2pdf().set(opt).from(element).save();
+}
+
+/**
+ * 탭이 활성화될 때까지 대기하는 함수
+ * @param {HTMLElement} tabButton - 탭 버튼 요소
+ * @param {number} timeout - 최대 대기 시간 (밀리초)
+ * @returns {Promise} - 탭이 활성화되면 해결, 시간 초과 시 거부
+ */
+function waitForTabActivation(tabButton, timeout = 5000) {
+    return new Promise((resolve, reject) => {
+        if (!tabButton) {
+            reject(new Error("탭 버튼이 존재하지 않습니다."));
+            return;
+        }
+
+        const intervalTime = 100;
+        let elapsedTime = 0;
+        const interval = setInterval(() => {
+            if (tabButton.classList.contains('active')) {
+                clearInterval(interval);
+                resolve();
+            }
+            elapsedTime += intervalTime;
+            if (elapsedTime >= timeout) {
+                clearInterval(interval);
+                reject(new Error("탭 활성화 실패"));
+            }
+        }, intervalTime);
+    });
+}
+
+/**
+ * 콘텐츠가 확장될 때까지 대기하는 함수
+ * @param {HTMLElement} button - 버튼 요소
+ * @param {number} timeout - 최대 대기 시간 (밀리초)
+ * @returns {Promise} - 콘텐츠가 확장되면 해결, 시간 초과 시 거부
+ */
+function waitForContentExpansion(button, timeout = 5000) {
+    return new Promise((resolve, reject) => {
+        if (!button) {
+            reject(new Error("버튼 요소가 존재하지 않습니다."));
+            return;
+        }
+
+        const contentWrapper = button.nextElementSibling;
+        if (!contentWrapper || !contentWrapper.classList.contains('inspection-content-wrapper')) {
+            console.warn("inspection-content-wrapper 요소를 찾을 수 없습니다. 해당 버튼을 건너뜁니다.");
+            resolve(); // 요소가 없으면 그냥 건너뜁니다.
+            return;
+        }
+
+        const checkExpansion = () => {
+            const isExpanded = window.getComputedStyle(contentWrapper).display !== 'none' && contentWrapper.style.height !== '0px';
+            if (isExpanded) {
+                clearInterval(interval);
+                resolve();
+            }
+        };
+
+        const intervalTime = 100;
+        let elapsedTime = 0;
+        const interval = setInterval(() => {
+            checkExpansion();
+            elapsedTime += intervalTime;
+            if (elapsedTime >= timeout) {
+                clearInterval(interval);
+                reject(new Error("콘텐츠 확장 실패"));
+            }
+        }, intervalTime);
+    });
+}
+
+/**
+ * 인쇄 전용 콘텐츠 추가 함수
+ */
+window.addPrintContent = function() {
+    // 인쇄 전용 콘텐츠가 이미 존재하는지 확인
+    if (document.getElementById('additionalContent')) {
+        return; // 이미 추가되어 있으면 중복 추가하지 않음
+    }
+
+    // 인쇄 전용 콘텐츠 추가
+    var printContent = document.createElement('div');
+    printContent.id = 'additionalContent';
+    printContent.className = 'print-only';
+
+    // body의 마지막에 추가 (또는 원하는 위치에 추가)
+    document.body.appendChild(printContent);
+}
+
+/**
+ * 인쇄 후 추가된 콘텐츠 제거 함수
+ */
+window.removePrintContent = function() {
+    // 인쇄 후 추가된 콘텐츠 제거
+    var printContent = document.getElementById('additionalContent');
+    if (printContent) {
+        printContent.parentNode.removeChild(printContent);
+    }
+}
+
+/**
+ * 나가기 버튼 클릭 시 팝업 창을 닫는 함수
+ */
+window.outInspectionResult = function() {
+    // 팝업 창을 닫음
+    window.close();  // 점검 완료 후 팝업창 종료
+}
+
+/**
+ * 초기화 함수: 탭 이벤트 리스너 설정
+ */
+function initializeTabs() {
+    const tabs = document.querySelectorAll(".inspection-tab");
+    const reportSummary = document.querySelector(".report-summary");
+    const detailedResult = document.querySelector(".detailed-result");
+    const inspectionList = document.getElementById("inspection-result-list");
+
+    // 기본 상태 설정: 보고서 간략은 보이기, 세부결과는 숨기기
+    if(reportSummary) reportSummary.style.display = "flex";
+    if(detailedResult) detailedResult.style.display = "none";
+    if(inspectionList) inspectionList.style.display = "none";
+
+    // 탭 클릭 이벤트 추가
+    tabs.forEach(tab => {
+        tab.addEventListener("click", function () {
+            tabs.forEach(tab => tab.classList.remove("active"));
+
+            this.classList.add("active");
+
+            const selectedTab = this.getAttribute("data-tab");
+
+            if (selectedTab === "report-summary") {
+                if(reportSummary) reportSummary.style.display = "flex";
+                if(detailedResult) detailedResult.style.display = "none";
+                if(inspectionList) inspectionList.style.display = "none";
+            } else if (selectedTab === "detailed-result") {
+                if(reportSummary) reportSummary.style.display = "none";
+                if(detailedResult) detailedResult.style.display = "flex";
+                if(inspectionList) inspectionList.style.display = "none";
+            }
+        });
+    });
+}
+
+/**
+ * 초기화 함수 호출
+ */
+initializeTabs();

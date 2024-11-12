@@ -466,9 +466,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           $("#selectSV").val("");
           $("#selectSV").val(store.supervisorName);
-
-          $("#selectComplTm").val("");
-          $("#selectComplTm").val(store.inspComplTm);
+          $("#selectComplTm").val(store.inspComplTm !== null ? store.inspComplTm.slice(0, 8) : '');
 
           // 동일한 storeNm을 가진 모든 매장 필터링
           let matchingStores = allStores.filter(
@@ -616,7 +614,7 @@ document.addEventListener("DOMContentLoaded", function () {
       $.each(segments, function (index, segment) {
         var $routeDiv = $("<div>", { class: "map-route" });
         var $detailDiv = $("<div>", { class: "map-route-detail" });
-
+        console.table(segment)
         var routeName = $("<span>").html(
           `${segment.from}<i class="fa-solid fa-angles-right"></i> ${segment.to}`,
         );
@@ -825,11 +823,13 @@ document.addEventListener("DOMContentLoaded", function () {
   function getCongestionClass(congestion) {
     switch (congestion) {
       case 0:
-        return "congestionWant"; // 원활
+        return "congestionWant"; // 원활 congestionWant
       case 1:
-        return "congestionNormal"; // 보통
+        return "congestionWant"; // 원활 congestionWant
       case 2:
-        return "congestionConfusion"; // 혼잡
+        return "congestionNormal"; // 보통 congestionNormal
+      case 3:
+        return "congestionConfusion" // 혼잡 congestionConfusion
       default:
         return "congestionConfusion"; // 혼잡
     }
@@ -845,11 +845,13 @@ document.addEventListener("DOMContentLoaded", function () {
       case 0:
         return "원활";
       case 1:
-        return "보통";
+        return "월활";
       case 2:
-        return "혼잡";
+        return "서행";
+      case 3:
+        return "혼잡"
       default:
-        return "알 수 없음";
+        return "혼잡";
     }
   }
 
@@ -932,7 +934,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const newRow = $("<tr>");
       newRow.append($("<td>").text(store.storeNm));
       newRow.append($("<td>").text(store.inspPlanDt));
-      newRow.append($("<td>").text(store.brandNm));
+      newRow.append($("<td>").text(store.chkLstNm));
       newRow.append($("<td>").text(store.inspectorName));
       newRow.append($("<td>").text(store.supervisorName));
       $(".custom-table tbody").append(newRow);
@@ -1067,7 +1069,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
 
-      // 정렬 (옵션)
       uniqueStoreNames.sort((a, b) => a.localeCompare(b, "ko-KR"));
 
       uniqueStoreNames.forEach((storeNm) => {
@@ -1077,19 +1078,14 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     }
 
-    /**
-     * 필터링된 옵션 리스트를 렌더링
-     * @param {string} query - 검색어
-     */
     filterOptions(query) {
       console.log("Filtering options with query:", query);
 
-      // 검색어에 따라 필터링된 storeNm을 기준으로 중복 제거
       const filtered = this.dataList
-        .filter((item) =>
-          item.storeNm.toLowerCase().includes(query.toLowerCase()),
-        )
-        .map((item) => item.storeNm);
+          .filter((item) =>
+              item.storeNm.toLowerCase().includes(query.toLowerCase()),
+          )
+          .map((item) => item.storeNm);
 
       const uniqueFiltered = [...new Set(filtered)];
 
@@ -1098,24 +1094,20 @@ document.addEventListener("DOMContentLoaded", function () {
         uniqueFiltered.sort((a, b) => a.localeCompare(b, "ko-KR"));
         uniqueFiltered.forEach((storeNm) => {
           const isSelected =
-            storeNm === this.$searchBtn.children().first().text()
-              ? "selected"
-              : "";
+              storeNm === this.$searchBtn.find(".storeNm").text()
+                  ? "selected"
+                  : "";
           const li = `<li onclick="window.updateName(this)" class="${isSelected} autocomplete-item list-group-item list-group-item-action">${storeNm}</li>`;
           this.$options.append(li);
         });
       } else {
         this.$options.html(
-          `<li class="list-group-item">찾으시는 항목이 없습니다.</li>`,
+            `<li class="list-group-item">찾으시는 항목이 없습니다.</li>`,
         );
       }
     }
 
-    /**
-     * 이벤트 리스너를 바인딩
-     */
     bindEvents() {
-      // 검색 버튼 클릭 시 옵션 리스트 토글
       this.$searchBtn.on("click", (e) => {
         e.stopPropagation();
         $(".wrapper").not(this.$wrapper).removeClass("active");
@@ -1123,7 +1115,6 @@ document.addEventListener("DOMContentLoaded", function () {
         this.$input.focus();
       });
 
-      // 입력 필드 키업 이벤트 처리
       this.$input.on("keyup", (e) => {
         e.stopPropagation();
         const query = this.$input.val();
@@ -1134,33 +1125,24 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
 
-      // 외부 클릭 시 옵션 리스트 숨기기
       $(document).on("click", (e) => {
         if (
-          !this.$wrapper.is(e.target) &&
-          this.$wrapper.has(e.target).length === 0
+            !this.$wrapper.is(e.target) &&
+            this.$wrapper.has(e.target).length === 0
         ) {
           this.$wrapper.removeClass("active");
         }
       });
     }
 
-    /**
-     * 선택된 아이템을 업데이트
-     * @param {string} selectedItem - 선택된 아이템 텍스트
-     */
     updateSelected(selectedItem) {
       this.$input.val("");
       this.renderOptions(selectedItem);
       this.$wrapper.removeClass("active");
-      this.$searchBtn.children().first().text(selectedItem);
+      this.$searchBtn.find(".storeNm").text(selectedItem);
     }
   }
 
-  /**
-   * 전역 함수로 선택된 아이템을 업데이트
-   * @param {HTMLElement} selectedLi - 선택된 li 요소
-   */
   window.updateName = function (selectedLi) {
     const selectedText = $(selectedLi).text();
     console.log("Selected item:", selectedText);
@@ -1168,54 +1150,37 @@ document.addEventListener("DOMContentLoaded", function () {
     const instance = $wrapper.data("autocompleteInstance");
 
     if (instance) {
-      console.log("Updating Autocomplete instance for wrapper:", $wrapper);
       instance.updateSelected(selectedText);
 
-      // Autocomplete 타입 가져오기
-      const type = $wrapper.data("autocomplete");
-
-      // 'store' 타입인 경우 지도 포커스 이동
-      if (type === "store") {
-        // 선택된 매장들 찾기 (여러 매장일 수 있음)
+      if ($wrapper.data("autocomplete") === "store") {
         const selectedStores = allStores.filter(
-          (store) => store.storeNm === selectedText,
+            (store) => store.storeNm === selectedText,
         );
 
         if (
-          selectedStores.length > 0 &&
-          selectedStores[0].latitude &&
-          selectedStores[0].longitude
+            selectedStores.length > 0 &&
+            selectedStores[0].latitude &&
+            selectedStores[0].longitude
         ) {
-          const selectedStore = selectedStores[0]; // 첫 번째 매장 위치로 지도 이동
+          const selectedStore = selectedStores[0];
           const selectedPosition = new naver.maps.LatLng(
-            selectedStore.latitude,
-            selectedStore.longitude,
+              selectedStore.latitude,
+              selectedStore.longitude,
           );
 
-          // 입력 필드 업데이트 (첫 번째 매장 정보 사용)
-          $("#selectStore").val(selectedStore.storeNm);
+          $wrapper.find(".storeNm").text(selectedStore.storeNm);
           $("#selectBrand").val(selectedStore.brandNm);
           $("#selectInspector").val(selectedStore.inspectorName);
           $("#selectSV").val(selectedStore.supervisorName);
           $("#selectComplTm").val(selectedStore.inspComplTm);
 
-          // inspPlanDt 기준 내림차순
-          // selectedStores.sort((a, b) => {
-          //   const dateA = new Date(a.inspPlanDt);
-          //   const dateB = new Date(b.inspPlanDt);
-          //   return dateB - dateA; // 내림차순 정렬
-          // });
-
-          // 중복되지 않은 모든 매장 정보를 추가
           addStoreInfoSideTable(selectedStores);
 
-          // 지도 중심 이동
           map.setCenter(selectedPosition);
-          map.setZoom(15); // 원하는 확대 수준으로 조정
+          map.setZoom(15);
 
-          // 선택된 매장에 마커가 이미 있는 경우 InfoWindow 열기
           const marker = initialMarkers.find(
-            (m) => m.getTitle() === selectedText,
+              (m) => m.getTitle() === selectedText,
           );
           if (marker && marker.infoWindow) {
             if (activeInfoWindow && activeInfoWindow !== marker.infoWindow) {
@@ -1236,7 +1201,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   };
 
-  // 각 자동완성 필드에 대한 데이터 목록 정의
   const autocompleteData = {
     store: () =>
       Promise.resolve(
@@ -1266,11 +1230,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }),
   };
 
-  /**
-   * 특정 타입의 Autocomplete를 초기화하는 함수
-   * @param {string} type - Autocomplete 타입
-   * @param {Array} dataList - Autocomplete에 사용할 데이터 목록
-   */
   function initializeAutocomplete(type, dataList) {
     const $wrapper = $(`.wrapper[data-autocomplete="${type}"]`);
     if ($wrapper.length > 0) {
@@ -1282,9 +1241,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  /**
-   * Autocomplete 인스턴스를 초기화할 때 데이터 로드 후 생성
-   */
   function initializeAutocompletes() {
     $(".wrapper").each(function () {
       const $wrapper = $(this);

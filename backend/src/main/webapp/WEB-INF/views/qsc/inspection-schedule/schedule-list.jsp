@@ -46,6 +46,10 @@
         }
     </style>
 
+    <%-- Flatpickr   --%>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
     <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js'></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ag-grid-community/dist/ag-grid-community.min.js"></script>
@@ -265,40 +269,6 @@
                         <div class="container px-0 bottom-box-filter">
                             <div class="row g-3 align-items-center pt-4">
 
-                                <!-- 점검유형 -->
-                                <div class="col-lg-3 col-md-6 col-12">
-                                    <label  class="form-label">점검 유형</label>
-                                    <div class="wrapper" data-autocomplete="BottomINSP" data-include-all="false">
-                                        <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                                            <span id="bottom-INSP"></span>
-                                            <i class="uil uil-angle-down" style="visibility: hidden;"></i>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                                <!-- 체크리스트명 -->
-                                <div class="col-lg-3 col-md-6 col-12">
-                                    <label for="checklistName" class="form-label">체크리스트</label>
-                                    <div class="wrapper" data-autocomplete="BottomChkLst" data-include-all="false">
-                                        <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
-                                            <span id="bottom-CHKLST">체크리스트</span>
-                                            <i class="uil uil-angle-down"></i>
-                                        </div>
-                                        <div class="hide-list">
-                                            <div class="search">
-                                                <input
-                                                        type="text"
-                                                        class="form-control top-search"
-                                                        id="checklistName"
-                                                        placeholder="체크리스트를 입력해주세요"
-                                                />
-                                                <ul class="options"></ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <!-- 가맹점 -->
                                 <div class="col-lg-3 col-md-6 col-12">
                                     <label for="storeSearch" class="form-label">가맹점</label>
@@ -364,6 +334,41 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <!-- 점검유형 -->
+                                <div class="col-lg-3 col-md-6 col-12">
+                                    <label  class="form-label">점검 유형</label>
+                                    <div class="wrapper" data-autocomplete="BottomINSP" data-include-all="false">
+                                        <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
+                                            <span id="bottom-INSP"></span>
+                                            <i class="uil uil-angle-down" style="visibility: hidden;"></i>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- 체크리스트명 -->
+                                <div class="col-lg-3 col-md-6 col-12">
+                                    <label for="checklistName" class="form-label">체크리스트</label>
+                                    <div class="wrapper" data-autocomplete="BottomChkLst" data-include-all="false">
+                                        <div class="search-btn top-search form-control d-flex align-items-center justify-content-between">
+                                            <span id="bottom-CHKLST">체크리스트</span>
+                                            <i class="uil uil-angle-down"></i>
+                                        </div>
+                                        <div class="hide-list">
+                                            <div class="search">
+                                                <input
+                                                        type="text"
+                                                        class="form-control top-search"
+                                                        id="checklistName"
+                                                        placeholder="체크리스트를 입력해주세요"
+                                                />
+                                                <ul class="options"></ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
 
                                 <!-- 빈도 -->
                                 <div class="col-lg-3 col-md-6 col-12">
@@ -431,13 +436,13 @@
                                                 <table class="table table-bordered">
                                                     <thead class="table-light">
                                                     <tr class="text-center">
+                                                        <th>일</th>
                                                         <th>월</th>
                                                         <th>화</th>
                                                         <th>수</th>
                                                         <th>목</th>
                                                         <th>금</th>
                                                         <th>토</th>
-                                                        <th>일</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody class="calendar-body">
@@ -607,5 +612,28 @@
 <script src="/resources/js/qsc/inspection_schedule/schedule_list.js"></script>
 <!-- SweetAlert2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateInput = document.getElementById('bottomScheduleDate');
+
+        dateInput.addEventListener('change', function() {
+            const selectedDate = new Date(this.value);
+            const dayOfWeek = selectedDate.getDay(); // 0: 일요일, 6: 토요일
+
+            if (dayOfWeek === 0 || dayOfWeek === 6) {
+                // 주말인 경우 SweetAlert 표시
+                Swal.fire({
+                    icon: 'warning',
+                    title: '주의!',
+                    text: '주말은 선택할 수 없습니다. 다른 날짜를 선택해주세요.',
+                    confirmButtonText: '확인'
+                }).then(() => {
+                    // 날짜 입력 필드를 초기화하거나 원하는 동작을 추가할 수 있습니다.
+                    dateInput.value = '';
+                });
+            }
+        });
+    });
+</script>
 </body>
 </html>

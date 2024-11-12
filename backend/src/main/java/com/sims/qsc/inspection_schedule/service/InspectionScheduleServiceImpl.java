@@ -2,6 +2,7 @@ package com.sims.qsc.inspection_schedule.service;
 
 import com.sims.config.Exception.CustomException;
 import com.sims.config.Exception.ErrorCode;
+import com.sims.config.common.aop.SRoleCheck;
 import com.sims.config.common.aop.SVInspectorRolCheck;
 import com.sims.master.checklist_manage.mapper.ChecklistMapper;
 import com.sims.qsc.inspection_schedule.mapper.InspectionScheduleMapper;
@@ -29,7 +30,6 @@ import java.util.Map;
 public class InspectionScheduleServiceImpl implements InspectionScheduleService {
 
     private final InspectionScheduleMapper scheduleMapper;
-    private final ChecklistMapper checklistMapper;
 
     // DateTimeFormatter를 상수로 정의하여 중복 제거
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
@@ -103,7 +103,7 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
 
     @Override
     @Transactional
-    @SVInspectorRolCheck
+    @SRoleCheck
     public void updateInspectionPlans(InspectionPlan inspectionPlan) {
         scheduleMapper.updateInspectionPlans(inspectionPlan);
         log.info("Updated InspectionPlan with ID: {}", inspectionPlan.getInspPlanId());
@@ -111,7 +111,7 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
 
     @Override
     @Transactional
-    @SVInspectorRolCheck
+    @SRoleCheck
     public void insertInspectionPlans(InspectionPlan inspectionPlan) {
         inspectionPlan.setCreTm(getCurrentTime());
         inspectionPlan.setInspPlanSttsW("1");
@@ -121,7 +121,7 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
 
     @Override
     @Transactional
-    @SVInspectorRolCheck
+    @SRoleCheck
     public void updateInspectionSchedules(InspectionSchedule inspectionSchedule) {
         scheduleMapper.updateInspectionSchedules(inspectionSchedule);
         log.info("Updated InspectionSchedule with ID: {}", inspectionSchedule.getInspSchdId());
@@ -129,7 +129,7 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
 
     @Override
     @Transactional
-    @SVInspectorRolCheck
+    @SRoleCheck
     public void insertInspectionSchedules(List<InspectionSchedule> schedules) {
         if (!schedules.isEmpty()) {
             scheduleMapper.insertInspectionSchedules(schedules);
@@ -141,14 +141,14 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
 
     @Override
     @Transactional
-    @SVInspectorRolCheck
+    @SRoleCheck
     public List<InspectionSchedule> selectInspectionSchedulesByPlanIdAndDate(int inspPlanId) {
         return scheduleMapper.selectInspectionSchedulesByPlanIdAndDate(inspPlanId);
     }
 
     @Override
     @Transactional
-    @SVInspectorRolCheck
+    @SRoleCheck
     public void insertOrUpdateInspectionPlans(List<InspectionPlan> inspectionPlans) {
         String creMbrNo = getAuthenticatedUserName();
         log.info("Authenticated user name: {}", creMbrNo);
@@ -186,11 +186,11 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
                 MemberRequest mbrRequest = getMemberRequest(creMbrNo);
 
                 if (existingSchedules.isEmpty()) {
-                    log.info("start new Schedule {}",plan);
+                    log.info("start new Schedule {}", plan);
                     InspectionSchedule newSchedule = createNewInspectionSchedule(plan, date, mbrRequest);
                     schedulesToInsert.add(newSchedule);
                 } else {
-                    log.info("start update Schedule {}",plan);
+                    log.info("start update Schedule {}", plan);
                     deleteInspectionSchedulesByPlanId(plan.getInspPlanId());
                     InspectionSchedule newSchedule = createNewInspectionSchedule(plan, date, mbrRequest, true);
                     schedulesToInsert.add(newSchedule);
@@ -385,8 +385,18 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
         switch (frqCd) {
             case "ED": // 일별
                 int dailyInterval = parseInterval(cntCd, "D");
-                for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(dailyInterval)) {
-                    dates.add(date);
+                if ("LD".equalsIgnoreCase(cntCd)) {
+                    // 월의 마지막 날 처리
+                    for (LocalDate date = start.with(TemporalAdjusters.lastDayOfMonth());
+                         !date.isAfter(end);
+                         date = date.plusMonths(1).with(TemporalAdjusters.lastDayOfMonth())) {
+                        dates.add(date);
+                    }
+                } else {
+
+                    for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(dailyInterval)) {
+                        dates.add(date);
+                    }
                 }
                 break;
 
@@ -400,16 +410,26 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
                 break;
 
             case "EM": // 월별
-                int monthlyInterval = parseInterval(cntCd, "M");
-                int dayOfMonth = (plan.getSlctDt() != null && !plan.getSlctDt().isEmpty()) ? Integer.parseInt(plan.getSlctDt()) : 1;
-                for (LocalDate date = start.withDayOfMonth(Math.min(dayOfMonth, start.lengthOfMonth()));
-                     !date.isAfter(end);
-                     date = date.plusMonths(monthlyInterval).withDayOfMonth(Math.min(dayOfMonth, date.plusMonths(monthlyInterval).lengthOfMonth()))) {
-                    dates.add(date);
+                if ("LD".equalsIgnoreCase(cntCd)) {
+                    // 월의 마지막 날 처리
+                    for (LocalDate date = start.with(TemporalAdjusters.lastDayOfMonth());
+                         !date.isAfter(end);
+                         date = date.plusMonths(1).with(TemporalAdjusters.lastDayOfMonth())) {
+                        dates.add(date);
+                    }
+                } else {
+                    // 일반적인 월별 간격 처리
+                    int monthlyInterval = parseInterval(cntCd, "M");
+                    int dayOfMonth = (plan.getSlctDt() != null && !plan.getSlctDt().isEmpty()) ? Integer.parseInt(plan.getSlctDt()) : 1;
+                    for (LocalDate date = start.withDayOfMonth(Math.min(dayOfMonth, start.lengthOfMonth()));
+                         !date.isAfter(end);
+                         date = date.plusMonths(monthlyInterval).withDayOfMonth(Math.min(dayOfMonth, date.plusMonths(monthlyInterval).lengthOfMonth()))) {
+                        dates.add(date);
+                    }
                 }
                 break;
 
-            case "NF": // 빈도없음
+            case "NF": // 빈도 없음
                 try {
                     dates.add(LocalDate.parse(plan.getInspPlanDt(), DATE_FORMATTER));
                 } catch (DateTimeParseException e) {
@@ -424,6 +444,7 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
 
         return dates;
     }
+
 
     /**
      * CNT_CD에서 인터벌 값을 추출하는 메서드
