@@ -303,16 +303,16 @@ $(function () {
      * @returns {string} - 생성된 요일 버튼 HTML 문자열
      */
     function generateWeekdayButtons() {
-        const weekdays = ["월", "화", "수", "목", "금"];
-        const serverWeekdays = ["MO", "TU", "WE", "TH", "FR"];
+        const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
+        const serverWeekdays = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
         let buttonsHTML = "";
         weekdays.forEach((day, index) => {
             buttonsHTML += `
-      <div class="col-6 col-sm-4 col-md-3 col-lg-1 mb-2">
+      <div class="col-6 col-sm-3 col-md-2 col-lg-1 mb-2">
         <button 
           class="btn btn-outline-secondary btn-toggle w-100" 
           type="button" 
-          value="${index + 1}"  
+          value="${index}"  
           data-weekdays="${serverWeekdays[index]}" 
           aria-pressed="false"
           data-bs-toggle="button"
@@ -324,6 +324,7 @@ $(function () {
         });
         return buttonsHTML;
     }
+
 
     // 선택된 날짜를 저장할 배열 (월별)
     let selectedDays = [];
@@ -454,8 +455,8 @@ $(function () {
             let day = 1;
             let $row = $("<tr></tr>");
 
-            // 월요일 시작으로 설정 (일요일을 0으로 간주)
-            const startDayIndex = firstDay === 0 ? 6 : firstDay - 1;
+            // 일요일 시작으로 설정
+            const startDayIndex = firstDay;
 
             // 첫 번째 주의 빈 칸 채우기
             for (let i = 0; i < startDayIndex; i++) {

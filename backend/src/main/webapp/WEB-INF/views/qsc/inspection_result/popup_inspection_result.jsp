@@ -27,6 +27,9 @@
     <link rel="stylesheet" href="/resources/css/qsc/inspection_result/popup_inspection_result.css">
     <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js'></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- html2pdf.js 라이브러리 추가 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
 </head>
 <body>
 <%--<p>입력된 기타사항: ${textareaData}</p>--%>
@@ -134,6 +137,7 @@
 
 <div id="go-inspection-wrap">
     <button class="go-inspection" onclick="outInspectionResult()">나가기</button>
+    <button class="print-button btn btn-secondary ms-2" onclick="fn_printClick()">인쇄</button>
 </div>
 
 <%--  ----------------하단 세부결과 보기----------------  --%>

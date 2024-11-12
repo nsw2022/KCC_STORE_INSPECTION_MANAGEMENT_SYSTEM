@@ -63,7 +63,9 @@
                 , INP.INSP_PLAN_ID
                 ,ISC.INSP_SCHD_ID
                 , CHK.INSP_TYPE_CD
-            ORDER BY STO.STORE_NM
+            ORDER BY
+                INSP_PLAN_DT DESC
+                , STO.STORE_NM
     </select>
 
     <sql id="DynamicConditions">

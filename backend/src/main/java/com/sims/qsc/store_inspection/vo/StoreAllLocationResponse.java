@@ -24,4 +24,5 @@ public class StoreAllLocationResponse {
     private String inspectorName;
     private String supervisorName;
     private String inspComplTm;
+    private String chkLstNm;
 }

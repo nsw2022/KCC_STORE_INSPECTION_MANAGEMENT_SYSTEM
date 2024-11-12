@@ -101,6 +101,7 @@
                 , INS.MBR_NM AS INSPECTOR_NAME
                 , SV.MBR_NM AS SUPERVISOR_NAME
                 , ISR.INSP_COMPL_TM
+                , CK.CHKLST_NM
         FROM INSP_SCHD ISC
                   INNER JOIN STORE STO
                             ON STO.STORE_ID = ISC.STORE_ID
@@ -110,6 +111,8 @@
                              ON INS.MBR_ID = STO.INSP_MBR_ID
                   INNER JOIN MBR SV
                              ON SV.MBR_ID = STO.SV_MBR_ID
+                 INNER JOIN CHKLST CK
+                             ON INP.CHKLST_ID = CK.CHKLST_ID
                   LEFT JOIN INSP_RESULT ISR
                              ON ISR.INSP_SCHD_ID = ISC.INSP_SCHD_ID
         <where>
@@ -128,6 +131,9 @@
                 </otherwise>
             </choose>
         </where>
+    ORDER BY
+        ISC.INSP_PLAN_DT
+            DESC
 
     </select>
 
