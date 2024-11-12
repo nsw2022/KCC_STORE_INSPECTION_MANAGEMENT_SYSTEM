@@ -102,7 +102,6 @@
 
 	<select id="selectInspectionResultSubCategoryContentByInspResultId" resultType="com.sims.qsc.inspection_result.vo.InspectionResultSubCategoryDetailResponse">
 		SELECT /* InsepctionResultMapper.selectInspectionResultSubCategoryContentByInspResultId 원승언 */
-		    /*+ ORDERED */
 			DISTINCT
 		      CHCTC.CTG_ID
 			, CHCTC.SEQ
@@ -111,9 +110,6 @@
 			INSP_RESULT INRE
 		INNER JOIN EVIT_ANSW EVAN
 			ON EVAN.INSP_RESULT_ID = INRE.INSP_RESULT_ID
-		LEFT JOIN EVIT_VLT EVVL
-			ON EVAN.EVIT_ID = EVVL.EVIT_ID
-			AND EVAN.INSP_RESULT_ID = EVVL.INSP_RESULT_ID
 		INNER JOIN CHKLST_EVIT CHEV
 			ON CHEV.EVIT_ID = EVAN.EVIT_ID
 		INNER JOIN EVIT_CHCLST EVCH
@@ -122,6 +118,9 @@
 			ON CHCTC.CTG_ID = CHEV.CTG_ID
 		INNER JOIN CHKLST_CTG CHCTP
 			ON CHCTC.MASTER_CTG_ID = CHCTP.CTG_ID
+		LEFT JOIN EVIT_VLT EVVL
+			ON EVAN.EVIT_ID = EVVL.EVIT_ID
+			AND EVAN.INSP_RESULT_ID = EVVL.INSP_RESULT_ID
 		<where>
 			EVAN.EVIT_ANSW_CONTENT = EVCH.CHCLST_CONTENT
 		AND
@@ -158,7 +157,6 @@
 
 	<select id="selectInspResultEvaluationByCategoryNms" resultMap="inspResultBySubCategory">
 		SELECT /* InsepctionResultMapper.selectInspResultEvaluationByCategoryNms 원승언 */
-		/*+ ORDERED */
 			  EVAN.EVIT_ID
 		    , EVVL.VLT_ID
 			, CHEV.EVIT_CONTENT
@@ -189,9 +187,6 @@
 		    INSP_RESULT INRE
 		INNER JOIN EVIT_ANSW EVAN
 			ON EVAN.INSP_RESULT_ID = INRE.INSP_RESULT_ID
-		LEFT JOIN EVIT_VLT EVVL
-			ON EVAN.EVIT_ID = EVVL.EVIT_ID
-			AND EVAN.INSP_RESULT_ID = EVVL.INSP_RESULT_ID
 		INNER JOIN CHKLST_EVIT CHEV
 			ON CHEV.EVIT_ID = EVAN.EVIT_ID
 		INNER JOIN EVIT_CHCLST EVCH
@@ -200,6 +195,9 @@
 			ON CHCTC.CTG_ID = CHEV.CTG_ID
 		INNER JOIN CHKLST_CTG CHCTP
 			ON CHCTC.MASTER_CTG_ID = CHCTP.CTG_ID
+		LEFT JOIN EVIT_VLT EVVL
+			ON EVAN.EVIT_ID = EVVL.EVIT_ID
+			AND EVAN.INSP_RESULT_ID = EVVL.INSP_RESULT_ID
 		<where>
 			EVAN.EVIT_ANSW_CONTENT = EVCH.CHCLST_CONTENT
 		  AND
@@ -217,7 +215,6 @@
 		ORDER BY
 			CHEV.EVIT_SEQ
 	</select>
-
 
 	<select id="selectAnswImgByInspResultId" resultType="com.sims.qsc.inspection_result.vo.InspectionResultAnswImgResponse">
 		SELECT /* InsepctionResultMapper.selectAnswImgByInspResultId 원승언 */

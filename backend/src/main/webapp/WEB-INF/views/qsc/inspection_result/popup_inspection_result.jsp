@@ -29,7 +29,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- html2pdf.js 라이브러리 추가 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
-
 </head>
 <body>
 <%--<p>입력된 기타사항: ${textareaData}</p>--%>
