@@ -123,42 +123,6 @@ $(function () {
     })
 
 
-
-    // 탭 초기화 함수
-    function initializeTabs() {
-
-        const tabs = document.querySelectorAll(".inspection-tab");
-        const reportSummary = document.querySelector(".report-summary");
-        const detailedResult = document.querySelector(".detailed-result");
-        const inspectionList = document.getElementById("inspection-result-list");
-
-        // 기본 상태 설정: 보고서 간략은 보이기, 세부결과는 숨기기
-        reportSummary.style.display = "flex";
-        detailedResult.style.display = "none";
-        inspectionList.style.display = "none";
-
-        // 탭 클릭 이벤트 추가
-        tabs.forEach(tab => {
-            tab.addEventListener("click", function () {
-                tabs.forEach(tab => tab.classList.remove("active"));
-
-                this.classList.add("active");
-
-                const selectedTab = this.getAttribute("data-tab");
-
-                if (selectedTab === "report-summary") {
-                    reportSummary.style.display = "flex";
-                    detailedResult.style.display = "none";
-                    inspectionList.style.display = "none";
-                } else if (selectedTab === "detailed-result") {
-                    reportSummary.style.display = "none";
-                    detailedResult.style.display = "flex";
-                    inspectionList.style.display = "none";
-                }
-            });
-        });
-    }
-
     // 세부결과 탭의 상세 항목을 동적으로 생성하는 함수
     function generateDetailedItems(inspectionData) {
         const detailedSection = document.querySelector('.detailed-section');
