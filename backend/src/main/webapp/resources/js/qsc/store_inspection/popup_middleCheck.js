@@ -2202,121 +2202,121 @@ function sendDataToServer(requestData) {
  * @param {Element} wrapper - inspection-content-wrapper 요소
  * @return {string|null} 답변 내용
  */
-function getAnswerContent(wrapper) {
-    // 2-choice
-    const activeBtn = wrapper.querySelector('.answer-btn.active');
-    if (activeBtn) {
-        console.log(`Active button found: ${activeBtn.dataset.optionValue}`);
-        return activeBtn.getAttribute('data-option-value');
-    }
-
-    // 5-choice
-    const selectedRadio = wrapper.querySelector('input[type="radio"]:checked');
-    if (selectedRadio) {
-        console.log(`Checked radio found: ${selectedRadio.value}`);
-        return selectedRadio.value;
-    }
-
-    console.log('No answer content found.');
-    return null;
-}
-
-function getProductName(contentWrapper) {
-    const productInput = contentWrapper.querySelector('.product-name');
-    return productInput ? productInput.value.trim() : null;
-}
-
-function getViolationContent(contentWrapper) {
-    const vltContent = contentWrapper.querySelector('.violation');
-    return vltContent ? vltContent.value.trim() : null;
-}
-
-function getViolationCount(contentWrapper) {
-    const violationQty = contentWrapper.querySelector('.violation-quantity');
-    return violationQty ? parseInt(violationQty.value, 10) || null : null;
-}
-
-function getCaupvdCd(contentWrapper) {
-    const selectedResponsibility = contentWrapper.querySelector('input[name^="responsibility_"]:checked');
-    const caupvdValueMap = {
-        "점주": "C001",
-        "SV": "C002",
-        "직원": "C003",
-        "기타": "C004"
-    };
-
-    if (selectedResponsibility) {
-        if (selectedResponsibility.value === "기타") {
-            const caupvdInput = contentWrapper.querySelector('.caupvd');
-            return caupvdInput ? caupvdInput.value.trim() : null; // 기타일 경우 입력된 값 사용
-        } else {
-            return caupvdValueMap[selectedResponsibility.value] || null;
-        }
-    }
-
-    return null;
-}
-
-function getVltCause(contentWrapper) {
-    const cause = contentWrapper.querySelector('.reason');
-    return cause ? cause.value.trim() : null;
-}
-
-function getInstruction(contentWrapper) {
-    const instruction = contentWrapper.querySelector('.action');
-    return instruction ? instruction.value.trim() : null;
-}
-
-function getVltPlcCd(contentWrapper) {
-    console.log("getVltPlcCd 함수 호출됨");
-    console.log("contentWrapper:", contentWrapper);
-
-    const selectedLoc = contentWrapper.querySelector('input[name^="location_"]:checked');
-    const plcValueMap = {
-        "매장": "VP001",
-        "주방": "VP002",
-        "카페": "VP003",
-        "기타": "VP004"
-    };
-
-    if (selectedLoc) {
-        if (selectedLoc.value === "기타") {
-            const etcInput = contentWrapper.querySelector('.etc-input');
-            console.log("ETC Input Found:", etcInput); // 디버깅 로그
-            if (etcInput && etcInput.value.trim() !== "") {
-                console.log("ETC Input Value:", etcInput.value.trim()); // 디버깅 로그
-                return etcInput.value.trim(); // 기타일 경우 입력된 값 사용
-            } else {
-                console.warn("ETC Input is empty or not found.");
-                return ""; // 빈 문자열 반환
-            }
-        } else {
-            const mappedValue = plcValueMap[selectedLoc.value] || "";
-            console.log("Mapped Value:", mappedValue); // 디버깅 로그
-            return mappedValue;
-        }
-    }
-
-    console.warn("No location selected.");
-
-    return null;
-}
-
-
-function getPhotoPaths(contentWrapper) {
-    const photoBoxes = contentWrapper.querySelectorAll('.photo-box');
-    const photos = [];
-    photoBoxes.forEach((box, index) => {
-        const path = box.getAttribute('data-path');
-        if (path) {
-            photos.push({
-                seq: index + 1,
-                photoPath: path
-            });
-        }
-    });
-    return photos;
-}
+// function getAnswerContent(wrapper) {
+//     // 2-choice
+//     const activeBtn = wrapper.querySelector('.answer-btn.active');
+//     if (activeBtn) {
+//         console.log(`Active button found: ${activeBtn.dataset.optionValue}`);
+//         return activeBtn.getAttribute('data-option-value');
+//     }
+//
+//     // 5-choice
+//     const selectedRadio = wrapper.querySelector('input[type="radio"]:checked');
+//     if (selectedRadio) {
+//         console.log(`Checked radio found: ${selectedRadio.value}`);
+//         return selectedRadio.value;
+//     }
+//
+//     console.log('No answer content found.');
+//     return null;
+// }
+//
+// function getProductName(contentWrapper) {
+//     const productInput = contentWrapper.querySelector('.product-name');
+//     return productInput ? productInput.value.trim() : null;
+// }
+//
+// function getViolationContent(contentWrapper) {
+//     const vltContent = contentWrapper.querySelector('.violation');
+//     return vltContent ? vltContent.value.trim() : null;
+// }
+//
+// function getViolationCount(contentWrapper) {
+//     const violationQty = contentWrapper.querySelector('.violation-quantity');
+//     return violationQty ? parseInt(violationQty.value, 10) || null : null;
+// }
+//
+// function getCaupvdCd(contentWrapper) {
+//     const selectedResponsibility = contentWrapper.querySelector('input[name^="responsibility_"]:checked');
+//     const caupvdValueMap = {
+//         "점주": "C001",
+//         "SV": "C002",
+//         "직원": "C003",
+//         "기타": "C004"
+//     };
+//
+//     if (selectedResponsibility) {
+//         if (selectedResponsibility.value === "기타") {
+//             const caupvdInput = contentWrapper.querySelector('.caupvd');
+//             return caupvdInput ? caupvdInput.value.trim() : null; // 기타일 경우 입력된 값 사용
+//         } else {
+//             return caupvdValueMap[selectedResponsibility.value] || null;
+//         }
+//     }
+//
+//     return null;
+// }
+//
+// function getVltCause(contentWrapper) {
+//     const cause = contentWrapper.querySelector('.reason');
+//     return cause ? cause.value.trim() : null;
+// }
+//
+// function getInstruction(contentWrapper) {
+//     const instruction = contentWrapper.querySelector('.action');
+//     return instruction ? instruction.value.trim() : null;
+// }
+//
+// function getVltPlcCd(contentWrapper) {
+//     console.log("getVltPlcCd 함수 호출됨");
+//     console.log("contentWrapper:", contentWrapper);
+//
+//     const selectedLoc = contentWrapper.querySelector('input[name^="location_"]:checked');
+//     const plcValueMap = {
+//         "매장": "VP001",
+//         "주방": "VP002",
+//         "카페": "VP003",
+//         "기타": "VP004"
+//     };
+//
+//     if (selectedLoc) {
+//         if (selectedLoc.value === "기타") {
+//             const etcInput = contentWrapper.querySelector('.etc-input');
+//             console.log("ETC Input Found:", etcInput); // 디버깅 로그
+//             if (etcInput && etcInput.value.trim() !== "") {
+//                 console.log("ETC Input Value:", etcInput.value.trim()); // 디버깅 로그
+//                 return etcInput.value.trim(); // 기타일 경우 입력된 값 사용
+//             } else {
+//                 console.warn("ETC Input is empty or not found.");
+//                 return ""; // 빈 문자열 반환
+//             }
+//         } else {
+//             const mappedValue = plcValueMap[selectedLoc.value] || "";
+//             console.log("Mapped Value:", mappedValue); // 디버깅 로그
+//             return mappedValue;
+//         }
+//     }
+//
+//     console.warn("No location selected.");
+//
+//     return null;
+// }
+//
+//
+// function getPhotoPaths(contentWrapper) {
+//     const photoBoxes = contentWrapper.querySelectorAll('.photo-box');
+//     const photos = [];
+//     photoBoxes.forEach((box, index) => {
+//         const path = box.getAttribute('data-path');
+//         if (path) {
+//             photos.push({
+//                 seq: index + 1,
+//                 photoPath: path
+//             });
+//         }
+//     });
+//     return photos;
+// }
 
 
 
