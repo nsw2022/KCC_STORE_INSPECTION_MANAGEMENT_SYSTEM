@@ -470,7 +470,7 @@ body {
   }
 
   .evit-score{
-    min-width: 50px !important;
+    min-width: 51px !important;
   }
 }
 
@@ -511,4 +511,13 @@ body {
 }
 .ag-header-cell-label {
   justify-content: center;
+}
+
+.form-label-essential:after {
+  content: "*";
+  display: block;
+  height: 16px !important;
+  width: 7px !important;
+  margin-left: 3px;
+  color: red;
 }

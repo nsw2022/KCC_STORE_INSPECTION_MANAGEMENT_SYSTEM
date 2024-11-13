@@ -23,17 +23,20 @@ public class InspectionListManageServiceImpl implements InspectionListManageServ
 
     private final InspectionListManageMapper inspectionListManageMapper;
     @Override
+    @Transactional(readOnly = true)
     public InspectionPageResponse selectChklstNmByChklstId(String chklstId) {
 
         return inspectionListManageMapper.selectChklstNmByChklstId(chklstId);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public String selectChklstIdByChklstNm(String chklstNm) {
         return inspectionListManageMapper.selectChklstIdByChklstNm(chklstNm);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CtgResponse> selectCtgByChklstId(String chklstId) {
         log.info("chklstId = {}", chklstId);
 
@@ -41,18 +44,21 @@ public class InspectionListManageServiceImpl implements InspectionListManageServ
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<SubCtgResponse> selectSubCtgByChklstIdAndCtgNm(String chklstId, String CtgNm) {
 
         return inspectionListManageMapper.selectSubCtgByChklstIdAndCtgNm(chklstId, CtgNm);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<EvitResponse> selectEvitByCtgNmAndCtgId(String ctgId, String ctgNm) {
         log.info("result = {}", inspectionListManageMapper.selectEvitByCtgNmAndCtgId(ctgId, ctgNm));
         return inspectionListManageMapper.selectEvitByCtgNmAndCtgId(ctgId, ctgNm);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ChclstResponse> selectEvitChclstByCtgIdAndEvitNm(String ctgId, String evitNm) {
         return inspectionListManageMapper.selectEvitChclstByCtgIdAndEvitNm(ctgId, evitNm);
     }
@@ -65,7 +71,10 @@ public class InspectionListManageServiceImpl implements InspectionListManageServ
         log.info("auth = {}", auth);
         ctgRequest.forEach(ctg -> {
             ctg.setCreMbrId(auth);
-            ctg.setCtgId(ctg.getCtgId().replace("new", ""));
+//            ctg.setCtgId(ctg.getCtgId().replace("new", ""));
+            if(ctg.getCtgId().contains("new")){
+                ctg.setCtgId(null);
+            }
         });
 
         return inspectionListManageMapper.insertOrUpdateCtg(ctgRequest);

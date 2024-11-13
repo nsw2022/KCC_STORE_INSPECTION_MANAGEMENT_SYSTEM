@@ -104,8 +104,8 @@ public class AwsFileService {
 	}
 
 	/**
-	 * 이미지를 리사이징 및 압축하여 File 객체로 변환하는 메서드
-	 * @param file 변환할 MultipartFile
+	 * 이미지를 리사이징하여 File 객체로 변환하는 메서드
+	 * @param file 변환할 MultipartFile(사진)
 	 * @return 리사이징된 File 객체 (Optional)
 	 * @throws IOException 변환 실패 시 예외 발생
 	 */
@@ -113,10 +113,9 @@ public class AwsFileService {
 		File convertFile = new File(System.getProperty("user.home") + "/" + file.getOriginalFilename());
 
 		try (FileOutputStream fos = new FileOutputStream(convertFile)) {
-			// 리사이징 및 압축 진행 (폭과 높이 비율을 설정하여 적절한 크기로 리사이즈)
 			Thumbnails.of(file.getInputStream())
-					.size(800, 800)          // 원하는 크기 지정 (예: 800x800)
-					.outputQuality(0.7)      // 0.0(저품질) ~ 1.0(최고품질)
+					.size(800, 800)          // 사진 크기 지정
+					.outputQuality(0.7)      // 품질 지정
 					.toOutputStream(fos);    // FileOutputStream으로 저장
 			return Optional.of(convertFile);
 		} catch (IOException e) {

@@ -1,5 +1,7 @@
 package com.sims.config.common;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+
 public class ClientInfo {
     public static String getClientOS(String userAgent) {
         String os = "";
@@ -65,5 +67,11 @@ public class ClientInfo {
             browser ="Other";
         }
         return browser;
+    }
+
+    public static String getClientLoginId(){
+        String loginId = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return loginId;
     }
 }

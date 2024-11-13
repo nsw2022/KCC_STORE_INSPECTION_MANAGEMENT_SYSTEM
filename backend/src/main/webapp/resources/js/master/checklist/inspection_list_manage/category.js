@@ -7,9 +7,21 @@ let gridApi;
 
 $(document).ready(async function() {
     $('.ctg-stnd-score').on('input', function() {
-        const value = parseFloat($(this).val());
+        const inputValue = $(this).val().trim();
 
-        if (!isNaN(value) && value > 100) {
+        if (!/^\d+$/.test(inputValue)) {
+            Swal.fire({
+                title: "오류!",
+                text: "숫자만 입력할 수 있습니다.",
+                icon: "error",
+                confirmButtonText: "확인",
+            });
+            $(this).val(''); // 입력값 초기화
+            return;
+        }
+        const value = parseInt(inputValue, 10);
+
+        if (value > 100) {
             Swal.fire({
                 title: "오류!",
                 text: "100점을 초과할 수 없습니다",
@@ -17,8 +29,13 @@ $(document).ready(async function() {
                 confirmButtonText: "확인",
             });
             $(this).val(''); // 입력값 초기화
+            rowData[selectedRowNo].stndScore = "0";
+            gridApi.applyTransaction({
+                update: [rowData[selectedRowNo]]
+            });
         }
     });
+
     try {
         const response = await fetch(`/master/inspection-list-manage/ctg/${chklstId}`);
         const data = await response.json();
@@ -43,10 +60,10 @@ $(document).ready(async function() {
                     cellStyle: { backgroundColor: "#ffffff" },
                 },
                 { field: "ctgId", headerName: "no", width: 50, minWidth: 50, tooltipField: "no"  },
-                { field: "ctgNm", headerName: "대분류명", width: 90, minWidth: 90, tooltipField: "category_name"  },
-                { field: "stndScore", headerName: "기준점수", width: 90, minWidth: 90, tooltipField: "reference_score" },
-                { field: "ctgUseW", headerName: "사용여부", width: 90, minWidth: 90, tooltipField: "status"},
-                { field: "seq", headerName: "정렬순서", width: 90, minWidth: 90, tooltipField: "seq"},
+                { field: "ctgNm", headerName: "대분류명", width: 90, minWidth: 90, tooltipField: "대분류명"  },
+                { field: "stndScore", headerName: "기준점수", width: 90, minWidth: 90, tooltipField: "기준점수" },
+                { field: "ctgUseW", headerName: "사용여부", width: 90, minWidth: 90, tooltipField: "사용여부"},
+                { field: "seq", headerName: "정렬순서", width: 90, minWidth: 90, tooltipField: "정렬순서"},
             ],
 
             getRowId: params => params.data.ctgId, // 각 행의 고유 ID로 ctgId를 사용
@@ -79,12 +96,13 @@ $(document).ready(async function() {
                             rowData2.push(data[i]);
                         }
                         gridApi2.setGridOption("rowData", rowData2);  // Initialize gridApi2 with rowData2
+                        $('.sub-ctg-save-btn, .sub-ctg-delete-btn').removeAttr("disabled");
                     });
                 $('.ctg-nm').next().val(ctgNm);
                 $('.stnd-score').next().val(stndScore);
                 if(ctgUseW === 'Y'){
                     $('.ctg-use-w').next().prop('checked', true);
-                }else if (ctgUseW === 'N'){
+                }else if (ctgUseW === 'N' || ctgUseW === ''){
                     $('.ctg-use-w').next().prop('checked', false);
                 }
             },
@@ -100,6 +118,8 @@ $(document).ready(async function() {
                     $('.ctg-nm').next().val("");
                     $('.stnd-score').next().val("");
                     $('.ctg-use-w').next().prop('checked', false);
+                    $('.sub-ctg-save-btn, .sub-ctg-delete-btn').attr('disabled', true);
+
                 }
             },
 
@@ -109,7 +129,6 @@ $(document).ready(async function() {
                 if (selectedRows.length === 1 && event.node.isSelected()) {
                     const selectedNode = event.node;
                     selectedRowNo = selectedNode.rowIndex;
-                    console.log("선택된 행 번호: ", selectedRowNo);
 
                 } else if (!event.node.isSelected() && event.node.rowIndex === selectedRowNo) {
                     selectedRowNo = null;
@@ -128,20 +147,22 @@ $(document).ready(async function() {
 
 // 새로운 rowData 생성 함수
 function createNewCategoryRowData() {
-    return {
-        ctgId: "",
+    const newData = {
+        ctgId: `new-${Date.now()}`,
         ctgNm: "",
         stndScore: "",
-        ctgUseW: "",
+        ctgUseW: "Y",
         seq: (gridApi.getDisplayedRowCount() + 1).toString()
     };
+    return newData;
 }
 
 // 행 추가 함수
 function onAddCategoryRow() {
-    const newItem = createNewCategoryRowData();
+    var newItem = createNewCategoryRowData();
     rowData.push(newItem); // rowData에 새 항목 추가
-    gridApi.applyTransaction({ add: [newItem] }); // 그리드에 항목 추가
+    console.log(rowData);
+    gridApi.applyTransaction({ add: [newItem] });
 }
 
 function onDeleteCategoryRow() {
@@ -271,10 +292,17 @@ $('.ctg-input').keyup(function(){
     if (selectedRowNo !== null) {
         checkUnload = true;
         $('.ctg-save-btn').removeAttr("disabled");
-        rowData[selectedRowNo].ctgNm = $('.ctg-input').val();
-        gridApi.applyTransaction({
-            update: [rowData[selectedRowNo]]
-        });
+
+
+        // gridApi에서 선택된 행 데이터 가져오기
+        const selectedRowNode = gridApi.getDisplayedRowAtIndex(selectedRowNo);
+        if (selectedRowNode && selectedRowNode.data) {
+            // 가져온 데이터가 유효할 때만 업데이트
+            selectedRowNode.data.ctgNm = $('.ctg-input').val();
+            gridApi.applyTransaction({
+                update: [selectedRowNode.data]
+            });
+        }
     }
 })
 // 기준점수 수정 시 이벤트
@@ -329,6 +357,15 @@ function ctgSaveOrUpdate() {
                 Swal.fire("실패!", "항목을 선택해주세요.", "error");
                 return;
             }
+            // 필수 항목이 비어있으면 종료
+            const hasEmptyFields = selectedRows.some((row) => {
+                if(row.ctgNm === "" || row.stndScore === "" || row.ctgUseW === ""){
+                    Swal.fire("실패!", "필수 항목을 모두 입력해주세요.", "error");
+                    return true;
+                };
+                return false
+            });
+            if (hasEmptyFields) return;
 
             // 체크리스트를 서버에 저장하는 fetch 요청
             fetch("/master/inspection-list-manage/ctg/submit", {

@@ -38,12 +38,15 @@ $('.masterChklstSearchBtn .search-btn').click(function(e) {
     $('.list-group-item').each(function() {
         let text = $(this).find('p').text();
         if(text === placeholderText){
+            clickedListText = text;
             // 클릭된 리스트 아이템의 스타일을 변경
             $(this).find('.item-info').css({
                 'background-color': '#f2f6ff',
                 'border': '1px solid #3274fa',
                 'box-shadow': 'none',
             });
+        }else{
+            clickedListText = "";
         }
     });
 
@@ -69,13 +72,73 @@ $('.masterChklstSearchBtn .search-btn').click(function(e) {
         });
     });
 
+    // 마스터 체크리스트 등록
     $('.chklstSelectBtn').click(function(){
-        $('.masterChecklistPlaceholder').text(clickedListText);
+        Swal.fire({
+            title: "확인",
+            html: "마스터 체크리스트를 등록하시겠습니까?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "확인",
+            cancelButtonText: "취소",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // const selectedRows = gridApi.getSelectedRows();
+                // if (selectedRows.length === 0) {
+                //     Swal.fire("실패!", "체크리스트를 선택해주세요.", "error");
+                //     return;
+                // }
+
+                // 마스터 체크리스트를 서버에 저장하는 fetch 요청
+                fetch("/master/checklist/master-chklst/copy", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        newChklstId: selectedRowChklstId,
+                        masterChklstNm: clickedListText
+                    }),
+                })
+                .then((response) => {
+                    if (!response.ok) {
+                        // 응답 상태 코드에 따른 에러 처리
+                        if (response.status === 403) {
+                            Swal.fire("실패!", "권한이 없습니다.", "error");
+                        } else if (response.status === 500) {
+                            Swal.fire("실패!", "저장에 실패했습니다. 관리자에게 문의하세요.", "error");
+                        }
+                        return Promise.reject();
+                    }
+                })
+                .then((data) => {
+                    // 서버 저장이 성공하면 완료 알림 표시
+                    Swal.fire({
+                        title: "완료!",
+                        text: "완료되었습니다.",
+                        icon: "success",
+                        confirmButtonText: "OK",
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            checkUnload = false;
+                            // placeholder에 text 추가
+                            // $('.masterChecklistPlaceholder').text(clickedListText);
+                            location.href = "/master/checklist";
+                        }
+                    });
+                })
+            }
+        });
+
+
     });
 });
 
 /**
  * @Todo 체크리스트 추가 시 검색모달에 나타나는 현상 수정해야 함
+ * @Todo 체크리스트 삭제 시 연결되어있는 대,중분류 삭제해야 함
  */
 // 검색 버튼 클릭 시 실행
 $('.chklst-search-btn').click(function() {

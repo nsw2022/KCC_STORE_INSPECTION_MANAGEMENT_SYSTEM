@@ -52,7 +52,7 @@ const gridOptions4 = {
         $('.chclst-bsnSspnDaynum').next().val(params.data.bsnSspnDaynum);
         if(params.data.evitChclstUseW === 'Y'){
             $('.chclst-use-w').next().prop('checked', true);
-        }else if (params.data.evitChclstUseW === 'N'){
+        }else if (params.data.evitChclstUseW === 'N' || params.data.evitChclstUseW === ''){
             $('.chclst-use-w').next().prop('checked', false);
         }
     },

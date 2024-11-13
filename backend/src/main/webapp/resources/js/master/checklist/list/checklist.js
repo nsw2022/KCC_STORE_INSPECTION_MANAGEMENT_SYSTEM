@@ -4,6 +4,7 @@ let defaultRowData = [];
 let gridApi = null;
 let gridOptions = null;
 let selectedRowNo = 0;
+let selectedRowChklstId = "";
 let firstRowLength = 0;
 // 체크리스트 데이터를 서버에서 받아오는 함수
 async function getChecklistAll(searchCriteria = {}) {
@@ -132,11 +133,12 @@ function initializeGrid() {
         $(".checklistPlaceholder").text(selectedRows[0].chklstNm);
         $(".masterChecklistPlaceholder").text(selectedRows[0].masterChklstNm);
         $(".inspectionTypePlaceholder").text(selectedRows[0].inspTypeNm);
-
+        selectedRowChklstId = selectedRows[0].chklstId;
         enableElementSearchBtn(); // 검색 버튼 활성화
       } else if (!event.node.isSelected() && event.node.rowIndex === selectedRowNo) {
         // 행이 선택 해제될 때 선택된 행 번호를 초기화합니다.
         selectedRowNo = null;
+        selectedRowChklstId = null;
         disableSearchBtn(); // 검색 버튼 비활성화
       }
     },

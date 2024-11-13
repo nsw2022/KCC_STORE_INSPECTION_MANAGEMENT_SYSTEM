@@ -489,6 +489,29 @@ button:hover {
         width: 100%;
     }
 
+    #notification-group{
+        order: 4;
+        width: 100%;
+    }
 
+    #group{
+        order: 3;
+        width: 100%;
+    }
+    #chart-group{
+        flex-direction: column;
+    }
 }
 
+@media screen and (max-width: 1200px) {
+    #notification-group{
+        height: 330px;
+    }
+}
+
+@media screen and (max-width: 920px) {
+    #chart-group .item-content {
+        margin-right: 0 !important;
+        margin-left: 0 !important;
+    }
+}

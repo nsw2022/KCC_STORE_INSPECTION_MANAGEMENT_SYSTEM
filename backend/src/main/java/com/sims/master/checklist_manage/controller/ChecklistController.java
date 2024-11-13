@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Description 체크리스트 관리 컨트롤러 클래스
@@ -89,4 +90,21 @@ public class ChecklistController {
         return new ResponseEntity<ChecklistPreviewResponse>(checklistService.getComplianceData(chklstNm), HttpStatus.OK);
     }
 
+    /**
+     * 마스터 체크리스트 등록
+     *
+     */
+    @PostMapping("/checklist/master-chklst/copy")
+    @ResponseBody
+    public ResponseEntity<?> insertMasterChecklistCopy(@RequestBody Map<String, String> chklstNm){
+        String masterChklstNm = chklstNm.get("masterChklstNm");
+        String newChklstId = chklstNm.get("newChklstId");
+
+        log.info("masterChklstNm = {}", masterChklstNm);
+        log.info("newChklstId = {}", newChklstId);
+
+        checklistService.insertMasterChecklistCopy(newChklstId, masterChklstNm);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

@@ -50,12 +50,13 @@ const gridOptions2 = {
                     rowData3.push(data[i]);
                 }
                 gridApi3.setGridOption("rowData", rowData3);  // Initialize gridApi2 with rowData2
+                $('.eval-save-btn, .eval-delete-btn').removeAttr("disabled");
             });
         $('.sub-ctg-nm').next().val(ctgNm);
         $('.sub-ctg-stnd-score').val(params.data.stndScore);
         if(ctgUseW === 'Y'){
             $('.sub-ctg-use-w').next().prop('checked', true);
-        }else if (ctgUseW === 'N'){
+        }else if (ctgUseW === 'N' || ctgUseW === 'N'){
             $('.sub-ctg-use-w').next().prop('checked', false);
         }
     },
@@ -72,6 +73,7 @@ const gridOptions2 = {
             gridApi3.setGridOption("rowData", []);
             $('.sub-ctg-nm').next().val("");
             $('.sub-ctg-use-w').next().prop('checked', false);
+            $('.eval-save-btn, .eval-delete-btn').attr('disabled', true);
         }
     },
 
@@ -109,6 +111,7 @@ function createNewSubCategoryRowData() {
 function onAddSubCategoryRow() {
     var newItem2 = createNewSubCategoryRowData();
     rowData2.push(newItem2); // rowData에 새 항목 추가
+    console.log(rowData2);
     gridApi2.applyTransaction({ add: [newItem2] });
 }
 

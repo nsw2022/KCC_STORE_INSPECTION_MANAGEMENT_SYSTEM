@@ -142,9 +142,9 @@
                 <%-- 내부에 요소 추가하기 --%>
 
             </section>
-            <section id="chart-group" class="mt-3">
+            <section id="chart-group" class="mt-3 d-flex">
                 <div id="group" class="box row m-0 justify-content-between">
-                    <div class="item col-lg-4 p-0 mb-3">
+                    <div class="item col-lg-4 p-0 mb-3 chart1">
                         <div class="item-content me-2 p-3">
                             <div class="mb-3 title">점검 진행현황</div>
                             <div id="chart1"></div>
@@ -187,12 +187,6 @@
                             <div id="myGrid" class="ag-theme-quartz" style="height: 85%"></div>
                         </div>
                     </div>
-                    <%--                    <div class="item col-lg-4 p-1 mb-3 ">--%>
-                    <%--                        <div class="item-content m-1 p-3">--%>
-                    <%--                            <div class="mb-3 title">심사 평균점수 비교</div>--%>
-                    <%--                            <div id="chart3"></div>--%>
-                    <%--                        </div>--%>
-                    <%--                    </div>--%>
                     <div class="item col-lg-8 p-0 mb-3">
                         <div class="item-content ms-2 p-3" >
                             <div class="mb-3 title">월별 평균 점수</div>

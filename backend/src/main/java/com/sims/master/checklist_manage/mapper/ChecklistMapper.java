@@ -1,9 +1,6 @@
 package com.sims.master.checklist_manage.mapper;
 
-import com.sims.master.checklist_manage.vo.ChecklistDeleteRequest;
-import com.sims.master.checklist_manage.vo.ChecklistPreviewResponse;
-import com.sims.master.checklist_manage.vo.ChecklistRequest;
-import com.sims.master.checklist_manage.vo.ChecklistResponse;
+import com.sims.master.checklist_manage.vo.*;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -80,5 +77,30 @@ public interface ChecklistMapper {
      * @return 수정된 데이터 갯수
      */
     public int updateChklstUseW(int chklstId);
+
+    /**
+     * 마스터 체크리스트 ID 가져오기
+     */
+    public Long selectMasterChecklistId(String masterChklstNm);
+
+
+    /**
+     * 대분류 복사
+     */
+    public int insertCtgCopy(String newChklstId, Long masterChklstId);
+    /**
+     * 중분류 복사
+     */
+    public int insertSubCtgCopy(Long newCtgId, String newChklstId, Long masterChklstId);
+
+    public List<Long> selectNewCategoryIds(String newChklstId);
+    public List<Long> selectNewSubCtgIds(String newChklstId);
+
+    public int copyEvaluationItems(Long newSubCtgId, Long masterChklstId);
+
+    public int copyChoices(String newChklstId, Long masterChklstId);
+
+
+
 
 }

@@ -53,13 +53,14 @@ const gridOptions3 = {
                     rowData4.push(data[i]);
                 }
                 gridApi4.setGridOption("rowData", rowData4);  // Initialize gridApi2 with rowData2
+                $('.chclst-save-btn, .chclst-delete-btn').removeAttr("disabled");
             });
         $('.evit-nm').next().val(evitNm);
         $('.evit-type-nm').next().val(evitTypeNm);
         $('.evit-score').next().val(score);
         if(chklstEvitUseW === 'Y'){
             $('.evit-use-w').next().prop('checked', true);
-        }else if (chklstEvitUseW === 'N'){
+        }else if (chklstEvitUseW === 'N' || chklstEvitUseW === ''){
             $('.evit-use-w').next().prop('checked', false);
         }
     },
@@ -78,6 +79,7 @@ const gridOptions3 = {
             $('.evit-type-nm').next().val("");
             $('.evit-score').next().val("");
             $('.evit-use-w').next().prop('checked', false);
+            $('.chclst-save-btn, .chclst-delete-btn').attr('disabled', true);
         }
     },
 

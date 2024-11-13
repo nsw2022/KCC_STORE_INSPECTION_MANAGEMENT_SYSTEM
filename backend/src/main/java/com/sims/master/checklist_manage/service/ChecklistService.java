@@ -44,4 +44,9 @@ public interface ChecklistService {
      * @return 체크리스트 미리보기
      */
     public ChecklistPreviewResponse getComplianceData(String chklstNm);
+
+    /**
+     * 체크리스트 복사
+     */
+    public int insertMasterChecklistCopy(String newChklstId, String masterChklstNm);
 }
