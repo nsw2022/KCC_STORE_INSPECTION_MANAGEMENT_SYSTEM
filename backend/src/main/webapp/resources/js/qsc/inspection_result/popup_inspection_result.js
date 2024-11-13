@@ -582,13 +582,13 @@ $(function () {
             // 인쇄 후에 추가된 콘텐츠 제거
             removePrintContent();
 
-            // $('body').find('#inspection-result-list').removeClass('page-break');
-            // $('body').find('.check-subitem:not(:first-of-type)').removeClass('page-break').removeClass('mt-20');
-            // $('body').find('.check-subitem:last-child').removeClass('flex');
-            // $('body').find('.print-div').remove();
-            // $('body').find('#inspection-result-list > :nth-child(n)').css('display', 'flex');
-            // $(element).find('.print-div .check-subitem').removeClass('mt-20');
-            // $(element).find('.subitem-info-wrapper').removeClass(('avoid-page-break');
+            $('body').find('#inspection-result-list').removeClass('page-break');
+            $('body').find('.check-subitem:not(:first-of-type)').removeClass('page-break').removeClass('mt-20');
+            $('body').find('.check-subitem:last-child').removeClass('flex');
+            $('body').find('.print-div').remove();
+            $('body').find('#inspection-result-list > :nth-child(n)').css('display', 'flex');
+            $('body').find('.print-div .check-subitem').removeClass('mt-20');
+            $('body').find('.subitem-info-wrapper').removeClass('avoid-page-break');
 
             $('.detail-btn').removeClass('hide');
             $('.print-button').removeClass('hide');
@@ -660,7 +660,7 @@ $(function () {
         const opt = {
             filename:     '점검 결과.pdf',
             image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale:  3},
+            html2canvas:  { scale:  2, height: Window.innerHeight },
             pagebreak: {mode: ['avoid-all',"css", 'legacy']},
             jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' ,putTotalPages: true}  // 세로는 portrait  가로는 landscape
         };
