@@ -303,8 +303,8 @@ $(function () {
      * @returns {string} - 생성된 요일 버튼 HTML 문자열
      */
     function generateWeekdayButtons() {
-        const weekdays = ["일", "월", "화", "수", "목", "금", "토"];
-        const serverWeekdays = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"];
+        const weekdays =  ["월", "화", "수", "목", "금"];
+        const serverWeekdays = [ "MO", "TU", "WE", "TH", "FR"];
         let buttonsHTML = "";
         weekdays.forEach((day, index) => {
             buttonsHTML += `
@@ -1596,55 +1596,55 @@ $(function () {
             confirmButtonText: "삭제",
         });
     }
-
     /**
-     * 삭제 함수 (중복된 onDeleteRow 제거)
+     * 선택한 항목 삭제 함수
      */
     function onChecklistDeleteRow() {
         const selectedRows = gridOptions.api.getSelectedRows();
 
         if (selectedRows.length > 0) {
-            // 경고 메시지 표시
-            warningMessage().then((result) => {
-                if (result.isConfirmed) { // 사용자가 삭제를 확인한 경우
-                    fetch(`/master/checklist/delete`, { // URL 수정 필요
-                        method: 'DELETE',
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify(selectedRows.map(row => ({chklstId: row.chklstId})))
-                    }).then(response => {
-                        // 응답 상태 코드 확인
-                        if (!response.ok) {
-                            if (response.status === 403) {
-                                Swal.fire("실패!", "권한이 없습니다.", "error");
-                            } else if (response.status === 409) {
-                                Swal.fire("실패!", "사용중인 점검계획이 있습니다.", "error");
-                            }
-                            return Promise.reject();
-                        } else {
-                            return response.json(); // 응답을 JSON으로 파싱
-                        }
-                    }).then(data => {
-                        // 그리드에서도 해당 행 삭제
-                        gridOptions.api.applyTransaction({remove: selectedRows});
+            // 사용자에게 삭제 확인을 요청
+            confirmationDialog(
+                "삭제 확인",
+                "선택된 항목을 삭제하시겠습니까?",
+                () => {
+                    // 선택된 행의 'no' 값을 가져와 서버에 전송할 데이터 형식으로 변환
+                    const selectedStoreIds = selectedRows.map(row => ({ inspPlanId: row.no }));
 
-                        selectedRows.forEach((row) => {
-                            const index = alldata.findIndex((data) => data.chklstId === row.chklstId);
-                            if (index > -1) {
-                                alldata.splice(index, 1);
+                    console.log("삭제 요청 데이터: ", selectedStoreIds);
+
+                    // 삭제 API에 요청 전송
+                    fetch("/qsc/inspection-schedule/deleteSchedules", {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(selectedStoreIds)
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                Swal.fire("삭제 완료", "선택한 항목이 삭제되었습니다.", "success");
+
+                                // 삭제 완료 후 그리드에서 해당 항목 제거
+                                gridOptions.api.applyTransaction({ remove: selectedRows });
+                            } else {
+                                return response.json().then(data => {
+                                    throw new Error(data.message || "삭제 중 오류가 발생했습니다.");
+                                });
                             }
+                        })
+                        .catch(error => {
+                            console.error("삭제 요청 실패: ", error);
+                            Swal.fire("오류!", error.message, "error");
                         });
-                        updateChecklistCount();
-                    }).catch(error => {
-                        console.error("삭제 중 오류 발생:", error);
-                    });
                 }
-            });
+            );
         } else {
             Swal.fire("경고!", "삭제할 항목을 선택하세요.", "warning");
         }
     }
+
+
 
 
     function confirmationDialog() {
@@ -1666,6 +1666,60 @@ $(function () {
                     return;
                 }
 
+                // 필수 요소 체크
+                let missingElements = [];
+
+                // 'alldata' 체크
+                if (typeof alldata === 'undefined' || !Array.isArray(alldata)) {
+                    missingElements.push("alldata 데이터가 누락되었습니다.");
+                }
+
+                // 'bottomChkLst' 체크
+                if (typeof bottomChkLst === 'undefined' || !Array.isArray(bottomChkLst)) {
+                    missingElements.push("bottomChkLst 데이터가 누락되었습니다.");
+                }
+
+                // 'FRQ_CD_REVERSE_MAP' 체크
+                if (typeof FRQ_CD_REVERSE_MAP === 'undefined' || typeof FRQ_CD_REVERSE_MAP !== 'object') {
+                    missingElements.push("FRQ_CD_REVERSE_MAP 매핑이 누락되었습니다.");
+                }
+
+                // 'CNT_CD_REVERSE_MAP' 체크
+                if (typeof CNT_CD_REVERSE_MAP === 'undefined' || typeof CNT_CD_REVERSE_MAP !== 'object') {
+                    missingElements.push("CNT_CD_REVERSE_MAP 매핑이 누락되었습니다.");
+                }
+
+                // 'getSelectedItems' 함수 체크
+                if (typeof getSelectedItems !== 'function') {
+                    missingElements.push("getSelectedItems 함수가 누락되었습니다.");
+                }
+
+                // jQuery 선택자 체크
+                if (!$('#bottom-CHKLST').length) {
+                    missingElements.push("#bottom-CHKLST 요소가 존재하지 않습니다.");
+                }
+                if (!$('#bottom-STORE').length) {
+                    missingElements.push("#bottom-STORE 요소가 존재하지 않습니다.");
+                }
+                if (!$('#frequency').length) {
+                    missingElements.push("#frequency 요소가 존재하지 않습니다.");
+                }
+                if (!$('#count').length) {
+                    missingElements.push("#count 요소가 존재하지 않습니다.");
+                }
+
+                // 기타 필요한 변수나 요소가 있다면 추가로 체크
+
+                if (missingElements.length > 0) {
+                    Swal.fire({
+                        title: "경고!",
+                        html: missingElements.join("<br>"),
+                        icon: "warning",
+                        confirmButtonText: "확인",
+                    });
+                    return;
+                }
+
                 // 선택된 행의 'no' 값을 추출
                 const selectedStoreIds = selectedRows.map((row) => row.no);
                 console.log("선택된 Store IDs: ", selectedStoreIds);
@@ -1676,6 +1730,7 @@ $(function () {
 
                 // 저장할 데이터 준비
                 let inspectionPlans = [];
+                let missingPlanDtEntries = []; // inspPlanDt가 누락된 planEntry를 추적
 
                 // 매핑 객체 생성 (한 번만 실행)
                 const chkLstNameToIdMap = {};
@@ -1699,6 +1754,26 @@ $(function () {
                 console.log("선택된 캘린더 날짜: ", selectedCalendarDates);
                 console.log("선택된 요일: ", selectedWeekdays);
                 console.log("선택된 일자: ", selectedDays);
+
+                // 추가적인 필수 요소 체크
+                let additionalMissing = [];
+
+                if (!chklstId) {
+                    additionalMissing.push("선택된 체크리스트 ID가 유효하지 않습니다.");
+                }
+                if (!storeItem) {
+                    additionalMissing.push("선택된 매장 정보가 유효하지 않습니다.");
+                }
+
+                if (additionalMissing.length > 0) {
+                    Swal.fire({
+                        title: "경고!",
+                        html: additionalMissing.join("<br>"),
+                        icon: "warning",
+                        confirmButtonText: "확인",
+                    });
+                    return;
+                }
 
                 // 모든 selectedRows에 대해 inspectionPlans 생성
                 selectedRows.forEach((row, index) => {
@@ -1735,19 +1810,24 @@ $(function () {
                         planEntry.cntCd = countCode;
                     }
 
-                    console.log('if 전' + frqCd);
+                    console.log('if 전 frqCd: ' + frqCd);
 
                     // frqCd에 따른 필드 매핑
                     if (frequencyCode === '빈도없음' || frequencyCode === 'NF') {
                         // NF: cntCd, week, slctDt는 null
                         if (selectedCalendarDates.length > 0) {
                             selectedCalendarDates.forEach((date) => {
-                                console.log('나 빈도없음 : ' + date);
+                                console.log('빈도없음 날짜: ' + date);
                                 let nfPlanEntry = { ...planEntry, inspPlanDt: date };
-                                inspectionPlans.push(nfPlanEntry);
+                                if (!nfPlanEntry.inspPlanDt) {
+                                    missingPlanDtEntries.push(`행 ${index + 1}: inspPlanDt가 설정되지 않았습니다.`);
+                                } else {
+                                    inspectionPlans.push(nfPlanEntry);
+                                }
                             });
                         } else {
                             console.warn("빈도없음 선택 시 선택된 날짜가 없습니다.");
+                            missingPlanDtEntries.push(`행 ${index + 1}: 빈도없음 선택 시 선택된 날짜가 없습니다.`);
                         }
                     } else if (frequencyCode === '일별' || frequencyCode === 'ED') {
                         // 일별: cntCd, week, slctDt는 null, inspPlanDt는 row의 inspPlanDt 사용
@@ -1756,36 +1836,62 @@ $(function () {
                             inspectionPlans.push(planEntry);
                         } else {
                             console.warn("일별 선택 시 inspPlanDt가 없습니다.");
+                            missingPlanDtEntries.push(`행 ${index + 1}: 일별 선택 시 점검예정일이 설정되지 없습니다.`);
                         }
                     } else if (frequencyCode === '주별' || frequencyCode === 'EW') {
                         // 주별: week 사용, inspPlanDt는 선택된 주별 요일 사용 (캘린더 날짜가 비어있는 경우에도 주별만 처리)
                         if (selectedWeekdays.length > 0) {
                             selectedWeekdays.forEach((weekday) => {
                                 let weeklyPlanEntry = { ...planEntry, week: weekday, inspPlanDt: row.inspPlanDt || null };
-                                inspectionPlans.push(weeklyPlanEntry);
+                                if (!weeklyPlanEntry.inspPlanDt) {
+                                    missingPlanDtEntries.push(`행 ${index + 1}: 주별 선택 시 점검예정일이 설정되지 않았습니다.`);
+                                } else {
+                                    inspectionPlans.push(weeklyPlanEntry);
+                                }
                             });
                         } else {
                             console.warn("주별 선택 시 선택된 요일이 없습니다.");
+                            missingPlanDtEntries.push(`행 ${index + 1}: 주별 선택 시 선택된 요일이 없습니다.`);
                         }
                     } else if (frequencyCode === '월별' || frequencyCode === 'EM') {
                         // 월별: slctDt 사용, inspPlanDt는 선택된 일자로 설정
                         if (selectedDays.length > 0) {
                             selectedDays.forEach((day) => {
                                 let monthlyPlanEntry = { ...planEntry, inspPlanDt: day, slctDt: day };
-                                inspectionPlans.push(monthlyPlanEntry);
+                                if (!monthlyPlanEntry.inspPlanDt) {
+                                    missingPlanDtEntries.push(`행 ${index + 1}: 월별 선택 시 점검예정일이 설정되지 않았습니다.`);
+                                } else {
+                                    inspectionPlans.push(monthlyPlanEntry);
+                                }
                             });
                         } else {
                             console.warn("월별 선택 시 선택된 일자가 없습니다.");
+                            missingPlanDtEntries.push(`행 ${index + 1}: 월별 선택 시 선택된 일자가 없습니다.`);
                         }
                     } else {
-                        console.log('나 else');
-                        console.table(inspectionPlans);
+                        console.log('기타 frqCd 처리');
                         // 기타 frqCd: 필요 시 추가 매핑
+                        if (!planEntry.inspPlanDt) {
+                            missingPlanDtEntries.push(`행 ${index + 1}: 점검예정일이 설정되지 않았습니다.`);
+                        } else {
+                            inspectionPlans.push(planEntry);
+                        }
                     }
                 });
 
                 console.log("Inspection Plans to Save: ", inspectionPlans);
                 console.table(inspectionPlans);
+
+                // inspPlanDt 누락된 항목 체크
+                if (missingPlanDtEntries.length > 0) {
+                    Swal.fire({
+                        title: "경고!",
+                        html: "다음 점검 계획에 점검예정일이 누락되었습니다:<br>" + missingPlanDtEntries.join("<br>"),
+                        icon: "warning",
+                        confirmButtonText: "확인",
+                    });
+                    return;
+                }
 
                 // 데이터 유효성 검사 (필요 시 추가)
 
@@ -1805,7 +1911,10 @@ $(function () {
                             if (result.isConfirmed) {
                                 checkUnload = false;
                                 loadInitialData().then(() => {
+                                    initializeUI();
+                                    resetUIElements
                                     loadInitialData();
+
                                 });
                             }
                         });
@@ -1816,7 +1925,15 @@ $(function () {
                             errorMessage = "권한이 없습니다.";
                         } else if (xhr.status === 400) {
                             errorMessage = xhr.responseText || "잘못된 요청입니다.";
-                        } else if (xhr.status === 500) {
+                        } else if(xhr.status === 409){
+                            try {
+                                const response = JSON.parse(xhr.responseText);
+                                errorMessage = response.message || "점검일정이 이미 존재합니다.";
+                            } catch (e) {
+                                errorMessage = "점검일정이 이미 존재합니다.";
+                            }
+                        }
+                        else if (xhr.status === 500) {
                             errorMessage = "저장에 실패했습니다. 관리자에게 문의하세요.";
                         }
                         Swal.fire("실패!", errorMessage, "error");
@@ -1826,6 +1943,8 @@ $(function () {
             }
         });
     }
+
+
 
 
     /**

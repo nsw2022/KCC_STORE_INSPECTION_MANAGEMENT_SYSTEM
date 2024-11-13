@@ -40,14 +40,16 @@
                 ON CHK.CHKLST_ID = INP.CHKLST_ID
             INNER JOIN MBR
                 ON MBR.MBR_ID = STO.INSP_MBR_ID
-        WHERE INP.INSP_PLAN_USE_W = 'Y'
-                AND ISC.INSP_PLAN_DT =
-                    (
-                        SELECT
-                            MIN (INSP_PLAN_DT)
-                        FROM INSP_SCHD
-                            WHERE INSP_PLAN_ID = ISC.INSP_PLAN_ID
-                    )
+        WHERE
+            INP.INSP_PLAN_USE_W = 'Y'
+            AND ISC.INSP_PLAN_DT =
+                (
+                    SELECT
+                        MIN (INSP_PLAN_DT)
+                    FROM INSP_SCHD
+                        WHERE INSP_PLAN_ID = ISC.INSP_PLAN_ID
+                )
+                AND INP.INSP_PLAN_STTS_W = 1
 
         <include refid="DynamicConditions" />
             GROUP BY
@@ -368,5 +370,34 @@
         DELETE FROM INSP_SCHD /* InspectionScheduleMapper.deleteInspectionSchedulesByPlanId 노승우 */
         WHERE INSP_PLAN_ID = #{inspPlanId}
     </delete>
+
+    <select id="selectDuplicationSchedules" resultType="int" parameterType="map">
+        SELECT /* InspectionScheduleMapper.selectDuplicationSchedules 노승우 */
+            COUNT(*)
+        FROM INSP_PLAN ISP
+            INNER JOIN INSP_SCHD ISC
+                ON ISP.INSP_PLAN_ID = ISC.INSP_PLAN_ID
+        WHERE
+            ISC.STORE_ID = #{storeId}
+        AND
+            ISP.FRQ_CD = #{frqCd}
+        <choose>
+            <when test="cntCd != null">
+                AND ISP.CNT_CD = #{cntCd}
+            </when>
+            <otherwise>
+                AND ISP.CNT_CD IS NULL
+            </otherwise>
+        </choose>
+        AND ISC.INSP_PLAN_DT = #{inspPlanDt}
+    </select>
+
+    <!-- 활성화된 모든 InspectionPlan 조회 -->
+    <select id="selectActiveInspectionPlans" resultType="com.sims.qsc.inspection_schedule.vo.InspectionPlan">
+        SELECT *
+        FROM insp_plan
+        WHERE INSP_PLAN_USE_W = 'Y'
+    </select>
+
 
 </mapper>
