@@ -489,9 +489,9 @@ function generateScheduleTable(date) {
             // 선택된 점검자에 따라 필터링 ('all'인 경우 모두 포함)
             if (selectedInspector === 'all' || selectedInspector == inspector.INSP_MBR_ID) {
                 inspector.INSP_TYPE.forEach(category => {
-                    // checklistSelect 값과 INSP_TYPE_CD에 따른 필터링
-                    if (selectedChecklist === 'all' || INSPECTION_TYPE_MAP[category.CTG_NM] === selectedChecklist) {
-                        category.SUB_CTH_NM.forEach(item => {
+                    category.SUB_CTH_NM.forEach(item => {
+                        // 체크리스트 필터링: 'all' 또는 선택한 유형과 일치
+                        if (selectedChecklist === 'all' || INSPECTION_TYPE_MAP[item.inspTypeCd] === selectedChecklist) {
                             if (item.INSP_PLAN_DT === dateStr) {
                                 allItems.push({
                                     categoryName: INSPECTION_TYPE_MAP[item.inspTypeCd] || '알 수 없는 점검 유형',
@@ -505,8 +505,8 @@ function generateScheduleTable(date) {
                                     inspTypeCd: item.inspTypeCd // INSP_TYPE_CD 추가
                                 });
                             }
-                        });
-                    }
+                        }
+                    });
                 });
             }
         });
@@ -617,10 +617,6 @@ function generateScheduleTable(date) {
 
     tableBody.appendChild(weekRow);
 }
-
-
-
-
 
 
 

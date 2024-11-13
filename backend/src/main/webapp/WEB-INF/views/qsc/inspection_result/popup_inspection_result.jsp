@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>가맹점 점검 팝업</title>
+    <title>SIMS</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -27,6 +27,8 @@
     <link rel="stylesheet" href="/resources/css/qsc/inspection_result/popup_inspection_result.css">
     <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js'></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- html2pdf.js 라이브러리 추가 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 </head>
 <body>
 <%--<p>입력된 기타사항: ${textareaData}</p>--%>
@@ -35,13 +37,13 @@
         <table class="inspection-table">
             <tr>
                 <td class="info-title">
-                    <p>KCC 크라상 점포 위생점검표_2024</p>
+                    <p></p>
                 </td>
                 <td class="info-details">
-                    <span class="store-name">KCC 크라상</span>
-                    <span class="store-subtitle">가맹점 (이름예시 아무거나 추가하기)</span>
-                    <span class="inspection-date">점검일 : 2024.09.24</span>
-                    <span class="inspector-name">점검자 : 노승우</span>
+                    <span class="store-name"></span>
+                    <span class="store-subtitle"></span>
+                    <span class="inspection-date"></span>
+                    <span class="inspector-name"></span>
                 </td>
             </tr>
         </table>
@@ -128,12 +130,13 @@
 
 
     <div class="inspection-total-score">
-        <p>총 <span>100</span> 점</p>
+        <p>총 <span></span> 점</p>
     </div>
 </section>
 
 <div id="go-inspection-wrap">
     <button class="go-inspection" onclick="outInspectionResult()">나가기</button>
+    <button class="print-button btn btn-secondary ms-2" onclick="fn_printClick()">다운로드</button>
 </div>
 
 <%--  ----------------하단 세부결과 보기----------------  --%>

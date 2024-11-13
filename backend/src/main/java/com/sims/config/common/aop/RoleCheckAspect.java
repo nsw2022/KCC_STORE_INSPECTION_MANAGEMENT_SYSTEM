@@ -122,4 +122,15 @@ public class RoleCheckAspect {
         }
         throw new CustomException(ErrorCode.HANDLE_ACCESS_DENIED);
     }
+
+    @Around("@annotation(com.sims.config.common.aop.SOnlyCheck)")
+    public Object checkSOnlyRole(ProceedingJoinPoint joinPoint) throws Throwable {
+        GrantedAuthority role = (GrantedAuthority) SecurityContextHolder.getContext().getAuthentication().getAuthorities().iterator().next();
+        String roleName = role.getAuthority();
+
+        if ("MR003".equals(roleName)|| "MR001".equals(roleName)) {
+            return joinPoint.proceed();
+        }
+        throw new CustomException(ErrorCode.HANDLE_ACCESS_DENIED);
+    }
 }

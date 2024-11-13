@@ -1,5 +1,6 @@
 body {
   font-family: "Noto Sans KR";
+  position: relative;
 }
 
 /* 기본 레이아웃 */
@@ -838,17 +839,25 @@ table.calendar td .incomplete {
   padding: 20px;
   background-color: white;
 }
-
 /* 테이블 스타일 */
 .custom-table {
+  table-layout: fixed;
   width: 100%;
-  /*border-collapse: collapse;*/
+  border-collapse: collapse; /* border-collapse 활성화 */
   background-color: white;
   font-family: "Noto Sans KR", sans-serif;
   text-align: left;
   border: solid 1px #cccccc;
+  overflow-x: scroll;
+  min-width: 600px;
 }
 
+/* Thead 스타일을 고정하기 위해 display를 block으로 설정 */
+.custom-table thead {
+  display: block;
+}
+
+/* Thead의 th 스타일 */
 .custom-table thead th {
   background-color: #f4f4f4;
   padding: 12px 10px;
@@ -860,6 +869,47 @@ table.calendar td .incomplete {
   text-align: center;
 }
 
+/*.custom-table thead th,*/
+/*.custom-table tbody td {*/
+/*  width: 200px; !* 예시: 4개의 열이 있다고 가정 *!*/
+/*}*/
+/* Tbody를 스크롤 가능하게 설정 */
+.custom-table tbody {
+  display: block;
+  max-height: 200px; /* 약 4개의 행 높이에 맞게 조정 */
+  overflow-y: auto;
+}
+
+.custom-table tbody::-webkit-scrollbar {
+  width: 8px;
+  border-radius: 5px;
+}
+
+.custom-table tbody::-webkit-scrollbar-thumb {
+  background-color: #b3b3b3;
+  border-radius: 4px;
+}
+
+.custom-table tbody::-webkit-scrollbar-track {
+  background-color: #ededed;
+  border-radius: 5px;
+}
+
+.custom-table thead tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+
+/* Tbody의 tr을 table-row로 설정하여 레이아웃 유지 */
+.custom-table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+/* Tbody의 td 스타일 */
 .custom-table tbody td {
   padding: 12px 10px;
   font-size: 14px;
@@ -885,11 +935,6 @@ table.calendar td .incomplete {
   border-left: none;
 }
 
-/* 테이블 내용의 여백 설정 */
-.custom-table td {
-  padding: 10px;
-  vertical-align: middle;
-}
 
 @media (max-width: 1300px) {
   .modal-content {

@@ -35,6 +35,15 @@
             rel="stylesheet"
     />
     <link rel="stylesheet" href="/resources/css/qsc/store_inspection/store_inspection.css">
+
+
+
+    <style>
+        .page-content{
+            overflow-x: initial!important;
+        }
+    </style>
+
     <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js'></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript"
@@ -235,6 +244,8 @@
 
                 <div id="map" style=" background-color: #f0f0f0;">
                     <div class="map-box-container">
+                      
+
                         <div id="map-all" class="map-view-button active">전체보기</div>
                         <div id="map-tsp" class="map-view-button">오늘의 점검</div>
                     </div>
@@ -247,10 +258,10 @@
                     <thead>
                     <tr>
                         <th>가맹점명</th>
-                        <th>최근 점검일</th>
-                        <th>개점시간</th>
-                        <th>점검 분류</th>
-                        <th>점검 예약</th>
+                        <th>점검 예정일</th>
+                        <th>체크리스트명</th>
+                        <th>점검자</th>
+                        <th>SV</th>
                     </tr>
                     </thead>
                     <tbody>

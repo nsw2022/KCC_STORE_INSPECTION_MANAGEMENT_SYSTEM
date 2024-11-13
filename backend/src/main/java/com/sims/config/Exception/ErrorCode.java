@@ -22,6 +22,12 @@ public enum ErrorCode {
     INSP_NOT_FOUND(HttpStatus.NOT_FOUND, "DATA-0010", "점검자가 존재하지 않습니다."), // 404
     CHKLST_NOT_FOUND(HttpStatus.NOT_FOUND, "DATA-0011", "체크리스트가 존재하지 않습니다."), // 404
     INSP_TYPE_NOT_FOUND(HttpStatus.NOT_FOUND, "DATA-0012", "점검유형이 존재하지 않습니다."), // 404
+
+
+    SCHEDULE_IN_USE(HttpStatus.CONFLICT,"DATA-0013","점검일정이 이미 존재합니다."), //409
+    RESULT_IN_USE(HttpStatus.CONFLICT,"DATA-0014","점검결과가 존재하는 일정입니다."), //409
+    SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND,"DATA-0015","점검계획이 존재하지않습니다."),
+
     HAS_EMAIL(HttpStatus.BAD_REQUEST, "ACCOUNT-001", "이미 존재하는 사원번호입니다."),
     DUPLICATE_CHECKLIST_NAME(HttpStatus.BAD_REQUEST, "ACCOUNT-001", "이미 존재하는 체크리스트명입니다."),
 
