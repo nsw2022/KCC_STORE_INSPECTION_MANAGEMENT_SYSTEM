@@ -474,6 +474,10 @@ body{
     margin-right: 0;
 }
 
+.detailed-section .detailed-item:first-child {
+    flex : 1 1 48%;
+}
+
 .detailed-item:last-child {
     flex : none;
     width: 49%;
@@ -580,7 +584,7 @@ body{
     border: 1px solid #D0D5DD;
     border-radius: 10px;
     padding: 20px;
-    margin-top: 10px;
+    margin-top: 20px;
 }
 
 .subitem-info-wrapper p {
@@ -1117,8 +1121,44 @@ body{
         margin-top: 10px;
     }
 
+    .check-subitem {
+        margin-top: 20px;
+    }
+
     .detailed-item:last-child {
         flex : 1 1 48%;
         width: 100%;
     }
+}
+
+
+
+/** print 페이지 관련 CSS */
+
+.flex {
+    flex : 1 1 48% !important;
+}
+
+.block {
+    display: block;
+}
+
+.mt-20 {
+    margin-top: 20px !important;
+}
+
+.pb-0 {
+    padding-bottom: 0px !important;
+}
+
+.page-break {
+    page-break-before: always;
+}
+
+.avoid-page-break {
+    page-break-inside: avoid;
+}
+
+.hide {
+    display: none !important;
 }
