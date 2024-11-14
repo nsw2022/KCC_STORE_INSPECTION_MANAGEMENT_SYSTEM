@@ -303,7 +303,7 @@
                      #{week},
                      #{inspPlanUseW},
                      #{creMbrId},
-                     #{creTm},
+                      TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI'),
                      '1'
                  )
     </insert>
