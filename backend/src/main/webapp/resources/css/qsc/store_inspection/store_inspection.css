@@ -506,14 +506,20 @@ table.calendar td .incomplete {
   justify-content: space-between;
 }
 #map-input-container {
-  width: 20%;
+  /*width: 20%;*/
+  /*width: 240px; !* 변경 내용 *!*/
+
+  flex: 0 0 250px; /* 고정된 너비 */
+
   padding-right: 20px;
   box-sizing: border-box;
   font: 400 14px "Noto Sans KR";
   color: black;
 }
 #map {
-  width: 80%;
+  /*width: 80%;*/
+  flex: 1;
+
   border-radius: 10px;
 }
 
@@ -655,16 +661,77 @@ table.calendar td .incomplete {
 }
 /* 기존 CSS 유지 */
 
-/* 버튼 공통 스타일 */
+/*!* 버튼 공통 스타일 *!*/
+/* 버튼 내부 텍스트와 아이콘 스타일 */
 .map-view-button {
-  background: white;
-  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);
+  position: relative; /* Tooltip 위치를 위한 설정 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 8px;
   border-radius: 27px;
   width: 105px;
   text-align: center;
   cursor: pointer;
-  transition: background-color 0.3s ease-out;
+  background: white;
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.25);
+  margin: 0 5px; /* 버튼 간 간격 조정 */
+  transition: background-color 0.3s ease-out, color 0.3s ease-out, width 0.3s ease-out, height 0.3s ease-out;
+}
+
+/* 커스텀 툴팁 */
+.map-view-button::after {
+  content: attr(data-tooltip); /* data-tooltip 속성의 내용을 표시 */
+  position: absolute;
+  bottom: 120%; /* 버튼 위에 위치하도록 설정 */
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8); /* 검은색 배경에 80% 불투명도 */
+  color: white; /* 글자색 흰색 */
+  padding: 5px 10px;
+  border-radius: 5px; /* 테두리 반경 5px */
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  pointer-events: none; /* 툴팁이 마우스 이벤트를 차단하지 않도록 설정 */
+  z-index: 1000;
+  font-size: 12px;
+}
+
+/* 툴팁의 화살표 */
+.map-view-button::before {
+  content: '';
+  position: absolute;
+  bottom: 110%; /* 툴팁의 아래쪽에 위치 */
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent; /* 화살표 색상 */
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* 버튼에 마우스 올렸을 때 툴팁 표시 */
+.map-view-button:hover::after,
+.map-view-button:hover::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+.map-view-button i {
+  font-size: 20px; /* 아이콘 크기 */
+  color: inherit;
+  display: none; /* 기본적으로 숨김 */
+}
+
+.map-view-button .button-text {
+  font-size: 16px; /* 텍스트 크기 */
+  color: inherit;
 }
 
 /* 활성화된 버튼 스타일 */
@@ -677,6 +744,23 @@ table.calendar td .incomplete {
 .map-view-button:not(.active):hover {
   background-color: rgb(238, 238, 238);
 }
+
+/* Tooltip 스타일 */
+.tooltip-div {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  padding: 5px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  font-size: 12px;
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+/*------------------------------------------*/
+
 
 #map-all {
   margin-right: 15px;
@@ -826,6 +910,11 @@ table.calendar td .incomplete {
 
 .map-summary-context > input {
   width: 125px;
+}
+/*-----------------지도버튼숨기기----------------*/
+/* 기본 상태에서 .toggle-button 숨기기 */
+.toggle-button {
+  display: none; /* 기본적으로 숨김 */
 }
 
 /*----------------------------지도에 따른 체크리스트-----------------------------*/
@@ -1036,6 +1125,78 @@ table.calendar td .incomplete {
 
   #today_inspection_list li:last-child {
     margin-right: 0;
+  }
+
+
+  /* ------------------------지도 css--------------------- */
+  .map-section {
+    position: relative; /* 토글 버튼의 절대 위치를 위해 상대 위치 설정 */
+  }
+  .map-box-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-right: 0;
+    padding-right: 0;
+  }
+
+  /* 토글 버튼 스타일 */
+  .map-section .toggle-button {
+    display: block; /* 600px 이하에서 표시 */
+    background-color: #fff;
+    border: 1px solid #ccc;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transition: background-color 0.3s ease;
+  }
+  #map-tsp{
+    margin-right: 15px;
+  }
+
+  .map-section .toggle-button:hover {
+    background-color: #f0f0f0;
+  }
+
+  /* #map-input-container의 기본 스타일 조정 */
+  #map-input-container {
+    display: block; /* 기본적으로 표시 */
+    width: 80%; /* 너비를 80%로 설정 */
+    max-width: 300px; /* 최대 너비 설정 */
+    transition: width 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  }
+
+  /* #map의 기본 너비 조정 */
+  #map {
+    width: 80%; /* 너비를 80%로 설정 */
+    transition: width 0.3s ease-in-out; /* 부드러운 전환 효과 */
+  }
+
+  /* .collapsed 클래스가 추가되었을 때 #map-input-container를 숨기고 #map의 너비를 100%로 설정 */
+  .map-section.collapsed #map-input-container {
+    display: none; /* 완전히 숨기기 */
+  }
+
+  .map-section.collapsed #map {
+    width: 100%;
+  }
+
+  .map-view-button {
+    width: 50px; /* 동그란 버튼을 위해 너비 조정 */
+    height: 50px; /* 동그란 버튼을 위해 높이 조정 */
+    border-radius: 50%; /* 동그란 모양 */
+    margin-top: 15px;
+    margin-left: 0;
+  }
+
+  .map-view-button .button-text {
+    display: none; /* 텍스트 숨김 */
+  }
+
+  .map-view-button i {
+    display: block; /* 아이콘 표시 */
   }
 }
 
