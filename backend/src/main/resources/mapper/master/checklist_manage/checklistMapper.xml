@@ -241,6 +241,21 @@
             CHKLST_ID = #{chklstId}
     </update>
 
+    <update id="updateMasterChklst">
+        UPDATE /* ChecklistMapper.updateMasterChklst 유재원 */
+            CHKLST
+        SET
+            MASTER_CHKLST_ID = #{masterChklstId}
+        WHERE
+            CHKLST_ID = #{newChklstId}
+    </update>
+
+
+
+
+
+
+
     <!-- 마스터 체크리스트 ID 가져오기 -->
     <select id="selectMasterChecklistId" resultType="Long">
         SELECT
@@ -251,93 +266,79 @@
             CHKLST_NM = #{masterChklstNm}
     </select>
 
-    <!-- 대분류 복사 -->
-    <insert id="insertCtgCopy">
-        INSERT INTO
-            CHKLST_CTG (CTG_ID, CTG_NM, CHKLST_ID, MASTER_CTG_ID, CTG_USE_W, SEQ, STND_SCORE, CRE_MBR_ID, CRE_TM)
-        SELECT
-            CHKLST_CTG_SEQ.NEXTVAL
-             , CTG_NM
-             , #{newChklstId}
-             , MASTER_CTG_ID
-             , CTG_USE_W
-             , SEQ
-             , STND_SCORE
-             , CRE_MBR_ID
-             , TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
-        FROM
-            CHKLST_CTG
-        WHERE
-            CHKLST_ID = #{masterChklstId}
-        AND
-            MASTER_CTG_ID IS NULL
-    </insert>
-
-    <!-- 중분류 복사 -->
-    <insert id="insertSubCtgCopy">
-        INSERT INTO
-            CHKLST_CTG (CTG_ID, CTG_NM, CHKLST_ID, MASTER_CTG_ID, CTG_USE_W, SEQ, STND_SCORE, CRE_MBR_ID, CRE_TM)
-        SELECT
-            CHKLST_CTG_SEQ.NEXTVAL
-             , CTG_NM
-             , #{newChklstId}
-             , #{newCtgId}
-             , CTG_USE_W
-             , SEQ
-             , STND_SCORE
-             , CRE_MBR_ID
-             , TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
-        FROM
-            CHKLST_CTG
-        WHERE
-            CHKLST_ID = #{masterChklstId}
-          AND
-            MASTER_CTG_ID IS NOT NULL
-    </insert>
-
-    <!-- 새로 삽입된 대분류/중분류 ID 조회 -->
-    <select id="selectNewCategoryIds" resultType="Long">
-        SELECT
-            CTG_ID
-        FROM
-            CHKLST_CTG
-        WHERE
-            CHKLST_ID = #{newChklstId}
+    <select id="selectMasterChklstCtg">
+        SELECT *
+        FROM CHKLST_CTG
+        WHERE CHKLST_ID = #{masterChklstId}
         AND MASTER_CTG_ID IS NULL
     </select>
-    <!-- 새로 /중분류 ID 조회 -->
-    <select id="selectNewSubCtgIds" resultType="Long">
-        SELECT
-            CTG_ID
-        FROM
-            CHKLST_CTG
-        WHERE
-            CHKLST_ID = #{newChklstId}
-        AND
-            MASTER_CTG_ID IS NOT NULL
+
+    <select id="selectMasterChklstSubCtg">
+        SELECT *
+        FROM CHKLST_CTG
+        WHERE CHKLST_ID = #{masterChklstId}
+          AND MASTER_CTG_ID IS NOT NULL
+        ORDER BY MASTER_CTG_ID, CTG_ID
     </select>
 
-
-    <!-- 평가항목 복사 -->
-    <insert id="copyEvaluationItems">
-        INSERT INTO
-            CHKLST_EVIT (EVIT_ID, CTG_ID, EVIT_CONTENT, EVIT_TYPE_CD, SCORE, CHKLST_EVIT_USE_W, EVIT_SEQ, CRE_MBR_ID, CRE_TM)
-        SELECT
-            CHKLST_EVIT_SEQ.NEXTVAL, #{newSubCtgId}, EVIT_CONTENT, EVIT_TYPE_CD, SCORE, CHKLST_EVIT_USE_W, EVIT_SEQ, CRE_MBR_ID, TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
-        FROM
-            CHKLST_EVIT
+    <select id="selectMasterChklstEvit">
+        SELECT *
+        FROM CHKLST_EVIT ce
         WHERE
-            CTG_ID IN (SELECT CTG_ID FROM CHKLST_CTG WHERE CHKLST_ID = #{masterChklstId} AND MASTER_CTG_ID IS NOT NULL )
+            CTG_ID
+                  IN (SELECT CTG_ID FROM CHKLST_CTG cc WHERE CHKLST_ID = #{masterChklstId}
+                                                                                AND MASTER_CTG_ID IS NOT NULL)
+    </select>
+
+    <select id="selectMasterChklstChclst">
+        SELECT
+            ec.CHCLST_ID,
+            ec.EVIT_ID,
+            ec.CHCLST_CONTENT,
+            ec.NPRFS_CD,
+            ec.PRF_W,
+            ec.SCORE,
+            ec.PENALTY,
+            ec.BSN_SSPN_DAYNUM,
+            ec.EVIT_CHCLST_USE_W,
+            ec.CHCLST_SEQ,
+            ec.CRE_MBR_ID,
+            ec.UPD_MBR_ID,
+            ec.CRE_TM,
+            ec.UPD_TM
+        FROM
+            EVIT_CHCLST ec
+                JOIN
+            CHKLST_EVIT ce ON ec.EVIT_ID = ce.EVIT_ID
+                JOIN
+            CHKLST_CTG cc ON ce.CTG_ID = cc.CTG_ID
+        WHERE
+            cc.CHKLST_ID = #{masterChklstId}
+    </select>
+
+    <!-- 대분류 복사 -->
+    <insert id="insertCtgCopy">
+        <selectKey keyProperty="ctgId" resultType="long" order="BEFORE">
+            SELECT CHKLST_CTG_SEQ.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO
+            CHKLST_CTG (CTG_ID, CTG_NM, CHKLST_ID, MASTER_CTG_ID, CTG_USE_W, SEQ, STND_SCORE, CRE_MBR_ID, CRE_TM)
+        SELECT
+            #{ctgId},
+            CTG_NM,
+            #{newChklstId},
+            NULL,
+            CTG_USE_W,
+            SEQ,
+            STND_SCORE,
+            CRE_MBR_ID,
+            TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+        FROM CHKLST_CTG cc
+        WHERE CHKLST_ID = #{masterChklstId}
+        AND MASTER_CTG_ID IS NULL
     </insert>
 
-    <!-- 선택지 복사 -->
-    <insert id="copyChoices">
-        INSERT INTO
-            EVIT_CHCLST (CHCLST_ID, EVIT_ID, CHCLST_CONTENT, NPRFS_CD, PRF_W, SCORE, PENALTY, BSN_SSPN_DAYNUM, EVIT_CHCLST_USE_W, CHCLST_SEQ, CRE_MBR_ID, CRE_TM)
-        SELECT
-            EVIT_CHCLST_SEQ.NEXTVAL, EVIT_ID, CHCLST_CONTENT, NPRFS_CD, PRF_W, SCORE, PENALTY, BSN_SSPN_DAYNUM, EVIT_CHCLST_USE_W, CHCLST_SEQ, CRE_MBR_ID, TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
-        FROM
-            EVIT_CHCLST
-        WHERE EVIT_ID IN (SELECT EVIT_ID FROM CHKLST_EVIT WHERE CHKLST_ID = #{masterChklstId})
-    </insert>
+
+
+
 </mapper>

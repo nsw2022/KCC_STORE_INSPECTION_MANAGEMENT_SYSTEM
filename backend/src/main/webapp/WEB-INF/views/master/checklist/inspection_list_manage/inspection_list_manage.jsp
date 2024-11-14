@@ -81,7 +81,7 @@
                   </div>
                 </div>
                 <div class="my-3" style="margin: 0 !important;">
-                  <button type="button" class="btn btn-light init-btn  p-0" onclick="onDeleteRow()">저장</button>
+<%--                  <button type="button" class="btn btn-light init-btn  p-0" onclick="onDeleteRow()">저장</button>--%>
                 </div>
               </div>
               <div class="container mt-3">

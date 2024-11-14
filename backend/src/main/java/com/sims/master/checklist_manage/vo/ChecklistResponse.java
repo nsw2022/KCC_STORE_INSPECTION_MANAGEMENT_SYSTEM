@@ -7,9 +7,7 @@ import lombok.*;
  * @Author 유재원
  * @Date 2024.10.23
  */
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 public class ChecklistResponse {
     private int chklstId; // 체크리스트 ID
     private String brandNm; // 브랜드 이름
