@@ -499,7 +499,7 @@ $(function () {
 
         // 높이와 padding을 0으로 애니메이션
         element.style.height = "0px";
-        element.style.padding = "0px";
+        element.style.setProperty("padding", "0px", "important");
         element.style.transition = "height 0.3s ease, padding 0.3s ease";
 
         // transition 종료 후 display를 none으로 설정
@@ -508,10 +508,11 @@ $(function () {
                 element.style.display = "none"; // display를 none으로 설정
 
                 // 리사이즈 이벤트 제거 (닫힐 때)
-                window.removeEventListener('resize', () => adjustWrapperHeight(element));
+                window.removeEventListener('resize', adjustWrapperHeight); // 리스너 참조 전달
             }
             element.removeEventListener('transitionend', onTransitionEnd); // 리스너 제거
         });
+
     }
 
     // 높이 재조정 함수 (리사이즈 시 호출)
