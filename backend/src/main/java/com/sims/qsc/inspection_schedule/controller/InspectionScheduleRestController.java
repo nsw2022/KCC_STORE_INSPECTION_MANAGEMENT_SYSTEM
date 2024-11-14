@@ -158,21 +158,11 @@ public class InspectionScheduleRestController {
      */
     @PutMapping("/deleteSchedules")
     public ResponseEntity<?> deleteInspectionSchedules(@RequestBody List<InspectionPlan> inspectionPlans) {
-        if (inspectionPlans == null || inspectionPlans.isEmpty()) {
-            log.warn("DELETE 요청에서 전달된 InspectionPlan 리스트가 비어있거나 null입니다.");
-            return ResponseEntity.badRequest().body("InspectionPlans 리스트가 비어있거나 null입니다.");
-        }
-
         try {
-            inspectionScheduleService.deleteInspectionSchedules(inspectionPlans);
-            return ResponseEntity.ok("삭제된 스케줄 수: " + inspectionPlans.size());
-        } catch (CustomException e) {
-            log.error("스케줄 삭제 중 사용자 정의 예외 발생: {}", e.getErrorCode());
-            return ResponseEntity.status(e.getErrorCode().getHttpStatus())
-                    .body(e.getMessage());
+            inspectionScheduleService.softDeleteInspectionPlans(inspectionPlans);
+            return ResponseEntity.ok("삭제 완료");
         } catch (Exception e) {
-            log.error("스케줄 삭제 중 예상치 못한 오류 발생: {}", e.getMessage());
-            return ResponseEntity.status(500).body("스케줄 삭제 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("삭제 중 오류 발생: " + e.getMessage());
         }
     }
 

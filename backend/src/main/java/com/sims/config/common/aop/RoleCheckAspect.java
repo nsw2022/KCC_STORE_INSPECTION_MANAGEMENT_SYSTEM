@@ -117,7 +117,7 @@ public class RoleCheckAspect {
         GrantedAuthority role = (GrantedAuthority) SecurityContextHolder.getContext().getAuthentication().getAuthorities().iterator().next();
         String roleName = role.getAuthority();
 
-        if ("MR003".equals(roleName) || "MR004".equals(roleName)) {
+        if ("MR004".equals(roleName)) {
             return joinPoint.proceed();
         }
         throw new CustomException(ErrorCode.HANDLE_ACCESS_DENIED);

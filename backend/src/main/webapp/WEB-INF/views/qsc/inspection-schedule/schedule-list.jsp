@@ -260,7 +260,7 @@
                              style="display: flex; justify-content: space-between; align-items: center;">
                             <span class="m-0" style="font: 700 20px Noto Sans KR;">가맹점 점검 계획 관리</span>
                             <div class="my-0">
-                                <button type="button" class="btn btn-primaty save-btn me-3">저장</button>
+                                <button type="button" class="btn btn-primaty save-btn me-3" id="save-btn">저장</button>
                                 <button type="button" class="btn init-btn btn-light me-0 p-0"
                                         id="reset-selection-bottom">초기화
                                 </button>
