@@ -8,6 +8,8 @@
 
 .design_area {
 	background-image: url("/resources/img/login_img.png");
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
 }
 
 .row .login_area .container {
