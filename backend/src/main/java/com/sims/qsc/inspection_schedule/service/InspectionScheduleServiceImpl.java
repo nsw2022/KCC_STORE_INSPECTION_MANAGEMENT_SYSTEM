@@ -124,52 +124,27 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
     }
 
     @Override
-    public int updatePlan(int inspPlanId) {
-        int rowsAffected = scheduleMapper.updatePlan(inspPlanId);
-        if(rowsAffected == 0) {
-            throw new CustomException(ErrorCode.SCHEDULE_NOT_FOUND);
-        }
-        return rowsAffected;
-    }
-
-
-    /**
-     * 여러 InspectionPlan의 상태를 0으로 업데이트합니다.
-     *
-     * @param inspectionPlans 업데이트할 InspectionPlan 리스트
-     */
-    @Override
-    @Transactional
-    @SOnlyCheck
     public void deleteInspectionSchedules(List<InspectionPlan> inspectionPlans) {
-        String creMbrNo = getAuthenticatedUserName();
-        log.info("Authenticated user name: {}", creMbrNo);
-        log.info("Received inspection plans for deletion: {}", inspectionPlans);
 
-        if (inspectionPlans == null || inspectionPlans.isEmpty()) {
-            log.warn("삭제할 InspectionPlan 리스트가 비어있습니다.");
-            throw new CustomException(ErrorCode.INVALID_INPUT_VALUE);
-        }
-
-        for (InspectionPlan plan : inspectionPlans) {
-            int inspPlanId = plan.getInspPlanId();
-            try {
-                // 상태를 0으로 업데이트
-                int updatedRows = scheduleMapper.updatePlan(inspPlanId);
-                log.info("INSP_PLAN_ID={} 상태를 0으로 업데이트했습니다. 변경된 행 수: {}", inspPlanId, updatedRows);
-            } catch (CustomException e) {
-                log.error("INSP_PLAN_ID={} 상태 업데이트 중 오류 발생: {}", inspPlanId, e.getMessage());
-                throw e; // 트랜잭션 롤백을 위해 예외 재던짐
-            }
-        }
-
-        log.info("총 {}개의 InspectionPlan 상태가 0으로 업데이트되었습니다.", inspectionPlans.size());
     }
+
 
     @Override
     public List<InspectionPlan> selectActiveInspectionPlans() {
         return scheduleMapper.selectActiveInspectionPlans();
     }
+
+    @Override
+    public void deleteInspPlanBatch(InspectionPlan inspectionPlans) {
+
+    }
+
+    @Override
+    public void deleteInspSchdWithoutResultsBatch(InspectionPlan inspectionPlans) {
+
+    }
+
+
 
     @Override
     @Transactional
@@ -779,6 +754,24 @@ public class InspectionScheduleServiceImpl implements InspectionScheduleService 
         return dates;
     }
 
+    @Override
+    @Transactional
+    public void softDeleteInspectionPlans(List<InspectionPlan> inspectionPlans) {
+        String creMbrNo = getAuthenticatedUserName();
+        MemberRequest mbrRequest = getMemberRequest(creMbrNo);
+        log.info("soft inspectionPlans {}", inspectionPlans);
+        for (InspectionPlan plan : inspectionPlans) {
+
+            plan.setUpdMbrId(mbrRequest.getMbrId());
+
+            // INSP_PLAN 업데이트
+            scheduleMapper.deleteInspPlanBatch(plan);
+            // INSP_SCHD 삭제 (insp_result가 없는 경우)
+            scheduleMapper.deleteInspSchdWithoutResultsBatch(plan);
+
+        }
+
+    }
 
 
 }

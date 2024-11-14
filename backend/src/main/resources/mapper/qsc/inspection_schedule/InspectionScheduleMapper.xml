@@ -303,7 +303,7 @@
                      #{week},
                      #{inspPlanUseW},
                      #{creMbrId},
-                     TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI'),
+                     #{creTm},
                      '1'
                  )
     </insert>
@@ -395,9 +395,35 @@
     <!-- 활성화된 모든 InspectionPlan 조회 -->
     <select id="selectActiveInspectionPlans" resultType="com.sims.qsc.inspection_schedule.vo.InspectionPlan">
         SELECT *
-        FROM insp_plan
+        FROM INSP_PLAN
         WHERE INSP_PLAN_USE_W = 'Y'
     </select>
+
+    <!-- deleteInspPlan을 여러 개 업데이트하도록 수정 -->
+    <update id="deleteInspPlanBatch" parameterType="list">
+
+            UPDATE INSP_PLAN
+                SET
+                INSP_PLAN_STTS_W = 0,
+                UPD_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI'),
+                INSP_PLAN_USER_W = 'N',
+                UPD_MBR_ID = #{updMbrId}
+            WHERE
+                INSP_PLAN_ID = #{inspPlanId}
+
+    </update>
+
+    <!-- deleteInspSchdWithoutResults를 여러 개 삭제하도록 수정 -->
+    <delete id="deleteInspSchdWithoutResultsBatch" parameterType="list">
+
+            DELETE FROM INSP_SCHD ISC
+            WHERE ISC.INSP_PLAN_ID = #{plan.inspPlanId}
+            AND NOT EXISTS (
+            SELECT 1 FROM insp_result IR
+            WHERE IR.INSP_SCHD_ID = ISC.INSP_SCHD_ID
+            )
+
+    </delete>
 
 
 </mapper>

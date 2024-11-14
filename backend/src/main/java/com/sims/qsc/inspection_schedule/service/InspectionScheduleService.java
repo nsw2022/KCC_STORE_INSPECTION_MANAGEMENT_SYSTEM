@@ -132,19 +132,6 @@ public interface  InspectionScheduleService {
             "WHERE ISR.INSP_SCHD_ID = #{inspSchdId}")
     int selectInspResultById(int inspSchdId);
 
-    /**
-     * 특정 점검 계획의 상태를 0으로 업데이트합니다.
-     *
-     * @param inspPlanId 업데이트할 inspPlanId
-     * @return 업데이트된 행의 수
-     */
-    @Update({
-            "UPDATE INSP_PLAN",
-            "SET INSP_PLAN_STTS_W = 0",
-            "WHERE INSP_PLAN_ID = #{inspPlanId}"
-    })
-    int updatePlan(int inspPlanId);
-
 
     /**
      * 여러 InspectionPlan의 상태를 0으로 업데이트합니다.
@@ -163,6 +150,11 @@ public interface  InspectionScheduleService {
     List<InspectionPlan> selectActiveInspectionPlans();
 
 
+    void deleteInspPlanBatch( InspectionPlan inspectionPlans);
+    void deleteInspSchdWithoutResultsBatch( InspectionPlan inspectionPlans);
 
+    @Transactional
+    @SVInspectorRolCheck
+    void softDeleteInspectionPlans(List<InspectionPlan> inspectionPlans);
 
 }
