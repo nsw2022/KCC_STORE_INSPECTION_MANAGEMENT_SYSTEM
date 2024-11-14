@@ -24,6 +24,8 @@ spring:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+    hikari:
+      connection-init-sql: ALTER SESSION SET TIME_ZONE = 'Asia/Seoul'
   servlet:
     multipart:
       max-file-size: 30MB

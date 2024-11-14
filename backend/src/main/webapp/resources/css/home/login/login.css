@@ -8,6 +8,8 @@
 
 .design_area {
 	background-image: url("/resources/img/login_img.png");
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
 }
 
 .row .login_area .container {
@@ -96,9 +98,7 @@ input[type="checkbox"] {
 }
 
 @media screen and (max-width: 768px) {
-	.design_area {
-		display: none;
-	}
+
 	.container-fluid .header_text {
 		font: 700 1.5em "Noto Sans KR";
 	}
@@ -107,5 +107,11 @@ input[type="checkbox"] {
 	}
 	.container-fluid .input_area, .container-fluid .line_area {
 		width: 100%;
+	}
+}
+
+@media screen and (max-width: 767px) {
+	.design_area {
+		display: none;
 	}
 }

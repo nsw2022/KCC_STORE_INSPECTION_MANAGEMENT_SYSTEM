@@ -443,6 +443,180 @@ function generateTodayInspectionList(date) {
 
 
 // 점검 한주 스케줄 표시 함수
+// function generateScheduleTable(date) {
+//     const tableBody = document.getElementById('schedule-table-body');
+//     tableBody.innerHTML = '';
+//
+//     // Tooltip div 생성 (한 번만 생성)
+//     let tooltip = document.getElementById('tooltip-div');
+//     if (!tooltip) {
+//         tooltip = document.createElement('div');
+//         tooltip.id = 'tooltip-div';
+//         tooltip.classList.add('tooltip-div'); // CSS에서 스타일링할 클래스 추가
+//         document.body.appendChild(tooltip);
+//     }
+//
+//     // 선택한 날짜의 주 (일요일 시작)
+//     const weekStartDate = new Date(date);
+//     weekStartDate.setDate(date.getDate() - date.getDay()); // 일요일로 설정
+//
+//     const selectedChecklist = document.getElementById('checklist-select').value;
+//     const selectedInspector = getSelectedInspector();
+//
+//     const weekRow = document.createElement('tr');
+//     for (let i = 0; i < 7; i++) {
+//         const cellDate = new Date(weekStartDate);
+//         cellDate.setDate(weekStartDate.getDate() + i);
+//
+//         const td = document.createElement('td');
+//         const spanDate = document.createElement('span');
+//         spanDate.textContent = `${cellDate.getMonth() + 1}/${cellDate.getDate()}`;
+//
+//         // 버튼과 날짜를 감쌀 div 생성
+//         const btnDateWrap = document.createElement('div');
+//         btnDateWrap.classList.add('btn-date-wrap');
+//
+//         // 일요일(0)과 토요일(6)에 empty-cell 클래스 추가
+//         if (i === 0 || i === 6) {
+//             td.classList.add('empty-cell');
+//         }
+//
+//         // 해당 날짜의 점검 항목 가져오기
+//         const dateStr = formatDate(cellDate);
+//
+//         let allItems = [];
+//         inspectionAllScheduleData.forEach(inspector => {
+//             // 선택된 점검자에 따라 필터링 ('all'인 경우 모두 포함)
+//             if (selectedInspector === 'all' || selectedInspector == inspector.INSP_MBR_ID) {
+//                 inspector.INSP_TYPE.forEach(category => {
+//                     category.SUB_CTH_NM.forEach(item => {
+//                         // 체크리스트 필터링: 'all' 또는 선택한 유형과 일치
+//                         if (selectedChecklist === 'all' || INSPECTION_TYPE_MAP[item.inspTypeCd] === selectedChecklist) {
+//                             if (item.INSP_PLAN_DT === dateStr) {
+//                                 allItems.push({
+//                                     categoryName: INSPECTION_TYPE_MAP[item.inspTypeCd] || '알 수 없는 점검 유형',
+//                                     itemName: item.CHKLST_NM, // 전체 체크리스트 이름 사용
+//                                     fullChklstNm: item.FULL_CHKLST_NM, // 전체 체크리스트 이름 추가
+//                                     planDate: item.INSP_PLAN_DT,
+//                                     statusCode: item.INSP_STTS_CD, // 상태 코드 추가
+//                                     chklstId: item.CHKLST_ID, // chklstId 추가
+//                                     storeNm: extractStoreName(item.CHKLST_NM), // storeNm 추출 함수 사용
+//                                     inspResultId: item.INSP_RESULT_ID,
+//                                     inspTypeCd: item.inspTypeCd // INSP_TYPE_CD 추가
+//                                 });
+//                             }
+//                         }
+//                     });
+//                 });
+//             }
+//         });
+//
+//         // 미완료된 점검 항목을 먼저 오도록 정렬
+//         allItems.sort((a, b) => {
+//             const today = new Date();
+//             today.setHours(0,0,0,0);
+//
+//             const dateA = new Date(a.planDate.replace(/\//g, '-'));
+//             const dateB = new Date(b.planDate.replace(/\//g, '-'));
+//             dateA.setHours(0,0,0,0);
+//             dateB.setHours(0,0,0,0);
+//
+//             const isIncompleteA = dateA < today && a.statusCode === 'IS001' ? 1 : 0;
+//             const isIncompleteB = dateB < today && b.statusCode === 'IS001' ? 1 : 0;
+//
+//             return isIncompleteB - isIncompleteA; // isIncomplete가 높은 것부터 정렬
+//         });
+//
+//         // 버튼들을 td에 추가하기 전에 btn-date-wrap에 추가
+//         if (allItems.length > 3) {
+//             const extraCount = allItems.length - 3;
+//             const moreButton = document.createElement('button');
+//             moreButton.classList.add('more-btn');
+//             moreButton.textContent = `+${extraCount} 더보기`;
+//
+//             // '+n 더보기' 버튼 클릭 시 모달 창 열기
+//             moreButton.addEventListener('click', function() {
+//                 openModal(allItems);
+//             });
+//
+//             // btn-date-wrap에 more-btn과 spanDate 추가
+//             btnDateWrap.appendChild(moreButton);
+//             btnDateWrap.appendChild(spanDate);
+//             td.appendChild(btnDateWrap);
+//         } else {
+//             // 더보기 버튼이 없을 경우 날짜만 추가
+//             const spanWrapper = document.createElement('div');
+//             spanWrapper.classList.add('btn-date-wrap');
+//             spanWrapper.appendChild(spanDate);
+//             td.appendChild(spanWrapper);
+//         }
+//
+//         // 실제로 표시할 버튼들 (최대 3개)
+//         const displayItems = allItems.slice(0, 3);
+//         displayItems.forEach(item => {
+//             const button = document.createElement('button');
+//             button.classList.add('inspection-btn');
+//
+//             // INSP_TYPE_CD에 따른 점검 유형 이름과 가맹점명 결합
+//             const inspTypeName = INSPECTION_TYPE_MAP[item.inspTypeCd] || '알 수 없는 점검 유형';
+//             button.textContent = `${item.storeNm} ${inspTypeName}`;
+//
+//             // 점검 상태에 따라 팝업 함수 설정
+//             if (item.statusCode === 'IS002') {
+//                 // 완료된 점검인 경우 openPopup2 호출
+//                 button.onclick = function() {
+//                     openPopup2(item.inspResultId);
+//                 };
+//             } else {
+//                 // 미완료된 점검인 경우 openPopup 호출
+//                 button.onclick = function() {
+//                     openPopup(item);
+//                 };
+//             }
+//
+//             // 아이템의 날짜과 상태를 확인하여 스타일 적용
+//             const itemDate = new Date(item.planDate.replace(/\//g, '-'));
+//             const todayDate = new Date();
+//             todayDate.setHours(0,0,0,0); // 오늘 날짜의 시간을 0시로 설정
+//             itemDate.setHours(0,0,0,0); // 아이템 날짜의 시간을 0시로 설정
+//
+//             if (itemDate < todayDate) {
+//                 if (item.statusCode === 'IS001') {
+//                     // 미완료된 이전 날짜의 점검인 경우 배경색 변경
+//                     button.style.backgroundColor = '#EC3B57';
+//                     button.style.color = 'white';
+//                 } else if (item.statusCode === 'IS002') {
+//                     // 완료된 이전 날짜의 점검인 경우 배경색 변경
+//                     button.style.backgroundColor = '#eeeeee';
+//                 }
+//             }
+//
+//             // Tooltip 표시를 위한 이벤트 리스너 추가
+//             button.addEventListener('mouseenter', function(e) {
+//                 tooltip.textContent = `체크리스트명: ${item.fullChklstNm}`; // FULL_CHKLST_NM 필드 사용
+//                 tooltip.style.display = 'block';
+//             });
+//
+//             button.addEventListener('mousemove', function(e) {
+//                 // Tooltip을 마우스 커서 옆에 위치시키기
+//                 tooltip.style.left = (e.pageX + 10) + 'px';
+//                 tooltip.style.top = (e.pageY + 10) + 'px';
+//             });
+//
+//             button.addEventListener('mouseleave', function(e) {
+//                 tooltip.style.display = 'none';
+//             });
+//
+//             td.appendChild(button);
+//         });
+//
+//         // 버튼이 3개 이상일 경우 '+n 더보기' 버튼은 이미 추가됨
+//
+//         weekRow.appendChild(td);
+//     }
+//
+//     tableBody.appendChild(weekRow);
+// }
 function generateScheduleTable(date) {
     const tableBody = document.getElementById('schedule-table-body');
     tableBody.innerHTML = '';
@@ -580,15 +754,24 @@ function generateScheduleTable(date) {
             todayDate.setHours(0,0,0,0); // 오늘 날짜의 시간을 0시로 설정
             itemDate.setHours(0,0,0,0); // 아이템 날짜의 시간을 0시로 설정
 
+            // 오늘 이전의 날짜인 경우
             if (itemDate < todayDate) {
                 if (item.statusCode === 'IS001') {
-                    // 미완료된 이전 날짜의 점검인 경우 배경색 변경
+                    // 미완료된 이전 날짜의 점검인 경우 배경색 변경 (빨간색)
                     button.style.backgroundColor = '#EC3B57';
                     button.style.color = 'white';
                 } else if (item.statusCode === 'IS002') {
-                    // 완료된 이전 날짜의 점검인 경우 배경색 변경
+                    // 완료된 이전 날짜의 점검인 경우 배경색 변경 (회색)
                     button.style.backgroundColor = '#eeeeee';
                 }
+            }
+            // 오늘 날짜인 경우
+            else if (itemDate.getTime() === todayDate.getTime()) {
+                if (item.statusCode === 'IS002') {
+                    // 완료된 오늘 날짜의 점검인 경우 배경색 변경 (회색)
+                    button.style.backgroundColor = '#eeeeee';
+                }
+                // 미완료된 오늘 날짜의 점검은 스타일 적용하지 않음
             }
 
             // Tooltip 표시를 위한 이벤트 리스너 추가
@@ -617,6 +800,7 @@ function generateScheduleTable(date) {
 
     tableBody.appendChild(weekRow);
 }
+
 
 
 
@@ -771,6 +955,136 @@ function openModal(items) {
         modalContent.classList.add('show');
     }, 10);
 }
+
+//---------------------지도토글함수------------------
+initializeMapToggle();
+
+function initializeMapToggle() {
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleButton = document.querySelector('.map-section .toggle-button');
+        const mapSection = document.querySelector('.map-section');
+
+        if (!toggleButton || !mapSection) {
+            console.warn('Toggle button or map section not found.');
+            return;
+        }
+
+        // 모든 map-view-button 요소 선택
+        const mapButtons = document.querySelectorAll('.map-view-button');
+
+        mapButtons.forEach(button => {
+            // 버튼의 data-tooltip 속성을 설정하여 커스텀 툴팁 사용
+            const tooltipText = button.getAttribute('data-tooltip') || button.textContent.trim();
+            if (tooltipText) {
+                button.setAttribute('data-tooltip', tooltipText);
+            }
+
+            // 버튼 내부의 아이콘에 pointer-events: none 적용
+            const icon = button.querySelector('i');
+            if (icon) {
+                icon.style.pointerEvents = 'none';
+            }
+        });
+
+        // Function to replace text with icons and vice versa
+        function swapButtonContent() {
+            if (window.innerWidth <= 600) {
+                mapButtons.forEach(button => {
+                    if (!button.dataset.originalText) {
+                        button.dataset.originalText = button.textContent.trim();
+                    }
+                    if (!button.querySelector('i')) {
+                        const iconClass = button.id === 'map-all' ? 'fa-solid fa-map-location-dot' : 'fa-solid fa-road';
+                        const icon = document.createElement('i');
+                        icon.className = iconClass;
+                        icon.style.pointerEvents = 'none'; // 아이콘이 마우스 이벤트를 차단하지 않도록 설정
+                        button.textContent = ''; // 기존 텍스트 제거
+                        button.appendChild(icon);
+                    }
+                });
+            } else {
+                mapButtons.forEach(button => {
+                    if (button.dataset.originalText) {
+                        button.textContent = button.dataset.originalText;
+                        const icon = button.querySelector('i');
+                        if (icon) {
+                            button.removeChild(icon);
+                        }
+                    }
+                });
+            }
+        }
+
+        // 초기 상태 설정: 화면 너비에 따라 버튼 내용 변경 및 토글 버튼 아이콘 설정
+        function setInitialState() {
+            if (window.innerWidth <= 600) {
+                // localStorage에 저장된 상태 확인
+                const isCollapsed = localStorage.getItem('mapCollapsed') === 'true';
+                if (isCollapsed) {
+                    if (!mapSection.classList.contains('collapsed')) {
+                        mapSection.classList.add('collapsed');
+                        const toggleIcon = toggleButton.querySelector('i');
+                        if (toggleIcon) {
+                            toggleIcon.classList.replace('fa-times', 'fa-bars'); // Show 'fa-bars' when collapsed
+                        }
+                    }
+                } else {
+                    if (mapSection.classList.contains('collapsed')) {
+                        mapSection.classList.remove('collapsed');
+                        const toggleIcon = toggleButton.querySelector('i');
+                        if (toggleIcon) {
+                            toggleIcon.classList.replace('fa-bars', 'fa-times'); // Show 'fa-times' when expanded
+                        }
+                    }
+                }
+            } else {
+                // 화면 너비가 600px 초과일 때는 항상 펼쳐진 상태
+                if (mapSection.classList.contains('collapsed')) {
+                    mapSection.classList.remove('collapsed');
+                    const toggleIcon = toggleButton.querySelector('i');
+                    if (toggleIcon) {
+                        toggleIcon.classList.replace('fa-times', 'fa-bars'); // Show 'fa-bars'
+                    }
+                }
+            }
+
+            // Swap button content based on screen size
+            swapButtonContent();
+        }
+
+        setInitialState(); // 초기 상태 설정
+
+        // 창 크기 변경 시 초기 상태 재설정 및 button content 변경
+        window.addEventListener('resize', function() {
+            setInitialState();
+            swapButtonContent();
+        });
+
+        toggleButton.addEventListener('click', function() {
+            mapSection.classList.toggle('collapsed');
+
+            const icon = toggleButton.querySelector('i');
+            if (!icon) {
+                console.warn('Icon element not found within toggle button.');
+                return;
+            }
+
+            if (mapSection.classList.contains('collapsed')) {
+                // 접힌 상태일 때: 열기 아이콘으로 변경 (fa-bars)
+                icon.classList.replace('fa-times', 'fa-bars');
+                localStorage.setItem('mapCollapsed', 'true');
+            } else {
+                // 펼쳐진 상태일 때: 닫기 아이콘으로 변경 (fa-times)
+                icon.classList.replace('fa-bars', 'fa-times');
+                localStorage.setItem('mapCollapsed', 'false');
+            }
+        });
+    });
+}
+
+
+
+
 
 
 //---------------------팝업 이동 함수------------------------

@@ -1603,11 +1603,18 @@ $(function () {
         const selectedRows = gridOptions.api.getSelectedRows();
 
         if (selectedRows.length > 0) {
-            // 사용자에게 삭제 확인을 요청
-            confirmationDialog(
-                "삭제 확인",
-                "선택된 항목을 삭제하시겠습니까?",
-                () => {
+            // 삭제 확인 다이얼로그 표시
+            Swal.fire({
+                title: "삭제 확인",
+                text: "선택된 항목을 삭제하시겠습니까?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "삭제",
+                cancelButtonText: "취소",
+            }).then((result) => {
+                if (result.isConfirmed) {
                     // 선택된 행의 'no' 값을 가져와 서버에 전송할 데이터 형식으로 변환
                     const selectedStoreIds = selectedRows.map(row => ({ inspPlanId: row.no }));
 
@@ -1638,11 +1645,12 @@ $(function () {
                             Swal.fire("오류!", error.message, "error");
                         });
                 }
-            );
+            });
         } else {
-            Swal.fire("경고!", "삭제할 항목을 선택하세요.", "warning");
+            Swal.fire("경고!", "삭제할 항목을 선택해주세요.", "warning");
         }
     }
+
 
 
 
@@ -1911,10 +1919,30 @@ $(function () {
                             if (result.isConfirmed) {
                                 checkUnload = false;
                                 loadInitialData().then(() => {
-                                    initializeUI();
-                                    resetUIElements
-                                    loadInitialData();
 
+                                    $("#frequency").val("none");
+                                    updateCountOptions("none");
+                                    initializeUI();
+
+                                    // 점검 예정일
+                                    $("#bottomScheduleDate").val("all");
+
+                                    // 하단 Autocomplete 필드 초기화
+                                    $(".bottom-box-filter .wrapper").each(function () {
+                                        const $wrapper = $(this);
+                                        const instance = $wrapper.data("autocompleteInstance");
+                                        if (instance) {
+                                            instance.updateSelected(" ");
+                                            $wrapper.find('.search-btn span').text("");
+
+                                        }
+                                    });
+
+                                    // 커스텀 달력 선택 초기화
+                                    resetDateCards();
+
+                                    // 횟수 초기화
+                                    $("#count").val("없음");
                                 });
                             }
                         });
@@ -1960,7 +1988,7 @@ $(function () {
     });
 
     // 저장 버튼 이벤트 핸들링: saveRowButton 대신 save-btn 클래스 사용
-    $(".save-btn").on("click", function () {
+    $("#save-btn").on("click", function () {
         confirmationDialog();
     });
 
