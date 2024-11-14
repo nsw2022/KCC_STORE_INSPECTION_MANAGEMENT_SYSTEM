@@ -956,6 +956,136 @@ function openModal(items) {
     }, 10);
 }
 
+//---------------------지도토글함수------------------
+initializeMapToggle();
+
+function initializeMapToggle() {
+    document.addEventListener('DOMContentLoaded', function() {
+        const toggleButton = document.querySelector('.map-section .toggle-button');
+        const mapSection = document.querySelector('.map-section');
+
+        if (!toggleButton || !mapSection) {
+            console.warn('Toggle button or map section not found.');
+            return;
+        }
+
+        // 모든 map-view-button 요소 선택
+        const mapButtons = document.querySelectorAll('.map-view-button');
+
+        mapButtons.forEach(button => {
+            // 버튼의 data-tooltip 속성을 설정하여 커스텀 툴팁 사용
+            const tooltipText = button.getAttribute('data-tooltip') || button.textContent.trim();
+            if (tooltipText) {
+                button.setAttribute('data-tooltip', tooltipText);
+            }
+
+            // 버튼 내부의 아이콘에 pointer-events: none 적용
+            const icon = button.querySelector('i');
+            if (icon) {
+                icon.style.pointerEvents = 'none';
+            }
+        });
+
+        // Function to replace text with icons and vice versa
+        function swapButtonContent() {
+            if (window.innerWidth <= 600) {
+                mapButtons.forEach(button => {
+                    if (!button.dataset.originalText) {
+                        button.dataset.originalText = button.textContent.trim();
+                    }
+                    if (!button.querySelector('i')) {
+                        const iconClass = button.id === 'map-all' ? 'fa-solid fa-map-location-dot' : 'fa-solid fa-road';
+                        const icon = document.createElement('i');
+                        icon.className = iconClass;
+                        icon.style.pointerEvents = 'none'; // 아이콘이 마우스 이벤트를 차단하지 않도록 설정
+                        button.textContent = ''; // 기존 텍스트 제거
+                        button.appendChild(icon);
+                    }
+                });
+            } else {
+                mapButtons.forEach(button => {
+                    if (button.dataset.originalText) {
+                        button.textContent = button.dataset.originalText;
+                        const icon = button.querySelector('i');
+                        if (icon) {
+                            button.removeChild(icon);
+                        }
+                    }
+                });
+            }
+        }
+
+        // 초기 상태 설정: 화면 너비에 따라 버튼 내용 변경 및 토글 버튼 아이콘 설정
+        function setInitialState() {
+            if (window.innerWidth <= 600) {
+                // localStorage에 저장된 상태 확인
+                const isCollapsed = localStorage.getItem('mapCollapsed') === 'true';
+                if (isCollapsed) {
+                    if (!mapSection.classList.contains('collapsed')) {
+                        mapSection.classList.add('collapsed');
+                        const toggleIcon = toggleButton.querySelector('i');
+                        if (toggleIcon) {
+                            toggleIcon.classList.replace('fa-times', 'fa-bars'); // Show 'fa-bars' when collapsed
+                        }
+                    }
+                } else {
+                    if (mapSection.classList.contains('collapsed')) {
+                        mapSection.classList.remove('collapsed');
+                        const toggleIcon = toggleButton.querySelector('i');
+                        if (toggleIcon) {
+                            toggleIcon.classList.replace('fa-bars', 'fa-times'); // Show 'fa-times' when expanded
+                        }
+                    }
+                }
+            } else {
+                // 화면 너비가 600px 초과일 때는 항상 펼쳐진 상태
+                if (mapSection.classList.contains('collapsed')) {
+                    mapSection.classList.remove('collapsed');
+                    const toggleIcon = toggleButton.querySelector('i');
+                    if (toggleIcon) {
+                        toggleIcon.classList.replace('fa-times', 'fa-bars'); // Show 'fa-bars'
+                    }
+                }
+            }
+
+            // Swap button content based on screen size
+            swapButtonContent();
+        }
+
+        setInitialState(); // 초기 상태 설정
+
+        // 창 크기 변경 시 초기 상태 재설정 및 button content 변경
+        window.addEventListener('resize', function() {
+            setInitialState();
+            swapButtonContent();
+        });
+
+        toggleButton.addEventListener('click', function() {
+            mapSection.classList.toggle('collapsed');
+
+            const icon = toggleButton.querySelector('i');
+            if (!icon) {
+                console.warn('Icon element not found within toggle button.');
+                return;
+            }
+
+            if (mapSection.classList.contains('collapsed')) {
+                // 접힌 상태일 때: 열기 아이콘으로 변경 (fa-bars)
+                icon.classList.replace('fa-times', 'fa-bars');
+                localStorage.setItem('mapCollapsed', 'true');
+            } else {
+                // 펼쳐진 상태일 때: 닫기 아이콘으로 변경 (fa-times)
+                icon.classList.replace('fa-bars', 'fa-times');
+                localStorage.setItem('mapCollapsed', 'false');
+            }
+        });
+    });
+}
+
+
+
+
+
 
 //---------------------팝업 이동 함수------------------------
 // 팝업 이동 함수

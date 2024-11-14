@@ -154,6 +154,8 @@
             </section>
 
             <section class="map-section">
+                <!-- 토글 버튼 추가 -->
+<%--                <button class="toggle-button"><i class="fa-solid fa-bars"></i></button>--%>
                 <div id="map-input-container">
                     <h4 style="font-size: 20px">오늘의 점검 지도</h4>
 
@@ -244,10 +246,15 @@
 
                 <div id="map" style=" background-color: #f0f0f0;">
                     <div class="map-box-container">
-                      
-
-                        <div id="map-all" class="map-view-button active">전체보기</div>
-                        <div id="map-tsp" class="map-view-button">오늘의 점검</div>
+                        <button class="toggle-button"><i class="fa-solid fa-bars"></i></button>
+                        <div id="map-all" class="map-view-button active">
+                            <span class="button-text">전체보기</span>
+                            <i class="fa-solid fa-map-location-dot"></i>
+                        </div>
+                        <div id="map-tsp" class="map-view-button">
+                            <span class="button-text">오늘의 점검</span>
+                            <i class="fa-solid fa-road"></i>
+                        </div>
                     </div>
                 </div>
             </section>
