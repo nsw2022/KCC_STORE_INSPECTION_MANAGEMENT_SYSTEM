@@ -660,6 +660,7 @@ $(function () {
   // 가맹점 추가 모달 생성
   $('#addRowButton').click(function () {
 
+    $('.map-content').css('display', 'none');
     // 모달 열기
     $("#DetailStore").modal("show");
     $('.modal-title').text('가맹점 등록');
@@ -677,6 +678,7 @@ $(function () {
     $('.modal-body .wrapper span').eq(2).text("SV 검색");
     $('.modal-body').find('input[type="radio"]').eq(0).prop('checked', true);
     $('#save').text('등록');
+
   })
 
 
@@ -689,11 +691,6 @@ $(function () {
       $wrapper.data("autocompleteInstance", autocomplete);
     }
   });
-
-  /** map CSS */
-  $()
-  console.log($('.map_info'))
-
 
 })
 
