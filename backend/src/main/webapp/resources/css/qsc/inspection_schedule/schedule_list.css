@@ -1,115 +1,118 @@
+@import "/resources/css/common/common.css";
+
+
 body {
   font-family: "Noto Sans KR" !important;
 }
 
-/* 모달 시작 */
-/* 모달 시작 */
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1050; /* 부트스트랩 z-index 범위 내 */
+.form-select:focus {
+  box-shadow: none !important;
+}
+
+.content {
+  flex-grow: 1; /* 남은 공간을 모두 사용 */
+  background-color: #f4f7ff;
   display: flex;
+  align-items: center;
+  align-content: center;
   justify-content: center;
-  align-items: center;
+  flex-direction: column;
+}
+.container,
+.container-sm,
+.container-md,
+.container-lg,
+.container-xl,
+.container-xxl {
+  max-width: 100% !important; /* 모든 화면에서 100%로 설정 */
+  width: 100% !important; /* 컨테이너 너비를 100%로 설정 */
+}
+/* 미디어 쿼리 덮어쓰기: min-width 제한 제거 */
+@media (min-width: 0px) {
+  .container,
+  .container-sm,
+  .container-md,
+  .container-lg,
+  .container-xl,
+  .container-xxl {
+    max-width: 100% !important; /* 모든 조건에서 100%로 설정 */
+  }
 }
 
-.modal_popup {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  max-width: 500px; /* 최대 너비 설정 */
-  background: #fff;
-  border-radius: 0.3rem;
-  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.5);
-  padding: 20px;
-  overflow-y: auto; /* 내용이 많을 경우 스크롤 가능 */
-}
-
-.modal-header,
-.modal-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #dee2e6;
-}
-
-.modal-footer {
-  border-top: 1px solid #dee2e6;
-}
-
-.list-group {
-  max-height: 200px; /* 모바일에서는 최대 높이를 조금 줄임 */
-  overflow-y: auto;
-}
-
-.list-group .list-group-item {
-  border: none;
-  background-color: #fff8e5 !important;
-  border-radius: 8px;
-  height: auto;
-  padding: 10px;
-}
-
-.item-info p {
-  font-weight: 500;
-  color: #333;
-  margin: 0; /* 여백 제거 */
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: space-between; /* 버튼 사이 공간을 균등하게 분배 */
-  align-items: center;
-  border-top: 1px solid #dee2e6;
-  padding: 1rem; /* 하단 패딩 추가 */
-}
-
-.modal-footer .btn {
-  flex: 1; /* 버튼의 너비가 균등해지도록 설정 */
-  margin: 0 10px; /* 버튼 사이에 일정한 간격 추가 */
-  min-width: 100px; /* 버튼 최소 너비 설정 */
-}
-
-.modal.on {
-  display: block;
-}
-
-/* 가맹점 관리 top 영역 시작 */
+/************** top **************/
 .top-box {
   width: 100%;
-}
-
-.more {
-  background-color: #fff;
+  height: 100%;
+  background-color: #ffffff;
   border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  padding: 30px 30px 10px 30px;
+}
+.top-box .select-btn {
+  width: 80px;
+  background-color: #16dbcc;
+  height: 35px;
+  border-radius: 30px;
+  color: #ffffff;
+  border: none;
+}
+.select-btn:hover {
+  background-color: #3ab2a9 !important;
+  color: white !important;
 }
 
-.more:hover {
-  background-color: #e1e1e1;
+.top-box .init-btn {
+  width: 80px;
+  background-color: #ffffff;
+  height: 35px;
+  border-radius: 30px;
+  color: #858d9d !important;
+  border-color: #d0d5dd;
 }
 
-.search-btn,
-.autocomplete-item {
-  display: flex !important;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
+.init-btn:hover {
+  background-color: #e1e1e1 !important;
+  transition: 0.3s ease-out;
 }
 
-.search-btn i {
-  transition: transform 0.3s linear;
+.button-box {
+  margin-bottom: 20px !important;
+}
+/*------------드롭다운 버튼-----------*/
+.top-drop-down {
+  width: 26px;
+  height: 26px;
+  margin-left: 15px;
+  margin-top: 2px;
 }
 
-.wrapper.active .search-btn i {
-  transform: rotate(-180deg);
+.top-drop-down > button {
+  width: 100%;
+  height: 100%;
+  border: solid 2px #858d9d;
+  border-radius: 50%;
+  color: #858d9d;
+  font-size: 12px;
+  background: none;
+}
+.top-drop-down > button:hover {
+  color: white;
+  border: none;
+  background-color: #4318ff;
+  transition: ease-out 0.3s;
 }
 
+.top-search-box {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
+}
+
+.top-drop-down button i {
+  transition: transform 0.3s ease-in-out;
+}
+
+/* 자동완성 selebox 처럼 보이는 div들 */
 .hide-list {
   display: none;
   padding: 20px;
@@ -177,140 +180,344 @@ body {
   background: #f2f2f2;
 }
 
-.top-box-content {
-  width: 90%;
-  height: 100%;
-  margin: 0 auto;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
-  padding: 12px 30px;
+.search-btn i {
+  transition: transform 0.3s linear;
 }
 
-.top-box-content div div b {
-  font-size: 1.5rem;
+.wrapper.active .search-btn i {
+  transform: rotate(-180deg);
 }
-
-.top-button-wrapper {
-  padding-left: 10px; /* 좌측 패딩 추가 */
-  padding-right: 10px; /* 우측 패딩 추가 */
+.form-label {
+  font-size: 15px;
+  font-weight: 500;
 }
-
-.top-button {
-  text-align: center;
-  cursor: pointer;
-  width: 80px;
-}
-
-.top-lookup {
-  background-color: #16dbcc;
-  border-radius: 30px;
-  height: 35px;
-  line-height: 2;
-  color: white;
-}
-
-.top-lookup:hover {
-  background-color: #3ab2a9;
-}
-
-.top-reset {
-  border-radius: 30px;
-  height: 35px;
-  line-height: 2;
+.search-btn span,
+.search input {
+  font-size: 13px;
   color: #858d9d;
-  box-shadow:
-    rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
-    rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
 }
 
-.top-reset:hover {
-  background-color: #e1e1e1;
+.search-btn,
+.autocomplete-item {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  line-height: 1.2 !important;
+}
+.search-btn,
+.search .form-control {
+  border-radius: 8px !important;
+}
+.options li {
+  height: 40px;
+  padding: 0px 13px;
+  font-size: 13px;
 }
 
-input.top-search::-webkit-input-placeholder {
-  background-image: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQujvGvIxeVPUNWJWCxEA94dTFFxjjPK1khMQ&s);
-  background-size: 32px;
-  background-position: right;
-  background-repeat: no-repeat;
-  text-indent: 5px;
-  color: #aaa;
-}
-
-/* 가맹점 관리 top 영역 끝 */
-
-/* 중간 게시판 목록 시작 */
+/************** middle **************/
 .middle-box {
   width: 100%;
-}
-
-.middle-content {
-  width: 90%;
   height: 100%;
-  margin: 0 auto;
-  background-color: white;
+  background-color: #ffffff;
   border-radius: 8px;
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
-  padding: 12px 30px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  padding: 30px 20px 20px 20px;
+  box-sizing: border-box;
+  margin-bottom: 40px;
 }
-
-.middle-register {
-  background-color: #4318ff;
-  border-radius: 30px;
+.middle-box .btn {
+  width: 80px;
+  background-color: #ffffff;
   height: 35px;
-  line-height: 2;
-  color: white;
-}
-
-.middle-register:hover {
-  background-color: #1d0879;
-}
-
-.middle-delete {
   border-radius: 30px;
+  color: #858d9d !important;
+  border-color: #d0d5dd;
+  line-height: 20px;
+}
+
+.middle-box .btn:hover {
+  background-color: #e1e1e1 !important;
+  transition: 0.3s ease-out;
+}
+/* header */
+.ag-header-row {
+  font: 600 14px "Noto Sans KR";
+  color: #718ebf !important;
+}
+/* 홀수 row */
+.ag-row-even {
+  font: 350 13px "Noto Sans KR";
+  color: #232323 !important;
+  overflow: auto;
+}
+/* 짝수 row*/
+.ag-row-odd {
+  font: 350 13px "Noto Sans KR";
+  color: #232323 !important;
+  overflow: auto;
+}
+
+.cell-btn {
+  border: none !important;
+  color: #232323 !important;
+  font: 400 11px "Noto Sans KR" !important;
+  width: 40px !important;
+}
+
+/* 리스트 중간 더보기 */
+.edit-options {
+  position: absolute; /* 뷰포트 기준으로 위치 고정 */
+  font: 400 13px "Noto Sans KR";
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  padding: 5px 10px;
+  cursor: pointer;
+  display: none; /* 기본적으로 숨김 */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1006; /* 다른 요소들보다 위에 표시 */
+}
+
+/* 수정 옵션이 활성화될 때 표시 */
+.edit-options.show {
+  display: block;
+  opacity: 1;
+}
+
+/* "수정" 옵션에 호버 효과 추가 */
+.edit-options:hover {
+  background-color: #f0f0f0;
+}
+
+/* 리스트 중간 더보기 끝 */
+
+/************** bottom **************/
+
+.bottom-box {
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+}
+
+.bottom-box .init-btn {
+  width: 80px;
+  background-color: #ffffff;
   height: 35px;
-  line-height: 2;
+  border-radius: 30px;
+  color: #858d9d !important;
+  border-color: #d0d5dd;
+  padding: 0 !important;
+}
+
+.bottom-box.init-btn:hover {
+  background-color: #e1e1e1 !important;
+  transition: 0.3s ease-out;
+}
+.save-btn {
+  width: 80px;
+  background-color: #4318ff !important;
+  height: 35px;
+  border-radius: 30px !important;
+  color: #ffffff !important;
+  line-height: 15px !important;
+  border: none !important;
+}
+
+.bottom-select {
+  border: 1px solid #ced4da !important;
+  padding: 0.375rem 0.75rem !important;
+  line-height: 1.5 !important;
+  background-color: #fff !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  color: #858d9d !important;
+}
+
+.bottom-select > option {
+  font-size: 13px;
   color: #858d9d;
+}
+.wrapper.disabled {
+  cursor: not-allowed;
+}
+.wrapper.disabled > .search-btn {
+  pointer-events: none; /* 모든 클릭 이벤트를 비활성화 */
+  /*opacity: 0.7;*/
+  background-color: #e9ecef !important;
+}
+select.disabled {
+  cursor: not-allowed;
+  pointer-events: none; /* 모든 클릭 이벤트를 비활성화 */
+  /*opacity: 0.7;*/
+  background-color: #e9ecef !important;
+}
+input.disabled {
+  cursor: not-allowed;
+  pointer-events: none; /* 모든 클릭 이벤트를 비활성화 */
+  /*opacity: 0.7;*/
+  background-color: #e9ecef !important;
+}
+/******************   first modal   ********************/
+.list-group {
+  max-height: 500px; /* 모바일에서는 최대 높이를 조금 줄임 */
+  overflow-y: auto;
+}
+
+/*.input-group {*/
+/*  display: flex;*/
+/*  flex-wrap: nowrap !important;*/
+/*  width: 100%;*/
+/*  flex-direction: row !important;*/
+/*}*/
+
+.inspection-tab2 {
+  float: left;
+  margin-right: 15px;
+  padding: 10px 20px;
+  box-sizing: border-box;
+  border: solid 1px #d0d5dd;
+  border-radius: 10px;
+  background-color: white;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 400;
+  color: #9ca3af;
+}
+
+.modal-search-box {
+  flex-direction: row;
+  flex-wrap: nowrap !important;
+}
+
+.modal-search-box input {
+  border-color: #d0d5dd;
+  border-radius: 10px !important;
+  font: 350 13px "Noto Sans KR";
+  color: #858d9d;
+}
+.modal-search-box button {
+  border-color: #d0d5dd;
+  border-radius: 10px !important;
+  font: 350 13px "Noto Sans KR";
+  color: #858d9d;
+}
+
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.list-group-item {
+  border: none !important;
+}
+.item-info {
   box-shadow:
     rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
     rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+  border-radius: 6px;
+  width: 80%;
+  height: 60px;
+  padding: 10px;
+  font: 400 13px "Noto Sans KR";
 }
 
-.middle-delete:hover {
-  background-color: #e1e1e1;
+.item-info:hover {
+  background-color: #f2f6ff !important;
+  border: 1px solid #3274fa;
+}
+.list-group button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #f1f5f9;
+  border-color: #fff;
+  height: 60px;
+  color: black;
+}
+.list-group-item button {
+  font: 400 13px "Noto Sans KR";
 }
 
-.table-responsive {
-  overflow-x: scroll;
-  width: 100%;
+.modal-footer {
+  display: flex;
+  justify-content: space-between; /* 버튼 사이 공간을 균등하게 분배 */
+  align-items: center;
+  border-top: 1px solid #dee2e6;
+  padding: 1rem; /* 하단 패딩 추가 */
 }
 
-table th {
-  color: #718ebf;
-}
-
-table th,
-table td {
-  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
-  padding: 8px; /* 셀 패딩 조정 */
+.modal-footer button:last-child {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #4318ff;
+  font-weight: 400;
+  line-height: 1.5;
+  color: white;
+  text-align: center;
   vertical-align: middle;
+  cursor: pointer;
+  border: none;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  border-radius: 0.25rem;
 }
 
-table tr td input {
-  vertical-align: middle;
+.modal-footer button:last-child:hover {
+  background-color: #2c0eb1;
 }
 
-/* 중간 게시판 목록 끝 */
-
-/* 하단 점검 검색 필터 시작 */
-.bottom-box-content {
-  width: 90%;
-  height: 100%;
-  margin: 0 auto;
-  background-color: white;
+/*  second modal         ***************************************************/
+.accordion-button {
+  background-color: #ededed !important;
+  font: 400 13px "Noto Sans KR" !important;
+  border-radius: 10px !important;
+}
+.accordion-item {
+  border-radius: 10px !important;
+  border-color: #ededed !important;
+}
+.modal-backdrop {
+  /*z-index: 1200 !important; !* 모달 배경 *!*/
+}
+.score {
+  height: 3rem;
+  background-color: #d9ddff;
+  border-radius: 10px;
+  font: 400 15px "Noto Sans KR" !important;
+}
+.accordion-body .row div {
   border-radius: 8px;
-  box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
-  padding: 12px 30px;
+  margin: 0rem 1rem;
+}
+.accordion-body .row span {
+  margin: 0.5rem 0rem;
+  color: #9ca3af;
+  font: 400 13px "Noto Sans KR" !important;
+}
+.form-check {
+  font: 300 10px "Noto Sans KR" !important;
+  padding: 0 !important;
+  margin: 0rem 0rem 0rem 1.5rem !important;
+}
+.radio-box {
+  display: flex;
+  justify-content: center;
+}
+
+.large-category-group .btn {
+  width: 4.5rem;
+  height: 2rem;
+  font: 350 12px "Noto Sans KR";
+  border-radius: 15px;
 }
 
 /* 커스텀 달력시작 */
@@ -323,9 +530,11 @@ table tr td input {
   cursor: pointer;
   transition: background-color 0.3s;
 }
+
 .calendar-body td:hover {
   background-color: #f0f0f0;
 }
+
 .table .disabled {
   background-color: #e9ecef !important;
   color: #6c757d;
@@ -335,6 +544,7 @@ table tr td input {
 .table .today {
   background-color: #ffc107 !important;
 }
+
 .table .selected {
   background-color: #6e00fa !important;
   color: white;
@@ -347,12 +557,14 @@ table tr td input {
     font-size: 12px;
   }
 }
+
 /* 선택된 날짜 카드 스타일 */
 #selected-dates-container {
   display: flex;
   overflow-x: auto;
   padding: 10px 0;
 }
+
 .date-card {
   display: flex;
   align-items: center;
@@ -363,6 +575,7 @@ table tr td input {
   margin-right: 10px;
   min-width: 100px;
 }
+
 .date-card .remove-date {
   margin-left: 10px;
   cursor: pointer;
@@ -375,130 +588,162 @@ table tr td input {
   display: none;
 }
 
+/* ag-Grid의 z-index를 낮게 설정 */
+.ag-theme-alpine {
+  z-index: 1 !important; /* 그리드의 z-index 값을 사이드바보다 낮게 설정 */
+  position: relative !important; /* 위치 속성 설정 (필요 시 추가) */
+}
+
+.sidebar {
+  z-index: 1000; /* 사이드바의 z-index 값을 높게 설정 */
+  position: relative; /* 위치 속성 설정 (필요 시 추가) */
+}
+
 /* 커스텀 달력 끝 */
 
-/* 하단 점검 검색 필터 끝 */
-
-/* 반응형 시작 */
-@media (max-width: 1300px) {
-  .top-box-content div div b {
-    font-size: 1.4rem;
+@media (max-width: 600px) {
+  .top-content > .button-box {
+    margin-top: 10px;
+  }
+  .top-box {
+    padding: 15px 15px 10px 15px;
+  }
+  .top-box > .col {
+    margin-bottom: -30px !important;
   }
 
-  .top-search-box div {
-    font-size: 0.75rem;
+  .top-content div div span {
+    font-size: 16px !important;
+    line-height: 30px !important;
   }
 
-  .top-search-box input {
-    font-size: 0.75rem;
-  }
-
-  .item-info p {
-    font-size: 0.75rem;
+  .top-content span {
+    font-size: 16px !important;
+    line-height: 30px !important;
   }
 }
 
-@media (max-width: 1170px) {
-  .top-search-box div {
-    font-size: 0.75rem;
+@media (max-width: 400px) {
+  .page-content > div {
+    padding: 10px 20px !important;
   }
 
-  .top-search-box input {
-    font-size: 0.75rem;
-  }
-
-  input.top-search::-webkit-input-placeholder {
-    background-image: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQujvGvIxeVPUNWJWCxEA94dTFFxjjPK1khMQ&s);
-    background-size: 24px;
-    background-position: right;
-    background-repeat: no-repeat;
-    color: #aaa;
-  }
-
-  table {
-    font-size: 0.7rem;
-    min-width: 600px; /* 적절한 최소 너비 설정 */
-    width: 100%; /* 너비를 100%로 유지 */
-    border-collapse: collapse; /* 셀 간격 제거 */
-  }
-
-  table th,
-  table td {
-    white-space: nowrap; /* 텍스트 줄바꿈 방지 */
-    padding: 8px; /* 셀 패딩 조정 */
-    vertical-align: middle;
-  }
-
-  table th {
-    color: #718ebf;
-  }
-
-  table td .btn {
+  /* header */
+  .ag-header-row {
+    font: 600 14px "Noto Sans KR";
+    color: #718ebf !important;
     font-size: 0.7rem !important;
   }
-
-  /* 모바일 모달 창 */
-  .modal_popup {
-    width: 410px;
+  /* 홀수 row */
+  .ag-row-even {
+    font: 350 13px "Noto Sans KR";
+    color: #232323 !important;
+    overflow: auto;
+    font-size: 0.7rem !important;
   }
-}
-
-@media (max-width: 393px) {
-  .top-box-content {
-    padding: 12px 15px; /* 작은 화면에서 패딩 조정 */
+  /* 짝수 row*/
+  .ag-row-odd {
+    font: 350 13px "Noto Sans KR";
+    color: #232323 !important;
+    overflow: auto;
+    font-size: 0.7rem !important;
   }
-
-  .top-box-content div div b {
-    font-size: 1.2rem !important;
+  .ag-paging-panel {
+    font-size: 0.6rem !important;
   }
-
-  .sidebar {
-    width: 100%; /* 모바일에서 사이드바를 전체 너비로 확장 */
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    height: auto;
-    background-color: #fff;
-  }
-
-  .content {
-    margin-left: 0; /* 모바일에서 사이드바 없애고 콘텐츠 너비 조정 */
-  }
-
-  .top-search {
-    width: 90%;
-  }
-
-  table {
-    min-width: unset;
-    width: 400px;
-  }
-
-  .table-responsive {
-    overflow-x: scroll !important;
-    width: 100%;
-  }
-
-  .middle-pagebox {
-    font-size: 0.8rem;
-  }
-
-  .middle-box label {
-    display: none;
-  }
-
-  .middle-pagebox .form-select {
+  .ag-paging-page-summary-panel > * {
+    margin: 0.2px !important;
     font-size: 0.7rem;
   }
-
-  /* 모바일 모달 창 */
-  .modal_popup {
-    width: 360px;
+  .ag-paging-row-summary-panel > * {
+    font-size: 0.7rem;
+  }
+  .middle-box {
+    padding: 1.5rem;
+  }
+  .top-box {
+    padding: 1.5rem;
+  }
+  .middle-box .btn {
+    font-size: 0.7rem;
+    width: 15vw;
+    margin-right: 0.1rem !important;
+    border-radius: 15px;
   }
 
-  /* 모바일 모달 창 itme들 글자 크기 */
-  .item-info p {
-    font-size: 0.65rem;
+  .top-box .btn {
+    font-size: 0.7rem;
+    width: 15vw;
+    margin-right: 0.1rem !important;
+    border-radius: 15px;
+  }
+
+  .modal-search-box input {
+    border-color: #d0d5dd;
+    border-radius: 10px !important;
+    font: 350 10px "Noto Sans KR";
+    color: #858d9d;
+  }
+  .modal-search-box button {
+    border-color: #d0d5dd;
+    border-radius: 10px !important;
+    font: 350 10px "Noto Sans KR";
+    color: #858d9d;
+  }
+  .item-info {
+    box-shadow:
+      rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+      rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    border-radius: 6px;
+    width: 80%;
+    height: 60px;
+    padding: 10px;
+    font: 400 10px "Noto Sans KR";
+  }
+  .list-group button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f1f5f9;
+    border-color: #fff;
+    height: 60px;
+    color: black;
+  }
+  .list-group-item button {
+    font: 400 10px "Noto Sans KR";
+  }
+  .container {
+    margin: 0.1rem 0.1rem;
+  }
+  .btn-box div {
+    width: 8rem;
+  }
+
+  .large-category-group .btn {
+    width: 4rem;
+    height: 2rem;
+    font: 350 10px "Noto Sans KR";
   }
 }
+@media (max-width: 991px) {
+  .top-content .first-input-box {
+    margin-bottom: 0rem !important;
+  }
+  .top-content .second-input-box {
+    margin-bottom: 0.1rem !important;
+  }
+  .top-content .col-12 {
+    margin-bottom: 1rem !important;
+  }
+}
+
+.back-btn,
+.btn-close {
+  outline: none !important;
+  box-shadow: none !important;
+}
+/*.btn:active, .btn:focus {*/
+/*  outline:none !important;*/
+/*  box-shadow:none !important;*/
+/*}*/

@@ -43,7 +43,6 @@
         rel="stylesheet"
         href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
         />
-        <link rel="stylesheet" href="sidebar.css">
         <link rel="stylesheet" href="/resources/css/qsc/store_inspection_schedule/store_inspection_schedule.css">
         <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js'></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -51,6 +50,7 @@
 </head>
 <body>
 
+<jsp:include page="../../sidebar/sidebar.jsp"></jsp:include>
 
  <!-- 본문 -->
         <div class="page-wrapper2">
@@ -59,12 +59,12 @@
                     <!-- 검색 영억 -->
                     <div
                         class="row container-header d-flex align-items-center justify-content-between mx-0">
-                        <div class="col-xl-4 md-4 mx-0 inspector_area d-flex align-items-center row p-0">
-                            <div class="inspector_text col-md-5 pe-0 mb-3">점검자 검색:</div>
+                        <div class="col-xl-3 md-4 mx-0 inspector_area d-flex align-items-center row p-0">
+                            <div class="inspector_text col-md-4 pe-0 mb-3">점검자 검색</div>
                             <div
-                                class="input_area border border-1 d-flex flex-column justify-content-between align-items-center col-md-7 mb-3"
+                                class="input_area d-flex flex-column justify-content-between align-items-center col-md-8 mb-3"
                                 data-autocomplete="inspector">
-                                <div class="search-btn top-search d-flex">
+                                <div class="search-btn top-search d-flex border border-1">
                                     <span>선택해주세요.</span>
                                     <i class="uil uil-angle-down"></i>
                                 </div>
@@ -72,20 +72,19 @@
                                 <div class="hide-list border border-1">
                                     <div class="search">
                                       <div class="input_area d-flex justify-content-between align-items-center border border-1">
-                                        <input type="text" class="px-3 py-2 top-search border border-1" placeholder="점검자 검색"/>
-                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                        <input type="text" class="px-3 py-1 top-search border border-1" placeholder="점검자 검색"/>
                                       </div>
-                                      <ul class="options my-0"></ul>
+                                      <ul class="options my-1"></ul>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-xl-4 md-4 mx-0 inspection_type_area d-flex align-items-center row p-0">
-                            <div class="inspection_type_text col-md-5 pe-0 mb-3">점검 유형 선택:</div>
+                            <div class="inspection_type_text col-md-4 pe-0 mb-3">점검 유형 선택</div>
                             <div
-                                class="input_area border border-1 d-flex flex-column justify-content-between align-items-center col-md-7 mb-3"
+                                class="input_area  d-flex flex-column justify-content-between align-items-center col-md-8 mb-3"
                                 data-autocomplete="inspection_type">
-                                <div class="search-btn top-search d-flex">
+                                <div id ="input_type" class="search-btn top-search d-flex border border-1">
                                     <span>선택해주세요.</span>
                                     <i class="uil uil-angle-down"></i>
                                 </div>
@@ -93,10 +92,9 @@
                                 <div class="hide-list border border-1">
                                     <div class="search">
                                       <div class="input_area d-flex justify-content-between align-items-center border border-1">
-                                        <input type="text" class="px-3 py-2 top-search border border-1" placeholder="점검 유형 검색"/>
-                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                        <input type="text" class="px-3 py-1 top-search" placeholder="점검 유형 검색"/>
                                       </div>
-                                      <ul class="options my-0"></ul>
+                                      <ul class="options my-1"></ul>
                                     </div>
                                 </div>
                             </div>
@@ -111,12 +109,30 @@
                                 <i class="fa-solid fa-chevron-right"></i>
                             </button>
                         </div>
-                        
+
                     </div>
-                    
+
 
                     <!-- 캘린더 -->
                     <div id="wrapper" class="container-fluid mt-2 mb-0 p-0"></div>
+
+                    <!-- 가맹점 점검체크리스트 목록 Modal -->
+						<div class="modal fade" id="storeChecklistModal" tabindex="-1" aria-labelledby="storeChecklistModalLabel" aria-hidden="true">
+							<div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+								<div class="modal-content">
+									<div class="modal-header pe-3 ps-4 py-3 justify-content-between">
+										<div class="modal-title modal_store_name" id="storeChecklistModalLabel"></div>
+										<div class="modal_inspector_area">
+											<div class="modal_inspector_name ps-3 pe-1 py-2 border border-1"><span class=""></span></div>
+										</div>
+										<button type="button" class="btn-close ms-0" data-bs-dismiss="modal" aria-label="Close"></button>
+									</div>
+									<div class="modal-body py-0 mb-3">
+										
+									</div>
+								</div>
+							</div>
+						</div>
 
                 </div>
             </main>
@@ -124,6 +140,7 @@
 
         <!-- 본문 끝 -->
 <script src="/resources/js/qsc/store_inspection_schedule/store_inspection_schedule.js"></script>
+<input type="hidden" value="${username}">
 
 </body>
 </html>

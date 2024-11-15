@@ -2,7 +2,7 @@
     font-family: "Noto Sans KR";
 }
 body{
-    background-color: #f4f7ff;
+    background-color: #f4f7ff !important;
     padding: 40px;
     box-sizing: border-box;
 }
@@ -149,9 +149,10 @@ body{
 .inspection-table td.info-title p {
     display: block;
     margin: 0;
-    line-height: 1.4; /* 줄 간격 설정 */
+    line-height: 2.8; /* 줄 간격 설정 */
     word-wrap: break-word; /* 긴 단어를 줄 바꿈 처리 */
     white-space: normal; /* 여러 줄로 표시되도록 설정 */
+    text-align: center;
 }
 
 .info-details {
@@ -224,6 +225,19 @@ body{
     font-weight: 500;
 }
 
+/*-----------------tab부분 전환 디자인-------------*/
+
+/* 콘텐츠 블록 기본 숨기기 */
+.tab-content {
+    display: none;
+}
+/* 보고서 간략, 세부결과의 기본 스타일 */
+.report-summary, .detailed-result {
+    width: 100%;
+}
+
+
+
 /*------------------보고서 간략 디자인----------------*/
 
 .report-summary {
@@ -271,24 +285,31 @@ body{
 .grade-box, .total-score-box {
     width: 48%;
     height: 100px;
-    text-align: center;
+    /*text-align: center;*/
     padding: 15px;
     box-sizing: border-box;
-    background-color: #fffaf0;
+    background-color: #FFF8E5;
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #D0D5DD;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.grade-text {
-    font-size: 24px;
-    color: #4318ff;
-    font-weight: bold;
+.grade-box>p, .total-score-box>p{
+    margin-bottom: 0;
 }
 
-.total-score-text {
+.grade-text, .total-score-text {
+    font-size: 18px;
+    font-weight: 400;
+
+}
+.grade-text>span, .total-score-text>span{
     font-size: 24px;
-    color: #007bff;
-    font-weight: bold;
+    font-weight: 500;
+    color: #4318FF;
 }
 
 /* 행정처분 섹션 */
@@ -321,14 +342,18 @@ body{
     text-align: right;
     padding: 15px;
     box-sizing: border-box;
-    background-color: #fffaf0;
+    background-color: #FFF8E5;
     border-radius: 8px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #D0D5DD;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .fine-amount, .closure-days {
     font-size: 18px;
     font-weight: 400;
+    margin-bottom: 0;
 }
 .fine-amount>span, .closure-days>span{
     color: #D90D0D;
@@ -360,11 +385,224 @@ body{
     color: red;
 }
 
+/*---------------------중단 버튼 디자인-----------------------*/
+#go-inspection-wrap{
+    width: 100%;
+    height: 50px;
+
+}
+.go-inspection{
+    float: right;
+    width: 15vw; /* 화면 너비의 15% */
+    height: 50px;
+    border-radius: 10px;
+    border: none;
+    font: 500 1em "Noto Sans KR";
+    color: white;
+    background: #4318FF;
+    margin-left: 15px;
+}
+
+/*---------------------세부결과-----------------------*/
+
+.tab-content.detailed-result {
+    background-color: white;
+    border-radius: 10px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* 테이블과 상세보기 버튼 */
+.detailed-section {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+.detailed-item {
+    flex: 1 1 48%;  /* 2개씩 배치되도록 설정 */
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    margin-right: 10px;
+}
+.detailed-item:nth-child(2n){
+    margin-right: 0;
+}
+.detailed-item:last-child{
+    margin-right: 0;
+}
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.item-header h3 {
+    font-size: 16px;
+    color: #333;
+    font-weight: bold;
+    margin: 0;
+}
+
+.detail-btn {
+    padding: 5px 10px;
+    background-color: white;
+    border-radius: 10px;
+    border: solid 1px #D0D5DD;
+    cursor: pointer;
+    font-size: 14px;
+    color: #9CA3AF;
+}
+.detail-btn:hover{
+    border: solid 1px #4A00E0;
+    background-color: #4A00E0;
+    color: white;
+    transition: ease-out 0.3s;
+}
+
+/* 테이블 스타일 */
+.detailed-table {
+    width: 100%;  /* 테이블이 부모 컨테이너에 맞게 확장됨 */
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.detailed-table th, .detailed-table td {
+    text-align: center;
+    padding: 10px;
+}
+.detailed-table th{
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+}
+.detailed-table td{
+    border: none;
+}
+
+.detailed-table thead {
+    background-color: #EDEDED;
+    font-weight: bold;
+}
+
+/*-------------------하단 상세보기 섹션------------------*/
+#inspection-middleCheck-list {
+    width: 100%;
+    margin: 0 auto;
+    margin-top: 30px;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+.item-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.check-item {
+    display: flex;
+    flex-wrap: wrap; /* 여러 줄로 감싸기 */
+    gap: 20px; /* 요소 간격 */
+    justify-content: space-between;
+}
+
+.check-subitem {
+    flex: 1 1 48%; /* 각 항목이 한 행에 두 개씩 배치되도록 설정 */
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.subitem-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.subitem-info-wrapper {
+    border: 1px solid #D0D5DD;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 10px;
+}
+
+.subitem-info-wrapper p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.subitem-info {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    gap: 15px;
+}
+
+.info-box {
+    background-color: #FFF8E5;
+    border-radius: 10px;
+    padding: 10px 20px;
+    text-align: center;
+    flex: 1;
+}
+
+.info-box p {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+.info-box .score {
+    font-size: 16px;
+    font-weight: 700;
+    color: red; /* 강조 */
+}
+
+.edit-btn {
+    padding: 10px 20px;
+    background-color: white;
+    border: 1px solid #4318FF;
+    border-radius: 10px;
+    color: #4318FF;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease-out;
+    text-align: center;
+    display: block;
+    width: 100%;
+}
+
+.edit-btn:hover {
+    background-color: #4318FF;
+    color: white;
+}
+.inspection-content-wrapper{
+    padding: 20px 0 0 0 !important;
+    box-sizing: border-box;
+}
+
+
 
 
 
 /*------------------- 반응형 디자인 --------------------*/
 @media screen and (max-width: 1000px) {
+    body{
+        padding: 40px 20px;
+    }
     .info-title{
         padding: 29px;
     }
@@ -376,8 +614,10 @@ body{
         margin-top: 10px;
     }
 }
-@media screen and (max-width: 950px) {
-
+@media screen and (max-width: 910px) {
+    .detailed-item {
+        margin-right: 0;
+    }
 
 }
 @media screen and (max-width: 768px) {
@@ -395,18 +635,18 @@ body{
     }
 
     .info-details {
-        overflow: hidden; /* 자식 요소들의 float로 인한 깨짐 방지 */
+        overflow: hidden;
     }
 
     .info-details > span {
-        float: left; /* 왼쪽 정렬 */
-        width: calc(50% - 10px); /* 각 요소의 너비를 50%로 설정 */
-        margin-bottom: 10px; /* 아래쪽 여백 추가 */
-        margin-right: 10px; /* 오른쪽 여백 추가 */
+        float: left;
+        width: calc(50% - 10px);
+        margin-bottom: 10px;
+        margin-right: 10px;
     }
 
     .info-details > span:nth-child(2n) {
-        margin-right: 0; /* 짝수 번째 요소는 오른쪽 여백 제거 */
+        margin-right: 0;
     }
 
     .store-name {
@@ -446,9 +686,32 @@ body{
         margin-bottom: 10px;
     }
 
+    .fine-box-wrapper, .closure-box-wrapper{
+        width: 100%;
+    }
+
+    /*--------------------탭세부결과-------------------*/
+    .detailed-section {
+        display: block;
+    }
+
+    .detailed-item {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    /*-------------------하단 상세보기 섹션------------------*/
+
+    .check-subitem {
+        flex: 1 1 100%;
+    }
 
 }
 @media screen and (max-width: 580px) {
+    body{
+        padding: 20px !important;
+        box-sizing: border-box;
+    }
     .progress-container {
         width: 310px;
         min-height: 100px;
@@ -491,6 +754,17 @@ body{
         float: left;
     }
 
+    /*--------------------탭세부결과-------------------*/
+
+
+    .go-inspection{
+        width: calc(50% - 15px);
+        margin-left: 0;
+    }
+
+    .go-inspection:first-child{
+        margin-left: 15px;
+    }
 
 }
 
@@ -504,6 +778,17 @@ body{
     }
     .info-details > span:last-child{
         margin-bottom: 0;
+    }
+
+    .subitem-info {
+        list-style-type: none;
+        padding: 0;
+        display: block;
+    }
+
+    .info-box{
+        width: 100%;
+        margin-bottom: 15px;
     }
 
 }

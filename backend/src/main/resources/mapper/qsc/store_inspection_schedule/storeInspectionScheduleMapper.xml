@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sims.qsc.store_inspection_schedule.mapper.StoreInspectionScheduleMapper">
+    <select id="selectStoreInspectionSchedule" resultType="com.sims.qsc.store_inspection_schedule.vo.StoreInspectionScheduleResponse">
+        SELECT /* StoreInspectionScheduleMapper.selectStoreInspectionSchedule 원승언 */
+        	DISTINCT
+			      MB.MBR_NO AS INSP_MBR_NO
+			    , MBR_NM
+			    , CHKLST_NM
+			    , INSP_PLAN_DT
+			    , STORE_NM
+			    , CASE
+			    	WHEN INSP_TYPE_CD = 'IT001' THEN '제품점검'
+	                WHEN INSP_TYPE_CD = 'IT002' THEN '위생점검'
+	                WHEN INSP_TYPE_CD = 'IT003' THEN '정기점검'
+	                WHEN INSP_TYPE_CD = 'IT004' THEN '비정기점검'
+	                WHEN INSP_TYPE_CD = 'IT005' THEN '기획점검'
+	              END AS inspTypeCd
+		FROM
+		    MBR MB
+		INNER JOIN STORE ST
+		    ON MB.MBR_ID = ST.INSP_MBR_ID
+		INNER JOIN INSP_SCHD INSC
+		    ON INSC.STORE_ID = ST.STORE_ID
+		INNER JOIN INSP_PLAN INPL
+		    ON INSC.INSP_PLAN_ID = INPL.INSP_PLAN_ID
+		INNER JOIN CHKLST CH
+		    ON CH.CHKLST_ID = INPL.CHKLST_ID
+		<where>
+		    MB.MBR_STTS_CD ='1'
+		AND
+		    ST.STORE_BSN_STTS_CD ='1'
+
+			<if test="storeNm != null">
+				AND STORE_NM = #{storeNm}
+			</if>
+			<if test="inspPlanDt != null">
+				AND INSP_PLAN_DT = #{inspPlanDt}
+			</if>
+		</where>
+		ORDER BY
+		    STORE_NM, INSP_PLAN_DT
+
+    </select>
+
+    <select id="selectStoreInspectionScheduleByFilter" resultType="com.sims.qsc.store_inspection_schedule.vo.StoreInspectionScheduleRequest">
+        SELECT /* StoreInspectionScheduleMapper.selectStoreInspectionScheduleByFilter 원승언 */
+        	DISTINCT
+			      MB.MBR_NO AS INSP_MBR_NO
+			    , MB2.MBR_NO AS SV_MBR_NO
+			    , MB.MBR_NM
+			    , CHKLST_NM
+			    , INSP_PLAN_DT
+			    , STORE_NM
+			    , CASE
+			    	WHEN INSP_TYPE_CD = 'IT001' THEN '제품점검'
+	                WHEN INSP_TYPE_CD = 'IT002' THEN '위생점검'
+	                WHEN INSP_TYPE_CD = 'IT003' THEN '정기점검'
+	                WHEN INSP_TYPE_CD = 'IT004' THEN '비정기점검'
+	                WHEN INSP_TYPE_CD = 'IT005' THEN '기획점검'
+	            END AS inspTypeCd
+		FROM
+		    MBR MB
+		INNER JOIN STORE ST
+		    ON MB.MBR_ID = ST.INSP_MBR_ID
+		INNER JOIN MBR MB2
+			ON MB2.MBR_ID = ST.SV_MBR_ID
+		INNER JOIN INSP_SCHD INSC
+		    ON INSC.STORE_ID = ST.STORE_ID
+		INNER JOIN INSP_PLAN INPL
+		    ON INSC.INSP_PLAN_ID = INPL.INSP_PLAN_ID
+		INNER JOIN CHKLST CH
+		    ON CH.CHKLST_ID = INPL.CHKLST_ID
+		<where>
+		    MB.MBR_STTS_CD ='1'
+		AND
+		    ST.STORE_BSN_STTS_CD ='1'
+
+			<if test="inspTypeCd != null">
+				AND INSP_TYPE_CD = #{inspTypeCd}
+			</if>
+			<if test="inspMbrNo != null">
+				AND MB.MBR_NO = #{inspMbrNo}
+			</if>
+			<if test="svMbrNo != null">
+				AND MB2.MBR_NO = #{svMbrNo}
+			</if>
+		</where>
+		ORDER BY
+		    INSP_PLAN_DT
+
+    </select>
+
+    <select id="selectInspectorList" resultType="String">
+    	SELECT /* StoreInspectionScheduleMapper.selectInspectorList 원승언 */
+		    DISTINCT
+		        MB.MBR_NM || '(' || MB.MBR_NO || ')' AS inspMbrNm
+		FROM
+		    INSP_SCHD INSC
+		INNER JOIN STORE ST
+		    ON INSC.STORE_ID = ST.STORE_ID
+		INNER JOIN MBR MB
+		    ON ST.INSP_MBR_ID = MB.MBR_ID
+		INNER JOIN MBR MB2
+		    ON ST.SV_MBR_ID = MB2.MBR_ID
+    	<where>
+    		MB.MBR_STTS_CD ='1'
+    		<if test="svMbrNo != null">
+    			AND MB2.MBR_ID = (SELECT
+				                      MBR_ID
+				                  FROM
+				                      MBR
+				                  WHERE
+				                      MBR_NO = #{svMbrNo}
+				                 )
+    		</if>
+
+    		<if test="inspMbrNo != null">
+    		    AND MB2.MBR_ID = (SELECT
+				                      DISTINCT
+				                          SV_MBR_ID
+				                  FROM
+				                      STORE
+				                  WHERE
+				                      INSP_MBR_ID = (SELECT
+				                                         MBR_ID
+				                                     FROM
+				                                         MBR
+				                                     WHERE
+				                                         MBR_NO= #{inspMbrNo}
+				                                    )
+				                 )
+    		</if>
+    	</where>
+    </select>
+
+    <select id="selectInspectionType" resultType="String">
+	    SELECT /* StoreInspectionScheduleMapper.selectInspectionType 원승언 */
+	        DISTINCT
+	            CASE
+	            	WHEN INSP_TYPE_CD = 'IT001' THEN '제품점검'
+	                WHEN INSP_TYPE_CD = 'IT002' THEN '위생점검'
+	                WHEN INSP_TYPE_CD = 'IT003' THEN '정기점검'
+	                WHEN INSP_TYPE_CD = 'IT004' THEN '비정기점검'
+	                WHEN INSP_TYPE_CD = 'IT005' THEN '기획점검'
+	            END AS INSP_TYPE_CD
+	    FROM
+	        INSP_SCHD INSC
+	    INNER JOIN INSP_PLAN INPL
+	        ON INPL.INSP_PLAN_ID = INSC.INSP_PLAN_ID
+	    INNER JOIN CHKLST CH
+	        ON CH.CHKLST_ID = INPL.CHKLST_ID
+	    INNER JOIN STORE ST
+	    	ON ST.STORE_ID = INSC.STORE_ID
+	    INNER JOIN MBR MB
+	    	ON MB.MBR_ID = ST.INSP_MBR_ID
+	    INNER JOIN MBR MB2
+	    	ON MB2.MBR_ID = ST.SV_MBR_ID
+	    <where>
+	        CHKLST_USE_W = 'Y'
+	    AND
+	        INSP_PLAN_USE_W = 'Y'
+	    	<if test="svMbrNo != null">
+    			AND MB2.MBR_ID = (SELECT
+				                      MBR_ID
+				                  FROM
+				                      MBR
+				                  WHERE
+				                      MBR_NO = #{svMbrNo}
+				                 )
+    		</if>
+
+    		<if test="inspMbrNo != null">
+    		    AND MB2.MBR_ID = (SELECT
+				                      DISTINCT
+				                          SV_MBR_ID
+				                  FROM
+				                      STORE
+				                  WHERE
+				                      INSP_MBR_ID = (SELECT
+				                                         MBR_ID
+				                                     FROM
+				                                         MBR
+				                                     WHERE
+				                                         MBR_NO= #{inspMbrNo}
+				                                    )
+				                 )
+    		</if>
+	    </where>
+	    ORDER BY
+	        INSP_TYPE_CD
+    </select>
+
+
+
+</mapper>

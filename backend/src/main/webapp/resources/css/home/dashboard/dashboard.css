@@ -1,0 +1,56 @@
+body {
+    font-family: "Noto Sans KR" !important;
+}
+.content {
+    flex-grow: 1; /* 남은 공간을 모두 사용 */
+    background-color: #f4f7ff;
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.item {
+    cursor: pointer;
+    height: 300px;
+}
+
+.item-content{
+    background-color: #FFFFFF;
+    border-radius: 8px;
+    box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+    height: 300px;
+}
+
+.sidebar {
+    z-index: 1000; /* 사이드바의 z-index 값을 높게 설정 */
+    position: relative; /* 위치 속성 설정 (필요 시 추가) */
+}
+
+.item-content .title{
+    font: 700 17px "Noto Sans KR";
+}
+
+
+
+.container,
+.container-sm,
+.container-md,
+.container-lg,
+.container-xl,
+.container-xxl {
+    max-width: 100% !important; /* 모든 화면에서 100%로 설정 */
+    width: 100% !important;     /* 컨테이너 너비를 100%로 설정 */
+}
+/* 미디어 쿼리 덮어쓰기: min-width 제한 제거 */
+@media (min-width: 0px) {
+    .container,
+    .container-sm,
+    .container-md,
+    .container-lg,
+    .container-xl,
+    .container-xxl {
+        max-width: 100% !important; /* 모든 조건에서 100%로 설정 */
+    }
+}

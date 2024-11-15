@@ -1,0 +1,891 @@
+* {
+    font-family: "Noto Sans KR";
+}
+body{
+    background-color: #f4f7ff !important;
+    padding: 40px;
+    box-sizing: border-box;
+}
+/* 프로그레스 바 컨테이너 */
+.progress-container {
+    width: 457px;
+    min-height: 100px;
+    margin: 0 auto;
+    background-color: #f4f7ff;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+/* 각 단계 */
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    gap: 0;
+    float: left;
+}
+
+/* 원형 모양 */
+.circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 30px;
+    border: 3px solid #9CA3AF;
+    background-color: #F4F7FF;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.circle.complete {
+    background-color: #4318ff;
+    border: none;
+}
+.circle.complete>i{
+    color: white;
+}
+
+/* 활성화된 원형 */
+.circle.active {
+    border-color: #4318ff;
+}
+
+.inner-circle{
+    width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    background-color: #D1D5DB;
+
+}
+.inner-circle.active{
+    background-color: #4318ff;
+}
+
+/* 각 단계의 텍스트 */
+.step p {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+/* 활성화된 텍스트 */
+.step.active p {
+    color: black;
+    font-weight: 600;
+}
+
+.line {
+    width: 85px;
+    height: 3px;
+    background-color: #d0d5dd;
+    margin-top: 25px;
+    float: left;
+}
+
+.line.active{
+    background-color: #4318ff;
+}
+
+/* 첫 번째와 마지막 단계에 라인 표시 안함 */
+.step:first-child .line,
+.step:last-child .line {
+    display: none;
+}
+
+
+/*---------------------------상단 구역--------------------------*/
+/* 공통 스타일 */
+.inspection-detail {
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    font-family: 'Noto Sans KR', sans-serif;
+    box-sizing: border-box;
+    margin-bottom: 40px;
+}
+
+
+.inspection-info {
+    border: 1px solid #D0D5DD;
+    border-radius: 10px;
+}
+
+.inspection-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+    table-layout: auto;
+}
+
+.inspection-table td {
+
+    vertical-align: top;
+    font-size: 1rem;
+    color: #333;
+}
+.info-title{
+    border-right: 1px solid #D0D5DD;
+}
+
+.inspection-table td:last-child {
+    border-right: none;
+}
+
+.info-title {
+    width: 180px;
+    vertical-align: top;
+    word-break: break-word; /* 텍스트가 길면 줄 바꿈 */
+    font-weight: 700;
+    color: #333;
+    white-space: nowrap;
+    padding: 15px;
+    box-sizing: border-box;
+}
+.inspection-table td.info-title p {
+    display: block;
+    margin: 0;
+    line-height: 1.4; /* 줄 간격 설정 */
+    word-wrap: break-word; /* 긴 단어를 줄 바꿈 처리 */
+    white-space: normal; /* 여러 줄로 표시되도록 설정 */
+}
+
+.info-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 25px;
+    box-sizing: border-box;
+}
+
+.store-name {
+    font-weight: 700;
+    color: #D90D0D;
+    margin-right: 10px;
+}
+
+.store-subtitle, .inspection-date, .inspector-name {
+    font-size: 1rem;
+    color: #666;
+    margin-right: 20px;
+}
+
+/*--------------------탭 디자인------------------*/
+.inspection-section {
+    width: 100%;
+    margin: 0 auto;
+    padding: 30px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    background-color: white;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+}
+
+.inspection-tabs{
+    width: 100%;
+    height: 50px;
+    /*display: flex;*/
+    /*justify-content: space-between;*/
+    margin-bottom: 20px;
+}
+
+.inspection-tab{
+    float: left;
+    margin-right: 15px;
+    padding: 10px 20px;
+    box-sizing: border-box;
+    border: solid 1px #D0D5DD;
+    border-radius: 10px;
+    background-color: white;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 400;
+    color: #9CA3AF;
+}
+.inspection-tab:last-child{
+    margin-right: 0;
+}
+.inspection-tab:hover{
+    border: solid 1px #4318FF;
+    font-weight: 500;
+    color: #4318FF;
+    transition: 0.3s ease-out;
+}
+
+.inspection-tab.active{
+    background-color: #4318FF;
+    color: white;
+    font-weight: 500;
+}
+
+/*-----------------tab부분 전환 디자인-------------*/
+
+/* 콘텐츠 블록 기본 숨기기 */
+.tab-content {
+    display: none;
+}
+/* 보고서 간략, 세부결과의 기본 스타일 */
+.report-summary, .detailed-result {
+    width: 100%;
+}
+
+
+
+/*------------------보고서 간략 디자인----------------*/
+
+.report-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+}
+
+/* 점수표 섹션 */
+.score-section {
+    width: 48%;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background-color: #fff;
+    overflow: hidden;
+}
+
+.score-table {
+    width: 100%;
+    border-collapse: collapse;
+    padding: 20px;
+    box-sizing: border-box;
+    border: none;
+}
+
+.score-table th, .score-table td {
+    padding: 10px;
+    text-align: center;
+    border: none;
+}
+
+.score-table thead{
+    background-color: #EDEDED;
+    border-bottom: solid 1px #D0D5DD;
+}
+
+.grade-section {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 20px 20px 20px;
+    box-sizing: border-box;
+}
+
+.grade-box, .total-score-box {
+    width: 48%;
+    height: 100px;
+    /*text-align: center;*/
+    padding: 15px;
+    box-sizing: border-box;
+    background-color: #FFF8E5;
+    border-radius: 8px;
+    border: 1px solid #D0D5DD;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.grade-box>p, .total-score-box>p{
+    margin-bottom: 0;
+}
+
+.grade-text, .total-score-text {
+    font-size: 18px;
+    font-weight: 400;
+
+}
+.grade-text>span, .total-score-text>span{
+    font-size: 24px;
+    font-weight: 500;
+    color: #4318FF;
+}
+
+/* 행정처분 섹션 */
+.admin-action-section {
+    width: 48%;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #fff;
+}
+
+.admin-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.admin-box {
+    display: flex;
+    justify-content: space-between;
+}
+
+.fine-box-wrapper, .closure-box-wrapper{
+    width: 48%;
+}
+
+.fine-box, .closure-box {
+    width: 100%;
+    height: 100px;
+    text-align: right;
+    padding: 15px;
+    box-sizing: border-box;
+    background-color: #FFF8E5;
+    border-radius: 8px;
+    border: 1px solid #D0D5DD;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.fine-amount, .closure-days {
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 0;
+}
+.fine-amount>span, .closure-days>span{
+    color: #D90D0D;
+    font-weight: 500;
+    font-size: 24px;
+}
+
+
+
+
+
+
+/*------------------점수표기 디자인----------------*/
+.inspection-total-score {
+    width: 100%;
+    height: 60px;
+    border-radius: 10px;
+    background-color: #D9DDFF;
+    margin-top: 20px;
+    text-align: right;
+    font-size: 18px;
+    font-weight: bold;
+    color: #6258ff;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.inspection-total-score span {
+    color: red;
+}
+
+/*---------------------중단 버튼 디자인-----------------------*/
+#go-inspection-wrap{
+    width: 100%;
+    height: 50px;
+
+}
+.go-inspection{
+    float: right;
+    width: 15vw; /* 화면 너비의 15% */
+    height: 50px;
+    border-radius: 10px;
+    border: none;
+    font: 500 1em "Noto Sans KR";
+    color: white;
+    background: #4318FF;
+    margin-left: 15px;
+}
+
+/*---------------------세부결과-----------------------*/
+
+.tab-content.detailed-result {
+    background-color: white;
+    border-radius: 10px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* 테이블과 상세보기 버튼 */
+.detailed-section {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+.detailed-item {
+    flex: 1 1 48%;  /* 2개씩 배치되도록 설정 */
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    margin-right: 10px;
+}
+.detailed-item:nth-child(2n){
+    margin-right: 0;
+}
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.item-header h3 {
+    font-size: 16px;
+    color: #333;
+    font-weight: bold;
+    margin: 0;
+}
+
+.detail-btn {
+    padding: 5px 10px;
+    background-color: white;
+    border-radius: 10px;
+    border: solid 1px #D0D5DD;
+    cursor: pointer;
+    font-size: 14px;
+    color: #9CA3AF;
+}
+.detail-btn:hover{
+    border: solid 1px #4A00E0;
+    background-color: #4A00E0;
+    color: white;
+    transition: ease-out 0.3s;
+}
+
+/* 테이블 스타일 */
+.detailed-table {
+    width: 100%;  /* 테이블이 부모 컨테이너에 맞게 확장됨 */
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.detailed-table th, .detailed-table td {
+    text-align: center;
+    padding: 10px;
+}
+.detailed-table th{
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+}
+.detailed-table td{
+    border: none;
+}
+
+.detailed-table thead {
+    background-color: #EDEDED;
+    font-weight: bold;
+}
+
+/*-------------------하단 상세보기 섹션------------------*/
+#inspection-lastCheck-list {
+    width: 100%;
+    margin: 0 auto;
+    margin-top: 30px;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+.item-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.check-item {
+    display: flex;
+    flex-wrap: wrap; /* 여러 줄로 감싸기 */
+    gap: 20px; /* 요소 간격 */
+    justify-content: space-between;
+}
+
+.check-subitem {
+    flex: 1 1 48%; /* 각 항목이 한 행에 두 개씩 배치되도록 설정 */
+    box-sizing: border-box;
+    background-color: white;
+}
+
+.subitem-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.subitem-info-wrapper {
+    border: 1px solid #D0D5DD;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 10px;
+}
+
+.subitem-info-wrapper p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.subitem-info {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    gap: 15px;
+}
+
+.info-box {
+    background-color: #FFF8E5;
+    border-radius: 10px;
+    padding: 10px 20px;
+    text-align: center;
+    flex: 1;
+}
+
+.info-box p {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+.info-box .score {
+    font-size: 16px;
+    font-weight: 700;
+    color: red; /* 강조 */
+}
+
+.edit-btn {
+    padding: 10px 20px;
+    background-color: white;
+    border: 1px solid #4318FF;
+    border-radius: 10px;
+    color: #4318FF;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease-out;
+    text-align: center;
+    display: block;
+    width: 100%;
+}
+
+.edit-btn:hover {
+    background-color: #4318FF;
+    color: white;
+}
+.inspection-content-wrapper{
+    display: none;
+    margin-top: 20px;
+    /*padding: 20px !important;*/
+    padding: 0;
+    box-sizing: border-box;
+    border: solid 1px #D0D5DD;
+    border-radius: 10px;
+}
+
+
+.image-section{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+.image-section>div{
+    width: 47%;
+    height: 130px;
+    background-color: #FFF8E5;
+    border: solid 1px #D0D5DD;
+    border-radius: 10px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.zoom-icon{
+    width: 35px;
+    height: 35px;
+    border-radius: 5px;
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.zoom-icon>i{
+    font-size: 22px;
+    color: white;
+}
+.img-wrapper>img{
+    width: 100%;
+    height: 100%;
+}
+.detail-item-row{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.detail-item-row>div{
+    width: 47%;
+}
+.detail-section>div{
+    margin-bottom: 20px;
+    padding: 5px 0;
+    box-sizing: border-box;
+}
+.detail-section p {
+    font-weight: 400;
+    font-size: 14px;
+    color: #9CA3AF;
+}
+.detail-section>div:last-child{
+    margin-bottom: 0;
+}
+.detail-item-row>div>p:first-child{
+    font-size: 15px;
+    color:  black;
+}
+.detail-single-item>p:first-child{
+    font-size: 15px;
+    color:  black;
+}
+
+/*------사진클릭시 모달-------*/
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal img {
+    max-width: 80%;
+    max-height: 80%;
+    border-radius: 10px;
+}
+
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+
+
+
+/*------------------- 반응형 디자인 --------------------*/
+@media screen and (max-width: 1000px) {
+    .info-title{
+        padding: 29px;
+    }
+    .info-details span:nth-child(3) {
+        flex-basis: 50%;
+        margin-top: 10px;
+    }
+    .info-details span:nth-child(4) {
+        margin-top: 10px;
+    }
+}
+@media screen and (max-width: 910px) {
+    .detailed-item {
+        margin-right: 0;
+    }
+
+}
+@media screen and (max-width: 768px) {
+    .info-title{
+        border-right: none;
+        border-bottom: solid 1px #D0D5DD;
+        align-items: center;
+    }
+
+    .inspection-table td {
+        display: block;
+        width: 100%;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    .info-details {
+        overflow: hidden;
+    }
+
+    .info-details > span {
+        float: left;
+        width: calc(50% - 10px);
+        margin-bottom: 10px;
+        margin-right: 10px;
+    }
+
+    .info-details > span:nth-child(2n) {
+        margin-right: 0;
+    }
+
+    .store-name {
+        margin-bottom: 5px;
+    }
+
+    .store-subtitle, .inspection-date, .inspector-name {
+        margin-bottom: 5px;
+    }
+
+    /* -----------------보고서 간략 반응형 ------------------ */
+
+    .report-summary {
+        flex-direction: column;
+    }
+
+    .score-section, .admin-action-section {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .grade-section {
+        flex-direction: column;
+    }
+
+    .grade-box, .total-score-box {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .admin-box {
+        flex-direction: column;
+    }
+
+    .fine-box, .closure-box {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .fine-box-wrapper, .closure-box-wrapper{
+        width: 100%;
+    }
+
+    /*--------------------탭세부결과-------------------*/
+    .detailed-section {
+        display: block;
+    }
+
+    .detailed-item {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    /*-------------------하단 상세보기 섹션------------------*/
+
+    .check-subitem {
+        flex: 1 1 100%;
+    }
+
+}
+@media screen and (max-width: 580px) {
+    body{
+        padding: 20px !important;
+        box-sizing: border-box;
+    }
+    .progress-container {
+        width: 310px;
+        min-height: 100px;
+        margin: 0 auto;
+    }
+    .circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        border: 2px solid #9CA3AF;
+        background-color: #F4F7FF;
+        margin-bottom: 10px;
+    }
+
+    .inner-circle{
+        width: 14px;
+        height: 14px;
+        border-radius: 7px;
+        background-color: #D1D5DB;
+
+    }
+
+    .step p {
+        font-size: 10px;
+        color: #666;
+        margin: 0;
+    }
+
+    /* 활성화된 텍스트 */
+    .step.active p {
+        color: black;
+        font-weight: 600;
+    }
+
+    .line {
+        width: 50px;
+        height: 2px;
+        background-color: #d0d5dd;
+        margin-top: 19px;
+        float: left;
+    }
+
+    /*--------------------탭세부결과-------------------*/
+    .detail-item-row{
+        display: block;
+    }
+    .detail-item-row:first-child{
+        margin-bottom: 0;
+    }
+
+    .detail-item-row>div{
+        width: 100%;
+    }
+
+}
+
+@media screen and (max-width: 470px) {
+    .info-details > span {
+        display: block;
+        float: none;
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    .info-details > span:last-child{
+        margin-bottom: 0;
+    }
+
+    .subitem-info {
+        list-style-type: none;
+        padding: 0;
+        display: block;
+    }
+
+    .info-box{
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+}

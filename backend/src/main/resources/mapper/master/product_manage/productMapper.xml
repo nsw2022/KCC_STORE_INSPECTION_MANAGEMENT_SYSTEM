@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sims.master.product_manage.mapper.ProductMapper">
+
+    <!-- 제품 정보 받아올 때 쓰는 resultMap-->
+    <resultMap id="selectProductInfo" type="com.sims.master.product_manage.vo.ProductResponse">
+        <id property="pdtId" column="PDT_ID"/>
+        <result property="brandNm" column="brandNm"/>
+        <result property="pdtNm" column="PDT_NM"/>
+        <result property="pdtPrice" column="PDT_PRICE"/>
+        <result property="expDaynum" column="EXP_DAYNUM"/>
+        <result property="pdtSellSttsNm" column="pdtSellSttsNm"/>
+    </resultMap>
+    <select id="selectAllProducts" resultMap="selectProductInfo" parameterType="com.sims.master.product_manage.vo.ProductRequest">
+        SELECT /* ProductMapper.selectAllProducts 원승언 */
+            PDT_ID
+          , BRAND_CD.DTL_CD_NM AS brandNm
+          , PDT_NM
+          , PDT_PRICE
+          , EXP_DAYNUM
+          , PDT_SELL_STTS_CD.DTL_CD_NM AS pdtSellSttsNm
+        FROM
+            PDT
+        LEFT JOIN COMM_CD_DTL BRAND_CD
+            ON BRAND_CD.DTL_CD = PDT.BRAND_CD
+        LEFT JOIN COMM_CD_DTL PDT_SELL_STTS_CD
+            ON PDT_SELL_STTS_CD.DTL_CD = PDT.PDT_SELL_STTS_CD
+        <where>
+            PDT_STTS_W = '1'
+            <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(brandNm)">
+                AND BRAND_CD.DTL_CD_NM LIKE '%'||#{brandNm}||'%'
+            </if>
+            <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(pdtNm)">
+                AND PDT_NM LIKE '%'||#{pdtNm}||'%'
+            </if>
+            <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(pdtSellSttsNm)">
+                AND PDT_SELL_STTS_CD.DTL_CD_NM  LIKE '%'||#{pdtSellSttsNm}||'%'
+            </if>
+        </where>
+        ORDER BY
+            BRAND_CD.DTL_CD_NM, PDT_NM, PDT_SELL_STTS_CD.DTL_CD_NM
+    </select>
+
+    <select id="selectAllPdtNm" resultType="String">
+        SELECT /* ProductMapper.selectAllPdtNm 원승언 */
+            PDT_NM
+        FROM
+            PDT
+        WHERE
+            PDT_STTS_W = '1'
+    </select>
+
+    <select id="selectAllBrandNm" resultType="String">
+        SELECT /* ProductMapper.selectAllBrandNm 원승언 */
+            DTL_CD_NM
+        FROM
+            COMM_CD_DTL CCD
+        INNER JOIN COMM_CD CC
+            ON CCD.COMM_CD_ID = CC.COMM_CD_ID
+        WHERE
+            COMM_CD ='BRAND_CD'
+        ORDER BY
+            DTL_CD
+    </select>
+
+    <select id="selectAllPdtSellSttsNm" resultType="String">
+        SELECT /* ProductMapper.selectAllPdtSellSttsNm 원승언 */
+            DTL_CD_NM
+        FROM
+            COMM_CD_DTL CC
+        INNER JOIN COMM_CD CD
+            ON CD.COMM_CD_ID = CC.COMM_CD_ID
+        WHERE
+            COMM_CD ='PDT_SELL_STTS_CD'
+        ORDER BY
+            DTL_CD
+    </select>
+    <select id="selectProductByPdtId" resultMap="selectProductInfo">
+        SELECT /* ProductMapper.selectProductByPdtId 원승언 */
+            PDT_ID
+            , BRAND_CD.DTL_CD_NM AS brandNm
+            , PDT_NM
+            , PDT_PRICE
+            , EXP_DAYNUM
+            , PDT_SELL_STTS_CD.DTL_CD_NM AS pdtSellSttsNm
+        FROM
+            PDT
+        LEFT JOIN COMM_CD_DTL BRAND_CD
+            ON BRAND_CD.DTL_CD = PDT.BRAND_CD
+        LEFT JOIN COMM_CD_DTL PDT_SELL_STTS_CD
+            ON PDT_SELL_STTS_CD.DTL_CD = PDT.PDT_SELL_STTS_CD
+        <where>
+             <if test="@org.apache.commons.lang3.math.NumberUtils@isDigits(pdtId)">
+                AND PDT_ID = #{pdtId, jdbcType=INTEGER}
+            </if>
+
+        </where>
+    </select>
+    <insert id="saveProduct" parameterType="com.sims.master.product_manage.vo.ProductRequest">
+        /* ProductMapper.saveProduct 원승언 */
+        INSERT INTO PDT(
+                        PDT_ID
+                      , BRAND_CD
+                      , PDT_NM
+                      , PDT_PRICE
+                      , EXP_DAYNUM
+                      , PDT_SELL_STTS_CD
+                      , CRE_MBR_ID
+                      , CRE_TM
+
+        ) VALUES (
+                      PDT_SEQ.NEXTVAL
+                    , (SELECT
+                           DTL_CD
+                       FROM
+                           COMM_CD_DTL
+                       WHERE
+                           DTL_CD_NM = #{brandNm}
+                       )
+                    , #{pdtNm}
+                    , #{pdtPrice}
+                    , #{expDaynum}
+                    , (SELECT
+                           DTL_CD
+                       FROM
+                           COMM_CD_DTL
+                       WHERE
+                           DTL_CD_NM = #{pdtSellSttsNm}
+                      )
+                    , (SELECT
+                           MBR_ID
+                       FROM
+                           MBR
+                       WHERE
+                           MBR_NO = #{mbrNo}
+                       )
+                    , TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+                 )
+    </insert>
+
+    <update id="updateProduct" parameterType="com.sims.master.product_manage.vo.ProductRequest">
+        /* ProductMapper.updateProduct 원승언 */
+        UPDATE
+            PDT
+        SET
+              PDT_NM = #{pdtNm}
+            , BRAND_CD = (SELECT
+                              DTL_CD
+                          FROM
+                              COMM_CD_DTL
+                          WHERE
+                              DTL_CD_NM = #{brandNm}
+                         )
+            , PDT_PRICE = #{pdtPrice}
+            , EXP_DAYNUM = #{expDaynum}
+            , PDT_SELL_STTS_CD = (SELECT
+                                      DTL_CD
+                                  FROM
+                                      COMM_CD_DTL
+                                  WHERE
+                                      DTL_CD_NM = #{pdtSellSttsNm}
+                                 )
+            , UPD_MBR_ID = (SELECT
+                                MBR_ID
+                            FROM
+                                MBR
+                            WHERE
+                                MBR_NO = #{mbrNo}
+                           )
+            , UPD_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+        <where>
+            <if test="@org.apache.commons.lang3.math.NumberUtils@isDigits(pdtId)">
+                AND PDT_ID = #{pdtId, jdbcType=INTEGER}
+            </if>
+        </where>
+    </update>
+
+    <update id="deleteProductByPdtId" parameterType="List">
+        /* ProductMapper.deleteProductByPdtId 원승언 */
+        UPDATE
+            PDT
+        SET
+            PDT_STTS_W = '0'
+        <where>
+            PDT_ID
+                IN
+            <foreach collection="list" item="item" open="(" close=")" separator="," index="index">
+                #{item.pdtId}
+            </foreach>
+        </where>
+    </update>
+</mapper>

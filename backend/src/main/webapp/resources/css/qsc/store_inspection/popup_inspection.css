@@ -2,9 +2,11 @@
     font-family: "Noto Sans KR";
 }
 body{
-    background-color: #f4f7ff;
-    padding: 40px;
+    background-color: #f4f7ff !important;
+    padding-right: 0 !important;
+    padding: 40px !important;
     box-sizing: border-box;
+
 }
 /* 프로그레스 바 컨테이너 */
 .progress-container {
@@ -138,9 +140,10 @@ body{
 .inspection-table td.info-title p {
     display: block;
     margin: 0;
-    line-height: 1.4; /* 줄 간격 설정 */
+    line-height: 2.8    ; /* 줄 간격 설정 */
     word-wrap: break-word; /* 긴 단어를 줄 바꿈 처리 */
     white-space: normal; /* 여러 줄로 표시되도록 설정 */
+    text-align: center;
 }
 
 .info-details {
@@ -360,7 +363,7 @@ body{
 }
 
 .answer-btn {
-    width: 45%;
+    width: calc(50% - 10px);
     height: 60px;
     border: 1px solid #d0d5dd;
     background-color: white;
@@ -373,11 +376,15 @@ body{
 
 .answer-btn:hover {
     background-color: #f4f7ff;
+    border: solid 1px #4318ff;
+    color: #4318FF;
+    transition: ease-out 0.3s;
 }
 
-.answer-btn:active {
-    border-color: #4318ff;
-    color: #4318ff;
+.answer-btn.active {
+    background-color: #4318ff;
+    border: none;
+    color: white;
 }
 
 .answer-section2 {
@@ -464,6 +471,23 @@ input[type="radio"]:checked {
     border: 1px solid #e0e0e0;
     font-family: 'Noto Sans KR', sans-serif;
     font-size: 14px;
+    position: relative;
+}
+
+.delete-btn{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 
@@ -554,7 +578,7 @@ input[type="radio"] {
     border: solid 1px #D0D5DD;
     border-radius: 0 0 10px 10px;
     border-top: none;
-    padding: 30px 20px 20px 20px;
+    padding: 30px 20px 18px 20px;
     box-sizing: border-box;
 }
 
@@ -666,6 +690,9 @@ input[type="radio"] {
 
 /* 반응형 스타일 */
 @media screen and (max-width: 1000px) {
+    body{
+        padding: 40px 20px !important;
+    }
     .info-title{
         padding: 29px;
     }
@@ -678,6 +705,11 @@ input[type="radio"] {
     }
 }
 @media screen and (max-width: 950px) {
+    .inspection-section{
+        padding: 15px;
+    }
+
+
     .input-group-cover{
         width: 100%;
         display: block;
@@ -848,6 +880,14 @@ input[type="radio"] {
         box-sizing: border-box;
     }
 
+    .go-inspection{
+        width: calc(50% - 15px);
+        margin-left: 0;
+    }
+
+    .go-inspection:first-child{
+        margin-left: 15px;
+    }
 }
 
 @media screen and (max-width: 470px) {

@@ -1,77 +1,73 @@
 .sidebar-wrapper {
-    width: 100%;
-    height: 100%;
-    max-height: 100%;
-    position: fixed;
-    top: 0;
-    left: -800px;
-    z-index: 999;
-    /*---------------*/
-    display: none;
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  position: fixed;
+  top: 0;
+  left: -800px;
+  z-index: 1000;
+  /*---------------*/
+  display: none;
 }
 
-#sidebar{
-    font: 400 1.25em "Noto Sans KR";
+#sidebar {
+  font: 500 1.1em "Noto Sans KR";
 }
-.sidebar-brand{
-    width: 100%;
-    height: 50px;
-    position: relative;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    justify-content: center;
+.sidebar-brand {
+  width: 100%;
+  height: 50px;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 10px;
 }
-.sidebar-brand>a{
-    margin-top: 10px;
-    font: 400 2em "Playfair Display";
+.sidebar-brand > a {
+  font: 400 2em "Playfair Display";
 }
-#close-sidebar{
-    position: absolute;
-    right: 10px;
-    top: 20px;
+#close-sidebar {
+  position: absolute;
+  right: 10px;
+  top: 20px;
 }
-.sidebar-menu{
-    width: 100%;
-    height: auto;
-    margin-top: 50px;
-
+.sidebar-menu {
+  width: 100%;
+  height: auto;
+  margin-top: 50px;
 }
-.sidebar-menu>ul{
-
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    justify-content: space-around;
+.sidebar-menu > ul {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: space-around;
 }
 
-.sidebar-dropdown{
-    margin-bottom: 2em;
-    margin-left: 10px;
+.sidebar-dropdown {
+  margin-bottom: 2em;
+  margin-left: 10px;
 }
 
-.sidebar-submenu>ul>li{
-    margin-top: 1.25em;
+.sidebar-submenu > ul > li {
+  margin-top: 1.25em;
 }
 
-.sidebar-submenu>ul>li>a{
-    font-size: 1.5em;
+.sidebar-submenu > ul > li > a {
+  font-size: 1.3em;
 }
 
 /* sidebar-dropdown에서 아이콘을 제거 */
 .sidebar-dropdown > a:after {
-    content: none !important; /* 가상 요소를 없앰 */
+  content: none !important; /* 가상 요소를 없앰 */
 }
 
 /* active 상태의 스타일 정의 */
 .sidebar-submenu > ul > li > a.active-hover {
-    background-color: #DCE8FF; /* hover 시 배경색 */
-    border-radius: 10px; /* 모서리 둥글게 */
-    color: #0035BE !important;
-    font: 600 1.5em "Noto Sans KR";
+  background-color: #dce8ff; /* hover 시 배경색 */
+  border-radius: 10px; /* 모서리 둥글게 */
+  color: #0035be !important;
+  font: 600 1.3em "Noto Sans KR";
 }
-
-
 
 .page-wrapper .sidebar-wrapper,
 .sidebar-wrapper .sidebar-dropdown > a:after,
@@ -81,289 +77,374 @@
 .sidebar-wrapper .sidebar-menu ul li a,
 #show-sidebar,
 #close-sidebar {
-    -webkit-transition: all 0.3s ease;
-    -moz-transition: all 0.3s ease;
-    -ms-transition: all 0.3s ease;
-    -o-transition: all 0.3s ease;
-    transition: all 0.3s ease;
+  -webkit-transition: all 0.3s ease;
+  -moz-transition: all 0.3s ease;
+  -ms-transition: all 0.3s ease;
+  -o-transition: all 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 /*----------------page-wrapper----------------*/
 
 .page-wrapper {
-    height: 100vh;
-    position:fixed;
-    left:0;
-    top:0;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
 }
 
 .page-wrapper .theme {
-    width: 40px;
-    height: 40px;
-    display: inline-block;
-    border-radius: 4px;
-    margin: 2px;
+  width: 40px;
+  height: 40px;
+  display: inline-block;
+  border-radius: 4px;
+  margin: 2px;
 }
 
 .page-wrapper .theme.chiller-theme {
-    background: #ffffff;
+  background: #ffffff;
 }
 
 /*----------------toggeled sidebar----------------*/
 
 .page-wrapper.toggled .sidebar-wrapper {
-    left: 0px;
+  left: 0px;
 }
-
 
 /*----------------show sidebar button----------------*/
 #show-sidebar {
-    position: fixed;
-    left: 0.5em;
-    top: 0.3em;
-    z-index: 100;
-    border-radius: 0 4px 4px 0px;
-    width: 35px;
-    transition-delay: 0.3s;
-    background-color: #F4F7FF;
-    border: none;
-    color: #000000;
-    font-size: 20px;
+  position: fixed;
+  left: 0.5em;
+  top: 0.3em;
+  z-index: 100;
+  border-radius: 0 4px 4px 0px;
+  width: 35px;
+  transition-delay: 0.3s;
+  background-color: #f4f7ff;
+  border: none;
+  color: #000000;
+  font-size: 20px;
 }
 .page-wrapper.toggled #show-sidebar {
-    left: -40px;
+  left: -40px;
 }
 /*----------------sidebar-wrapper----------------*/
 
-
-
 .sidebar-wrapper ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
 .sidebar-wrapper a {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 /*----------------sidebar-content----------------*/
 
 .sidebar-content {
-    max-height: calc(100% - 30px);
-    height: calc(100% - 30px);
-    position: relative;
+  max-height: calc(100% - 30px);
+  height: calc(100% - 30px);
+  position: relative;
 }
 
 .sidebar-content.desktop {
-    overflow-y: hidden;
+  overflow-y: hidden;
 }
 
 /*--------------------sidebar-brand----------------------*/
 
-
-
 .sidebar-wrapper .sidebar-brand > a {
-    text-transform: uppercase;
-    font-weight: bold;
+  text-transform: uppercase;
+  font-weight: bold;
 }
 
 .sidebar-wrapper .sidebar-brand #close-sidebar {
-    cursor: pointer;
-    font-size: 20px;
+  cursor: pointer;
+  font-size: 20px;
 }
-
-
-
-
 
 /*----------------------sidebar-menu-------------------------*/
 
 .sidebar-wrapper .sidebar-menu {
-    padding-bottom: 10px;
+  padding-bottom: 10px;
 }
 
 .sidebar-wrapper .sidebar-menu ul li a {
-    display: inline-block;
-    width: 100%;
-    text-decoration: none;
-    position: relative;
-    padding: 8px 30px 8px 20px;
+  display: inline-block;
+  width: 100%;
+  text-decoration: none;
+  position: relative;
+  padding: 8px 20px 8px 20px;
 }
 
 .sidebar-wrapper .sidebar-menu ul li a i {
-    margin-right: 10px;
-    font-size: 12px;
-    width: 30px;
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
-    border-radius: 4px;
+  margin-right: 10px;
+  font-size: 12px;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  border-radius: 4px;
 }
-
 
 .sidebar-wrapper .sidebar-menu .sidebar-dropdown .sidebar-submenu li {
-    padding-left: 15px;
-    padding-right: 25px;
-    box-sizing: border-box;
-    font-size: 13px;
+  padding-left: 15px;
+  padding-right: 25px;
+  box-sizing: border-box;
+  font-size: 13px;
 }
-
 
 .sidebar-wrapper .sidebar-menu .sidebar-submenu {
-    display: none;
+  display: none;
 }
-
-
-
-
-
 
 /*-----------------------------chiller-theme-------------------------------------------------*/
 
 .chiller-theme .sidebar-wrapper {
-    background: #ffffff;
+  background: #ffffff;
 }
 
-.chiller-theme .sidebar-wrapper .sidebar-brand>a{
-    color: #000000;
+.chiller-theme .sidebar-wrapper .sidebar-brand > a {
+  color: #000000;
 }
 
 .chiller-theme .sidebar-wrapper .sidebar-menu ul li a,
-.chiller-theme .sidebar-footer>a {
-    color: #818896;
+.chiller-theme .sidebar-footer > a {
+  color: #818896;
 }
 
-.chiller-theme .sidebar-wrapper .sidebar-menu ul li:hover>a,
-.chiller-theme .sidebar-wrapper .sidebar-menu .sidebar-dropdown.active>a {
-    color: #0035BE;
-    font-weight: bold;
+.chiller-theme .sidebar-wrapper .sidebar-menu ul li:hover > a,
+.chiller-theme .sidebar-wrapper .sidebar-menu .sidebar-dropdown.active > a {
+  color: #0035be;
+  font-weight: bold;
 }
 
 .page-wrapper.chiller-theme.toggled #close-sidebar {
-    color: #bdbdbd;
+  color: #bdbdbd;
 }
 
 .page-wrapper.chiller-theme.toggled #close-sidebar:hover {
-    color: #ffffff;
+  color: #ffffff;
 }
 
 .chiller-theme .sidebar-wrapper .sidebar-menu ul li a i,
 .chiller-theme .sidebar-wrapper .sidebar-menu .sidebar-dropdown div {
-    background: #ffffff;
+  background: #ffffff;
 }
 
-.sidebar-submenu>ul>li>a:hover{
-    border-radius: 10px;
-    background-color: #DCE8FF;
+.sidebar-submenu > ul > li > a:hover {
+  border-radius: 10px;
+  background-color: #dce8ff;
 }
 
-
-.top-bar{
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 25;
-    display: inline-block;
-    width: 100%;
-    height: 50px;
-    background-color: #F4F7FF;
-    padding-top: 13px;
-    padding-left: 0;
-    box-sizing: border-box;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-    justify-content: center;
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 25;
+  /*display: inline-block;*/
+  width: 100%;
+  height: 50px;
+  background-color: #f4f7ff;
+  padding-top: 13px;
+  padding-left: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: center;
 }
-#breadcrumb{
-    font: 500 1em "Noto Sans KR";
+#breadcrumb {
+  font: 500 1em "Noto Sans KR";
 }
 /* 대분류 메뉴 색상 */
 .parent-menu {
-    color: #A2A2A2;
+  color: #a2a2a2;
 }
 
 /* 구분자 색상 */
 .separator {
-    color: #A2A2A2;
-    margin: 0 5px; /* 약간의 여백 추가 */
+  color: #a2a2a2;
+  margin: 0 5px; /* 약간의 여백 추가 */
 }
 
 /* 서브메뉴 색상 */
 .sub-menu {
-    color: #000000;
+  color: #000000;
 }
-.page-wrapper2{
-    width:100%;
-}
-
-.page-content{
-    display: inline-block;
-    width: 100%;
-    padding-left: 300px;
-    padding-top: 50px;
-    padding-left:0;
-    box-sizing:border-box;
-    background-color: #F4F7FF;
-}
-
-.page-content > div {
-    padding: 20px 40px;
+.page-wrapper2 {
+  width: 100%;
 }
 
 .page-content {
-    overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+  padding-top: 50px;
+  padding-left: 0;
+  box-sizing: border-box;
+  background-color: #f4f7ff;
 }
 
+.page-content > div {
+  padding: 40px;
+}
 
+.page-content {
+  overflow-x: hidden;
+}
+
+#user_mini {
+  display: flex; /* 숨김 상태에서 보이도록 변경 */
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
+  background-color: white;
+  color: #4318FF;
+  cursor: pointer;
+  position: absolute;
+  right: 20px;
+  transition: background-color 0.3s ease-out;
+}
+
+#login-wrap{
+  display: none;
+  position: absolute;
+  top: 60px; /* user_mini 아래에 표시되도록 조정 */
+  right: 10px;
+  width: auto;
+  background-color: #222222;
+
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+#login-wrap.show {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  padding: 20px 20px 3px 20px;
+
+  opacity: 90%;
+}
+
+#login-user{
+  margin-right: 25px;
+}
+
+#login-user-name{
+  font: 500 16px "Noto Sans KR";
+  color: white;
+}
+#login-user-roll{
+  font: 500 16px "Noto Sans KR";
+  color: #cccccc;
+  margin-right: 5px;
+}
+
+#logOut{
+  width: 90px;
+  height: 30px;
+  border-radius: 15px;
+  border: solid 1px #4318FF;
+  color: #4318FF;
+  font: 500 14px "Noto Sans KR";
+  background-color: white;
+  margin-top: -4px;
+  transition: ease-out 0.3s;
+}
+#logOut:hover{
+  background-color: #4318FF;
+  color: white;
+  transition: ease-out 0.3s;
+}
 
 @media screen and (min-width: 1000px) {
-    .page-wrapper.toggled .page-content {
-        /*     padding-left: 300px */
-        padding-top: 50px;
-        box-sizing: border-box;
-    }
-    .top-bar{
-        background-color: #ffffff;
-        padding-left: 350px;
-        box-sizing: border-box;
-        display: block;
-    }
-    .sidebar-wrapper {
-        width: 300px;
-        height: 100%;
-        max-height: 100%;
-        position: fixed;
-        top: 0;
-        left: -100%;
-        z-index: 999;
-        /*---------------*/
-        display: block;
-    }
-    .sidebar-brand{
-        margin-left: 10px;
-        margin-top: 20px;
-    }
-    .sidebar-wrapper .sidebar-brand {
-        padding: 10px 20px;
-        display: block;
-    }
-    .sidebar-dropdown{
-        margin-bottom: 1.5em;
-        margin-left: 10px;
-    }
+  .page-wrapper.toggled .page-content {
+    padding-left: 250px;
+    padding-top: 50px;
+    box-sizing: border-box;
+  }
+  .top-bar {
+    background-color: #ffffff;
+    padding-left: 320px;
+    padding-right: 70px;
+    box-sizing: border-box;
+    display: block;
+  }
+  .sidebar-wrapper {
+    width: 250px;
+    height: 100%;
+    max-height: 100%;
+    position: fixed;
+    top: 0;
+    left: -100%;
+    z-index: 999;
+    /*---------------*/
+    display: block;
+  }
+  .sidebar-brand {
+    margin-left: 10px;
+    margin-top: 10px;
+  }
+  .sidebar-wrapper .sidebar-brand {
+    padding: 10px 20px;
+    display: block;
+  }
+  .sidebar-dropdown {
+    margin-bottom: 1.5em;
+    margin-left: 10px;
+  }
 
-    .page-wrapper2{
-        padding-left:300px;
-        box-sizing:border-box;
-    }
+  .page-wrapper2 {
+    padding-left: 250px;
+    box-sizing: border-box;
+  }
+
+  #login-wrap{
+    /*position: inherit;*/
+    top: 13px;
+    right: 70px;
+    float: right;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    background: none;
+    box-shadow: none;
+  }
+
+  #user_mini {
+    display: none;
+  }
+
+  #login-user-roll{
+    font: 500 16px "Noto Sans KR";
+    margin-right: 5px;
+  }
+
+  #login-user-name{
+    font: 500 16px "Noto Sans KR";
+    color: black;
+  }
+  #login-user-roll{
+    font: 500 16px "Noto Sans KR";
+    color: #5a5a5a;
+    margin-right: 5px;
+  }
 }
 
-@media (max-width: 600px){
-    .page-content > div {
-        padding: 20px 20px;
-        box-sizing: border-box;
-    }
+@media screen and (max-width: 1000px) {
+  .page-content > div {
+    padding: 20px 20px;
+  }
+}
 
+@media screen and (max-width: 400px) {
+  .page-content > div {
+    padding: 10px 10px;
+  }
 }

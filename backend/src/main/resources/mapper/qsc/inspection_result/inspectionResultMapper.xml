@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sims.qsc.inspection_result.mapper.InspectionResultMapper">
+
+	<select id="selectInspectionResultList" resultType="com.sims.qsc.inspection_result.vo.InspectionResultResponse"
+	parameterType="com.sims.qsc.inspection_result.vo.InspectionResultRequest">
+		SELECT	/* InsepctionResultMapper.selectInspectionResultList 원승언 */
+			  INSP_RESULT_ID
+			, STORE_NM
+			, BRAND_CD.DTL_CD_NM AS brandNm
+			, CHKLST_NM
+			, INSP_TYPE_CD.DTL_CD_NM AS inspTypeNm
+			, INSP_COMPL_TM
+			, MB2.MBR_NM
+		FROM
+			INSP_RESULT INRE
+		INNER JOIN INSP_SCHD INSC
+			ON INSC.INSP_SCHD_ID = INRE.INSP_SCHD_ID
+		INNER JOIN INSP_PLAN INPL
+			ON INPL.INSP_PLAN_ID = INSC.INSP_PLAN_ID
+		INNER JOIN STORE ST
+			ON ST.STORE_ID = INSC.STORE_ID
+		INNER JOIN MBR MB1
+			ON ST.SV_MBR_ID = MB1.MBR_ID
+		INNER JOIN MBR MB2
+			ON ST.INSP_MBR_ID = MB2.MBR_ID
+		INNER JOIN CHKLST CH
+			ON INPL.CHKLST_ID = CH.CHKLST_ID
+		INNER JOIN COMM_CD_DTL BRAND_CD
+			ON BRAND_CD.DTL_CD = ST.BRAND_CD
+		INNER JOIN COMM_CD_DTL INSP_TYPE_CD
+			ON INSP_TYPE_CD.DTL_CD = CH.INSP_TYPE_CD
+		<where>
+			INRE.INSP_COMPL_W ='Y'
+			<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(inspectionResultRequest.storeNm)">
+				AND ST.STORE_NM LIKE '%'||#{inspectionResultRequest.storeNm}||'%'
+			</if>
+			<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(inspectionResultRequest.brandNm)">
+				AND BRAND_CD.DTL_CD_NM LIKE '%'||#{inspectionResultRequest.brandNm}||'%'
+			</if>
+			<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(inspectionResultRequest.inspComplTm)">
+				AND INRE.INSP_COMPL_TM LIKE '%'||#{inspectionResultRequest.inspComplTm}||'%'
+			</if>
+			<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(inspectionResultRequest.chklstNm)">
+				AND CH.CHKLST_NM LIKE '%'||#{inspectionResultRequest.chklstNm}||'%'
+			</if>
+			<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(inspectionResultRequest.inspTypeNm)">
+				AND INSP_TYPE_CD.DTL_CD_NM LIKE '%'|| #{inspectionResultRequest.inspTypeNm}||'%'
+			</if>
+			<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(inspectionResultRequest.mbrNm)">
+				AND MB2.MBR_NM LIKE '%'||#{inspectionResultRequest.mbrNm}||'%'
+			</if>
+			<if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(inspectionResultRequest.mbrNo)">
+				AND MB2.MBR_NO LIKE '%'||#{inspectionResultRequest.mbrNo}||'%'
+			</if>
+
+			<choose>
+                <!-- SV로 로그인한 경우 -->
+                <when test="currentMbrNo != null and currentMbrNo.startsWith('S')">
+                    AND ST.SV_MBR_ID = (SELECT MBR_ID FROM MBR WHERE MBR_NO = #{currentMbrNo})
+                </when>
+                <!-- 점검자로 로그인한 경우 -->
+                <when test="currentMbrNo != null and currentMbrNo.startsWith('C')">
+                    AND ST.SV_MBR_ID = (
+                    			        SELECT 
+                    			        	DISTINCT SV_MBR_ID
+                    			        FROM 
+                    			        	STORE
+                    			        WHERE 
+                    			        	INSP_MBR_ID = (SELECT MBR_ID FROM MBR WHERE MBR_NO= #{currentMbrNo})
+                    				   )
+                </when>
+                <!-- 품질관리자 및 관리자인 경우: 조건 없음 -->
+                <otherwise>
+
+                </otherwise>
+            </choose>
+
+		</where>
+		ORDER BY
+		INSP_COMPL_TM DESC, BRAND_CD.DTL_CD_NM, ST.STORE_NM
+	</select>
+
+	<select id="selectAllBrandNms" resultType="String">
+		SELECT
+		    DISTINCT
+			BRAND_CD.DTL_CD_NM
+		FROM
+			INSP_RESULT INRE
+		INNER JOIN INSP_SCHD INSC
+		    ON INRE.INSP_SCHD_ID = INSC.INSP_SCHD_ID
+		INNER JOIN STORE ST
+		    ON ST.STORE_ID = INSC.STORE_ID
+		INNER JOIN COMM_CD_DTL BRAND_CD
+			ON BRAND_CD.DTL_CD = ST.BRAND_CD
+		WHERE
+			INRE.INSP_COMPL_W = 'Y'
+		ORDER BY
+			BRAND_CD.DTL_CD_NM
+	</select>
+
+	<select id="selectAllStoreNms" resultType="String">
+		SELECT
+		    DISTINCT
+			ST.STORE_NM
+		FROM
+			INSP_RESULT INRE
+		INNER JOIN INSP_SCHD INSC
+		    ON INRE.INSP_SCHD_ID = INSC.INSP_SCHD_ID
+		INNER JOIN STORE ST
+		    ON ST.STORE_ID = INSC.STORE_ID
+		WHERE
+			INRE.INSP_COMPL_W = 'Y'
+		ORDER BY
+			ST.STORE_NM
+	</select>
+
+	<select id="selectAllChklstNms" resultType="String">
+		SELECT
+		    DISTINCT
+		    CH.CHKLST_NM
+		FROM
+		    INSP_RESULT INRE
+		INNER JOIN INSP_SCHD INSC
+			ON INSC.INSP_SCHD_ID = INRE.INSP_SCHD_ID
+		INNER JOIN STORE ST
+			ON ST.STORE_ID = INSC.STORE_ID
+		INNER JOIN INSP_PLAN INPL
+			ON INPL.INSP_PLAN_ID = INSC.INSP_PLAN_ID
+		INNER JOIN CHKLST CH
+			ON INPL.CHKLST_ID = CH.CHKLST_ID
+		WHERE
+			INRE.INSP_COMPL_W = 'Y'
+		ORDER BY
+		    CH.CHKLST_NM
+	</select>
+
+	<select id="selectAllInspTypeNms" resultType="String">
+		SELECT
+			DISTINCT
+			INSP_TYPE_CD.DTL_CD_NM
+		FROM
+			INSP_RESULT INRE
+		INNER JOIN INSP_SCHD INSC
+		    ON INSC.INSP_SCHD_ID = INRE.INSP_SCHD_ID
+		INNER JOIN STORE ST
+		    ON ST.STORE_ID = INSC.STORE_ID
+		INNER JOIN INSP_PLAN INPL
+		    ON INPL.INSP_PLAN_ID = INSC.INSP_PLAN_ID
+		INNER JOIN CHKLST CH
+		    ON INPL.CHKLST_ID = CH.CHKLST_ID
+		INNER JOIN COMM_CD_DTL INSP_TYPE_CD
+			ON INSP_TYPE_CD.DTL_CD = CH.INSP_TYPE_CD
+		WHERE
+		    INRE.INSP_COMPL_W = 'Y'
+		ORDER BY
+		    INSP_TYPE_CD.DTL_CD_NM
+	</select>
+
+	<select id="selectAllInspectorNms" resultType="com.sims.qsc.inspection_result.vo.InspectorNmsResponse">
+		SELECT
+		    DISTINCT
+		      M.MBR_NM
+			, M.MBR_NO
+		FROM
+		    INSP_RESULT INRE
+		INNER JOIN INSP_SCHD INSC
+			ON INSC.INSP_SCHD_ID = INRE.INSP_SCHD_ID
+		INNER JOIN STORE ST
+			ON ST.STORE_ID = INSC.STORE_ID
+		INNER JOIN MBR M
+			ON M.MBR_ID = ST.INSP_MBR_ID
+		WHERE
+			INRE.INSP_COMPL_W = 'Y'
+		ORDER BY
+		    M.MBR_NM
+	</select>
+
+</mapper>

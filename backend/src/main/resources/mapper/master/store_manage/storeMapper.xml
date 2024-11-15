@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.sims.master.store_manage.mapper.StoreMapper">
+    <select id="selectAllStores" resultType="com.sims.master.store_manage.vo.StoreResponse">
+        SELECT
+              STORE_ID
+            , BRAND_CD.DTL_CD_NM AS brandNm
+            , STORE_NM
+            , BRN
+            , OPEN_HM
+            , OWN_NM
+            , MS.MBR_NM AS svMbrNm
+            , MI.MBR_NM AS inspMbrNm
+            , STORE_BSN_STTS_CD.DTL_CD_NM AS storeBsnSttsNm
+        FROM
+            STORE S
+        INNER JOIN MBR MS
+            ON S.SV_MBR_ID = MS.MBR_ID
+        INNER JOIN MBR MI
+            ON S.INSP_MBR_ID = MI.MBR_ID
+        LEFT JOIN COMM_CD_DTL BRAND_CD
+            ON BRAND_CD.DTL_CD = S.BRAND_CD
+        LEFT JOIN COMM_CD_DTL STORE_BSN_STTS_CD
+            ON STORE_BSN_STTS_CD.DTL_CD = S.STORE_BSN_STTS_CD
+        <where>
+            STORE_STTS_W = '1'
+        AND
+            STORE_BSN_STTS_CD.COMM_CD_ID = 3
+            <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(brandNm)">
+                AND BRAND_CD.DTL_CD_NM LIKE '%'||#{brandNm}||'%'
+            </if>
+            <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(storeNm)">
+                AND S.STORE_NM LIKE '%'||#{storeNm}||'%'
+            </if>
+            <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(inspMbrNm)">
+                AND MI.MBR_NM LIKE '%'||#{inspMbrNm}||'%'
+            </if>
+            <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(mbrNo)">
+                AND MI.MBR_NO LIKE '%'||#{mbrNo}||'%'
+            </if>
+        </where>
+        ORDER BY
+            BRAND_CD.DTL_CD_NM, S.STORE_NM, STORE_BSN_STTS_CD.DTL_CD_NM DESC
+    </select>
+
+    <select id="selectAllStoreNms" resultType="String">
+        SELECT
+            STORE_NM
+        FROM
+            STORE
+        WHERE
+            STORE_STTS_W = '1'
+        ORDER BY
+            STORE_NM
+    </select>
+
+    <select id="selectAllBrandNms" resultType="String">
+        SELECT
+            DTL_CD_NM
+        FROM
+            COMM_CD_DTL CCD
+                INNER JOIN COMM_CD CC
+                           ON CCD.COMM_CD_ID = CC.COMM_CD_ID
+        WHERE
+            COMM_CD ='BRAND_CD'
+        ORDER BY
+            DTL_CD_NM
+    </select>
+
+    <select id="selectAllInspectorNms" resultType="com.sims.master.store_manage.vo.InspectorNmsResponse">
+        SELECT
+            DISTINCT
+              MBR_NM
+            , MBR_NO
+        FROM
+            MBR M
+        INNER JOIN STORE S
+            ON S.INSP_MBR_ID = M.MBR_ID
+        WHERE
+            M.MBR_STTS_CD = '1'
+        AND
+            M.MBR_ROLE_CD = 'MR004'
+        ORDER BY
+            MBR_NM
+    </select>
+
+
+    <select id="selectAllSvNms" resultType="com.sims.master.store_manage.vo.SvNmsResponse"
+    parameterType="com.sims.master.store_manage.vo.InspectorNmsResponse">
+        SELECT
+            DISTINCT
+              MS.MBR_NM
+            , MS.MBR_NO
+        FROM
+            MBR MS
+        INNER JOIN STORE S
+            ON S.SV_MBR_ID = MS.MBR_ID
+        INNER JOIN MBR MI
+            ON MI.MBR_ID = S.INSP_MBR_ID
+        WHERE
+            MS.MBR_STTS_CD = '1'
+        AND
+            MS.MBR_ROLE_CD = 'MR003'
+        <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(inspMbrNm)">
+            AND MI.MBR_NM = #{inspMbrNm}
+        </if>
+        <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(inspMbrNo)">
+            AND MI.MBR_NO = #{inspMbrNo}
+        </if>
+        ORDER BY
+            MS.MBR_NM
+
+    </select>
+
+    <select id="selectStoreByStoreId" resultType="com.sims.master.store_manage.vo.StoreModalResponse">
+        SELECT
+            STORE_ID
+             , BRAND_CD.DTL_CD_NM AS brandNm
+             , STORE_NM
+             , BRN
+             , BRD_PATH
+             , STORE_ADDR
+             , OPEN_HM
+             , OWN_NM
+             , OWN_TEL
+             , MS.MBR_NM AS svMbrNm
+             , MS.MBR_NO AS svMbrNo
+             , MI.MBR_NM AS inspMbrNm
+             , MI.MBR_NO AS inspMbrNo
+             , STORE_BSN_STTS_CD.DTL_CD_NM AS storeBsnSttsNm
+        FROM
+            STORE S
+                INNER JOIN MBR MS
+                           ON S.SV_MBR_ID = MS.MBR_ID
+                INNER JOIN MBR MI
+                           ON S.INSP_MBR_ID = MI.MBR_ID
+                LEFT JOIN COMM_CD_DTL BRAND_CD
+                          ON BRAND_CD.DTL_CD = S.BRAND_CD
+                LEFT JOIN COMM_CD_DTL STORE_BSN_STTS_CD
+                          ON STORE_BSN_STTS_CD.DTL_CD = S.STORE_BSN_STTS_CD
+        <where>
+            STORE_BSN_STTS_CD.COMM_CD_ID = 3
+            <if test="@org.apache.commons.lang3.math.NumberUtils@isDigits(storeId)">
+                AND STORE_ID = #{storeId, jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+    <insert id="storeSave" parameterType="com.sims.master.store_manage.vo.StoreRequest">
+        INSERT INTO STORE(
+                          STORE_ID
+                        , BRAND_CD
+                        , STORE_NM
+                        , BRN
+                        , BRD_PATH
+                        , STORE_ADDR
+                        , OWN_NM
+                        , OWN_TEL
+                        , SV_MBR_ID
+                        , INSP_MBR_ID
+                        , STORE_BSN_STTS_CD
+                        , OPEN_HM
+                        , LATITUDE
+                        , LONGITUDE
+                        , CRE_MBR_ID
+                        , CRE_TM
+        ) VALUES (
+                          STORE_SEQ.NEXTVAL
+                        , (SELECT
+                               DTL_CD
+                           FROM
+                               COMM_CD_DTL
+                           WHERE
+                               DTL_CD_NM = #{brandNm}
+                           )
+                        , #{storeNm}
+                        , #{brn}
+                        , #{brdPath}
+                        , #{storeAddr}
+                        , #{ownNm}
+                        , #{ownTel}
+                        , (SELECT
+                               MBR_ID
+                           FROM
+                               MBR
+                           WHERE
+                               MBR_NM = #{svMbrNm}
+                           AND
+                               MBR_NO = #{svMbrNo}
+                           )
+                        , (SELECT
+                               MBR_ID
+                           FROM
+                               MBR
+                           WHERE
+                               MBR_NM = #{inspMbrNm}
+                           AND
+                               MBR_NO = #{inspMbrNo}
+                           )
+                        , (SELECT
+                               DTL_CD
+                           FROM
+                               COMM_CD_DTL
+                           WHERE
+                               DTL_CD_NM = #{storeBsnSttsNm}
+                           )
+                        , #{openHm}
+                        , #{latitude}
+                        , #{longitude}
+                        , (SELECT
+                               MBR_ID
+                           FROM
+                               MBR
+                           WHERE
+                               MBR_NO = #{mbrNo}
+                           )
+                        , TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+
+                  )
+    </insert>
+    <update id="updateStoreByStoreId" parameterType="com.sims.master.store_manage.vo.StoreRequest">
+        UPDATE
+            STORE
+        <set>
+            <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(brandNm)">
+                BRAND_CD = (SELECT DTL_CD FROM COMM_CD_DTL WHERE DTL_CD_NM = #{brandNm})
+            </if>
+            <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(storeNm)">
+                , STORE_NM = #{storeNm}
+            </if>
+            <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(brn)">
+                , BRN = #{brn}
+            </if>
+            <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(brdPath)">
+                , BRD_PATH = #{brdPath}
+            </if>
+            <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(storeAddr)">
+                , STORE_ADDR = #{storeAddr}
+            </if>
+            <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(ownNm)">
+                , OWN_NM = #{ownNm}
+            </if>
+            <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(ownTel)">
+                , OWN_TEL = #{ownTel}
+            </if>
+            <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(latitude)">
+                , LATITUDE = #{latitude}
+            </if>
+            <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(longitude)">
+                , LONGITUDE = #{longitude}
+            </if>
+            <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(storeBsnSttsNm)">
+                , STORE_BSN_STTS_CD = (SELECT
+                                           DTL_CD
+                                        FROM
+                                           COMM_CD_DTL
+                                        WHERE
+                                           DTL_CD_NM = #{storeBsnSttsNm}
+                                       )
+            </if>
+            <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(openHm)">
+                , OPEN_HM = #{openHm}
+            </if>
+            <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(svMbrNm) &amp;&amp;
+                      @org.apache.commons.lang3.StringUtils@isNotEmpty(svMbrNo)">
+                , SV_MBR_ID = (SELECT
+                                  MBR_ID
+                               FROM
+                                   MBR
+                               WHERE
+                                   MBR_NM = #{svMbrNm}
+                               AND
+                                  MBR_NO = #{svMbrNo}
+                               )
+            </if>
+            <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(inspMbrNm) &amp;&amp;
+                      @org.apache.commons.lang3.StringUtils@isNotEmpty(inspMbrNo)">
+                , INSP_MBR_ID = (SELECT
+                                    MBR_ID
+                                 FROM
+                                    MBR
+                                 WHERE
+                                    MBR_NM = #{inspMbrNm}
+                                 AND
+                                    MBR_NO = #{inspMbrNo}
+                                 )
+            </if>
+            <if test="@org.apache.commons.lang3.StringUtils@isNotEmpty(mbrNo)">
+                , UPD_MBR_ID = (SELECT
+                                    MBR_ID
+                                FROM
+                                    MBR
+                                WHERE
+                                    MBR_NO = #{mbrNo}
+                                )
+            </if>
+          , UPD_TM = TO_CHAR(CURRENT_DATE, 'YYYYMMDDHH24MI')
+        </set>
+        <where>
+            <if test="@org.apache.commons.lang3.math.NumberUtils@isDigits(storeId)">
+                AND STORE_ID = #{storeId, jdbcType=INTEGER}
+            </if>
+        </where>
+    </update>
+    <update id="deleteStoreByStoreId" parameterType="List">
+        UPDATE
+            STORE
+        SET
+            STORE_STTS_W = '0'
+        <where>
+            STORE_ID
+                IN
+            <foreach collection="list" item="item" open="(" close=")" separator="," index="index">
+                #{item.storeId}
+            </foreach>
+        </where>
+    </update>
+
+</mapper>

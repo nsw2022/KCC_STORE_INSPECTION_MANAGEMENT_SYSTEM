@@ -1,0 +1,688 @@
+@import "/resources/css/common/common.css";
+
+body {
+  font-family: "Noto Sans KR" !important;
+}
+.content {
+  flex-grow: 1; /* 남은 공간을 모두 사용 */
+  background-color: #f4f7ff;
+  display: flex;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.container,
+.container-sm,
+.container-md,
+.container-lg,
+.container-xl,
+.container-xxl {
+  max-width: 100% !important; /* 모든 화면에서 100%로 설정 */
+  width: 100% !important; /* 컨테이너 너비를 100%로 설정 */
+}
+/* 미디어 쿼리 덮어쓰기: min-width 제한 제거 */
+@media (min-width: 0px) {
+  .container,
+  .container-sm,
+  .container-md,
+  .container-lg,
+  .container-xl,
+  .container-xxl {
+    max-width: 100% !important; /* 모든 조건에서 100%로 설정 */
+  }
+}
+
+/************** top **************/
+
+.top-box {
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  padding: 30px 30px 10px 30px;
+}
+.top-box .select-btn {
+  width: 80px;
+  background-color: #16dbcc;
+  height: 35px;
+  border-radius: 30px;
+  color: #ffffff;
+  border: none;
+}
+/*------------드롭다운 버튼-----------*/
+.top-drop-down {
+  width: 26px;
+  height: 26px;
+  margin-left: 15px;
+  margin-top: 2px;
+}
+
+.top-drop-down > button {
+  width: 100%;
+  height: 100%;
+  border: solid 2px #858d9d;
+  border-radius: 50%;
+  color: #858d9d;
+  font-size: 12px;
+  background: none;
+}
+.top-drop-down > button:hover {
+  color: white;
+  border: none;
+  background-color: #4318ff;
+  transition: ease-out 0.3s;
+}
+
+.top-search-box {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
+}
+
+.top-drop-down button i {
+  transition: transform 0.3s ease-in-out;
+}
+.select-btn:hover {
+  background-color: #3ab2a9 !important;
+  color: white !important;
+}
+
+.top-box .init-btn {
+  width: 80px;
+  background-color: #ffffff;
+  height: 35px;
+  border-radius: 30px;
+  color: #858d9d !important;
+  border-color: #d0d5dd;
+}
+
+.init-btn:hover {
+  background-color: #e1e1e1 !important;
+  transition: 0.3s ease-out;
+}
+
+.button-box {
+  margin-bottom: 20px !important;
+}
+
+.hide-list {
+  display: none;
+  padding: 20px;
+  margin-top: 4px;
+  background: #fff;
+  border-radius: 7px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  z-index: 3;
+}
+
+.wrapper.active .hide-list {
+  display: block;
+  background: #fff !important;
+}
+
+.hide-list .search {
+  position: relative;
+}
+
+.search i {
+  top: 50%;
+  left: 15px;
+  color: #999;
+  font-size: 20px;
+  pointer-events: none;
+  transform: translateY(-50%);
+  position: absolute;
+}
+
+.hide-list .options {
+  margin-top: 15px;
+  max-height: 250px;
+  overflow-y: auto;
+  padding: 0px;
+  list-style: none;
+}
+
+.options::-webkit-scrollbar {
+  width: 7px;
+}
+
+.options::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 25px;
+}
+
+.options::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 25px;
+}
+
+.options::-webkit-scrollbar-thumb:hover {
+  background: #b3b3b3;
+}
+
+.options li {
+  height: 50px;
+  padding: 0px 13px;
+  font-size: 21px;
+}
+
+.options li:hover,
+.autocomplete-item.selected {
+  border-radius: 5px;
+  background: #f2f2f2;
+}
+
+.search-btn i {
+  transition: transform 0.3s linear;
+}
+
+.wrapper.active .search-btn i {
+  transform: rotate(-180deg);
+}
+.form-label {
+  font-size: 15px;
+  font-weight: 500;
+}
+.search-btn span,
+.search input {
+  font-size: 13px;
+  color: #858d9d;
+}
+
+.search-btn,
+.autocomplete-item {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  line-height: 1.2 !important;
+}
+.search-btn,
+.search .form-control {
+  border-radius: 8px !important;
+}
+.options li {
+  height: 40px;
+  padding: 0px 13px;
+  font-size: 13px;
+}
+
+/************** middle **************/
+.middle-box {
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  padding: 30px 20px 20px 20px;
+  box-sizing: border-box;
+  margin-bottom: 40px;
+}
+.middle-box .btn {
+  width: 80px;
+  background-color: #ffffff;
+  height: 35px;
+  border-radius: 30px;
+  color: #858d9d !important;
+  border-color: #d0d5dd;
+  line-height: 20px;
+}
+
+.button-box .ms-3 {
+  margin-left: 5px !important;
+  font: 400 16px "Noto Sans KR" !important;
+}
+
+.middle-box .btn:hover {
+  background-color: #e1e1e1 !important;
+  transition: 0.3s ease-out;
+}
+
+.ag-header-cell-label {
+  justify-content: center;
+}
+
+/* header */
+.ag-header-row {
+  font: 600 14px "Noto Sans KR";
+  color: #718ebf !important;
+}
+/* 홀수 row */
+.ag-row-even {
+  font: 350 13px "Noto Sans KR";
+  color: #232323 !important;
+  overflow: auto;
+}
+/* 짝수 row*/
+.ag-row-odd {
+  font: 350 13px "Noto Sans KR";
+  color: #232323 !important;
+  overflow: auto;
+}
+
+.cell-btn {
+  border: none !important;
+  color: #232323 !important;
+  font: 400 11px "Noto Sans KR" !important;
+  width: 40px !important;
+}
+
+/* 리스트 중간 더보기 */
+.edit-options {
+  position: absolute; /* 뷰포트 기준으로 위치 고정 */
+  font: 400 13px "Noto Sans KR";
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  padding: 5px 10px;
+  cursor: pointer;
+  display: none; /* 기본적으로 숨김 */
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1006; /* 다른 요소들보다 위에 표시 */
+}
+
+/* 수정 옵션이 활성화될 때 표시 */
+.edit-options.show {
+  display: block;
+  opacity: 1;
+}
+
+/* "수정" 옵션에 호버 효과 추가 */
+.edit-options:hover {
+  background-color: #f0f0f0;
+}
+
+/* 리스트 중간 더보기 끝 */
+
+/************** bottom **************/
+.bottom-box {
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+}
+
+.save-btn {
+  width: 80px;
+  background-color: #4318ff !important;
+  height: 35px;
+  border-radius: 30px !important;
+  color: #ffffff !important;
+  line-height: 15px !important;
+  border: none !important;
+}
+/* 수정 옵션이 활성화될 때 표시 */
+.edit-options.show {
+  display: block;
+  opacity: 1;
+}
+
+/* "수정" 옵션에 호버 효과 추가 */
+.edit-options:hover {
+  background-color: #f0f0f0;
+}
+
+/* 리스트 중간 더보기 끝 */
+
+/** 본문 내용 끝 */
+
+/** 최대 width가 1400일 때 */
+@media screen and (max-width: 1400px) {
+  .search-btn .ms-3 {
+    font: 500 0.85rem "Noto Sans KR";
+    margin-left: 1rem !important;
+  }
+
+  .fa-angle-down {
+    font-size: 1rem;
+    margin-right: 1rem !important;
+  }
+}
+
+/** 최대 width가 1400일 때 끝 */
+
+/** 최대 width가 992일 때 */
+@media screen and (max-width: 1000px) {
+  .page-content {
+    padding-left: 5px !important;
+    padding-right: 5px;
+  }
+  
+  .hide-list {
+  	width : 100%;
+  }
+
+  .container {
+    max-width: 100% !important;
+  }
+
+  .header_btn_area {
+    height: 40px;
+  }
+
+  .header_btn_area > :nth-child(n) {
+    height: 100%;
+  }
+}
+
+/** 최대 width가 992일 때 끝 */
+
+/** 최대 width가 768일 때 */
+@media screen and (max-width: 768px) {
+  .search_input_area .top-search {
+    width: 90%;
+    font: 500 0.85rem "Noto Sans KR";
+  }
+}
+/** 최대 width가 768일 때 끝 */
+
+/** 최대 width가 576일 때 */
+@media screen and (max-width: 576px) {
+  .top-box {
+    padding : 20px 15px 9px 20px;
+  }
+
+  .button-box >.d-flex >.m-3 {
+    line-height: 29px !important;
+    font: 700 16px Noto Sans KR;
+    margin: 0 !important;
+  }
+
+  .middle-box {
+    padding: 0;
+  }
+
+  .middle-content .button-box .ms-3 {
+    font : 350 15px "Noto Sans KR" !important;
+  }
+
+  .middle-content .button-box {
+    margin-bottom: 15px !important;
+  }
+
+  .top-drop-down {
+    width: 23px;
+    height: 23px;
+  }
+
+  .top-drop-down > button {
+    padding-top: 0 !important;
+  }
+
+  .button-box .my-3 button
+  , .middle-content .button-box .my-0 button{
+    width: 53px;
+    font : 400 14px "Noto Sans KR";
+  }
+
+  .button-box .my-3 button:first-child {
+    margin-right: 5px !important;
+  }
+
+ .middle-content .button-box .my-0 button {
+   margin-right: 5px !important;
+ }
+
+  .top-box >.col {
+    padding: 0 !important;
+    margin-bottom: -30px;
+  }
+
+  .hide-list {
+    width: 83%;
+    padding-bottom: 0px;
+  }
+
+  .header_btn_area {
+    margin-bottom: auto;
+  }
+
+  .row > .col > .middle-content {
+    padding: 20px 15px !important;
+  }
+
+  .ag-header-row {
+    font: 600 14px "Noto Sans KR";
+    color: #718ebf !important;
+    font-size: 0.7rem !important;
+  }
+  /* 홀수 row */
+  .ag-row-even {
+    font: 350 13px "Noto Sans KR";
+    color: #232323 !important;
+    overflow: auto;
+    font-size: 0.7rem !important;
+  }
+  /* 짝수 row*/
+  .ag-row-odd {
+    font: 350 13px "Noto Sans KR";
+    color: #232323 !important;
+    overflow: auto;
+    font-size: 0.7rem !important;
+  }
+  .ag-paging-panel {
+    font-size: 0.6rem !important;
+  }
+  .ag-paging-page-summary-panel > * {
+    margin: 0.2px !important;
+    font-size: 0.7rem;
+  }
+  .ag-paging-row-summary-panel > * {
+    font-size: 0.7rem;
+  }
+
+  .header_text {
+    padding-top: 4px;
+  }
+
+  .modal-body .row .radio_input_area label {
+    font: 500 0.75rem "Noto Sans KR" !important;
+  }
+
+  .modal-body .row .radio_input_area input[type="radio"] {
+    margin-right: 4px !important;
+    width: 15px;
+    height: 15px;
+  }
+}
+
+/** 최대 width가 576일 때 끝 */
+
+/** 모달 */
+
+.modal .modal-dialog {
+  max-width: 700px;
+}
+
+.modal-content {
+  border-radius: 20px;
+}
+
+/** 모달 헤더 영역*/
+
+.modal-header {
+  border-bottom: none;
+  
+}
+
+.modal-header h1 {
+  font : 700 20px "Noto Sans KR";
+  color: #000000;
+}
+
+/** 모달 헤더 영역 끝*/
+
+/** 모달 본문 영역 */
+.modal-body .row > :nth-child(n) > :last-child {
+  background-color: #f4f4f4;
+  border: none;
+  font: 400 13px "Noto Sans KR";
+  border-radius: 10px;
+  color: #9ca3af;
+}
+
+.modal-body .hide-list {
+	width : 48%;
+}
+
+.modal-body input {
+  border: none;
+  outline: none;
+}
+
+.modal-body .row.justify-content-between > :nth-child(n) > :first-child {
+  color: #5a5a5a;
+  font: 500 15px "Noto Sans KR";
+}
+
+.modal-body .row > :nth-child(n) :last-child::placeholder {
+  color: #9ca3af;
+}
+
+.modal-body .label_text {
+  color: #5a5a5a;
+  font: 500 15px "Noto Sans KR";
+  padding-left : 24px;
+}
+
+.radio_input_area {
+	padding-left : 24px !important;
+	display: flex;
+}
+
+.modal-body .row .radio_input_area label {
+  color: #9ca3af;
+  font: 400 13px "Noto Sans KR";
+}
+
+.radio_input_area input {
+	margin-top : 1px;
+}
+
+
+#expiration::-webkit-outer-spin-button,
+#expiration::-webkit-inner-spin-button,
+#price::-webkit-outer-spin-button,
+#price::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+label[for=productName]::after, label[for=brandName]::after,
+label[for=expiration]::after, label[for=price]::after,
+.label_text::after{
+  content: "*";
+  display: block;
+  height: 13px !important;
+  width: 7px !important;
+  margin-left: 2px;
+  color: red;
+}
+
+
+
+/** 모달 본문 영역 끝 */
+
+/** 모달 footer 영역 */
+.modal-footer {
+  padding-bottom : 0px !important;
+}
+
+.modal-footer :nth-child(n) {
+	font: 400 15px "Noto Sans KR";
+}
+
+.btn-cancel {
+  background-color: #eeeeee;
+  border-radius: 10px;
+  border: none;
+  width: 100px;
+  height: 45px;
+  color: #5a5a5a;
+}
+
+.btn-register {
+  border-radius: 10px;
+  border: none;
+  width: 100px;
+  height: 45px;
+  color: #ffffff;
+  background-color: #4318ff;
+}
+
+/** 모달 footer 영역 끝 */
+
+/** 최대 Width 768일 때 모달 CSS*/
+/** 모달 */
+@media screen and (max-width: 768px) {
+  .modal .modal-dialog {
+    max-width: 500px;
+    margin: auto;
+  }
+
+  .modal-dialog .modal-content {
+    padding: 0px 0px 16px 0px !important;
+  }
+
+  .radio_input_area input {
+    margin-right: 8px !important;
+  }
+
+  .modal-body .row .radio_input_area label {
+    font: 400 13px "Noto Sans KR";
+  }
+  
+  .modal-body >:nth-child(n) {
+  	margin-bottom : 8px !important;
+  }
+}
+
+/** 최대 Width 768일 때 모달 CSS 끝 */
+
+/** 최대 Width 576일 때 모달 CSS  */
+@media screen and (max-width: 576px) {
+  #productName,
+  #expiration {
+    margin-bottom: 16px;
+  }
+
+  .radio_input_area {
+    display: flex;
+  }
+
+  .modal-body .fa-lg {
+    font-size: 1rem;
+  }
+
+  .modal {
+    padding-right: 5px !important;
+    padding-left: 5px !important;
+  }
+  .top-content .button-box {
+    margin-bottom: -4px !important;
+  }
+
+  .top-content .button-box .d-flex .m-3 {
+    font: 700 16px "Noto Sans KR" !important;
+  }
+
+  .bottom-box-content .row .col-12 {
+    margin-top: 10px;
+  }
+
+  .top-drop-down {
+    margin-bottom: -2px;
+    margin-top : 0px;
+  }
+
+}
+
+
+/** 최대 Width 576일 때 모달 CSS 끝 */

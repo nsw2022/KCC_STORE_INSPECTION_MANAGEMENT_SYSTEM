@@ -24,15 +24,32 @@ spring:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
+    hikari:
+      connection-init-sql: ALTER SESSION SET TIME_ZONE = 'Asia/Seoul'
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 10MB
 
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
+    jdbc-type-for-null: 'NULL'
   mapper-locations: classpath:mapper/**/*.xml
-  type-aliases-package: com.sims.admin.domain
+  type-aliases-package: com.sims.home.dashboard.vo, com.sims.home.member.vo, com.sims.log.vo, com.sims.master.*.vo
 
 naver:
   maps:
     client:
       id: ${YOUR_CLIENT_ID}
+      key: ${YOUR_CLIENT_SECRET}
 
+cloud:
+  aws:
+    s3:
+      bucket: ${BUCKET_NAME}
+    stack.auto: false
+    region.static: ap-northeast-2
+    credentials:
+      accessKey: ${BUCKET_PBL_KEY}
+      secretKey: ${BUCKET_PRV_KEY}

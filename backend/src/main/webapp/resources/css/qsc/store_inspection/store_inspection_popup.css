@@ -155,6 +155,13 @@ body{
 
 
 /*-----------------------반응형 제어-----------------------*/
+@media (max-width: 1000px){
+    body{
+        padding: 40px 20px;
+    }
+}
+
+
 @media (max-width: 768px) {
     .inspection-details {
         flex-direction: column;
