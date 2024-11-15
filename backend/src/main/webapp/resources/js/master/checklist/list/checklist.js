@@ -1,3 +1,37 @@
+
+class CustomLoadingOverlay  {
+  eGui;
+
+  init(params) {
+    this.eGui = document.createElement('div');
+    this.refresh(params);
+  }
+
+  getGui() {
+    return this.eGui;
+  }
+
+  refresh(params) {
+    this.eGui.innerHTML = `
+    <div class="ag-overlay-loading-center" role="presentation">
+      <div aria-label="Loading..." role="status" class="loader">
+        <svg class="icon" viewBox="0 0 256 256">
+          <line x1="128" y1="32" x2="128" y2="64" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="195.9" y1="60.1" x2="173.3" y2="82.7" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="224" y1="128" x2="192" y2="128" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="195.9" y1="195.9" x2="173.3" y2="173.3" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="128" y1="224" x2="128" y2="192" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="60.1" y1="195.9" x2="82.7" y2="173.3" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="32" y1="128" x2="64" y2="128" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="60.1" y1="60.1" x2="82.7" y2="82.7" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+        </svg>
+        <span class="loading-text">Loading...</span>
+      </div>
+     </div>`;
+  }
+}
+
+
 // 전역 변수로 rowData와 gridApi 선언
 let rowData = [];
 let defaultRowData = [];
@@ -16,7 +50,7 @@ async function getChecklistAll(searchCriteria = {}) {
       },
       body: JSON.stringify(searchCriteria)
     });
-
+    gridApi.setGridOption("loading", true);
     const data = await response.json();
     console.log(data);
 
@@ -33,6 +67,10 @@ async function getChecklistAll(searchCriteria = {}) {
 
     // gridApi가 존재할 경우 데이터 설정
     if (gridApi) {
+      setTimeout(function() {
+        gridApi.setGridOption("loading", false);
+      }, 200)
+      gridApi.paginationGoToFirstPage()
       gridApi.setGridOption("rowData", rowData); // 데이터 설정
       updateChecklistCount();
     } else {
@@ -120,6 +158,10 @@ function initializeGrid() {
     rowSelection: "multiple",
     pagination: true,
     paginationAutoPageSize: true,
+    loadingOverlayComponent: CustomLoadingOverlay,
+    loadingOverlayComponentParams: {
+      loadingMessage: "One moment please...",
+    },
     onRowSelected: (event) => {
       const selectedRows = gridApi.getSelectedRows();
 
@@ -146,6 +188,7 @@ function initializeGrid() {
   // 그리드 API 생성 및 설정
   const gridDiv = document.querySelector("#myGrid");
   gridApi = agGrid.createGrid(gridDiv, gridOptions);
+
 
   // 초기 데이터 로드
   getChecklistAll();
