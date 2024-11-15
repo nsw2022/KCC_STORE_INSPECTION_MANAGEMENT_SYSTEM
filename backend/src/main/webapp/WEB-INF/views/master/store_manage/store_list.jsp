@@ -408,14 +408,15 @@
 
                 // 가맹점 주소 입력 필드에 도로명 주소 값 넣기
                 document.getElementById('storeAddress').value = fullRoadAddr;
-
                 console.log("선택한 주소:", fullRoadAddr);
-
                 // 주소를 좌표로 변환하고 지도를 이동
-                searchAddressToCoordinate(fullRoadAddr);
 
+                searchAddressToCoordinate(fullRoadAddr);
             },
+
         }).open();
+
+
     }
 </script>
 

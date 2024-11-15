@@ -96,7 +96,7 @@ function updateAjax(storeRequest) {
 
 let selectedFile;
 $(function () {
-    console.log($('.modal-body label:after').eq(6).css('visibility','hidden'));
+    $('.modal-body label:after').eq(6).css('visibility','hidden');
     // 점검자 입력할 때 자동으로 SV 가 입력되게 하는 이벤트
     $('.modal-body').on('click', $('.hide-list').eq(1).find('li'), function () {
         let inspMbrNm;
@@ -109,7 +109,6 @@ $(function () {
             inspMbrNmm : inspMbrNm,
             inspMbrNo : inspMbrNo
         };
-        console.log(inspectorInfoRequest)
         $.ajax({
             url: '/master/store/superVisors',
             method : 'POST',
@@ -123,8 +122,6 @@ $(function () {
                     $('.modal-body .wrapper').eq(2).find('span').text(sv);
                     let liTags = $('.modal-body .hide-list').eq(2).find('li');
                     $.each(liTags, function(index, item) {
-                        console.log(item.innerHTML)
-                        console.log(item)
                         if(item.innerHTML === sv) {
                             item.className +=' selected'
                         }
