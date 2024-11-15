@@ -39,6 +39,7 @@ async function onSearchRow() {
         masterChklstNm: searchMasterChklstPlaceholder,
         inspTypeNm: searchInspTypePlaceholder,
         creTm: searchDatePlaceholder,
+        masterSttsW: searchMasterSttsPlaceholder,
         chklstUseW: searchUseWPlaceholder
     };
 

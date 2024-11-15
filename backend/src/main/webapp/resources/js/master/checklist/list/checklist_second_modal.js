@@ -96,15 +96,11 @@ function checklistEvit(subCategoryData, uniqueID) {
             innerAccordionHTML += `
                 <div class="accordion-item inner-accordion-item border-0">
                     <h2 class="accordion-header" id="innerHeading${category}">
-                        <button class="accordion-button inner-accordion-button collapsed border-0" style="background-color: white !important;" type="button" data-bs-toggle="collapse" data-bs-target="#${innerCollapseID}" aria-expanded="false" aria-controls="${innerCollapseID}">
+                        <button class="accordion-button inner-accordion-button collapsed border-0" style="background-color: white !important;" type="button" >
                             <span class="pe-2">${category}</span>
                         </button>
                     </h2>
-                    <div id="${innerCollapseID}" class="accordion-collapse collapse" aria-labelledby="innerHeading${category}">
-                        <div class="accordion-body">
-                            ${items.map(item => `<p>${item}</p>`).join('')}
-                        </div>
-                    </div>
+
                 </div>
             `;
         }

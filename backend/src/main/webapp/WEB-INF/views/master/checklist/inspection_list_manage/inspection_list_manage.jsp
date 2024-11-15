@@ -81,7 +81,7 @@
                   </div>
                 </div>
                 <div class="my-3" style="margin: 0 !important;">
-                  <button type="button" class="btn btn-light init-btn  p-0" onclick="onDeleteRow()">저장</button>
+<%--                  <button type="button" class="btn btn-light init-btn  p-0" onclick="onDeleteRow()">저장</button>--%>
                 </div>
               </div>
               <div class="container mt-3">
@@ -129,15 +129,15 @@
                         <div class="update-box-content">
                           <div class="row row-cols-3 first-input-box mb-3">
                             <div class="col-12 col-lg-6 d-flex align-items-center mb-2">
-                              <label class="col-form-label me-2 ctg-nm" style="min-width: 50px;">대분류명</label>
+                              <label class="col-form-label me-2 ctg-nm form-label-essential d-flex" style="min-width: 51px;">대분류명</label>
                               <input type="text" class="form-control ctg-input" placeholder="대분류명">
                             </div>
                             <div class="col-12 col-lg-3 d-flex align-items-center mb-2">
-                              <label class="col-form-label me-2 stnd-score" style="min-width: 50px;">기준점수</label>
+                              <label class="col-form-label me-2 stnd-score form-label-essential d-flex" style="min-width: 51px;">기준점수</label>
                               <input type="text" class="form-control ctg-stnd-score" placeholder="0">
                             </div>
                             <div class="col-12 col-lg-3 d-flex align-items-center mb-2">
-                              <label class="col-form-label me-2 ctg-use-w" style="min-width: 50px;">사용여부</label>
+                              <label class="col-form-label me-2 ctg-use-w form-label-essential d-flex" style="min-width: 51px;">사용여부</label>
                               <input type="checkbox" class="form-check-label ctg-use-w-check">
                             </div>
                           </div>
@@ -162,8 +162,8 @@
                   <div class="accordion-body">
                     <div class="button-box d-flex justify-content-end">
                       <div class="my-2 d-flex justify-content-center">
-                        <button type="button" class="btn btn-light m-1" onclick="onAddSubCategoryRow()">추가</button>
-                        <button type="button" class="btn btn-light m-1" onclick="onDeleteSubCategoryRow()">삭제</button>
+                        <button type="button" class="btn btn-light m-1 sub-ctg-save-btn" onclick="onAddSubCategoryRow()" disabled>추가</button>
+                        <button type="button" class="btn btn-light m-1 sub-ctg-delete-btn" onclick="onDeleteSubCategoryRow()" disabled>삭제</button>
                       </div>
                     </div>
                     <div>
@@ -180,15 +180,15 @@
                         <div class="update-box-content">
                           <div class="row row-cols-2 first-input-box mb-3">
                             <div class="col-12 col-lg-6 d-flex align-items-center mb-2">
-                              <label class="col-form-label me-2 sub-ctg-nm" style="min-width: 50px;">중분류명</label>
+                              <label class="col-form-label me-2 sub-ctg-nm form-label-essential d-flex" style="min-width: 51px;">중분류명</label>
                               <input type="text" class="form-control sub-ctg-input" placeholder="중분류명">
                             </div>
                             <div class="col-12 col-lg-3 d-flex align-items-center mb-2">
-                              <label class="col-form-label me-2 sub-ctg-stnd-score" style="min-width: 50px;">기준점수</label>
+                              <label class="col-form-label me-2 sub-ctg-stnd-score form-label-essential d-flex" style="min-width: 51px;">기준점수</label>
                               <input type="text" class="form-control sub-ctg-stnd-score" placeholder="0">
                             </div>
                             <div class="col-12 col-lg-3 d-flex align-items-center mb-2">
-                              <label class="col-form-label me-2 sub-ctg-use-w" style="min-width: 50px;">사용여부</label>
+                              <label class="col-form-label me-2 sub-ctg-use-w form-label-essential d-flex" style="min-width: 51px;">사용여부</label>
                               <input type="checkbox" class="form-check-label sub-ctg-use-w-input">
                             </div>
                           </div>
@@ -213,8 +213,8 @@
                   <div class="accordion-body">
                     <div class="button-box d-flex justify-content-end">
                       <div class="my-2 d-flex justify-content-center">
-                        <button type="button" class="btn btn-light m-1" onclick="onAddEvaluationRow()">추가</button>
-                        <button type="button" class="btn btn-light m-1" onclick="onDeleteEvaluationRow()">삭제</button>
+                        <button type="button" class="btn btn-light m-1 eval-save-btn" onclick="onAddEvaluationRow()" disabled>추가</button>
+                        <button type="button" class="btn btn-light m-1 eval-delete-btn" onclick="onDeleteEvaluationRow()" disabled>삭제</button>
                       </div>
                     </div>
                     <div>
@@ -231,11 +231,11 @@
                         <div class="update-box-content">
                           <div class="row first-input-box mb-3">
                             <div class="col-12 col-lg-12 d-flex align-items-center mb-2">
-                              <label class="col-form-label me-2 evit-nm" style="min-width: 50px;">평가항목</label>
+                              <label class="col-form-label me-2 evit-nm form-label-essential d-flex" style="min-width: 51px;">평가항목</label>
                               <input type="text" class="form-control evit-nm-input" placeholder="평가항목">
                             </div>
                             <div class="col-12 col-lg-6 d-flex align-items-center mb-2">
-                              <label class="col-form-label me-2 evit-type-nm" style="min-width: 50px;">평가항목유형</label>
+                              <label class="col-form-label me-2 evit-type-nm form-label-essential d-flex" style="min-width: 51px;">평가항목유형</label>
                               <input type="text" class="form-control evit-type-input" placeholder="평가항목유형" list="evaluationOptions">
                               <datalist id="evaluationOptions">
                                 <option value="Y/N">
@@ -244,11 +244,11 @@
                               </datalist>
                             </div>
                             <div class="col-12 col-lg-3 d-flex align-items-center mb-2 suspention position-relative">
-                              <label class="col-form-label me-2 evit-score" style="min-width: 22px;">점수</label>
+                              <label class="col-form-label me-2 evit-score form-label-essential d-flex" style="min-width: 31px;">점수</label>
                               <input type="text" class="form-control evit-score" placeholder="100">
                             </div>
                             <div class="col-12 col-lg-3 d-flex align-items-center mb-2">
-                              <label class="col-form-label me-2 evit-use-w" style="min-width: 50px;">사용여부</label>
+                              <label class="col-form-label me-2 evit-use-w form-label-essential d-flex" style="min-width: 51px;">사용여부</label>
                               <input type="checkbox" class="form-check-label evit-use-w-input">
                             </div>
                           </div>
@@ -273,8 +273,8 @@
                   <div class="accordion-body">
                     <div class="button-box d-flex justify-content-end">
                       <div class="my-2 d-flex justify-content-center">
-                        <button type="button" class="btn btn-light m-1" onclick="onAddChoiceListRow()">추가</button>
-                        <button type="button" class="btn btn-light m-1" onclick="onDeleteChoiceListRow()">삭제</button>
+                        <button type="button" class="btn btn-light m-1 chclst-save-btn" onclick="onAddChoiceListRow()" disabled>추가</button>
+                        <button type="button" class="btn btn-light m-1 chclst-delete-btn" onclick="onDeleteChoiceListRow()" disabled>삭제</button>
                       </div>
                     </div>
                     <div>
@@ -291,23 +291,23 @@
                         <div class="update-box-content">
                           <div class="row first-input-box mb-3">
                             <div class="col-12 col-lg-6 d-flex align-items-center mb-2">
-                              <label class="col-form-label me-2 chclst-nm" style="min-width: 50px;">선택지<br>내용</label>
+                              <label class="col-form-label me-2 chclst-nm form-label-essential d-flex" style="min-width: 51px;">선택지<br>내용</label>
                               <input type="text" class="form-control chclst-nm-input" placeholder="적합">
                             </div>
                             <div class="col-12 col-lg-3 d-flex align-items-center mb-2">
-                              <label class="col-form-label me-2 chclst-use-w" style="min-width: 50px;">사용여부</label>
+                              <label class="col-form-label me-2 chclst-use-w form-label-essential d-flex" style="min-width: 51px;">사용여부</label>
                               <input type="checkbox" class="form-check-label chclst-use-w-input">
                             </div>
                             <div class="col-12 col-lg-3 d-flex align-items-center mb-2">
-                              <label class="col-form-label me-2 w" style="min-width: 50px;">적합여부</label>
+                              <label class="col-form-label me-2 w form-label-essential d-flex" style="min-width: 51px;">적합여부</label>
                               <input type="checkbox" class="form-check-label chclst-prfW-input">
                             </div>
                             <div class="col-12 col-lg-6 d-flex align-items-center mb-2 position-relative">
-                              <label class="col-form-label me-2 chclst-score" style="min-width: 50px;">선택지<br>점수</label>
+                              <label class="col-form-label me-2 chclst-score form-label-essential d-flex" style="min-width: 51px;">선택지<br>점수</label>
                               <input type="text" class="form-control chclst-score-input" placeholder="100">
                             </div>
                             <div class="col-12 col-lg-6 d-flex align-items-center mb-2 position-relative">
-                              <label class="col-form-label me-2" style="min-width: 50px;">부적합<br>강도</label>
+                              <label class="col-form-label me-2 form-label-essential d-flex" style="min-width: 51px;">부적합<br>강도</label>
                               <input type="text" class="form-control chclst-nprfsCd" list="strengthOptions">
                               <datalist id="strengthOptions">
                                 <option value="크리티컬">
@@ -316,12 +316,12 @@
                               </datalist>
                             </div>
                             <div class="col-12 col-lg-6 d-flex align-items-center mb-2 penalty position-relative">
-                              <label class="col-form-label me-2 chclst-penalty" style="min-width: 50px;">과태료</label>
+                              <label class="col-form-label me-2 chclst-penalty form-label-essential d-flex" style="min-width: 51px;">과태료</label>
                               <input type="text" class="form-control penalty-input" placeholder="0">
                               <span class="unit" style="margin-right: 8px; font: 300 11px Noto Sans KR">만원</span>
                             </div>
                             <div class="col-12 col-lg-6 d-flex align-items-center mb-2 suspention position-relative">
-                              <label class="col-form-label me-2 chclst-bsnSspnDaynum" style="min-width: 50px;">영업정지</label>
+                              <label class="col-form-label me-2 chclst-bsnSspnDaynum form-label-essential d-flex" style="min-width: 51px;">영업정지</label>
                               <input type="text" class="form-control suspention-input" placeholder="0">
                               <span class="unit" style="margin-right: 8px; font: 300 11px Noto Sans KR">일</span>
                             </div>

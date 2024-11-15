@@ -29,8 +29,11 @@ public enum ErrorCode {
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND,"DATA-0015","점검계획이 존재하지않습니다."),
 
     HAS_EMAIL(HttpStatus.BAD_REQUEST, "ACCOUNT-001", "이미 존재하는 사원번호입니다."),
+    DUPLICATE_CHECKLIST_NAME(HttpStatus.BAD_REQUEST, "ACCOUNT-001", "이미 존재하는 체크리스트명입니다."),
 
     HANDLE_ACCESS_DENIED(HttpStatus.FORBIDDEN, "AUTH-001", "권한이 없습니다."),
+
+
     ;
 
     private final HttpStatus httpStatus;

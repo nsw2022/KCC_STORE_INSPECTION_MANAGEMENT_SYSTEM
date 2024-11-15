@@ -2,9 +2,11 @@ package com.sims.master.checklist_manage.service;
 
 import com.sims.config.Exception.CustomException;
 import com.sims.config.Exception.ErrorCode;
+import com.sims.config.common.ClientInfo;
 import com.sims.config.common.aop.PRoleCheck;
 import com.sims.master.checklist_manage.mapper.ChecklistMapper;
 import com.sims.master.checklist_manage.vo.*;
+import com.sims.master.inspection_list_manage.mapper.InspectionListManageMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,12 +31,17 @@ public class ChecklistServiceImpl implements ChecklistService{
     private final ChecklistMapper checklistMapper;
 
     @Override
+    @Transactional(readOnly = true)
     public List<ChecklistResponse> selectChecklistAll(ChecklistRequest checklistRequest) {
         log.info("called ChecklsitServiceImpl checklistRequest = {}", checklistRequest);
-        log.info("service 결과 = {}", checklistMapper.selectChecklistAll(checklistRequest));
+
+
         return checklistMapper.selectChecklistAll(checklistRequest);
     }
 
+    /**
+     * @Todo 체크리스트 삭제 시 분류 삭제해야 함.
+     */
     @Override
     @PRoleCheck
     @Transactional(rollbackFor = Exception.class)
@@ -46,6 +53,7 @@ public class ChecklistServiceImpl implements ChecklistService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ChecklistOptionsResponse selectChecklistOptions() {
         List<String> brandOptions = checklistMapper.selectBrandOptions();
         List<String> inspTypeOptions = checklistMapper.selectInspTypeOptions();
@@ -58,20 +66,21 @@ public class ChecklistServiceImpl implements ChecklistService{
                 .build();
     }
 
-
-    /**
-     * @Todo 체크리스트명 중복 체크
-     */
     @Override
     @PRoleCheck
     @Transactional(rollbackFor = Exception.class)
     public int insertOrUpdateChecklist(List<ChecklistRequest> checklistRequests) {
         String mbrNo = SecurityContextHolder.getContext().getAuthentication().getName();
         int requestDataLength = checklistRequests.size();
-
+        List<String> chklstNm = new ArrayList<String>();
         for(int i = 0; i < checklistRequests.size(); i++) {
             checklistRequests.get(i).setMbrNo(mbrNo);
+            chklstNm.add(checklistRequests.get(i).getChklstNm());
             log.info(mbrNo);
+        }
+
+        if (checklistMapper.selectChklstCount(chklstNm) > 0) {
+            throw new CustomException(ErrorCode.DUPLICATE_CHECKLIST_NAME);
         }
 
         int resultDataLength = checklistMapper.insertOrUpdateChecklist(checklistRequests);
@@ -86,6 +95,7 @@ public class ChecklistServiceImpl implements ChecklistService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ChecklistPreviewResponse getComplianceData(String chklstNm) {
         List<Map<String, Object>> results = checklistMapper.selectChecklistPreview(chklstNm);
         ChecklistPreviewResponse complianceData = new ChecklistPreviewResponse();
@@ -124,4 +134,131 @@ public class ChecklistServiceImpl implements ChecklistService{
 
         return complianceData;
     }
+
+    /**
+     * @Todo 대분류, 중분류 조회까지 끝남
+     * 이제 평가항목, 선택지 조회한 후 삽입 해야함.
+     * @Todo 중분류 삭제 시 하위 항목 삭제 해야 함.
+     */
+//    @Override
+//    @Transactional(rollbackFor = Exception.class)
+//    public int insertMasterChecklistCopy(String newChklstId, String masterChklstNm) {
+//        // 마스터 체크리스트 ID 조회
+//        Long masterChklstId = checklistMapper.selectMasterChecklistId(masterChklstNm);
+//        log.info("masterChklstId = {}", masterChklstId);
+//
+//        // 마스터 체크리스트 대분류 조회
+//        List<Category> masterCtgList = checklistMapper.selectMasterChklstCtg(masterChklstId);
+//        log.info("masterCtgList = {}", masterCtgList);
+//
+//        // 대분류 복사
+//        checklistMapper.insertCtgCopy(newChklstId, masterChklstId);
+//
+//        // 마스터 체크리스트 중분류 조회
+//        List<Category> masterSubCtgList = checklistMapper.selectMasterChklstSubCtg(masterChklstId);
+//        log.info("masterSubCtgList = {}", masterSubCtgList);
+//
+//        // 마스터 체크리스트 평가항목 조회
+//        List<EvaluationItem> masterEvitList = checklistMapper.selectMasterChklstEvit(masterChklstId);
+//        log.info("masterEvitList = {}", masterEvitList);
+//
+//        // 마스터 체크리스트 선택지 조회
+//        List<Choice> masterChclstList = checklistMapper.selectMasterChklstChclst(masterChklstId);
+//        log.info("masterChclstList = {}", masterChclstList);
+//
+//
+//        return 0;
+//    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int insertMasterChecklistCopy(String newChklstId, String masterChklstNm) {
+
+        // 마스터 체크리스트 ID 조회
+        Long masterChklstId = checklistMapper.selectMasterChecklistId(masterChklstNm);
+        log.info("masterChklstId = {}", masterChklstId);
+        checklistMapper.updateMasterChklst(newChklstId, masterChklstId);
+//
+//        // 원본 대분류 ID 리스트 조회
+//        List<Long> masterCtgIds = checklistMapper.selectMasterCategoryIds(masterChklstId);
+//        log.info("masterCtgIds = {}", masterCtgIds);
+//
+//        // 대분류 복사 및 ID 매핑 저장
+//        Map<Long, Long> ctgIdMap = new HashMap<>();
+//        int rowsInserted = checklistMapper.insertCtgCopy(newChklstId, masterChklstId);
+//        log.info("Rows inserted for Ctg copy: {}", rowsInserted);
+//
+//        List<Long> newCtgIds = checklistMapper.selectMasterCategoryIds(Long.valueOf(newChklstId)); // 새로 생성된 대분류 ID 리스트 조회
+//        for (int i = 0; i < newCtgIds.size(); i++) {
+//            ctgIdMap.put(masterCtgIds.get(i), newCtgIds.get(i));  // 원본 대분류 ID와 새 대분류 ID 매핑
+//        }
+//        log.info("ctgIdMap = {}", ctgIdMap);
+//
+//        // 중분류 복사
+//        Map<Long, Long> subCtgIdMap = new HashMap<>();
+//        for (Map.Entry<Long, Long> entry : ctgIdMap.entrySet()) {
+//            Long masterCtgId = entry.getKey();
+//            Long newCtgId = entry.getValue();
+//
+//            // 원본 중분류 ID 리스트 조회
+//            List<Long> masterSubCtgIds = checklistMapper.selectSubCategoryIds(masterCtgId);
+//            log.info("masterSubCtgIds = {}", masterSubCtgIds);
+//
+//            // 중분류 복사
+//            checklistMapper.insertSubCtgCopy(newCtgId, masterCtgId);
+//            log.info("중분류 복사 완료");
+//
+//            // 새로 생성된 중분류 ID 리스트 조회
+//            List<Long> newSubCtgIds = checklistMapper.selectSubCategoryIds(newCtgId);
+//            log.info("newSubCtgIds = {}", newSubCtgIds);
+//
+//            for (int i = 0; i < newSubCtgIds.size(); i++) {
+//                subCtgIdMap.put(masterSubCtgIds.get(i), newSubCtgIds.get(i));  // 원본 중분류 ID와 새 중분류 ID 매핑
+//            }
+//            log.info("subCtgIdMap = {}", subCtgIdMap);
+//        }
+//
+//        // 평가항목 복사
+//        Map<Long, Long> evitIdMap = new HashMap<>();
+//        for (Map.Entry<Long, Long> entry : subCtgIdMap.entrySet()) {
+//            Long oldSubCtgId = entry.getKey();
+//            Long newSubCtgId = entry.getValue();
+//
+//            // 원본 평가항목 ID 리스트 조회
+//            List<Long> oldEvitIds = checklistMapper.selectEvaluationItemIds(oldSubCtgId);
+//            log.info("oldEvitIds = {}", oldEvitIds);
+//
+//            // 평가항목 복사 후 새로 생성된 평가항목 ID 리스트 반환
+//            checklistMapper.insertEvaluationItemCopy(newSubCtgId, oldSubCtgId);
+//            log.info("Rows inserted for Evaluation Item copy");
+//
+//            // 새로 생성된 평가항목 ID 리스트 조회
+//            List<Long> newEvitIds = checklistMapper.selectEvaluationItemIds(newSubCtgId);
+//            log.info("newEvitIds = {}", newEvitIds);
+//
+//            for (int i = 0; i < newEvitIds.size(); i++) {
+//                evitIdMap.put(oldEvitIds.get(i), newEvitIds.get(i));  // 원본 평가항목 ID와 새 평가항목 ID 매핑
+//            }
+//            log.info("evitIdMap = {}", evitIdMap);
+//        }
+//
+//        // 선택지 복사
+//        for (Map.Entry<Long, Long> entry : evitIdMap.entrySet()) {
+//            Long oldEvitId = entry.getKey();
+//            Long newEvitId = entry.getValue();
+//
+//            // 선택지 복사
+//            checklistMapper.insertChoiceCopy(newEvitId, oldEvitId);
+//            log.info("Rows inserted for Choice copy");
+//        }
+
+        return 1; // 성공 반환
+    }
+
+
+
+
+
+
+
 }

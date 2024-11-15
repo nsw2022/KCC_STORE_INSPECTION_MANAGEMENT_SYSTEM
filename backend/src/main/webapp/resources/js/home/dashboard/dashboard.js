@@ -1,28 +1,3 @@
-const group = document.querySelector("#group");
-let sortableInstance;
-const mediaQuery = window.matchMedia("(min-width: 1400px)");
-// 조건에 따라 Sortable 적용 및 해제 함수
-function handleMediaQueryChange(e) {
-  if (e.matches) {
-    // 화면 너비가 1400px 이상일 때 Sortable 활성화
-    sortableInstance = new Sortable(group, {
-      animation: 150,
-      ghostClass: "blue-bg",
-    });
-  } else {
-    // 1000px 미만일 때 Sortable 제거
-    if (sortableInstance) {
-      sortableInstance.destroy();
-      sortableInstance = null;
-    }
-  }
-}
-
-// 처음 로드 시에도 조건에 따라 설정
-handleMediaQueryChange(mediaQuery);
-
-// 화면 크기 변경 시 이벤트 리스너 추가
-mediaQuery.addEventListener("change", handleMediaQueryChange);
 
 
 $(document).ready(function () {

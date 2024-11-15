@@ -470,7 +470,7 @@ body {
   }
 
   .evit-score{
-    min-width: 50px !important;
+    min-width: 51px !important;
   }
 }
 
@@ -508,4 +508,16 @@ body {
 
 .top-drop-down button i {
   transition: transform 0.3s ease-in-out;
+}
+.ag-header-cell-label {
+  justify-content: center;
+}
+
+.form-label-essential:after {
+  content: "*";
+  display: block;
+  height: 16px !important;
+  width: 7px !important;
+  margin-left: 3px;
+  color: red;
 }

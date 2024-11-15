@@ -308,16 +308,18 @@
         )
     </update>
 
-    <delete id="deleteChklstEvit">
+    <delete id="deleteChklstEvit" parameterType="list">
         DELETE
         FROM
             CHKLST_EVIT
-        <where>
-            <foreach collection="list" item="item">
-                EVIT_ID = #{item}
-            </foreach>
-        </where>
+        WHERE
+            EVIT_ID
+                IN
+                    <foreach collection="list" item="item" open="(" separator="," close=")">
+                        #{item}
+                    </foreach>
     </delete>
+
 
     <update id="insertOrUpdateEvitChclst">
         MERGE INTO EVIT_CHCLST /* InspectionListManageMapper.insertOrUpdateChclst 유재원 */
@@ -389,10 +391,9 @@
         DELETE
         FROM
         EVIT_CHCLST
-        <where>
-            <foreach collection="list" item="item">
-                CHCLST_ID = #{item}
+        WHERE CHCLST_ID IN
+            <foreach collection="list" item="item" open="(" separator="," close=")">
+                #{item}
             </foreach>
-        </where>
     </delete>
 </mapper>

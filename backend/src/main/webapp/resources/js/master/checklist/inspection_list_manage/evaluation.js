@@ -48,19 +48,19 @@ const gridOptions3 = {
         fetch(`/master/inspection-list-manage/evit-chclst?ctg-id=${subCtgId}&evit-nm=${encodedEvitNm}`)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
-                const rowData4 = [];
+                rowData4 = [];
                 for (let i = 0; i < data.length; i++) {
                     rowData4.push(data[i]);
                 }
                 gridApi4.setGridOption("rowData", rowData4);  // Initialize gridApi2 with rowData2
+                $('.chclst-save-btn, .chclst-delete-btn').removeAttr("disabled");
             });
         $('.evit-nm').next().val(evitNm);
         $('.evit-type-nm').next().val(evitTypeNm);
         $('.evit-score').next().val(score);
         if(chklstEvitUseW === 'Y'){
             $('.evit-use-w').next().prop('checked', true);
-        }else if (chklstEvitUseW === 'N'){
+        }else if (chklstEvitUseW === 'N' || chklstEvitUseW === ''){
             $('.evit-use-w').next().prop('checked', false);
         }
     },
@@ -79,6 +79,7 @@ const gridOptions3 = {
             $('.evit-type-nm').next().val("");
             $('.evit-score').next().val("");
             $('.evit-use-w').next().prop('checked', false);
+            $('.chclst-save-btn, .chclst-delete-btn').attr('disabled', true);
         }
     },
 
@@ -88,7 +89,6 @@ const gridOptions3 = {
         if (selectedRows.length === 1 && event.node.isSelected()) {
             const selectedNode = event.node;
             selectedRowNo3 = selectedNode.rowIndex;
-            console.log("선택된 행 번호: ", selectedRowNo3);
 
         } else if (!event.node.isSelected() && event.node.rowIndex === selectedRowNo3) {
             selectedRowNo3 = null;
@@ -116,18 +116,19 @@ function createNewEvaluationRowData() {
 // 행 추가 함수
 function onAddEvaluationRow() {
     var newItem3 = createNewEvaluationRowData();
+    rowData3.push(newItem3);
     gridApi3.applyTransaction({ add: [newItem3] });
 }
 
 // 행 삭제 함수
-function onDeleteEvaluationRow() {
-    var selectedRows = gridApi3.getSelectedRows();
-    if (selectedRows.length > 0) {
-        gridApi3.applyTransaction({ remove: selectedRows });
-    } else {
-        alert('삭제할 항목을 선택하세요.');
-    }
-}
+// function onDeleteEvaluationRow() {
+//     var selectedRows = gridApi3.getSelectedRows();
+//     if (selectedRows.length > 0) {
+//         gridApi3.applyTransaction({ remove: selectedRows });
+//     } else {
+//         alert('삭제할 항목을 선택하세요.');
+//     }
+// }
 
 function onDeleteEvaluationRow() {
     const selectedRows = gridApi3.getSelectedRows();
@@ -255,9 +256,10 @@ $('.evit-score').keyup(function(){
         }
         const selectedRows = gridApi2.getSelectedRows();
         const subCtgScore = selectedRows.length > 0 && selectedRows[0].stndScore !== undefined ? selectedRows[0].stndScore : 0;
+        console.log(rowData3);
 
-        const totalScore = gridApi3.getGridOption("rowData").reduce((sum, row) => sum + (parseInt(row.score, 10) || 0), 0);
-
+        const totalScore = rowData3.reduce((sum, row) => sum + (parseInt(row.score, 10) || 0), 0);
+        console.log(totalScore + $('.evit-score').val());
         if (totalScore > subCtgScore) {
             Swal.fire("실패!", `총 기준점수는 ${subCtgScore}를 초과할 수 없습니다.`, "error");
             $(this).val(''); // 입력값 초기화
@@ -305,7 +307,7 @@ function evitSaveOrUpdate() {
             const selectedRows = gridApi2.getSelectedRows();
             const subCtgScore = selectedRows.length > 0 && selectedRows[0].stndScore !== undefined ? selectedRows[0].stndScore : 0;
 
-            const totalScore = gridApi3.getGridOption("rowData").reduce((sum, row) => sum + (parseInt(row.score, 10) || 0), 0);
+            const totalScore = rowData3.reduce((sum, row) => sum + (parseInt(row.score, 10) || 0), 0);
             if (totalScore != subCtgScore) {
                 Swal.fire("실패!", `총 기준점수는 ${subCtgScore}점과 같아야 합니다.`, "error");
                 $(this).val(''); // 입력값 초기화

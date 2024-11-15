@@ -299,6 +299,9 @@ body {
   margin-left: 3px;
   color: red;
 }
+.ag-header-cell-label {
+  justify-content: center;
+}
 
 
 /******************   first modal   ********************/
@@ -635,3 +638,4 @@ body {
 .top-drop-down button i {
   transition: transform 0.3s ease-in-out;
 }
+
