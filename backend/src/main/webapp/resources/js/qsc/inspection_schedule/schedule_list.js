@@ -34,6 +34,38 @@ $(function () {
         };
     }
 
+    class CustomLoadingOverlay  {
+        eGui;
+
+        init(params) {
+            this.eGui = document.createElement('div');
+            this.refresh(params);
+        }
+
+        getGui() {
+            return this.eGui;
+        }
+
+        refresh(params) {
+            this.eGui.innerHTML = `
+    <div class="ag-overlay-loading-center" role="presentation">
+      <div aria-label="Loading..." role="status" class="loader">
+        <svg class="icon" viewBox="0 0 256 256">
+          <line x1="128" y1="32" x2="128" y2="64" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="195.9" y1="60.1" x2="173.3" y2="82.7" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="224" y1="128" x2="192" y2="128" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="195.9" y1="195.9" x2="173.3" y2="173.3" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="128" y1="224" x2="128" y2="192" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="60.1" y1="195.9" x2="82.7" y2="173.3" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="32" y1="128" x2="64" y2="128" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+          <line x1="60.1" y1="60.1" x2="82.7" y2="82.7" stroke-linecap="round" stroke-linejoin="round" stroke-width="24"></line>
+        </svg>
+        <span class="loading-text">Loading...</span>
+      </div>
+     </div>`;
+        }
+    }
+
 
 
 
@@ -908,6 +940,8 @@ $(function () {
                             originalData = response.slice(); // 원본 데이터 복사
                         }
 
+                        gridOptions.api.setGridOption("loading", true);
+
                         alldata = response.map((item, index) => ({
                             ...item,
                             no: index + 1,
@@ -921,7 +955,7 @@ $(function () {
                         storeNm: item.storeNm || "",
                         brandNm: item.brandNm || "",
                         chklstNm: item.chklstNm || "",
-                        inspPlanDt: item.inspPlanDt || "",
+                        inspPlanDt: item.inspPlanDt.replace(/(\d{4})(\d{2})(\d{2})/, "$1-$2-$3") || "",
                         mbrNm: item.mbrNm || "",
                         storeId: item.storeId || "",
                         cntCd: CNT_CD_MAP[item.cntCd?.toUpperCase()] || item.cntCd || "",
@@ -929,6 +963,10 @@ $(function () {
                     }));
 
                     if (gridOptions.api) {
+                        setTimeout(function() {
+                            gridOptions.api.setGridOption("loading", false);
+                        }, 200)
+                        gridOptions.api.paginationGoToFirstPage()
                         gridOptions.api.setGridOption("rowData", formattedData);
                         updateChecklistCount();
                     } else {
@@ -986,14 +1024,14 @@ $(function () {
                 minWidth: 110,
             },
             {field: "mbrNm", headerName: "점검자", width: 150, minWidth: 110},
+            {field: "frqCd", headerName: "빈도", width: 130, minWidth: 70},
+            {field: "cntCd", headerName: "횟수", width: 130, minWidth: 70},
             {
                 field: "inspPlanDt",
                 headerName: "점검예정일",
                 width: 160,
                 minWidth: 110,
             },
-            {field: "frqCd", headerName: "빈도", width: 130, minWidth: 70},
-            {field: "cntCd", headerName: "횟수", width: 130, minWidth: 70},
             {
                 headerName: "관리",
                 field: "more",
@@ -1085,6 +1123,10 @@ $(function () {
         rowDragManaged: true,
         rowDragEntireRow: true,
         rowDragMultiRow: true,
+        loadingOverlayComponent: CustomLoadingOverlay,
+        loadingOverlayComponentParams: {
+            loadingMessage: "One moment please...",
+        },
         onRowSelected: (event) => {
             const selectedRows = event.api.getSelectedRows();
 
@@ -1398,6 +1440,20 @@ $(function () {
         // 횟수 초기화
         $("#count").val("없음");
     });
+
+    /**
+     *
+     */
+    function setupSearchInput() {
+        $('.top-box .form-control').keyup(function (e) {
+            if(e.keyCode === 13) {
+                let text = $(this).val();
+                $(this).parents('.wrapper').find('span').text(text);
+                $(this).parents('.wrapper').removeClass('active');
+            }
+        })
+    }
+    setupSearchInput()
 
     /**
      * 검색 박스 토글 함수 정의
@@ -1943,6 +1999,9 @@ $(function () {
 
                                     // 횟수 초기화
                                     $("#count").val("없음");
+
+                                    location.href = "/qsc/inspection-schedule/schedule-list"
+
                                 });
                             }
                         });

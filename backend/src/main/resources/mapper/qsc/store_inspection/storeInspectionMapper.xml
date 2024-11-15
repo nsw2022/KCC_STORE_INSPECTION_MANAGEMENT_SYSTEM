@@ -79,6 +79,7 @@
                           ON st.SV_MBR_ID = sv.MBR_ID
         WHERE
             s.INSP_PLAN_DT = TO_CHAR(CURRENT_DATE, 'YYYYMMDD')
+--             s.INSP_STTS_CD = 'IS001'
           AND
             m.MBR_NO = #{mbrNo}
     </select>
@@ -124,6 +125,7 @@
                 <!-- 점검자로 로그인한 경우 -->
                 <when test="currentMbrNo != null and currentMbrNo.startsWith('C')">
                     AND STO.INSP_MBR_ID = (SELECT MBR_ID FROM MBR WHERE MBR_NO = #{currentMbrNo})
+--                     AND ISC.INSP_PLAN_DT = TO_CHAR(CURRENT_DATE, 'YYYYMMDD')
                 </when>
                 <!-- 품질관리자 및 관리자인 경우: 조건 없음 -->
                 <otherwise>
