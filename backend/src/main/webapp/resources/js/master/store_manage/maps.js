@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
     geoJsonPath = "/resources/map/seoul.json",
     seoulGeoJson;
 
+
   // 지도 객체 생성
   map = new naver.maps.Map("map", {
     zoom: 15,
@@ -116,6 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // 주소를 좌표로 변환하는 함수 (전역 함수로 선언)
   window.searchAddressToCoordinate = function (address) {
+
     naver.maps.Service.geocode(
       {
         query: address,
@@ -160,6 +162,7 @@ document.addEventListener("DOMContentLoaded", function () {
         map.setCenter(point);
         infoWindow.open(map, point);
         document.querySelector('.map_info').parentElement.parentElement.className = 'map-content';
+        document.querySelector('.map_info').parentElement.parentElement.style.display = 'block';
         document.querySelector('.map_info').parentElement.className = 'map-box';
         document.querySelector('.map_info').parentElement.nextElementSibling.className = 'map-arrow';
         document.querySelector('.map_info').parentElement.nextElementSibling.nextElementSibling.className = 'map-arrow';
